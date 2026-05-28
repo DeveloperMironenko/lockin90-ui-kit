@@ -1,0 +1,10 @@
+/* Storybook-only stylesheet. The shared design tokens + kit component classes
+ * are imported first, then Tailwind's directives generate the utility classes
+ * the kit components rely on (bg-elevated, text-secondary, etc). postcss-import
+ * inlines the @import'd files before Tailwind runs (see postcss.config.cjs). */
+@import '@p90/tokens/tokens.css';
+@import '@p90/ui/styles.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -1,0 +1,351 @@
+/*
+ * @p90/ui — shared component styles.
+ * Import once in a consuming app (after Tailwind base/components/utilities and
+ * @p90/tokens/tokens.css). Provides the `ea-*` design-system classes the
+ * components rely on. Token values come from @p90/tokens (CSS custom properties).
+ */
+
+@layer components {
+  .ea-display {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    line-height: 0.95;
+  }
+  .ea-display-upright {
+    font-family: var(--font-display);
+    font-style: normal;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    line-height: 0.95;
+  }
+  .ea-num {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-feature-settings: "tnum";
+  }
+  .ea-eyebrow {
+    font-family: var(--font-display);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .ea-mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+  .ea-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px 20px;
+    position: relative;
+  }
+  .ea-btn {
+    width: 100%;
+    height: 56px;
+    border-radius: 4px;
+    border: none;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 200ms var(--ease-smooth), opacity 200ms var(--ease-smooth);
+    position: relative;
+    overflow: hidden;
+  }
+  .ea-btn:active { transform: scale(0.98); }
+  .ea-btn-primary {
+    background: #fff;
+    color: #000;
+  }
+  .ea-btn-primary:hover { background: #f0f0f0; }
+  .ea-btn-primary::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+  }
+  .ea-btn-secondary {
+    background: var(--bg-elevated);
+    color: #fff;
+    border: 1px solid var(--border-strong);
+  }
+  .ea-btn-secondary:hover { background: var(--bg-elevated-2); }
+  .ea-btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .ea-btn-ghost:hover { color: var(--text-primary); border-color: var(--border-strong); }
+  /* ── Action chip ────────────────────────────────────────────────────────
+     Compact button used in card headers, action strips, and inline toolbars.
+     Single canonical size so Edit / Add / Save / Cancel / Reset never visually
+     drift. Variants change colour only — never height/padding/font. */
+  .ea-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 28px;
+    min-width: 84px;
+    padding: 0 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 10px;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 150ms, background 150ms, border-color 150ms;
+    white-space: nowrap;
+  }
+  .ea-chip:hover { color: #fff; border-color: var(--border-strong); }
+  .ea-chip:disabled, .ea-chip[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
+  .ea-chip:disabled:hover, .ea-chip[aria-disabled="true"]:hover {
+    color: var(--text-secondary); border-color: var(--border);
+  }
+  .ea-chip-primary {
+    background: #fff; color: #000; border-color: #fff;
+  }
+  .ea-chip-primary:hover { background: #f0f0f0; color: #000; border-color: #fff; }
+  .ea-chip-accent {
+    color: var(--accent); border-color: rgba(255, 31, 31, 0.4);
+  }
+  .ea-chip-accent:hover { background: rgba(255, 31, 31, 0.1); color: var(--accent); border-color: rgba(255, 31, 31, 0.6); }
+  .ea-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--border-strong);
+    color: var(--text-primary);
+    font-size: 17px;
+    font-family: var(--font-ui);
+    font-weight: 500;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 200ms;
+    width: 100%;
+  }
+  .ea-input:focus { border-bottom-color: var(--accent); }
+  .ea-input::placeholder { color: var(--text-muted); }
+  .ea-input-label {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .ea-stat-block {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 14px 14px 12px;
+    position: relative;
+    transition: background 200ms, border-color 200ms;
+    cursor: default;
+  }
+  .ea-stat-block:hover {
+    background: var(--bg-elevated);
+    border-color: var(--border-strong);
+  }
+  .ea-stat-block-label {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .ea-stat-block-value {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    font-size: 30px;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-top: 6px;
+    font-feature-settings: "tnum";
+  }
+  .ea-stat-block-unit {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-left: 4px;
+    font-weight: 500;
+  }
+  .ea-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+  .ea-chip-active {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .ea-link {
+    color: var(--text-secondary);
+    font-size: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 8px;
+    text-decoration: none;
+  }
+  .ea-link:hover { color: var(--text-primary); }
+  .ea-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+}
+
+/* Animations */
+@keyframes ea-slash-in {
+  from { transform: rotate(-8deg) scaleX(0); }
+  to   { transform: rotate(-8deg) scaleX(1); }
+}
+@keyframes ea-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes ea-fade-only {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes ea-breath {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50%       { transform: scale(1.025); opacity: 1; }
+}
+@keyframes ea-pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.85); }
+}
+@keyframes ea-pop {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(0.94); }
+  60%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.ea-fade-in { animation: ea-fade-in 400ms var(--ease-smooth) both; }
+.ea-pulse-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 3px;
+  background: var(--accent);
+  animation: ea-pulse-dot 1.4s ease-in-out infinite;
+}
+
+/* ─── Tables + dense inputs (used by DataTable, FilterBuilder and other
+   operator-surface primitives in @p90/ui/admin) ───────────────────────────── */
+@layer components {
+  .ea-table-wrap {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .ea-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .ea-table-th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border-strong);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  .ea-table-td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    vertical-align: middle;
+  }
+  .ea-table-row {
+    transition: background 120ms;
+  }
+  .ea-table-row:hover {
+    background: var(--bg-elevated);
+  }
+  .ea-table-row-selected {
+    background: rgba(255, 31, 31, 0.05);
+  }
+  .ea-table-row:last-child .ea-table-td {
+    border-bottom: 0;
+  }
+  .ea-checkbox {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .ea-mock-chrome {
+    background: linear-gradient(90deg, rgba(240,169,59,0.12), rgba(240,169,59,0.02));
+    border: 1px solid rgba(240,169,59,0.3);
+    border-radius: 4px;
+  }
+  .ea-text-input {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 8px 12px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: var(--font-ui);
+    width: 100%;
+    outline: none;
+    transition: border-color 150ms;
+  }
+  .ea-text-input:focus { border-color: var(--accent); }
+}
