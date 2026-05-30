@@ -1,4 +1,4 @@
-// @p90/ui/admin — operator-surface primitives. Run scripts/gen-admin.mjs to refresh.
+// @lockin90/ui/admin — operator-surface primitives. Run scripts/gen-admin.mjs to refresh.
 
 export * from './admin/AdminGateBanner';
 export { default as AdminGateBanner } from './admin/AdminGateBanner';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, Text, View, ActivityIndicator, StyleSheet } from 'react-native';
 import type { GestureResponderEvent } from 'react-native';
-import { colors, fonts, radius } from '@p90/tokens';
+import { colors, fonts, radius } from '@lockin90/tokens';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
 

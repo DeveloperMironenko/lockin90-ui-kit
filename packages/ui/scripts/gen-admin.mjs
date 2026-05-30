@@ -1,4 +1,4 @@
-// Regenerates src/admin.ts (the @p90/ui/admin barrel) from src/admin/*.
+// Regenerates src/admin.ts (the @lockin90/ui/admin barrel) from src/admin/*.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,7 +10,7 @@ const dirs = fs
   .filter((d) => fs.statSync(path.join(root, d)).isDirectory())
   .sort();
 
-const lines = ['// @p90/ui/admin — operator-surface primitives. Run scripts/gen-admin.mjs to refresh.', ''];
+const lines = ['// @lockin90/ui/admin — operator-surface primitives. Run scripts/gen-admin.mjs to refresh.', ''];
 for (const d of dirs) {
   const tsx = path.join(root, d, 'index.tsx');
   const ts = path.join(root, d, 'index.ts');
@@ -26,4 +26,4 @@ for (const d of dirs) {
   }
 }
 fs.writeFileSync(path.join(here, '..', 'src', 'admin.ts'), lines.join('\n') + '\n');
-console.log(`[@p90/ui] wrote src/admin.ts (${dirs.length} admin components)`);
+console.log(`[@lockin90/ui] wrote src/admin.ts (${dirs.length} admin components)`);

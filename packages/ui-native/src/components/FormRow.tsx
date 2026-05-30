@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, fonts } from '@p90/tokens';
+import { colors, fonts } from '@lockin90/tokens';
 import { Eyebrow } from './Typography';
 
 export function FormRow({ label, last = false, danger = false, children }: { label: string; last?: boolean; danger?: boolean; children?: React.ReactNode }) {

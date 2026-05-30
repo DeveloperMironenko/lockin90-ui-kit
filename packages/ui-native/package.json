@@ -1,5 +1,5 @@
 {
-  "name": "@p90/ui-native",
+  "name": "@lockin90/ui-native",
   "version": "0.1.0",
   "description": "Performance 90 design-system components for React Native (Expo).",
   "license": "UNLICENSED",
@@ -33,7 +33,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@p90/tokens": "workspace:*"
+    "@lockin90/tokens": "workspace:*"
   },
   "peerDependencies": {
     "react": "*",

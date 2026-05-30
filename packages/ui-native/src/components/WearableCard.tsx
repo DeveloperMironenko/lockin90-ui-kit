@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import Svg, { Path, Text as SvgText } from 'react-native-svg';
-import { colors, fonts, radius, spacing } from '@p90/tokens';
+import { colors, fonts, radius, spacing } from '@lockin90/tokens';
 
 export type WearableProvider =
   | 'whoop'

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Animated, StyleSheet } from 'react-native';
-import { colors, fonts } from '@p90/tokens';
+import { colors, fonts } from '@lockin90/tokens';
 
 type BadgeVariant = 'muted' | 'active' | 'danger';
 

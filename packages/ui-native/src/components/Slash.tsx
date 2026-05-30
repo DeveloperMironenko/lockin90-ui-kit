@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, type DimensionValue } from 'react-native';
-import { colors } from '@p90/tokens';
+import { colors } from '@lockin90/tokens';
 
 interface Props {
   width?: DimensionValue;

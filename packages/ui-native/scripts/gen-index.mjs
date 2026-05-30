@@ -12,7 +12,7 @@ const files = fs
   .filter((f) => /\.tsx?$/.test(f) && !f.endsWith('.d.ts'))
   .sort();
 
-const lines = ['// Generated barrel for @p90/ui-native — run scripts/gen-index.mjs to refresh.', ''];
+const lines = ['// Generated barrel for @lockin90/ui-native — run scripts/gen-index.mjs to refresh.', ''];
 for (const f of files) {
   const name = f.replace(/\.tsx?$/, '');
   const src = fs.readFileSync(path.join(root, f), 'utf8');
@@ -22,4 +22,4 @@ for (const f of files) {
   }
 }
 fs.writeFileSync(path.join(here, '..', 'src', 'index.ts'), lines.join('\n') + '\n');
-console.log(`[@p90/ui-native] wrote src/index.ts (${files.length} components)`);
+console.log(`[@lockin90/ui-native] wrote src/index.ts (${files.length} components)`);

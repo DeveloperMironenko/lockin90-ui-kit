@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, type ViewStyle } from 'react-native';
-import { colors, fonts, radius } from '@p90/tokens';
+import { colors, fonts, radius } from '@lockin90/tokens';
 
 type AlertVariant = 'error' | 'success' | 'info';
 

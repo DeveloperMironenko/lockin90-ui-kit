@@ -1,8 +1,8 @@
 /*
- * @p90/ui — shared component styles.
+ * @lockin90/ui — shared component styles.
  * Import once in a consuming app (after Tailwind base/components/utilities and
- * @p90/tokens/tokens.css). Provides the `ea-*` design-system classes the
- * components rely on. Token values come from @p90/tokens (CSS custom properties).
+ * @lockin90/tokens/tokens.css). Provides the `ea-*` design-system classes the
+ * components rely on. Token values come from @lockin90/tokens (CSS custom properties).
  */
 
 @layer components {
@@ -280,7 +280,7 @@
 }
 
 /* ─── Tables + dense inputs (used by DataTable, FilterBuilder and other
-   operator-surface primitives in @p90/ui/admin) ───────────────────────────── */
+   operator-surface primitives in @lockin90/ui/admin) ───────────────────────────── */
 @layer components {
   .ea-table-wrap {
     background: var(--bg-surface);

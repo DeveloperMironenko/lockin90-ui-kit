@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, fonts, radius } from '@p90/tokens';
+import { colors, fonts, radius } from '@lockin90/tokens';
 import { Eyebrow } from './Typography';
 
 interface EmptyStateProps {
