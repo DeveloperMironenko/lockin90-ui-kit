@@ -12,7 +12,7 @@ import {
   StatusBadge,
 } from '../index';
 
-describe('@p90/ui smoke', () => {
+describe('@lockin90/ui smoke', () => {
   it('renders core primitives without throwing', () => {
     const { getByText } = render(
       <div>

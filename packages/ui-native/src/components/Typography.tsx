@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, type TextStyle } from 'react-native';
-import { colors, fonts, fontSizes, letterSpacing } from '@p90/tokens';
+import { colors, fonts, fontSizes, letterSpacing } from '@lockin90/tokens';
 
 type EyebrowColor = 'secondary' | 'accent' | 'muted';
 const EYEBROW_COLORS: Record<EyebrowColor, string> = {

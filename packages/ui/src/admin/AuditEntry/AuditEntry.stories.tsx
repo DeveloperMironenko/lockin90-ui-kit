@@ -6,7 +6,7 @@ const meta = {
   component: AuditEntry,
   args: {
     timestamp: '2026-05-28 12:04',
-    adminEmail: 'ops@p90.com',
+    adminEmail: 'ops@lockin90.com',
     action: 'UPDATE',
     targetLabel: 'user:u_01',
     summary: 'Changed training level to advanced',
@@ -32,9 +32,9 @@ export const Creation: Story = {
 export const Log: Story = {
   render: () => (
     <div style={{ width: 560 }}>
-      <AuditEntry timestamp="12:04" adminEmail="ops@p90.com" action="GRANT" targetLabel="role:admin" summary="Granted admin role" />
-      <AuditEntry timestamp="12:02" adminEmail="ops@p90.com" action="UPDATE" targetLabel="user:u_01" summary="Changed level" />
-      <AuditEntry timestamp="11:58" adminEmail="ops@p90.com" action="DELETE" targetLabel="session:s_88" summary="Removed session" />
+      <AuditEntry timestamp="12:04" adminEmail="ops@lockin90.com" action="GRANT" targetLabel="role:admin" summary="Granted admin role" />
+      <AuditEntry timestamp="12:02" adminEmail="ops@lockin90.com" action="UPDATE" targetLabel="user:u_01" summary="Changed level" />
+      <AuditEntry timestamp="11:58" adminEmail="ops@lockin90.com" action="DELETE" targetLabel="session:s_88" summary="Removed session" />
     </div>
   ),
 };

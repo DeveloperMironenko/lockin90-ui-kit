@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, fonts, radius, zIndex } from '@p90/tokens';
+import { colors, fonts, radius, zIndex } from '@lockin90/tokens';
 
 export type ToastLevel = 'success' | 'audit' | 'error' | 'info';
 

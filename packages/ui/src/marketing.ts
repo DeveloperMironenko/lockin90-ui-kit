@@ -1,6 +1,6 @@
-// @p90/ui/marketing — presentational primitives shared by the marketing site.
+// @lockin90/ui/marketing — presentational primitives shared by the marketing site.
 // These have no app-data / routing coupling (locale-aware links, content types,
-// and app hooks stay in p90-marketing). cn is inlined as ./marketing/_cn.
+// and app hooks stay in lockin90-marketing). cn is inlined as ./marketing/_cn.
 
 export * from './marketing/Container';
 export * from './marketing/Section';

@@ -1,7 +1,7 @@
-# @p90/tokens
+# @lockin90/tokens
 
-The **single source of truth** for Performance 90 design tokens — colors, type, spacing,
-radii, motion, and z-index. Every P90 surface (web `@p90/ui`, native `@p90/ui-native`, and
+The **single source of truth** for LockIn90 design tokens — colors, type, spacing,
+radii, motion, and z-index. Every LockIn90 surface (web `@lockin90/ui`, native `@lockin90/ui-native`, and
 the consuming Next.js / Expo apps) derives its look from this one package, so a token change
 here propagates everywhere instead of being hand-copied per app.
 
@@ -15,11 +15,11 @@ consumption surfaces so each platform can use them idiomatically:
 
 | Surface | Import | Used by |
 |---|---|---|
-| **TS objects** | `@p90/tokens` | React Native `StyleSheet`, any JS/TS that needs raw values |
-| **CSS variables** | `@p90/tokens/tokens.css` | Web apps — emits the `:root { --accent: … }` custom properties |
-| **Tailwind preset** | `@p90/tokens/tailwind-preset` | Web Tailwind configs — maps tokens to utility classes |
+| **TS objects** | `@lockin90/tokens` | React Native `StyleSheet`, any JS/TS that needs raw values |
+| **CSS variables** | `@lockin90/tokens/tokens.css` | Web apps — emits the `:root { --accent: … }` custom properties |
+| **Tailwind preset** | `@lockin90/tokens/tailwind-preset` | Web Tailwind configs — maps tokens to utility classes |
 
-### 1. TypeScript objects (`@p90/tokens`)
+### 1. TypeScript objects (`@lockin90/tokens`)
 
 Typed, `as const` token objects plus two helpers:
 
@@ -33,7 +33,7 @@ Typed, `as const` token objects plus two helpers:
 - `cssVars`, `tailwindThemeExtend` — internal bridges used to generate the two surfaces below
 
 ```ts
-import { colors, spacing, energyColor, energyLabel } from '@p90/tokens';
+import { colors, spacing, energyColor, energyLabel } from '@lockin90/tokens';
 
 const styles = StyleSheet.create({
   card: {
@@ -47,7 +47,7 @@ const ringColor = energyColor(score); // green / amber / red by zone
 const ringLabel = energyLabel(score); // 'HIGH' | 'MODERATE' | 'LOW'
 ```
 
-### 2. CSS custom properties (`@p90/tokens/tokens.css`)
+### 2. CSS custom properties (`@lockin90/tokens/tokens.css`)
 
 A generated stylesheet emitting the `:root` custom properties (`--accent`, `--bg-surface`,
 `--font-display`, `--ease-smooth`, …) that mirror the legacy `:root` block, so existing
@@ -55,11 +55,11 @@ A generated stylesheet emitting the `:root` custom properties (`--accent`, `--bg
 
 ```css
 /* in your app's globals.css */
-@import '@p90/tokens/tokens.css';
-@import '@p90/ui/styles.css'; /* the ea-* component classes, which reference the vars above */
+@import '@lockin90/tokens/tokens.css';
+@import '@lockin90/ui/styles.css'; /* the ea-* component classes, which reference the vars above */
 ```
 
-### 3. Tailwind preset (`@p90/tokens/tailwind-preset`)
+### 3. Tailwind preset (`@lockin90/tokens/tailwind-preset`)
 
 A Tailwind preset wiring the tokens into `theme.extend`, so utility classes like
 `bg-surface`, `text-accent`, `font-display`, and `font-mono` resolve to the design tokens.
@@ -67,13 +67,13 @@ A Tailwind preset wiring the tokens into `theme.extend`, so utility classes like
 ```ts
 // tailwind.config.ts
 import type { Config } from 'tailwindcss';
-import preset from '@p90/tokens/tailwind-preset';
+import preset from '@lockin90/tokens/tailwind-preset';
 
 const config: Config = {
   presets: [preset],
   content: [
     './src/**/*.{js,ts,jsx,tsx,mdx}',
-    // also scan the compiled @p90/ui kit so its utility classes aren't purged
+    // also scan the compiled @lockin90/ui kit so its utility classes aren't purged
     '../packages/ui/dist/**/*.{js,mjs,cjs}',
   ],
 };
@@ -84,8 +84,8 @@ export default config;
 ## Build
 
 ```bash
-pnpm --filter @p90/tokens build   # tsup (TS → dist) + generate-css.mjs (tokens.css)
-pnpm --filter @p90/tokens test    # vitest
+pnpm --filter @lockin90/tokens build   # tsup (TS → dist) + generate-css.mjs (tokens.css)
+pnpm --filter @lockin90/tokens test    # vitest
 ```
 
 The build compiles `src/` with tsup, then runs `scripts/generate-css.mjs` to emit
@@ -95,5 +95,5 @@ The build compiles `src/` with tsup, then runs `scripts/generate-css.mjs` to emi
 ## Editing tokens
 
 Change values in `src/tokens.ts` only — never edit `dist/` or hand-edit a consuming app's
-CSS variables. Rebuild, then add a changeset (`@p90/tokens`) so downstream `@p90/ui` /
-`@p90/ui-native` get the appropriate `patch` bump via `updateInternalDependencies`.
+CSS variables. Rebuild, then add a changeset (`@lockin90/tokens`) so downstream `@lockin90/ui` /
+`@lockin90/ui-native` get the appropriate `patch` bump via `updateInternalDependencies`.

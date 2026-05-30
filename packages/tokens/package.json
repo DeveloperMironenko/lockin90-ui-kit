@@ -1,7 +1,7 @@
 {
-  "name": "@p90/tokens",
+  "name": "@lockin90/tokens",
   "version": "0.1.0",
-  "description": "Performance 90 design tokens — single source of truth for colors, type, spacing. Emits TS objects, CSS variables, and a Tailwind preset.",
+  "description": "LockIn90 design tokens — single source of truth for colors, type, spacing. Emits TS objects, CSS variables, and a Tailwind preset.",
   "license": "UNLICENSED",
   "type": "module",
   "sideEffects": [

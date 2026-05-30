@@ -12,7 +12,7 @@ const dirs = fs
   .filter((d) => fs.statSync(path.join(root, d)).isDirectory())
   .sort();
 
-const lines = ['// Generated barrel for @p90/ui — run scripts/gen-index.mjs to refresh.', ''];
+const lines = ['// Generated barrel for @lockin90/ui — run scripts/gen-index.mjs to refresh.', ''];
 for (const d of dirs) {
   const tsx = path.join(root, d, 'index.tsx');
   const ts = path.join(root, d, 'index.ts');
@@ -28,4 +28,4 @@ for (const d of dirs) {
   }
 }
 fs.writeFileSync(path.join(here, '..', 'src', 'index.ts'), lines.join('\n') + '\n');
-console.log(`[@p90/ui] wrote src/index.ts (${dirs.length} components)`);
+console.log(`[@lockin90/ui] wrote src/index.ts (${dirs.length} components)`);

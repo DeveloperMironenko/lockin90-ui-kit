@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, Modal as RNModal, StyleSheet, type TextInputProps as RNTextInputProps } from 'react-native';
-import { colors, fonts } from '@p90/tokens';
+import { colors, fonts } from '@lockin90/tokens';
 
 interface BaseProps {
   label?: string;

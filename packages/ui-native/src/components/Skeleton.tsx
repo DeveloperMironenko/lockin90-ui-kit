@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { colors, radius } from '@p90/tokens';
+import { colors, radius } from '@lockin90/tokens';
 
 export function Skeleton({ h = 72 }: { h?: number }) {
   return <View style={[styles.bar, { height: h }]} />;

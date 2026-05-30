@@ -24,7 +24,7 @@ function typeOf(v: ParamValue | undefined): string {
  *   - object values render row-per-key with green (added) / red (removed) /
  *     amber (changed) chrome so the operator sees exactly what shifts.
  *
- * Admin-only primitive (not mirrored to p90-frontend).
+ * Admin-only primitive (not mirrored to lockin90-frontend).
  */
 export default function ParameterDiffPreview({
   family,

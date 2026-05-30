@@ -1,4 +1,4 @@
-// Generated barrel for @p90/ui-native — run scripts/gen-index.mjs to refresh.
+// Generated barrel for @lockin90/ui-native — run scripts/gen-index.mjs to refresh.
 
 export * from './components/Alert';
 export * from './components/Badge';

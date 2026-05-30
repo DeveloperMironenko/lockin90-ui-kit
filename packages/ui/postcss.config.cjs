@@ -2,7 +2,7 @@
 // in .storybook/tailwind.css are expanded into utility classes.
 //
 // tailwindcss / postcss-import / autoprefixer are devDeps of the consuming apps
-// (and live in the workspace pnpm store) rather than @p90/ui itself, so we
+// (and live in the workspace pnpm store) rather than @lockin90/ui itself, so we
 // resolve them from the monorepo root instead of relying on local hoisting.
 const path = require('node:path');
 const fs = require('node:fs');

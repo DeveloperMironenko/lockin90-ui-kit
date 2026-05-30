@@ -1,4 +1,4 @@
-// Generated barrel for @p90/ui — edit components, then re-run scripts/gen-index.mjs.
+// Generated barrel for @lockin90/ui — edit components, then re-run scripts/gen-index.mjs.
 
 export * from './components/Alert';
 export * from './components/AuthPanel';

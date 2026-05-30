@@ -1,11 +1,11 @@
-# @p90/ui
+# @lockin90/ui
 
-Performance 90 design-system components for the web (Next.js / React). Dark,
+LockIn90 design-system components for the web (Next.js / React). Dark,
 black/red, Barlow-Condensed visual language shared by the consumer dashboard
-(`p90-frontend`), the operator portal (`p90-admin`), and the marketing site
-(`p90-marketing`).
+(`lockin90-frontend`), the operator portal (`lockin90-admin`), and the marketing site
+(`lockin90-marketing`).
 
-Pairs with [`@p90/tokens`](../tokens) — the single source of truth for colors,
+Pairs with [`@lockin90/tokens`](../tokens) — the single source of truth for colors,
 type, and spacing (CSS variables + a Tailwind preset).
 
 ## Install
@@ -15,8 +15,8 @@ Both packages are workspace deps; in a consuming app's `package.json`:
 ```jsonc
 {
   "dependencies": {
-    "@p90/ui": "workspace:*",
-    "@p90/tokens": "workspace:*"
+    "@lockin90/ui": "workspace:*",
+    "@lockin90/tokens": "workspace:*"
   }
 }
 ```
@@ -34,8 +34,8 @@ directives so PostCSS can inline them first:
 
 ```css
 /* app/globals.css */
-@import '@p90/tokens/dist/tokens.css';
-@import '@p90/ui/dist/styles.css';
+@import '@lockin90/tokens/dist/tokens.css';
+@import '@lockin90/ui/dist/styles.css';
 
 @tailwind base;
 @tailwind components;
@@ -62,7 +62,7 @@ components rely on:
 ```ts
 // tailwind.config.ts
 import type { Config } from 'tailwindcss';
-import preset from '@p90/tokens/tailwind-preset';
+import preset from '@lockin90/tokens/tailwind-preset';
 
 const config: Config = {
   presets: [preset],
@@ -77,22 +77,22 @@ export default config;
 ### 3. Import components
 
 ```tsx
-import { Button, Badge, Alert, EnergyRing, SectionCard } from '@p90/ui';
+import { Button, Badge, Alert, EnergyRing, SectionCard } from '@lockin90/ui';
 ```
 
 ## Subpath exports
 
 | Import path             | Contents                                                       |
 | ----------------------- | -------------------------------------------------------------- |
-| `@p90/ui`               | Shared web primitives (Button, Badge, Alert, Input, Tabs, …).  |
-| `@p90/ui/admin`         | Operator-surface primitives (DataTable, AuditEntry, EnvIndicator, …). |
-| `@p90/ui/marketing`     | Presentational marketing primitives (Container, Section, Card, Pill, Stat, Icon, IconBadge, Typography, Accordion, Field, Reveal). |
-| `@p90/ui/styles.css`    | The shared `ea-*` component stylesheet.                         |
-| `@p90/ui/components/*`  | Per-component deep imports (tree-shakeable).                    |
+| `@lockin90/ui`               | Shared web primitives (Button, Badge, Alert, Input, Tabs, …).  |
+| `@lockin90/ui/admin`         | Operator-surface primitives (DataTable, AuditEntry, EnvIndicator, …). |
+| `@lockin90/ui/marketing`     | Presentational marketing primitives (Container, Section, Card, Pill, Stat, Icon, IconBadge, Typography, Accordion, Field, Reveal). |
+| `@lockin90/ui/styles.css`    | The shared `ea-*` component stylesheet.                         |
+| `@lockin90/ui/components/*`  | Per-component deep imports (tree-shakeable).                    |
 
 > The `admin` theme adds `green-zone`, `amber-zone`, and `border-subtle`
 > colors on top of the preset (`theme.extend.colors`) — see
-> `p90-admin/tailwind.config.ts`.
+> `lockin90-admin/tailwind.config.ts`.
 
 ## Building the kit
 
@@ -100,7 +100,7 @@ Built with [tsup](./tsup.config.ts) (`bundle: false`, preserves per-file
 `"use client"` directives). It needs a larger heap or it OOMs:
 
 ```bash
-NODE_OPTIONS=--max-old-space-size=4096 pnpm --filter @p90/ui build
+NODE_OPTIONS=--max-old-space-size=4096 pnpm --filter @lockin90/ui build
 ```
 
 Output lands in `dist/` (one file per source module + `.d.ts` + `styles.css`).
@@ -108,14 +108,14 @@ Output lands in `dist/` (one file per source module + `.d.ts` + `styles.css`).
 ## Storybook
 
 A dark-themed Storybook (`@storybook/react-vite`) documents the primitives.
-The kit must be built first (preview imports `@p90/ui/styles.css` +
-`@p90/tokens/tokens.css`); a Storybook-local PostCSS + Tailwind config
+The kit must be built first (preview imports `@lockin90/ui/styles.css` +
+`@lockin90/tokens/tokens.css`); a Storybook-local PostCSS + Tailwind config
 (`postcss.config.cjs`, `tailwind.config.cjs`) generates the utility classes so
 components render fully styled.
 
 ```bash
-pnpm --filter @p90/ui storybook        # dev server on :6006
-pnpm --filter @p90/ui build-storybook  # static build -> storybook-static/
+pnpm --filter @lockin90/ui storybook        # dev server on :6006
+pnpm --filter @lockin90/ui build-storybook  # static build -> storybook-static/
 ```
 
 Stories are colocated next to components as `*.stories.tsx` (excluded from the

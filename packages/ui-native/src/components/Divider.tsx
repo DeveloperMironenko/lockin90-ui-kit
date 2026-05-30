@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, fonts } from '@p90/tokens';
+import { colors, fonts } from '@lockin90/tokens';
 
 export function Divider({ strength = 'default' }: { strength?: 'default' | 'strong' }) {
   return <View style={{ height: 1, backgroundColor: strength === 'strong' ? colors.borderStrong : colors.border }} />;

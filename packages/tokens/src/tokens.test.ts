@@ -7,7 +7,7 @@ import {
   tailwindThemeExtend,
 } from './tokens';
 
-describe('@p90/tokens', () => {
+describe('@lockin90/tokens', () => {
   it('keeps the canonical brand values', () => {
     expect(colors.accent).toBe('#FF1F1F');
     expect(colors.bgSurface).toBe('#0A0A0A');

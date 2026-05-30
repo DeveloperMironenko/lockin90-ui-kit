@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { colors, fonts } from '@p90/tokens';
+import { colors, fonts } from '@lockin90/tokens';
 
 interface Props {
   size?: number;

@@ -12,7 +12,7 @@ interface Props {
 
 /**
  * Banner for admin pages whose backend endpoint(s) are NOT yet in
- * `p90-backend/API_REFERENCE.md` Appendix A. The page renders mock data so
+ * `lockin90-backend/API_REFERENCE.md` Appendix A. The page renders mock data so
  * operators can still navigate the UI, but mutations route to deleted Next.js
  * proxies and fail with 404. The notice makes the situation explicit instead
  * of letting the operator discover it via a generic error toast.

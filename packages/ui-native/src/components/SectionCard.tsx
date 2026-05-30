@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, type ViewStyle } from 'react-native';
-import { colors, fonts, radius } from '@p90/tokens';
+import { colors, fonts, radius } from '@lockin90/tokens';
 
 type Padding = 'tight' | 'normal' | 'loose' | 'none';
 const PAD: Record<Padding, number> = { tight: 12, normal: 20, loose: 24, none: 0 };

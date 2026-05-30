@@ -1,6 +1,6 @@
 import React from 'react';
 
-// Reason values mirror p90-backend src/modules/coach/coach.types.ts → COACH_FREEZE_REASONS.
+// Reason values mirror lockin90-backend src/modules/coach/coach.types.ts → COACH_FREEZE_REASONS.
 // The component accepts an unknown string so a future reason that lands on the wire before
 // the frontend type catches up doesn't crash — it falls back to the generic copy.
 export type CoachPausedReason =
@@ -35,7 +35,7 @@ function copyFor(reason: string | null): BannerCopy {
       return {
         title: 'Coach account paused',
         body:
-          "Your coach's account is paused by Performance 90 support. Message history is preserved. We'll let you know when this is resolved.",
+          "Your coach's account is paused by LockIn90 support. Message history is preserved. We'll let you know when this is resolved.",
       };
     default:
       // 'admin_freeze' OR any future reason the frontend hasn't enumerated yet. Generic,
