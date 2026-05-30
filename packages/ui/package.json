@@ -1,7 +1,7 @@
 {
   "name": "@lockin90/ui",
   "version": "0.1.0",
-  "description": "Performance 90 design-system components for the web (Next.js / React).",
+  "description": "LockIn90 design-system components for the web (Next.js / React).",
   "license": "UNLICENSED",
   "sideEffects": [
     "*.css"

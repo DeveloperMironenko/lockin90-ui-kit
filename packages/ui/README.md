@@ -1,9 +1,9 @@
 # @lockin90/ui
 
-Performance 90 design-system components for the web (Next.js / React). Dark,
+LockIn90 design-system components for the web (Next.js / React). Dark,
 black/red, Barlow-Condensed visual language shared by the consumer dashboard
-(`p90-frontend`), the operator portal (`p90-admin`), and the marketing site
-(`p90-marketing`).
+(`lockin90-frontend`), the operator portal (`lockin90-admin`), and the marketing site
+(`lockin90-marketing`).
 
 Pairs with [`@lockin90/tokens`](../tokens) — the single source of truth for colors,
 type, and spacing (CSS variables + a Tailwind preset).
@@ -92,7 +92,7 @@ import { Button, Badge, Alert, EnergyRing, SectionCard } from '@lockin90/ui';
 
 > The `admin` theme adds `green-zone`, `amber-zone`, and `border-subtle`
 > colors on top of the preset (`theme.extend.colors`) — see
-> `p90-admin/tailwind.config.ts`.
+> `lockin90-admin/tailwind.config.ts`.
 
 ## Building the kit
 

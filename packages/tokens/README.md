@@ -1,7 +1,7 @@
 # @lockin90/tokens
 
-The **single source of truth** for Performance 90 design tokens — colors, type, spacing,
-radii, motion, and z-index. Every P90 surface (web `@lockin90/ui`, native `@lockin90/ui-native`, and
+The **single source of truth** for LockIn90 design tokens — colors, type, spacing,
+radii, motion, and z-index. Every LockIn90 surface (web `@lockin90/ui`, native `@lockin90/ui-native`, and
 the consuming Next.js / Expo apps) derives its look from this one package, so a token change
 here propagates everywhere instead of being hand-copied per app.
 

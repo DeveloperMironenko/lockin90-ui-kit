@@ -1,5 +1,5 @@
 // Vendored admin domain types — the minimal shapes the @lockin90/ui/admin components
-// render. Mirrors p90-admin/src/lib/api/admin/*.types.ts so the kit is
+// render. Mirrors lockin90-admin/src/lib/api/admin/*.types.ts so the kit is
 // self-contained; consumer apps pass their own (structurally compatible) types.
 
 // --- parameters ---

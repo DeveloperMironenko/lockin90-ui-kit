@@ -12,7 +12,7 @@ module.exports = {
   ],
   theme: {
     extend: {
-      // Admin-only tokens (mirrors p90-admin/tailwind.config.ts) so admin
+      // Admin-only tokens (mirrors lockin90-admin/tailwind.config.ts) so admin
       // primitives like AuditEntry/DataTable render correctly in Storybook.
       colors: {
         'border-subtle': '#131313',

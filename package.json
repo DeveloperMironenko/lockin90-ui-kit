@@ -1,8 +1,8 @@
 {
-  "name": "p90-ui-kit",
+  "name": "lockin90-ui-kit",
   "version": "0.0.0",
   "private": true,
-  "description": "Performance 90 (P90 / EnergyApp) cross-platform design system — @lockin90/tokens, @lockin90/ui, @lockin90/ui-native.",
+  "description": "LockIn90 (LockIn90 / LockIn90) cross-platform design system — @lockin90/tokens, @lockin90/ui, @lockin90/ui-native.",
   "packageManager": "pnpm@10.33.2",
   "scripts": {
     "build": "pnpm -r build",

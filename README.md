@@ -1,6 +1,6 @@
-# P90 UI Kit (`@lockin90/*`)
+# LockIn90 UI Kit (`@lockin90/*`)
 
-Cross-platform design system for **Performance 90 / EnergyApp**. One source of truth for
+Cross-platform design system for **LockIn90 / LockIn90**. One source of truth for
 tokens and components across the web apps (Next.js) and the mobile app (Expo / React Native).
 
 A pnpm workspace with three publishable packages:
