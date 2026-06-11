@@ -70,8 +70,8 @@ export default function EnergyCurve({
           <rect x={0} y={0} width={clipW + 4} height={height}/>
         </clipPath>
         <linearGradient id="ec-fill" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#22C55E" stopOpacity="0.10"/>
-          <stop offset="100%" stopColor="#22C55E" stopOpacity="0"/>
+          <stop offset="0%" stopColor="#7C5CFF" stopOpacity="0.14"/>
+          <stop offset="100%" stopColor="#7C5CFF" stopOpacity="0"/>
         </linearGradient>
       </defs>
 
@@ -79,14 +79,14 @@ export default function EnergyCurve({
         <line key={t}
           x1={padX} x2={width - padX}
           y1={padY + innerH * t} y2={padY + innerH * t}
-          stroke="#222" strokeWidth="1" strokeDasharray="2 4"
+          stroke="rgba(255,255,255,0.06)" strokeWidth="1" strokeDasharray="2 4"
         />
       ))}
 
       {HOUR_LABELS.map((h, i) => {
         const x = padX + (i / (HOUR_LABELS.length - 1)) * innerW;
         return (
-          <text key={h} x={x} y={height - 1} fill="#555"
+          <text key={h} x={x} y={height - 1} fill="var(--text-muted)"
             fontSize="9" fontFamily="var(--font-mono)"
             textAnchor="middle" letterSpacing="0.05em">
             {h}

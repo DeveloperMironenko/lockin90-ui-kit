@@ -21,7 +21,7 @@ export default function ComparisonResultRow({ result, onClick }: ComparisonResul
       : Math.abs(meanDelta) < 0.005
         ? 'text-secondary'
         : meanDelta > 0
-          ? 'text-[#3FB661]'
+          ? 'text-[#34F5C5]'
           : 'text-accent';
 
   return (

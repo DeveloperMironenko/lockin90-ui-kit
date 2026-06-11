@@ -106,11 +106,11 @@ function ObjectPane({ value, other, side }: ObjectPaneProps) {
         const added = side === 'after' && inHere && !inThere;
         const removed = side === 'before' && inHere && !inThere;
         const tone = added
-          ? 'text-[#3FB661]'
+          ? 'text-[#34F5C5]'
           : removed
           ? 'text-accent'
           : changed
-          ? 'text-[#F0A93B]'
+          ? 'text-[#FFB020]'
           : 'text-white';
         return (
           <div key={k} className="flex items-baseline gap-2 font-mono text-[11px]">

@@ -1,10 +1,20 @@
 /* Storybook-only stylesheet. The shared design tokens + kit component classes
  * are imported first, then Tailwind's directives generate the utility classes
  * the kit components rely on (bg-elevated, text-secondary, etc). postcss-import
- * inlines the @import'd files before Tailwind runs (see postcss.config.cjs). */
-@import '@p90/tokens/tokens.css';
-@import '@p90/ui/styles.css';
+ * inlines the @import'd local files before Tailwind runs (see postcss.config.cjs).
+ * The Google Fonts @import (remote) is left as-is and loads the Aurora type. */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import '@lockin90/tokens/tokens.css';
+@import '@lockin90/ui/styles.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Docs-site base so stories render on the Aurora void in Inter. Consuming apps
+ * supply their own body styling; this only affects Storybook. */
+body {
+  font-family: var(--font-ui);
+  color: var(--text-primary);
+  background: var(--bg-base);
+}

@@ -1,9 +1,9 @@
 import type { VersionStatus, VersionStatusPillProps } from './types';
 
 const TONE: Record<VersionStatus, { label: string; text: string; dot: string }> = {
-  canary:      { label: 'canary',      text: 'text-[#F0A93B]', dot: 'bg-[#F0A93B]' },
+  canary:      { label: 'canary',      text: 'text-[#FFB020]', dot: 'bg-[#FFB020]' },
   standard:    { label: 'standard',    text: 'text-white',     dot: 'bg-white' },
-  all:         { label: 'all users',   text: 'text-[#3FB661]', dot: 'bg-[#3FB661]' },
+  all:         { label: 'all users',   text: 'text-[#34F5C5]', dot: 'bg-[#34F5C5]' },
   rolled_back: { label: 'rolled back', text: 'text-accent',    dot: 'bg-accent' },
   inactive:    { label: 'inactive',    text: 'text-muted',     dot: 'bg-muted' },
 };

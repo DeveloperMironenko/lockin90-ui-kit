@@ -1,21 +1,28 @@
 import { useState, useEffect } from 'react';
+import { colors, type GradientName } from '@lockin90/tokens';
 
 export function energyColor(score: number): string {
-  if (score >= 67) return '#22C55E';
-  if (score >= 34) return '#F59E0B';
-  return '#FF1F1F';
+  if (score >= 67) return colors.zoneHigh;
+  if (score >= 34) return colors.zoneMid;
+  return colors.zoneLow;
 }
 
 export function energyGlow(score: number): string {
-  if (score >= 67) return 'rgba(34,197,94,0.4)';
-  if (score >= 34) return 'rgba(245,158,11,0.4)';
-  return 'rgba(255,31,31,0.5)';
+  if (score >= 67) return 'rgba(52,245,197,0.45)';
+  if (score >= 34) return 'rgba(255,176,32,0.45)';
+  return 'rgba(255,77,109,0.5)';
 }
 
 export function energyLabel(score: number): string {
   if (score >= 67) return 'HIGH';
   if (score >= 34) return 'MODERATE';
   return 'LOW';
+}
+
+/** Spectrum gradient to use when the ring is in `gradient="zone"` mode. */
+export function zoneGradient(score: number): GradientName {
+  if (score >= 67) return 'mint';
+  return 'warm';
 }
 
 export function useCountUp(target: number, duration = 1200): number {

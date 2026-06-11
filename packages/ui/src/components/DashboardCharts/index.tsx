@@ -34,7 +34,7 @@ export default function DashboardCharts({ score, curve }: DashboardChartsProps) 
         </div>
         <EnergyCurve curve={curve} height={140} animate />
         <div className="flex gap-4 mt-2.5">
-          {([['#22C55E', t('zoneHigh')], ['#F59E0B', t('zoneMid')], ['#FF1F1F', t('zoneLow')]] as const).map(([c, l]) => (
+          {([['#34F5C5', t('zoneHigh')], ['#FFB020', t('zoneMid')], ['#FF4D6D', t('zoneLow')]] as const).map(([c, l]) => (
             <div key={l} className="flex items-center gap-[5px]">
               <div className="w-2 h-2 rounded-sm" style={{ background: c }} />
               <span className="ea-mono text-muted text-[10px]">{l}</span>

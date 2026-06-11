@@ -40,7 +40,7 @@ export default function HistoryChart({ data, width = 560, height = 120 }: Histor
   }
 
   const clipW = innerW * drawn + padX;
-  const dotColor = (v: number) => v < 34 ? '#FF1F1F' : '#FFFFFF';
+  const dotColor = (v: number) => v < 34 ? '#FF4D6D' : '#EEF1F8';
 
   return (
     <svg width={width} height={height} className="block w-full">
@@ -53,7 +53,7 @@ export default function HistoryChart({ data, width = 560, height = 120 }: Histor
         <line key={t}
           x1={padX} x2={width - padX}
           y1={padY + innerH * t} y2={padY + innerH * t}
-          stroke="#222" strokeWidth="1" strokeDasharray="2 4"
+          stroke="rgba(255,255,255,0.06)" strokeWidth="1" strokeDasharray="2 4"
         />
       ))}
       <g clipPath="url(#hist-reveal)">

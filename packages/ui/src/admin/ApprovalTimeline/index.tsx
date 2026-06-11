@@ -2,7 +2,7 @@ import { Mono } from '../../components/Typography';
 import type { ApprovalTimelineEntry, ApprovalTimelineProps } from './types';
 
 const DOT: Record<NonNullable<ApprovalTimelineEntry['tone']>, string> = {
-  approved:    'bg-[#3FB661]',
+  approved:    'bg-[#34F5C5]',
   rolled_back: 'bg-accent',
   neutral:     'bg-secondary',
 };

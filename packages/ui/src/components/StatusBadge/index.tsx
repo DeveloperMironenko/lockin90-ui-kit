@@ -2,19 +2,19 @@ import React from 'react';
 import type { StatusBadgeProps, StatusTone } from './types';
 
 const TONE_TEXT: Record<StatusTone, string> = {
-  green:   'text-[#3FB661]',
-  amber:   'text-[#F0A93B]',
-  red:     'text-accent',
+  green:   'text-[#34F5C5]',
+  amber:   'text-[#FFB020]',
+  red:     'text-[#FF4D6D]',
   neutral: 'text-secondary',
-  info:    'text-white',
+  info:    'text-accent-2',
 };
 
 const TONE_DOT: Record<StatusTone, string> = {
-  green:   'bg-[#3FB661]',
-  amber:   'bg-[#F0A93B]',
-  red:     'bg-accent',
+  green:   'bg-[#34F5C5]',
+  amber:   'bg-[#FFB020]',
+  red:     'bg-[#FF4D6D]',
   neutral: 'bg-muted',
-  info:    'bg-white',
+  info:    'bg-accent-2',
 };
 
 export default function StatusBadge({ tone, children, dot = true, className }: StatusBadgeProps) {

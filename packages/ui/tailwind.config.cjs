@@ -15,9 +15,9 @@ module.exports = {
       // Admin-only tokens (mirrors lockin90-admin/tailwind.config.ts) so admin
       // primitives like AuditEntry/DataTable render correctly in Storybook.
       colors: {
-        'border-subtle': '#131313',
-        'green-zone': '#3FB661',
-        'amber-zone': '#F0A93B',
+        'border-subtle': 'rgba(255,255,255,0.05)',
+        'green-zone': '#34F5C5',
+        'amber-zone': '#FFB020',
       },
     },
   },

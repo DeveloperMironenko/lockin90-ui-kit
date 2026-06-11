@@ -1,8 +1,8 @@
 export const ZONE_COLORS: Record<string, string> = {
-  green: '#22C55E',
-  amber: '#F59E0B',
-  red:   '#FF1F1F',
-  gray:  '#555555',
+  green: '#34F5C5', // mint — high zone
+  amber: '#FFB020', // amber — mid zone
+  red:   '#FF4D6D', // coral — low zone (recolored away from the shipped red)
+  gray:  '#6A7286',
 };
 
 export const HOUR_LABELS = ['6a', '8a', '10a', '12p', '2p', '4p', '6p', '8p', '10p'];

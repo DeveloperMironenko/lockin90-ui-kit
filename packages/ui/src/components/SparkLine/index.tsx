@@ -1,10 +1,11 @@
+import { colors } from '@lockin90/tokens';
 import type { SparkLineProps } from './types';
 
 export default function SparkLine({
   values,
   width = 220,
   height = 60,
-  color = '#FF1F1F',
+  color = colors.accent,
   className,
 }: SparkLineProps) {
   if (values.length === 0) return null;

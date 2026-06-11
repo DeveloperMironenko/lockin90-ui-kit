@@ -8,7 +8,7 @@ const meta = {
 } satisfies Meta<typeof Tabs>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj; // render-only stories (no required args supplied)
 
 export const Default: Story = {
   render: () => {

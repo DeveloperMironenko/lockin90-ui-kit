@@ -4,27 +4,42 @@ import {
   cssVars,
   energyColor,
   energyLabel,
+  gradients,
+  gradientStops,
   tailwindThemeExtend,
 } from './tokens';
 
 describe('@lockin90/tokens', () => {
-  it('keeps the canonical brand values', () => {
-    expect(colors.accent).toBe('#FF1F1F');
-    expect(colors.bgSurface).toBe('#0A0A0A');
-    expect(colors.border).toBe('#1F1F1F');
+  it('keeps the canonical Aurora Flux brand values', () => {
+    expect(colors.accent).toBe('#7C5CFF'); // electric indigo-violet (was #FF1F1F)
+    expect(colors.accent2).toBe('#22D3EE'); // cyan
+    expect(colors.accent3).toBe('#34F5C5'); // mint
+    expect(colors.bgBase).toBe('#080A12'); // deep void page base
+    expect(colors.border).toBe('rgba(255,255,255,0.09)'); // glass hairline
   });
 
-  it('exposes CSS variables matching the legacy :root contract', () => {
-    expect(cssVars['--accent']).toBe('#FF1F1F');
-    expect(cssVars['--bg-surface']).toBe('#0A0A0A');
+  it('exposes CSS variables matching the :root contract', () => {
+    expect(cssVars['--accent']).toBe('#7C5CFF');
+    expect(cssVars['--bg-base']).toBe('#080A12');
     expect(cssVars['--ease-smooth']).toBe('cubic-bezier(0.16, 1, 0.3, 1)');
-    expect(cssVars['--font-display']).toContain('var(--font-barlow)');
+    expect(cssVars['--font-display']).toContain('Space Grotesk');
+    // new Aurora tokens are emitted
+    expect(cssVars['--grad-flux']).toContain('linear-gradient');
+    expect(cssVars['--glow-accent']).toContain('rgba(124,92,255');
+    expect(cssVars['--r']).toBe('16px');
   });
 
-  it('mirrors the legacy tailwind token map', () => {
-    expect(tailwindThemeExtend.colors.surface).toBe('#0A0A0A');
-    expect(tailwindThemeExtend.colors.accent).toBe('#FF1F1F');
-    expect(tailwindThemeExtend.fontFamily.display[0]).toBe('var(--font-barlow)');
+  it('mirrors the tailwind token map', () => {
+    expect(tailwindThemeExtend.colors.accent).toBe('#7C5CFF');
+    expect(tailwindThemeExtend.colors['accent-2']).toBe('#22D3EE');
+    expect(tailwindThemeExtend.fontFamily.display[0]).toBe('var(--font-space-grotesk)');
+    expect(tailwindThemeExtend.backgroundImage['grad-flux']).toBe(gradients.flux);
+  });
+
+  it('ships the energy spectrum as gradients + ordered stops', () => {
+    expect(gradients.flux).toContain('#A8FF35');
+    expect(gradientStops.flux).toHaveLength(5);
+    expect(gradientStops.cta).toEqual(['#7C5CFF', '#22D3EE']);
   });
 
   it('maps energy scores to zones', () => {

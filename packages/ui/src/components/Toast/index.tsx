@@ -17,13 +17,13 @@ export function useToast() {
 }
 
 const TONE_CLASS: Record<ToastTone, string> = {
-  success: 'border-[#3FB661]/40 text-white',
+  success: 'border-[#34F5C5]/40 text-white',
   audit:   'border-border-strong text-white',
   error:   'border-accent/50 text-accent',
 };
 
 const TONE_DOT: Record<ToastTone, string> = {
-  success: 'bg-[#3FB661]',
+  success: 'bg-[#34F5C5]',
   audit:   'bg-accent',
   error:   'bg-accent',
 };

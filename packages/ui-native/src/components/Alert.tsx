@@ -5,8 +5,8 @@ import { colors, fonts, radius } from '@lockin90/tokens';
 type AlertVariant = 'error' | 'success' | 'info';
 
 const VARIANT: Record<AlertVariant, { bg: string; border: string; fg: string }> = {
-  error:   { bg: 'rgba(255,31,31,0.08)', border: 'rgba(255,31,31,0.3)', fg: colors.accent },
-  success: { bg: 'rgba(255,255,255,0.05)', border: colors.borderStrong, fg: colors.textPrimary },
+  error:   { bg: 'rgba(255,77,109,0.10)', border: 'rgba(255,77,109,0.35)', fg: colors.bad },
+  success: { bg: 'rgba(52,245,197,0.10)', border: 'rgba(52,245,197,0.30)', fg: colors.good },
   info:    { bg: colors.bgElevated, border: colors.border, fg: colors.textSecondary },
 };
 

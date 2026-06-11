@@ -8,10 +8,11 @@ const preview: Preview = {
   parameters: {
     layout: 'centered',
     backgrounds: {
-      default: 'dark',
+      default: 'void',
       values: [
-        { name: 'dark', value: '#000000' },
-        { name: 'surface', value: '#0A0A0A' },
+        { name: 'void', value: '#080A12' },
+        { name: 'panel', value: '#0C0F1A' },
+        { name: 'deep-void', value: '#05060B' },
       ],
     },
     controls: {

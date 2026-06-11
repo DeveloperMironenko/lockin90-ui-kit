@@ -3,6 +3,13 @@
 Cross-platform design system for **LockIn90 / LockIn90**. One source of truth for
 tokens and components across the web apps (Next.js) and the mobile app (Expo / React Native).
 
+**Visual language: "Aurora Flux"** — deep-void glassmorphism, a flowing
+energy-spectrum gradient (lime → mint → cyan → indigo → violet → magenta), glow +
+soft elevation, rounded glass radii, and **Space Grotesk** display type
+(Inter for UI, JetBrains Mono for data). This replaced the original red /
+Barlow Condensed / flat brand — upgrading an app? See
+[`MIGRATION-AURORA.md`](MIGRATION-AURORA.md).
+
 A pnpm workspace with three publishable packages:
 
 | Package | What it is | Build tool |

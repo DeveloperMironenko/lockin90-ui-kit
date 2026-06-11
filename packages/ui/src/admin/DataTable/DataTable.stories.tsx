@@ -39,7 +39,7 @@ export const Default: Story = {
   args: { columns, rows, rowKey: (r) => r.id },
 };
 
-export const Selectable: Story = {
+export const Selectable: StoryObj = {
   render: () => {
     const [selected, setSelected] = useState<Set<string | number>>(new Set(['u_01']));
     const toggle = (k: string | number) =>

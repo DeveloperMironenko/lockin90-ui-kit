@@ -1,24 +1,42 @@
 import type { BrandMarkProps } from './types';
 
+// Aurora Flux brand mark: a gradient-stroked rounded square with an upward
+// "energy" checkmark + endpoint dot, beside the "LockIn90" wordmark (the 90 in
+// flowing spectrum). Replaces the retired "90 + slash + PERFORMANCE" lockup.
 const SIZES = {
-  sm: { numCls: 'text-[64px]',  labelCls: 'text-[8px]',  wrap: 'w-16 h-14' },
-  md: { numCls: 'text-[90px]',  labelCls: 'text-[10px]', wrap: 'w-[86px] h-[78px]' },
-  lg: { numCls: 'text-[120px]', labelCls: 'text-[12px]', wrap: 'w-[120px] h-[108px]' },
+  sm: { box: 28, gap: 8, word: 16 },
+  md: { box: 34, gap: 10, word: 19 },
+  lg: { box: 44, gap: 13, word: 25 },
 };
 
-export default function BrandMark({ size = 'sm' }: BrandMarkProps) {
+export default function BrandMark({ size = 'sm', wordmark = true }: BrandMarkProps) {
   const s = SIZES[size];
   return (
-    <div className="inline-flex flex-col items-center">
-      <div className={`relative ${s.wrap} flex items-center justify-center`}>
-        <div className={`font-display italic font-black ${s.numCls} leading-[0.85] text-white tracking-[-0.04em] tabular-nums`}>
-          90
-        </div>
-        <div className="absolute top-[52%] left-[-4%] w-[108%] h-[3px] bg-accent rotate-[-12deg] origin-left shadow-[0_0_8px_rgba(255,31,31,0.4)]" />
-      </div>
-      <div className={`font-display italic font-bold ${s.labelCls} tracking-[0.32em] text-white mt-0.5 uppercase`}>
-        PERFORMANCE
-      </div>
-    </div>
+    <span className="inline-flex items-center" style={{ gap: s.gap }}>
+      <svg width={s.box} height={s.box} viewBox="0 0 36 36" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="lk-brandmark" x1="0" y1="0" x2="36" y2="36">
+            <stop stopColor="#A8FF35" />
+            <stop offset=".5" stopColor="#22D3EE" />
+            <stop offset="1" stopColor="#7C5CFF" />
+          </linearGradient>
+        </defs>
+        <rect x="1.5" y="1.5" width="33" height="33" rx="10" stroke="url(#lk-brandmark)" strokeWidth="2" />
+        <path
+          d="M9 23 L15 13 L20 20 L27 10"
+          stroke="url(#lk-brandmark)" strokeWidth="2.6"
+          strokeLinecap="round" strokeLinejoin="round"
+        />
+        <circle cx="27" cy="10" r="2.6" fill="#A8FF35" />
+      </svg>
+      {wordmark && (
+        <span
+          className="font-display font-bold text-white tracking-[-0.01em] leading-none"
+          style={{ fontSize: s.word }}
+        >
+          LockIn<span className="ea-gradient-text">90</span>
+        </span>
+      )}
+    </span>
   );
 }

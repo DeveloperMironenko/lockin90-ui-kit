@@ -2,14 +2,22 @@ import { describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
 import {
   Alert,
+  AttributionCard,
   Badge,
+  BarFill,
   Button,
+  Chip,
   Divider,
   EmptyState,
   Eyebrow,
+  GradientText,
+  KpiCard,
+  Pulse,
   PulseDot,
+  ScoreBreakdown,
   Skeleton,
   StatusBadge,
+  SyncBadge,
 } from '../index';
 
 describe('@lockin90/ui smoke', () => {
@@ -31,6 +39,24 @@ describe('@lockin90/ui smoke', () => {
     expect(getByText('Connected')).toBeInTheDocument();
     expect(getByText('Heads up')).toBeInTheDocument();
     expect(getByText('Nothing here')).toBeInTheDocument();
+  });
+
+  it('renders the Aurora Flux components without throwing', () => {
+    const { getByText } = render(
+      <div>
+        <GradientText variant="flux">78</GradientText>
+        <Chip tone="high" dot>HIGH ZONE</Chip>
+        <Pulse tone="ok" />
+        <BarFill value={0.6} immediate />
+        <SyncBadge status="synced" time="2m ago" />
+        <KpiCard label="HRV" value="74" unit="ms" delta={{ value: '8%', direction: 'up' }} />
+        <AttributionCard title="WHY 78?">Driven by <b>late caffeine</b>.</AttributionCard>
+        <ScoreBreakdown items={[{ name: 'Deep sleep', value: 9 }, { name: 'Late caffeine', value: -7 }]} />
+      </div>,
+    );
+    expect(getByText('HIGH ZONE')).toBeInTheDocument();
+    expect(getByText('HRV')).toBeInTheDocument();
+    expect(getByText('Deep sleep')).toBeInTheDocument();
   });
 
   it('applies the ea-btn class to buttons', () => {
