@@ -16,6 +16,8 @@ export * from './components/FormRow';
 export * from './components/Input';
 export * from './components/MiniEnergyRing';
 export { default as MiniEnergyRing } from './components/MiniEnergyRing';
+export * from './components/OAuthButton';
+export { default as OAuthButton } from './components/OAuthButton';
 export * from './components/PasswordInput';
 export * from './components/ProgressBar';
 export * from './components/Pulse';

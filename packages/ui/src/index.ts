@@ -62,6 +62,8 @@ export * from './components/Modal';
 export { default as Modal } from './components/Modal';
 export * from './components/NavItem';
 export { default as NavItem } from './components/NavItem';
+export * from './components/OAuthButton';
+export { default as OAuthButton } from './components/OAuthButton';
 export * from './components/PageHeader';
 export { default as PageHeader } from './components/PageHeader';
 export * from './components/PasswordInput';

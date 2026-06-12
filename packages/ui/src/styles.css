@@ -222,6 +222,92 @@
 }
 
 /* ============================================================================
+   OAUTH / SOCIAL SIGN-IN BUTTONS  (Google + Apple — FIXED brand colors)
+   Full-width pill, 48px tall + pill radius like .lk-btn. Brand styling follows
+   the official Google / Apple sign-in guidelines and is intentionally NOT themed
+   by the Aurora tokens, so it passes OAuth / app-store brand review. Sits below
+   the email/password form on the auth screens.
+   ========================================================================== */
+.lk-oauth {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  padding: 0 20px;
+  border-radius: var(--r-pill);
+  font-family:
+    'Roboto', var(--font-ui), system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    transform 0.2s var(--ease),
+    box-shadow 0.25s var(--ease),
+    background 0.2s var(--ease),
+    border-color 0.2s var(--ease);
+  will-change: transform;
+}
+.lk-oauth:hover {
+  transform: translateY(-1px);
+}
+.lk-oauth:active {
+  transform: translateY(0) scale(0.99);
+}
+.lk-oauth:disabled,
+.lk-oauth[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+.lk-oauth-logo {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+.lk-oauth-label {
+  white-space: nowrap;
+}
+/* Google — white button, hairline #dadce0 border, dark #3c4043 text. */
+.lk-oauth-google {
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  color: #3c4043;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.12);
+}
+.lk-oauth-google:hover {
+  background: #f8faff;
+  border-color: #d2e3fc;
+  box-shadow: 0 2px 6px rgba(60, 64, 67, 0.18);
+}
+/* Apple — solid black button, white text + white Apple glyph. */
+.lk-oauth-apple {
+  background: #000000;
+  border: 1px solid #000000;
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+.lk-oauth-apple:hover {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+}
+/* Spinner inherits the provider's text color (dark on Google, white on Apple). */
+.lk-oauth-spinner {
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  flex: none;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  opacity: 0.85;
+  animation: lk-btn-spin 0.7s linear infinite;
+}
+
+/* ============================================================================
    CHIPS / BADGES / PILLS  (status = signal color)
    ========================================================================== */
 .lk-chip {
