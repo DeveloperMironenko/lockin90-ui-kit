@@ -5,6 +5,8 @@ export interface FormRowProps {
   /** Field label, rendered as `<label>` (wire `htmlFor` to the control's id). */
   label?: ReactNode;
   htmlFor?: string;
+  /** Marks the field required — renders a `*` marker after the label. */
+  required?: boolean;
   /** Helper text shown below the control. Hidden when `error` is set. */
   hint?: ReactNode;
   /** Error message shown below the control (takes precedence over `hint`). */
@@ -14,12 +16,25 @@ export interface FormRowProps {
 }
 
 /** Aurora labelled-field wrapper: label, control, then a hint or error line. */
-export default function FormRow({ label, htmlFor, hint, error, children, className }: FormRowProps) {
+export default function FormRow({
+  label,
+  htmlFor,
+  required,
+  hint,
+  error,
+  children,
+  className,
+}: FormRowProps) {
   return (
     <div className={cn('lk-form-row', className)}>
       {label && (
         <label className="lk-form-label" htmlFor={htmlFor}>
           {label}
+          {required && (
+            <span className="lk-form-required" aria-hidden="true">
+              *
+            </span>
+          )}
         </label>
       )}
       {children}

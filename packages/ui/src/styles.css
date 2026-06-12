@@ -755,6 +755,10 @@
   letter-spacing: 0.12em;
   color: var(--text-faint);
 }
+.lk-form-required {
+  color: var(--accent);
+  margin-left: 3px;
+}
 .lk-form-hint {
   font-size: 12px;
   color: var(--text-faint);

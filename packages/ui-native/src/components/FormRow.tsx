@@ -5,16 +5,23 @@ import { colors, fonts, spacing } from '@lockin90/tokens';
 
 export interface FormRowProps {
   label?: string;
+  /** Marks the field required — renders a `*` marker after the label. */
+  required?: boolean;
   hint?: string;
   error?: string;
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
 }
 
-export function FormRow({ label, hint, error, children, style }: FormRowProps) {
+export function FormRow({ label, required, hint, error, children, style }: FormRowProps) {
   return (
     <View style={[styles.wrap, style]}>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
+      {label ? (
+        <Text style={styles.label}>
+          {label}
+          {required ? <Text style={styles.required}> *</Text> : null}
+        </Text>
+      ) : null}
       {children}
       {error ? (
         <Text style={styles.error}>{error}</Text>
@@ -34,6 +41,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: colors.textFaint,
   },
+  required: { color: colors.accent },
   error: {
     fontFamily: fonts.ui,
     fontSize: 12,
