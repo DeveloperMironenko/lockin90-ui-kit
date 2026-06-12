@@ -722,16 +722,17 @@
   letter-spacing: 0;
 }
 
-/* Brand wordmark — identical on web + native (LockIn + mint 90 in display 700) */
+/* Brand wordmark — flux-gradient "LockIn90", identical on web + native */
 .lk-brandmark {
   display: inline-block;
   font-family: var(--font-display);
   font-weight: 700;
-  line-height: 1;
-  color: var(--text);
-}
-.lk-brandmark-accent {
-  color: var(--accent-3);
+  line-height: 1.15;
+  background-image: var(--grad-flux);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .lk-form-row {

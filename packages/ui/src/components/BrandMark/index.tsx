@@ -9,14 +9,14 @@ export interface BrandMarkProps {
 }
 
 /**
- * LockIn90 wordmark — "LockIn" in --text, "90" in --accent-3 (mint), display
- * font, 700. Pixel-identical to the @lockin90/ui-native BrandMark so web and
- * native render the SAME brand mark (no divergent logo).
+ * LockIn90 wordmark filled with the Aurora flux gradient (lime→mint→cyan→violet→
+ * magenta), display font, 700. Identical look to the @lockin90/ui-native
+ * BrandMark (SVG gradient-filled text) so web and native render the SAME logo.
  */
 export default function BrandMark({ size = 20, className, style }: BrandMarkProps) {
   return (
     <span className={cn('lk-brandmark', className)} style={{ fontSize: size, ...style }}>
-      LockIn<span className="lk-brandmark-accent">90</span>
+      LockIn90
     </span>
   );
 }
