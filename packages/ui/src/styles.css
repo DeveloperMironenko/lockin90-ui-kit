@@ -757,7 +757,10 @@
 }
 .lk-form-required {
   color: var(--accent);
-  margin-left: 3px;
+  font-size: 0.85em;
+  vertical-align: super;
+  line-height: 0;
+  margin-left: 1px;
 }
 .lk-form-hint {
   font-size: 12px;

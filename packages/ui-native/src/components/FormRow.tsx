@@ -17,10 +17,10 @@ export function FormRow({ label, required, hint, error, children, style }: FormR
   return (
     <View style={[styles.wrap, style]}>
       {label ? (
-        <Text style={styles.label}>
-          {label}
-          {required ? <Text style={styles.required}> *</Text> : null}
-        </Text>
+        <View style={styles.labelRow}>
+          <Text style={styles.label}>{label}</Text>
+          {required ? <Text style={styles.required}>*</Text> : null}
+        </View>
       ) : null}
       {children}
       {error ? (
@@ -34,6 +34,7 @@ export function FormRow({ label, required, hint, error, children, style }: FormR
 
 const styles = StyleSheet.create({
   wrap: { gap: spacing.sm },
+  labelRow: { flexDirection: 'row', alignItems: 'flex-start' },
   label: {
     fontFamily: fonts.mono,
     fontSize: 10,
@@ -41,7 +42,8 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: colors.textFaint,
   },
-  required: { color: colors.accent },
+  // small star hugging the top-right corner of the label
+  required: { color: colors.accent, fontSize: 9, marginLeft: 2, marginTop: -1 },
   error: {
     fontFamily: fonts.ui,
     fontSize: 12,
