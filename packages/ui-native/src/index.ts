@@ -21,6 +21,7 @@ export { default as OAuthButton } from './components/OAuthButton';
 export * from './components/PasswordInput';
 export * from './components/ProgressBar';
 export * from './components/Pulse';
+export * from './components/ReauthSheet';
 export * from './components/SectionCard';
 export * from './components/Skeleton';
 export * from './components/StatBlock';

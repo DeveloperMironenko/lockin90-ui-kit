@@ -78,6 +78,8 @@ export * from './components/ProgressBar';
 export { default as ProgressBar } from './components/ProgressBar';
 export * from './components/Pulse';
 export { default as Pulse } from './components/Pulse';
+export * from './components/ReauthDialog';
+export { default as ReauthDialog } from './components/ReauthDialog';
 export * from './components/Reveal';
 export { default as Reveal } from './components/Reveal';
 export * from './components/SearchField';
