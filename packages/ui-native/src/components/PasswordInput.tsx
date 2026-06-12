@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { View, TextInput, Pressable, Text, StyleSheet } from 'react-native';
+import { View, TextInput, Pressable, StyleSheet } from 'react-native';
 import type { StyleProp, ViewStyle, TextStyle, TextInputProps } from 'react-native';
+import Svg, { Path, Circle } from 'react-native-svg';
 import { colors, fonts, fontSizes, radius, spacing } from '@lockin90/tokens';
 
 export interface PasswordInputProps {
@@ -19,7 +20,8 @@ export interface PasswordInputProps {
 /**
  * Aurora password field — matches `Input`, plus an overlaid show/hide eye
  * toggle on the right. The component owns `secureTextEntry`; reveal state is
- * internal and starts hidden.
+ * internal and starts hidden. The eye icon is the SAME SVG as the web
+ * @lockin90/ui PasswordInput so the two platforms render an identical control.
  */
 export function PasswordInput({
   value,
@@ -55,13 +57,43 @@ export function PasswordInput({
         hitSlop={8}
         style={styles.toggle}
       >
-        <Text style={styles.toggleText}>{visible ? 'Hide' : 'Show'}</Text>
+        {visible ? <EyeOff /> : <Eye />}
       </Pressable>
     </View>
   );
 }
 
-const TOGGLE_WIDTH = 54;
+/** Eye icon — same 24×24 paths + 1.6 stroke as the web PasswordInput toggle. */
+function Eye() {
+  return (
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"
+        stroke={colors.textFaint}
+        strokeWidth={1.6}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Circle cx={12} cy={12} r={3} stroke={colors.textFaint} strokeWidth={1.6} />
+    </Svg>
+  );
+}
+
+function EyeOff() {
+  return (
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.2 4.2M9.9 4.6A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a18.5 18.5 0 0 1-3.2 4M6.6 6.6A18.4 18.4 0 0 0 2 12s3.5 7 10 7a10.8 10.8 0 0 0 3.4-.5"
+        stroke={colors.textFaint}
+        strokeWidth={1.6}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+const TOGGLE_WIDTH = 44;
 
 const styles = StyleSheet.create({
   wrap: {
@@ -91,10 +123,5 @@ const styles = StyleSheet.create({
     width: TOGGLE_WIDTH,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  toggleText: {
-    fontFamily: fonts.uiMedium,
-    fontSize: fontSizes.sm,
-    color: colors.textDim,
   },
 });

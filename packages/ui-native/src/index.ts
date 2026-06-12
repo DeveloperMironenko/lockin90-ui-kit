@@ -1,5 +1,6 @@
 // Generated barrel for @lockin90/ui-native — run scripts/gen-index.mjs to refresh.
 
+export * from './components/AuroraBackground';
 export * from './components/Avatar';
 export * from './components/Badge';
 export * from './components/Banner';

@@ -12,6 +12,8 @@ export * from './components/Banner';
 export { default as Banner } from './components/Banner';
 export * from './components/BarFill';
 export { default as BarFill } from './components/BarFill';
+export * from './components/BrandMark';
+export { default as BrandMark } from './components/BrandMark';
 export * from './components/Button';
 export { default as Button } from './components/Button';
 export * from './components/CalendarStrip';

@@ -722,6 +722,18 @@
   letter-spacing: 0;
 }
 
+/* Brand wordmark — identical on web + native (LockIn + mint 90 in display 700) */
+.lk-brandmark {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text);
+}
+.lk-brandmark-accent {
+  color: var(--accent-3);
+}
+
 .lk-form-row {
   display: flex;
   flex-direction: column;
