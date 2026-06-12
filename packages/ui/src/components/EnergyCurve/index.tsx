@@ -1,126 +1,160 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { ZONE_COLORS, HOUR_LABELS, getZone, buildCurvePath } from './helpers';
-import type { EnergyCurveProps } from './types';
+import { useEffect, useId, useRef, useState } from 'react';
+import { energyColor } from '@lockin90/tokens';
+import { useInView, useReducedMotion } from '../motion';
+import { cn } from '../../cn';
 
+export interface EnergyCurveProps {
+  /** Energy values 0–100 across the day (or any window). */
+  data: number[];
+  /** X-axis tick labels (rendered below; spaced evenly). */
+  labels?: string[];
+  /** Index of the "now" marker (vertical dashed line + dot). */
+  nowIndex?: number;
+  /** Drawing height in px (the chart is full-width). */
+  height?: number;
+  /** Show the HIGH/MODERATE/LOW/now legend (default true). */
+  legend?: boolean;
+  animate?: boolean;
+  className?: string;
+  'aria-label'?: string;
+}
+
+const VB_W = 620;
+
+/**
+ * The hero energy curve — a gradient area + a zone-colored line (mint/amber/red
+ * by value) with an optional "now" marker, x-axis labels and legend. The line
+ * draws on scroll-in. Reduced-motion safe.
+ */
 export default function EnergyCurve({
-  curve,
-  width = 600,
-  height = 160,
-  currentSlot,
+  data,
+  labels,
+  nowIndex,
+  height = 170,
+  legend = true,
   animate = true,
+  className,
+  ...rest
 }: EnergyCurveProps) {
-  // Render only when the backend returns the canonical 34-slot curve. No fake fallback —
-  // missing data shows an empty axis-only chart so the user never sees fabricated numbers.
-  const data = curve && curve.length === 34 ? curve : null;
+  const uid = useId().replace(/:/g, '');
+  const strokeId = `lk-ec-s-${uid}`;
+  const fillId = `lk-ec-f-${uid}`;
+  const H = 200;
 
-  const now = new Date();
-  const derivedSlot = currentSlot ?? Math.min(33, Math.max(0,
-    Math.floor((now.getHours() * 2 + Math.floor(now.getMinutes() / 30)) - 12)
-  ));
+  const pathRef = useRef<SVGPathElement | null>(null);
+  const [len, setLen] = useState(0);
+  const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.25 });
+  const reduced = useReducedMotion();
 
-  const padX = 0;
-  const padY = 12;
-  const innerW = width - padX * 2;
-  const innerH = height - padY * 2;
-
-  const points = useMemo(() =>
-    data === null
-      ? []
-      : data.map((v, i) => ({
-          x: padX + (i / (data.length - 1)) * innerW,
-          y: padY + (1 - v / 100) * innerH,
-          v, zone: getZone(v, i),
-        })),
-  [data, innerW, innerH]);
-
-  const path = useMemo(() => (points.length ? buildCurvePath(points) : ''), [points]);
-
-  const segments = useMemo(() =>
-    points.slice(1).map((b, i) => ({
-      d: `M ${points[i].x} ${points[i].y} L ${b.x} ${b.y}`,
-      color: ZONE_COLORS[b.zone],
-    })),
-  [points]);
-
-  const [drawn, setDrawn] = useState(animate ? 0 : 1);
+  const pts = toPoints(data, VB_W, H);
+  const line = pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x},${y}`).join(' ');
+  const area = pts.length ? `${line} L${VB_W},${H} L0,${H} Z` : '';
 
   useEffect(() => {
-    if (!animate || points.length === 0) return;
-    let raf: number;
-    let start: number | null = null;
-    const step = (t: number) => {
-      if (!start) start = t;
-      const p = Math.min(1, (t - start) / 1500);
-      setDrawn(1 - Math.pow(1 - p, 3));
-      if (p < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [animate, points.length]);
+    if (pathRef.current) setLen(pathRef.current.getTotalLength());
+  }, [line]);
 
-  const clipW = innerW * drawn + padX;
-  const cur = points.length ? points[Math.min(derivedSlot, points.length - 1)] : null;
+  const drawn = !animate || reduced || inView;
+  const nowPt = nowIndex != null ? pts[nowIndex] : null;
 
   return (
-    <svg width={width} height={height} className="block overflow-visible">
-      <defs>
-        <clipPath id="ec-reveal">
-          <rect x={0} y={0} width={clipW + 4} height={height}/>
-        </clipPath>
-        <linearGradient id="ec-fill" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#7C5CFF" stopOpacity="0.14"/>
-          <stop offset="100%" stopColor="#7C5CFF" stopOpacity="0"/>
-        </linearGradient>
-      </defs>
-
-      {[0.25, 0.5, 0.75].map((t) => (
-        <line key={t}
-          x1={padX} x2={width - padX}
-          y1={padY + innerH * t} y2={padY + innerH * t}
-          stroke="rgba(255,255,255,0.06)" strokeWidth="1" strokeDasharray="2 4"
-        />
-      ))}
-
-      {HOUR_LABELS.map((h, i) => {
-        const x = padX + (i / (HOUR_LABELS.length - 1)) * innerW;
-        return (
-          <text key={h} x={x} y={height - 1} fill="var(--text-muted)"
-            fontSize="9" fontFamily="var(--font-mono)"
-            textAnchor="middle" letterSpacing="0.05em">
-            {h}
-          </text>
-        );
-      })}
-
-      {points.length > 0 && (
-        <>
-          <g clipPath="url(#ec-reveal)">
-            <path
-              d={`${path} L ${points[points.length - 1].x} ${height - padY} L ${points[0].x} ${height - padY} Z`}
-              fill="url(#ec-fill)"
-            />
-          </g>
-
-          <g clipPath="url(#ec-reveal)">
-            {segments.map((s, i) => (
-              <path key={i} d={s.d} stroke={s.color} strokeWidth="2"
-                fill="none" strokeLinecap="round"/>
+    <div ref={ref} className={cn(className)}>
+      <svg
+        viewBox={`0 0 ${VB_W} ${H}`}
+        width="100%"
+        height={height}
+        preserveAspectRatio="none"
+        role="img"
+        {...rest}
+      >
+        <defs>
+          <linearGradient id={strokeId} x1="0" y1="0" x2={VB_W} y2="0" gradientUnits="userSpaceOnUse">
+            {data.map((v, i) => (
+              <stop key={i} offset={`${(i / Math.max(1, data.length - 1)) * 100}%`} stopColor={energyColor(v)} />
             ))}
-          </g>
+          </linearGradient>
+          <linearGradient id={fillId} x1="0" y1="0" x2="0" y2={H} gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="rgba(124,92,255,.30)" />
+            <stop offset="1" stopColor="rgba(124,92,255,0)" />
+          </linearGradient>
+        </defs>
 
-          {drawn > 0.95 && cur && (
-            <>
-              <line x1={cur.x} x2={cur.x} y1={padY} y2={height - padY}
-                stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeDasharray="3 3"/>
-              <circle cx={cur.x} cy={cur.y} r="5" fill="rgba(255,255,255,0.12)"/>
-              <circle cx={cur.x} cy={cur.y} r="3" fill="#fff"
-                style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.8))' }}/>
-            </>
-          )}
-        </>
+        {/* gridlines */}
+        <g stroke="rgba(255,255,255,.05)" strokeWidth="1">
+          <line x1="0" y1={H * 0.25} x2={VB_W} y2={H * 0.25} />
+          <line x1="0" y1={H * 0.5} x2={VB_W} y2={H * 0.5} />
+          <line x1="0" y1={H * 0.75} x2={VB_W} y2={H * 0.75} />
+        </g>
+
+        {area && <path d={area} fill={`url(#${fillId})`} opacity={0.9} />}
+        <path
+          ref={pathRef}
+          d={line}
+          fill="none"
+          stroke={`url(#${strokeId})`}
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            filter: 'drop-shadow(0 0 8px rgba(52,245,197,.4))',
+            ...(len
+              ? {
+                  strokeDasharray: len,
+                  strokeDashoffset: drawn ? 0 : len,
+                  transition: animate ? 'stroke-dashoffset 1.8s var(--ease)' : undefined,
+                }
+              : {}),
+          }}
+        />
+
+        {nowPt && (
+          <>
+            <line x1={nowPt[0]} y1="14" x2={nowPt[0]} y2={H - 14} stroke="rgba(124,92,255,.5)" strokeWidth="1.5" strokeDasharray="3 4" />
+            <circle cx={nowPt[0]} cy={nowPt[1]} r="4.5" fill="var(--accent)" stroke="var(--bg-1)" strokeWidth="2" />
+          </>
+        )}
+      </svg>
+
+      {labels && labels.length > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
+          {labels.map((l, i) => (
+            <span key={i} className="lk-mono" style={{ fontSize: 10, color: 'var(--text-faint)' }}>
+              {l}
+            </span>
+          ))}
+        </div>
       )}
-    </svg>
+
+      {legend && (
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 6 }}>
+          <LegendKey color="var(--zone-high)" label="HIGH" />
+          <LegendKey color="var(--zone-mid)" label="MODERATE" />
+          <LegendKey color="var(--zone-low)" label="LOW" />
+          {nowIndex != null && <LegendKey color="var(--accent)" label="now" />}
+        </div>
+      )}
+    </div>
   );
+}
+
+function LegendKey({ color, label }: { color: string; label: string }) {
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-mono)', fontSize: 10.5, color: 'var(--text-dim)' }}>
+      <i style={{ width: 9, height: 9, borderRadius: 3, background: color }} />
+      {label}
+    </span>
+  );
+}
+
+function toPoints(data: number[], width: number, height: number): Array<[number, number]> {
+  if (data.length < 2) return [];
+  const pad = 14;
+  const h = height - pad * 2;
+  return data.map((v, i) => {
+    const x = (i / (data.length - 1)) * width;
+    const y = pad + h - (Math.max(0, Math.min(100, v)) / 100) * h;
+    return [Math.round(x), Math.round(y)];
+  });
 }

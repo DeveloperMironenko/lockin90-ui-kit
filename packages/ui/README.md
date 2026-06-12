@@ -1,16 +1,15 @@
 # @lockin90/ui
 
-LockIn90 design-system components for the web (Next.js / React). Dark,
-black/red, Barlow-Condensed visual language shared by the consumer dashboard
-(`lockin90-frontend`), the operator portal (`lockin90-admin`), and the marketing site
-(`lockin90-marketing`).
+LockIn90 web components — the **"Aurora Flux"** design system. Deep-void
+glassmorphism, a flowing energy-spectrum gradient (lime → mint → cyan → indigo →
+violet → magenta), glow + soft elevation, Space Grotesk display type, and motion
+everywhere. Rebuilt from the canonical design source `mockups/design/1`.
 
-Pairs with [`@lockin90/tokens`](../tokens) — the single source of truth for colors,
-type, and spacing (CSS variables + a Tailwind preset).
+Pairs with [`@lockin90/tokens`](../tokens) — the single source of truth for
+colors, type, spacing, gradients and glow (CSS variables + an optional Tailwind
+preset).
 
 ## Install
-
-Both packages are workspace deps; in a consuming app's `package.json`:
 
 ```jsonc
 {
@@ -21,102 +20,98 @@ Both packages are workspace deps; in a consuming app's `package.json`:
 }
 ```
 
-`react`, `react-dom`, `next`, and (optionally) `next-intl` are peer deps —
-supplied by the host app.
+`react` and `react-dom` (>=18) are the only peer deps. **No Tailwind, no Next.js
+required** — components emit plain `lk-*` classes and inline style. (Buttons
+render a `<button>`, or an `<a>` when given `href` — bring your own router.)
 
 ## Usage
 
-### 1. Import the styles (once, in your global stylesheet)
-
-The tokens provide the `:root` CSS variables; the kit provides the shared
-`ea-*` component classes. Import the tokens **before** the `@tailwind`
-directives so PostCSS can inline them first:
-
-```css
-/* app/globals.css */
-@import '@lockin90/tokens/dist/tokens.css';
-@import '@lockin90/ui/dist/styles.css';
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
-
-Your `postcss.config` MUST run `postcss-import` **before** `tailwindcss`,
-otherwise Tailwind errors on the `@layer components` blocks:
-
-```js
-// postcss.config.mjs
-const config = {
-  plugins: { 'postcss-import': {}, tailwindcss: {}, autoprefixer: {} },
-};
-export default config;
-```
-
-### 2. Wire up the Tailwind preset + content glob
-
-Use the shared preset for colors/fonts, and **add the compiled kit to your
-`content` globs** — otherwise Tailwind purges the utility classes the kit's
-components rely on:
+### 1. Import the two stylesheets once (e.g. in your root layout)
 
 ```ts
-// tailwind.config.ts
-import type { Config } from 'tailwindcss';
-import preset from '@lockin90/tokens/tailwind-preset';
-
-const config: Config = {
-  presets: [preset],
-  content: [
-    './src/**/*.{js,ts,jsx,tsx,mdx}',
-    '../packages/ui/dist/**/*.{js,mjs,cjs}', // <-- required
-  ],
-};
-export default config;
+import '@lockin90/tokens/tokens.css'; // the :root CSS variables
+import '@lockin90/ui/styles.css'; // the lk-* component layer (+ Space Grotesk/Inter/JetBrains Mono)
 ```
 
-### 3. Import components
+That's it — no Tailwind/PostCSS wiring needed. (If your app already uses
+Tailwind, you can additionally layer the `@lockin90/tokens/tailwind-preset` for
+utility classes like `text-accent-2` / `bg-grad-flux`, but the components don't
+depend on it.)
+
+### 2. Use components
 
 ```tsx
-import { Button, Badge, Alert, EnergyRing, SectionCard } from '@lockin90/ui';
+import { AuroraBackground, Card, EnergyRing, EnergyCurve, Chip, Button } from '@lockin90/ui';
+
+export default function Today() {
+  return (
+    <>
+      <AuroraBackground />
+      <main style={{ position: 'relative', zIndex: 1 }}>
+        <Card lit tilt>
+          <EnergyRing score={78} size={240} sub="ENERGY · TODAY" />
+          <EnergyCurve data={[60, 72, 85, 70, 58, 66, 78]} nowIndex={4} labels={['6a', '12p', '6p']} />
+          <Chip tone="high" dot>recovered</Chip>
+          <Button variant="primary" magnetic>Log event</Button>
+        </Card>
+      </main>
+    </>
+  );
+}
 ```
 
-## Subpath exports
+## What's in the box (~40 components)
 
-| Import path             | Contents                                                       |
-| ----------------------- | -------------------------------------------------------------- |
-| `@lockin90/ui`               | Shared web primitives (Button, Badge, Alert, Input, Tabs, …).  |
-| `@lockin90/ui/admin`         | Operator-surface primitives (DataTable, AuditEntry, EnvIndicator, …). |
-| `@lockin90/ui/marketing`     | Presentational marketing primitives (Container, Section, Card, Pill, Stat, Icon, IconBadge, Typography, Accordion, Field, Reveal). |
-| `@lockin90/ui/styles.css`    | The shared `ea-*` component stylesheet.                         |
-| `@lockin90/ui/components/*`  | Per-component deep imports (tree-shakeable).                    |
+- **Foundation** — `AuroraBackground`, `GradientText`, `Eyebrow`, `Card`,
+  `Button`, `Chip`, `Badge`, `StatusBadge`, `Pulse`, `Divider`, `SectionLabel`,
+  `Skeleton`, `Avatar`, `Marquee`.
+- **Motion** — `Reveal`, `CountUp`, and hooks (`useInView`, `useCountUp`,
+  `useTilt`, `useMagnetic`, `useReducedMotion`). All honor
+  `prefers-reduced-motion` (and a `?still=1` URL flag).
+- **Form** — `Input`, `Textarea`, `Select`, `Checkbox`, `Toggle`, `FormRow`,
+  `Stepper`, `SearchField`.
+- **Data / viz** — `Stat`, `KpiCard`, `BarFill`, `ProgressBar`, `MixBar`,
+  `SparkLine`, `EnergyRing`, `EnergyCurve`, `Table` (+ `Th`).
+- **Navigation** — `NavItem`, `Tabs`, `TabBar`, `PageHeader`.
+- **Feedback / overlay** — `Modal` (+ `ConfirmModal`), `Toast`
+  (`ToastProvider` + `useToast`), `Banner`, `EmptyState`.
+- **Patterns** — `InsightCard`, `PlanItem`, `EventRow`, `ContributionRow`,
+  `CalendarStrip`, `FeatureCard`, `StepCard`, `PricingCard`, `Accordion`,
+  `PhoneFrame`, `WearableCard`.
 
-> The `admin` theme adds `green-zone`, `amber-zone`, and `border-subtle`
-> colors on top of the preset (`theme.extend.colors`) — see
-> `lockin90-admin/tailwind.config.ts`.
+Everything renders dark-only on the deep-void background. SVG icons only.
+
+## Styling model
+
+Components emit semantic `lk-*` classes defined in
+[`styles.css`](./src/styles.css) — a faithful port of `design/1`'s component
+layer — plus inline `style` for dynamic values (ring size, bar fill `--v`,
+gradient choice). All colors/radii/gradients resolve from
+`@lockin90/tokens` CSS variables, so the kit is themeable from one place and
+needs no build-time CSS pipeline in the consumer.
 
 ## Building the kit
 
 Built with [tsup](./tsup.config.ts) (`bundle: false`, preserves per-file
-`"use client"` directives). It needs a larger heap or it OOMs:
+`"use client"` directives so RSC consumers can tree-shake at the component
+level):
 
 ```bash
-NODE_OPTIONS=--max-old-space-size=4096 pnpm --filter @lockin90/ui build
+pnpm --filter @lockin90/ui build   # -> dist/ (per-module .mjs/.cjs + .d.ts + styles.css)
 ```
 
-Output lands in `dist/` (one file per source module + `.d.ts` + `styles.css`).
+The barrel (`src/index.ts`) is generated from `src/components/*` —
+`pnpm --filter @lockin90/ui exec node scripts/gen-index.mjs` after adding a
+component.
 
-## Storybook
-
-A dark-themed Storybook (`@storybook/react-vite`) documents the primitives.
-The kit must be built first (preview imports `@lockin90/ui/styles.css` +
-`@lockin90/tokens/tokens.css`); a Storybook-local PostCSS + Tailwind config
-(`postcss.config.cjs`, `tailwind.config.cjs`) generates the utility classes so
-components render fully styled.
+## Storybook & preview
 
 ```bash
 pnpm --filter @lockin90/ui storybook        # dev server on :6006
 pnpm --filter @lockin90/ui build-storybook  # static build -> storybook-static/
 ```
 
-Stories are colocated next to components as `*.stories.tsx` (excluded from the
-tsup build) under `src/components/<Name>/` and `src/admin/<Name>/`.
+Storybook loads the tokens + `styles.css` directly (no Tailwind/PostCSS needed).
+A static visual showcase of the whole system lives in
+[`preview/showcase.html`](./preview/showcase.html) (rendered against the built
+`dist/styles.css`); see [`preview/showcase.png`](./preview/showcase.png).

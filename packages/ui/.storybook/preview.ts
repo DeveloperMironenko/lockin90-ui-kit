@@ -1,8 +1,12 @@
 import type { Preview } from '@storybook/react-vite';
 
-// Pulls in the design tokens, the shared ea-* component classes, and the
-// Tailwind utility layer (generated from ./tailwind.css via postcss).
-import './tailwind.css';
+// The new kit uses zero Tailwind utilities — components emit `lk-*` classes from
+// styles.css. So we just load the design tokens + the component layer directly
+// (Vite resolves these CSS modules) plus a small docs-canvas base. No Tailwind /
+// postcss needed for Storybook.
+import '@lockin90/tokens/tokens.css';
+import '../src/styles.css';
+import './preview-base.css';
 
 const preview: Preview = {
   parameters: {

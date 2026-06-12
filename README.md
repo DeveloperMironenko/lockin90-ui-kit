@@ -15,7 +15,7 @@ A pnpm workspace with three publishable packages:
 | Package | What it is | Build tool |
 | --- | --- | --- |
 | [`@lockin90/tokens`](packages/tokens) | Design tokens — TS objects, `tokens.css` (`:root` vars), and a Tailwind preset | tsup + generator |
-| [`@lockin90/ui`](packages/ui) | Web (React / Next.js) components. Main export + `@lockin90/ui/admin` and `@lockin90/ui/marketing` subpaths + `@lockin90/ui/styles.css`. Storybook included. | tsup (preserves `"use client"`) |
+| [`@lockin90/ui`](packages/ui) | Web (React) components — one curated core set (~40) emitting `lk-*` classes, **no Tailwind / Next required**. Main export + `@lockin90/ui/styles.css` + `@lockin90/ui/components/*`. Storybook included. | tsup (preserves `"use client"`) |
 | [`@lockin90/ui-native`](packages/ui-native) | React Native (Expo) components | react-native-builder-bob |
 
 ## Develop
@@ -35,33 +35,22 @@ pnpm build-storybook  # static Storybook build
 pnpm add @lockin90/ui @lockin90/tokens   # (or @lockin90/ui-native for React Native)
 ```
 
-**Web (Next.js + Tailwind):**
+**Web (React / Next.js):** import the two stylesheets once — no Tailwind or
+PostCSS wiring required (components emit `lk-*` classes).
 
 ```ts
-// tailwind.config.ts
-import preset from '@lockin90/tokens/tailwind-preset';
-export default {
-  presets: [preset],
-  content: [
-    './src/**/*.{js,ts,jsx,tsx,mdx}',
-    './node_modules/@lockin90/ui/dist/**/*.{js,mjs,cjs}', // so kit classes aren't purged
-  ],
-};
-```
-
-```css
-/* globals.css — postcss-import must run before Tailwind */
-@import '@lockin90/tokens/tokens.css';
-@import '@lockin90/ui/styles.css';
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+// root layout / global setup
+import '@lockin90/tokens/tokens.css';
+import '@lockin90/ui/styles.css';
 ```
 
 ```tsx
-import { Button } from '@lockin90/ui';
-import { DataTable } from '@lockin90/ui/admin';
+import { AuroraBackground, Card, EnergyRing, Button } from '@lockin90/ui';
 ```
+
+> Apps that already use Tailwind can additionally layer
+> `@lockin90/tokens/tailwind-preset` for utility classes (`text-accent-2`,
+> `bg-grad-flux`, …), but the components don't depend on it.
 
 **React Native:**
 

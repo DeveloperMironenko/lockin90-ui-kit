@@ -1,44 +1,33 @@
-import React from 'react';
+import type { ReactNode } from 'react';
+import { cn } from '../../cn';
 
-// ─── FormRow ──────────────────────────────────────────────────────────────────
-// Labeled row used inside profile-style settings forms.
-// Renders a small all-caps label + children + a bottom border (unless `last`).
-// Pair with Input/NumberInput/Select components — pass without their `label` prop.
-
-interface FormRowProps {
-  label: string;
-  last?: boolean;
-  danger?: boolean;
-  children?: React.ReactNode;
-}
-
-export function FormRow({ label, last = false, danger = false, children }: FormRowProps) {
-  return (
-    <div className={`py-4 ${last ? '' : 'border-b border-border'}`}>
-      <span className={`block font-display italic font-bold text-[11px] tracking-[0.18em] uppercase ${danger ? 'text-accent' : 'text-secondary'} ${children ? 'mb-[6px]' : ''}`}>
-        {label}
-      </span>
-      {children}
-    </div>
-  );
-}
-
-// ─── FormSection ─────────────────────────────────────────────────────────────
-// Groups FormRows under an eyebrow title with a top border.
-
-interface FormSectionProps {
-  title?: string;
-  children: React.ReactNode;
+export interface FormRowProps {
+  /** Field label, rendered as `<label>` (wire `htmlFor` to the control's id). */
+  label?: ReactNode;
+  htmlFor?: string;
+  /** Helper text shown below the control. Hidden when `error` is set. */
+  hint?: ReactNode;
+  /** Error message shown below the control (takes precedence over `hint`). */
+  error?: ReactNode;
+  children: ReactNode;
   className?: string;
 }
 
-export function FormSection({ title, children, className }: FormSectionProps) {
+/** Aurora labelled-field wrapper: label, control, then a hint or error line. */
+export default function FormRow({ label, htmlFor, hint, error, children, className }: FormRowProps) {
   return (
-    <div className={className}>
-      {title && <div className="ea-eyebrow mb-2.5">{title}</div>}
-      <div className="border-t border-border">
-        {children}
-      </div>
+    <div className={cn('lk-form-row', className)}>
+      {label && (
+        <label className="lk-form-label" htmlFor={htmlFor}>
+          {label}
+        </label>
+      )}
+      {children}
+      {error ? (
+        <span className="lk-form-hint lk-error">{error}</span>
+      ) : hint ? (
+        <span className="lk-form-hint">{hint}</span>
+      ) : null}
     </div>
   );
 }

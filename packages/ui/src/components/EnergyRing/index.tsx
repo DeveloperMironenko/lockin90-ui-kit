@@ -1,87 +1,104 @@
 'use client';
 
-import { useState, useEffect, useId } from 'react';
-import { gradientStops } from '@lockin90/tokens';
-import { energyColor, energyGlow, energyLabel, zoneGradient, useCountUp } from './helpers';
+import { useId } from 'react';
+import { gradientStops, energyColor, energyLabel, zoneGradient } from '@lockin90/tokens';
+import { useInView, useCountUp } from '../motion';
+import { cn } from '../../cn';
 import type { EnergyRingProps } from './types';
 
+export type { EnergyRingProps };
+
+const GLOW: Record<string, string> = {
+  flux: 'rgba(124,92,255,0.5)',
+  cta: 'rgba(124,92,255,0.5)',
+  mint: 'rgba(52,245,197,0.5)',
+  violet: 'rgba(110,123,255,0.5)',
+  warm: 'rgba(255,77,109,0.45)',
+};
+
+/**
+ * The signature energy ring — a gradient arc that draws to `score`/100 with the
+ * number counting up, drawn when it scrolls into view. Reduced-motion safe.
+ */
 export default function EnergyRing({
   score = 72,
-  size = 260,
-  animate = true,
+  size = 220,
+  stroke,
   gradient = 'flux',
-  label = 'ENERGY',
+  sub = 'ENERGY',
   showZone = true,
+  showValue = true,
+  animate = true,
+  className,
 }: EnergyRingProps) {
-  const stroke = Math.max(6, Math.round(size * 0.065));
-  const r = (size - stroke) / 2;
+  const sw = stroke ?? Math.max(6, Math.round(size * 0.07));
+  const r = (size - sw) / 2;
   const c = 2 * Math.PI * r;
-  const pct = Math.max(0, Math.min(1, score / 100));
+  const pct = Math.max(0, Math.min(100, score)) / 100;
 
   const gradName = gradient === 'zone' ? zoneGradient(score) : gradient;
   const stops = gradientStops[gradName];
-  const glow = energyGlow(score);
+  const glow = GLOW[gradName] ?? GLOW.flux;
   const zoneCol = energyColor(score);
   const zoneText = energyLabel(score);
 
-  const uid = useId().replace(/[:]/g, '');
-  const gradId = `er-grad-${uid}`;
+  const uid = useId().replace(/:/g, '');
+  const gradId = `lk-er-${uid}`;
 
-  const [drawn, setDrawn] = useState(animate ? 0 : pct);
-
-  useEffect(() => {
-    if (!animate) { setDrawn(pct); return; }
-    let raf: number;
-    let start: number | null = null;
-    const step = (t: number) => {
-      if (!start) start = t;
-      const p = Math.min(1, (t - start) / 1200);
-      setDrawn(pct * (1 - Math.pow(1 - p, 3)));
-      if (p < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [pct, animate]);
-
-  const display = useCountUp(score, 1200);
+  const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.3 });
+  const drawn = animate ? (inView ? pct : 0) : pct;
+  const display = useCountUp(score, { start: !animate || inView, instant: !animate, durationMs: 1500 });
 
   return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <svg width={size} height={size} style={{ transform: 'rotate(-90deg)', overflow: 'visible' }}>
+    <div ref={ref} className={cn('lk-ring', className)} style={{ width: size, height: size }}>
+      <svg width={size} height={size}>
         <defs>
-          <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
+          <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
             {stops.map((s, i) => (
               <stop key={i} offset={`${(i / (stops.length - 1)) * 100}%`} stopColor={s} />
             ))}
           </linearGradient>
         </defs>
-        <circle cx={size / 2} cy={size / 2} r={r} stroke="rgba(255,255,255,0.07)" strokeWidth={stroke} fill="none" />
+        <circle className="lk-ring-track" cx={size / 2} cy={size / 2} r={r} strokeWidth={sw} />
         <circle
-          cx={size / 2} cy={size / 2} r={r}
-          stroke={`url(#${gradId})`} strokeWidth={stroke} fill="none"
-          strokeLinecap="round"
-          strokeDasharray={c} strokeDashoffset={c * (1 - drawn)}
-          style={{ filter: `drop-shadow(0 0 10px ${glow})` }}
+          className="lk-ring-arc"
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          strokeWidth={sw}
+          stroke={`url(#${gradId})`}
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - drawn)}
+          style={{
+            filter: `drop-shadow(0 0 10px ${glow})`,
+            transition: animate ? 'stroke-dashoffset 1.5s var(--ease)' : undefined,
+          }}
         />
       </svg>
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div
-          className="font-display font-bold text-white tabular-nums leading-[0.9]"
-          style={{ fontSize: size * 0.32, letterSpacing: '-0.03em' }}
-        >
-          {display}
-        </div>
-        {label !== '' && <div className="ea-eyebrow mt-2">{label}</div>}
-        {showZone && (
-          <div
-            className="mt-1 text-[10px] font-mono font-medium tracking-[0.16em] uppercase"
-            style={{ color: zoneCol }}
-          >
-            {zoneText}
+      {showValue && (
+        <div className="lk-ring-center">
+          <div className="lk-ring-num" style={{ fontSize: Math.round(size * 0.3) }}>
+            {display}
           </div>
-        )}
-      </div>
+          {sub ? <div className="lk-eyebrow" style={{ marginTop: 6 }}>{sub}</div> : null}
+          {showZone && (
+            <div
+              className="lk-mono"
+              style={{
+                marginTop: 3,
+                fontSize: 10,
+                fontWeight: 500,
+                letterSpacing: '0.16em',
+                textTransform: 'uppercase',
+                color: zoneCol,
+              }}
+            >
+              {zoneText}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

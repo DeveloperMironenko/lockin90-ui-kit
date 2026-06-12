@@ -10,20 +10,22 @@ import {
 } from './tokens';
 
 describe('@lockin90/tokens', () => {
-  it('keeps the canonical Aurora Flux brand values', () => {
+  it('keeps the canonical Aurora Flux brand values (mirrors design/1)', () => {
     expect(colors.accent).toBe('#7C5CFF'); // electric indigo-violet (was #FF1F1F)
     expect(colors.accent2).toBe('#22D3EE'); // cyan
     expect(colors.accent3).toBe('#34F5C5'); // mint
-    expect(colors.bgBase).toBe('#080A12'); // deep void page base
+    expect(colors.bg0).toBe('#080A12'); // deep void page base
+    expect(colors.text).toBe('#EEF1F8');
+    expect(colors.textFaint).toBe('#6A7286'); // matches design/1 --text-faint
     expect(colors.border).toBe('rgba(255,255,255,0.09)'); // glass hairline
   });
 
-  it('exposes CSS variables matching the :root contract', () => {
+  it('exposes CSS variables matching the design/1 :root contract', () => {
     expect(cssVars['--accent']).toBe('#7C5CFF');
-    expect(cssVars['--bg-base']).toBe('#080A12');
-    expect(cssVars['--ease-smooth']).toBe('cubic-bezier(0.16, 1, 0.3, 1)');
+    expect(cssVars['--bg-0']).toBe('#080A12');
+    expect(cssVars['--text-faint']).toBe('#6A7286');
+    expect(cssVars['--ease']).toBe('cubic-bezier(0.22, 1, 0.36, 1)');
     expect(cssVars['--font-display']).toContain('Space Grotesk');
-    // new Aurora tokens are emitted
     expect(cssVars['--grad-flux']).toContain('linear-gradient');
     expect(cssVars['--glow-accent']).toContain('rgba(124,92,255');
     expect(cssVars['--r']).toBe('16px');

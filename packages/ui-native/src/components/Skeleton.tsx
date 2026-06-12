@@ -1,24 +1,28 @@
-import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import type { ViewStyle, StyleProp, DimensionValue } from 'react-native';
 import { colors, radius } from '@lockin90/tokens';
 
-export function Skeleton({ h = 72 }: { h?: number }) {
-  return <View style={[styles.bar, { height: h }]} />;
+export interface SkeletonProps {
+  width?: DimensionValue;
+  height?: DimensionValue;
+  radius?: number;
+  circle?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 
-export function SkeletonList({ count = 3, h = 72, gap = 8 }: { count?: number; h?: number; gap?: number }) {
-  return (
-    <View style={{ gap }}>
-      {Array.from({ length: count }).map((_, i) => <Skeleton key={i} h={h} />)}
-    </View>
-  );
+export function Skeleton({
+  width = '100%',
+  height = 16,
+  radius: r = radius.sm,
+  circle,
+  style,
+}: SkeletonProps) {
+  const borderRadius = circle ? 999 : r;
+  return <View style={[styles.base, { width, height, borderRadius }, style]} />;
 }
 
 const styles = StyleSheet.create({
-  bar: {
-    backgroundColor: colors.bgSurface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.sm,
+  base: {
+    backgroundColor: colors.glass,
   },
 });

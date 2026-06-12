@@ -1,26 +1,38 @@
-import React from 'react';
-import type { StatusBadgeProps, StatusTone } from './types';
+import type { CSSProperties, ReactNode } from 'react';
+import { cn } from '../../cn';
 
-const TONE_TEXT: Record<StatusTone, string> = {
-  green:   'text-[#34F5C5]',
-  amber:   'text-[#FFB020]',
-  red:     'text-[#FF4D6D]',
-  neutral: 'text-secondary',
-  info:    'text-accent-2',
+export type StatusTone = 'ok' | 'warn' | 'bad';
+
+export interface StatusBadgeProps {
+  children: ReactNode;
+  /** Status tone — drives both the pulse dot and the label color. */
+  tone?: StatusTone;
+  className?: string;
+}
+
+const LABEL_COLOR: Record<StatusTone, string> = {
+  ok: 'var(--zone-high)',
+  warn: 'var(--zone-mid)',
+  bad: 'var(--zone-low)',
 };
 
-const TONE_DOT: Record<StatusTone, string> = {
-  green:   'bg-[#34F5C5]',
-  amber:   'bg-[#FFB020]',
-  red:     'bg-[#FF4D6D]',
-  neutral: 'bg-muted',
-  info:    'bg-accent-2',
-};
-
-export default function StatusBadge({ tone, children, dot = true, className }: StatusBadgeProps) {
+/** A breathing pulse dot paired with a mono status label, for live statuses. */
+export default function StatusBadge({ children, tone = 'ok', className }: StatusBadgeProps) {
+  const rowStyle: CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 7,
+    fontFamily: 'var(--font-mono)',
+    fontSize: 11,
+    color: LABEL_COLOR[tone],
+  };
   return (
-    <span className={`inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.14em] uppercase ${TONE_TEXT[tone]} ${className ?? ''}`}>
-      {dot && <span className={`w-1.5 h-1.5 rounded-full ${TONE_DOT[tone]}`} />}
+    <span className={className} style={rowStyle} role="status">
+      <span
+        className={cn('lk-pulse', tone === 'warn' && 'lk-warn', tone === 'bad' && 'lk-bad')}
+        style={{ width: 7, height: 7 }}
+        aria-hidden
+      />
       {children}
     </span>
   );

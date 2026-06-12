@@ -1,37 +1,47 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, fonts } from '@lockin90/tokens';
-import { Eyebrow } from './Typography';
+import type { StyleProp, ViewStyle } from 'react-native';
+import { colors, fonts, spacing } from '@lockin90/tokens';
 
-export function FormRow({ label, last = false, danger = false, children }: { label: string; last?: boolean; danger?: boolean; children?: React.ReactNode }) {
-  return (
-    <View style={[styles.row, !last && styles.divider]}>
-      <Text style={[styles.label, { color: danger ? colors.accent : colors.textSecondary, marginBottom: children ? 6 : 0 }]}>
-        {label}
-      </Text>
-      {children}
-    </View>
-  );
+export interface FormRowProps {
+  label?: string;
+  hint?: string;
+  error?: string;
+  children: ReactNode;
+  style?: StyleProp<ViewStyle>;
 }
 
-export function FormSection({ title, children }: { title?: string; children: React.ReactNode }) {
+export function FormRow({ label, hint, error, children, style }: FormRowProps) {
   return (
-    <View>
-      {title && <View style={styles.titleWrap}><Eyebrow>{title}</Eyebrow></View>}
-      <View style={styles.topBorder}>{children}</View>
+    <View style={[styles.wrap, style]}>
+      {label ? <Text style={styles.label}>{label}</Text> : null}
+      {children}
+      {error ? (
+        <Text style={styles.error}>{error}</Text>
+      ) : hint ? (
+        <Text style={styles.hint}>{hint}</Text>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  row: { paddingVertical: 16 },
-  divider: { borderBottomWidth: 1, borderColor: colors.border },
+  wrap: { gap: spacing.sm },
   label: {
-    fontFamily: fonts.displayBoldItalic,
-    fontSize: 11,
-    letterSpacing: 1.8,
+    fontFamily: fonts.mono,
+    fontSize: 10,
+    letterSpacing: 1.6,
     textTransform: 'uppercase',
+    color: colors.textFaint,
   },
-  titleWrap: { marginBottom: 10 },
-  topBorder: { borderTopWidth: 1, borderColor: colors.border },
+  error: {
+    fontFamily: fonts.ui,
+    fontSize: 12,
+    color: colors.bad,
+  },
+  hint: {
+    fontFamily: fonts.ui,
+    fontSize: 12,
+    color: colors.textFaint,
+  },
 });

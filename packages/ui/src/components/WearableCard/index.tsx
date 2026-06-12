@@ -1,107 +1,94 @@
-'use client';
+import type { ReactNode } from 'react';
+import Card from '../Card';
+import BarFill from '../BarFill';
+import { cn } from '../../cn';
 
-import { useState } from 'react';
-import { formatSync } from './helpers';
-import type { WearableCardProps } from './types';
-
-function ServiceLogo({ id, size = 28 }: { id: string; size?: number }) {
-  if (id === 'whoop') return (
-    <svg width={size} height={size} viewBox="0 0 28 28">
-      <text x="50%" y="68%" textAnchor="middle" dominantBaseline="middle"
-        fontFamily="Arial Black, sans-serif" fontWeight="900"
-        fontSize="18" fill="#FFFFFF" letterSpacing="-1">W</text>
-    </svg>
-  );
-  return (
-    <div className="font-display italic font-extrabold text-[18px] text-white">
-      {id[0].toUpperCase()}
-    </div>
-  );
+export interface WearableProgress {
+  /** Caption above the bar, e.g. "Syncing history". */
+  label?: ReactNode;
+  /** Progress fraction 0..1. */
+  value: number;
 }
 
+export interface WearableCardProps {
+  /** Brand mark / device logo. */
+  logo?: ReactNode;
+  /** Device name, e.g. "Oura Ring". */
+  name: ReactNode;
+  /** Status text shown beside the pulse dot. */
+  status?: ReactNode;
+  /** Green dot + green status when connected; warm + dim otherwise. */
+  connected?: boolean;
+  /** Right-aligned action — pass a <Button size="sm" />. */
+  action?: ReactNode;
+  /** Optional pull/sync progress bar under the status. */
+  progress?: WearableProgress;
+  className?: string;
+}
+
+/** A device-connection row: logo box, name + live status, optional sync bar, action. */
 export default function WearableCard({
-  provider, name, isConnected, lastSyncAt, details,
-  onConnect, onDisconnect, isLoading, comingSoon,
+  logo,
+  name,
+  status,
+  connected = false,
+  action,
+  progress,
+  className,
 }: WearableCardProps) {
-  const [expanded, setExpanded] = useState(false);
-
   return (
-    <div className={`bg-surface border border-border-strong rounded overflow-hidden relative ${comingSoon ? 'opacity-45' : ''}`}>
-      {!comingSoon && (
-        <div
-          className="absolute top-0 right-0 w-[18px] h-[18px] bg-accent"
-          style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 0)' }}
-        />
-      )}
-
-      <div className={`w-full py-4 px-[18px] flex items-center gap-[14px] ${!comingSoon ? 'cursor-pointer' : ''}`}
-        onClick={() => !comingSoon && setExpanded(!expanded)}
-        role={!comingSoon ? 'button' : undefined}
+    <Card lit className={cn(className)} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+      <div
+        style={{
+          width: 44,
+          height: 44,
+          borderRadius: 12,
+          background: 'var(--glass-2)',
+          border: '1px solid var(--border)',
+          display: 'grid',
+          placeItems: 'center',
+          flexShrink: 0,
+        }}
       >
-        <div className="w-11 h-11 rounded-sm bg-base border border-border-strong flex items-center justify-center shrink-0">
-          <ServiceLogo id={provider} size={28} />
-        </div>
+        {logo}
+      </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="font-display italic font-extrabold text-xl text-white uppercase tracking-[0.04em]">
-            {name}
-          </div>
-          <div className="ea-mono text-secondary mt-[3px]">
-            {comingSoon ? 'COMING SOON' : isConnected ? `CONNECTED · synced ${formatSync(lastSyncAt)}` : 'NOT CONNECTED'}
-          </div>
-        </div>
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ fontWeight: 600, fontSize: 15 }}>{name}</div>
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 7,
+            fontSize: 12.5,
+            color: connected ? 'var(--zone-high)' : 'var(--text-dim)',
+          }}
+        >
+          <span className={cn('lk-pulse', !connected && 'lk-warn')} style={{ width: 6, height: 6 }} />
+          {status}
+        </span>
 
-        {!comingSoon && (
-          <div className="flex items-center gap-[6px] font-display italic font-bold text-[11px] text-accent tracking-[0.14em] uppercase shrink-0">
-            {expanded ? 'HIDE' : 'DETAILS'}
-            <svg
-              width="10" height="10" viewBox="0 0 10 10" fill="none"
-              style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 200ms' }}
+        {progress && (
+          <div style={{ marginTop: 4 }}>
+            <div
+              className="lk-mono"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: 9,
+                color: 'var(--text-faint)',
+                marginBottom: 4,
+              }}
             >
-              <path d="M2 3.5 L5 6.5 L8 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+              <span>{progress.label}</span>
+              <span>{Math.round(progress.value * 100)}%</span>
+            </div>
+            <BarFill value={progress.value} tone="pos" />
           </div>
         )}
       </div>
 
-      {!comingSoon && (
-        <div className="px-[18px] pb-4">
-          {isConnected ? (
-            <button
-              onClick={onDisconnect}
-              disabled={isLoading}
-              className={`py-2 px-4 bg-transparent border border-accent/40 rounded cursor-pointer font-display italic font-bold text-[11px] text-accent tracking-[0.12em] uppercase transition-all duration-200 ${isLoading ? 'opacity-50' : ''}`}
-            >
-              {isLoading ? 'Disconnecting…' : 'Disconnect'}
-            </button>
-          ) : (
-            <button
-              onClick={onConnect}
-              disabled={isLoading}
-              className={`relative overflow-hidden py-2 px-4 bg-white border-none rounded cursor-pointer font-display italic font-extrabold text-[11px] text-black tracking-[0.12em] uppercase transition-opacity duration-200 ${isLoading ? 'opacity-50' : ''}`}
-            >
-              {isLoading ? 'Connecting…' : `Connect ${name}`}
-              <span className="absolute bottom-0 inset-x-0 h-0.5 bg-accent" />
-            </button>
-          )}
-        </div>
-      )}
-
-      {!comingSoon && expanded && details && details.length > 0 && (
-        <div
-          className="px-[18px] pb-4 border-t border-border"
-          style={{ animation: 'ea-fade-in 250ms var(--ease-smooth)' }}
-        >
-          <div className="grid grid-cols-3 gap-[6px] pt-[14px]">
-            {details.map(({ label, value }) => (
-              <div key={label} className="bg-base border border-border py-[10px] px-3">
-                <div className="ea-mono text-muted text-[9px]">{label.toUpperCase()}</div>
-                <div className="font-display italic font-extrabold text-base text-white mt-1">{value}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+      {action && <div style={{ alignSelf: 'center', flexShrink: 0 }}>{action}</div>}
+    </Card>
   );
 }

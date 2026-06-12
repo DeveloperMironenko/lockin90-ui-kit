@@ -1,37 +1,57 @@
-import React from 'react';
-import { Eyebrow } from '../Typography';
+import type { ReactNode } from 'react';
+import { cn } from '../../cn';
 
-// ─── EmptyState ───────────────────────────────────────────────────────────────
-// Centered empty state with icon, heading, description, and optional CTA.
-
-interface EmptyStateProps {
-  icon?: React.ReactNode;
-  eyebrow?: string;
-  heading: string;
-  description?: string;
-  action?: React.ReactNode;
+export interface EmptyStateProps {
+  /** Glyph shown in a glass circle at the top. */
+  icon?: ReactNode;
+  title: ReactNode;
+  description?: ReactNode;
+  /** Optional call-to-action node (e.g. a `<Button>`). */
+  action?: ReactNode;
   className?: string;
 }
 
-export function EmptyState({ icon, eyebrow, heading, description, action, className }: EmptyStateProps) {
+/** Centered zero/empty state — glass icon disc, title, description, optional action. */
+export default function EmptyState({ icon, title, description, action, className }: EmptyStateProps) {
   return (
-    <div className={`flex flex-col items-center justify-center py-[60px] px-6 text-center gap-4 ${className ?? ''}`}>
+    <div
+      className={className}
+      style={{
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 12,
+        padding: 40,
+      }}
+    >
       {icon && (
-        <div className="w-16 h-16 rounded bg-elevated border border-dashed border-border-strong flex items-center justify-center text-[28px]">
+        <span
+          aria-hidden
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 56,
+            height: 56,
+            borderRadius: '50%',
+            background: 'var(--glass-2)',
+            border: '1px solid var(--border)',
+            color: 'var(--text-dim)',
+          }}
+        >
           {icon}
-        </div>
+        </span>
       )}
-      <div>
-        {eyebrow && <Eyebrow className="mb-[6px]">{eyebrow}</Eyebrow>}
-        <div className="ea-display text-2xl text-white">{heading}</div>
-        <div className="relative overflow-visible my-[6px] w-20 h-1 mx-auto">
-          <div className="absolute inset-x-0 top-1/2 h-0.5 bg-accent -translate-y-1/2 rotate-[-8deg] origin-left" style={{ animation: 'ea-slash-in 600ms var(--ease-power) both' }} />
-        </div>
-        {description && (
-          <p className="text-secondary text-[13px] mt-3 m-0">{description}</p>
-        )}
-      </div>
-      {action && action}
+      <h3 className="lk-display" style={{ fontSize: 18 }}>
+        {title}
+      </h3>
+      {description && (
+        <p className="lk-muted" style={{ maxWidth: '42ch', fontSize: 14 }}>
+          {description}
+        </p>
+      )}
+      {action}
     </div>
   );
 }

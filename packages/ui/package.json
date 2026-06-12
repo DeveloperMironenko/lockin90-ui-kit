@@ -15,30 +15,10 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
-    "./admin": {
-      "types": "./dist/admin.d.ts",
-      "import": "./dist/admin.mjs",
-      "require": "./dist/admin.cjs"
-    },
     "./components/*": {
       "types": "./dist/components/*.d.ts",
       "import": "./dist/components/*.mjs",
       "require": "./dist/components/*.cjs"
-    },
-    "./admin/*": {
-      "types": "./dist/admin/*.d.ts",
-      "import": "./dist/admin/*.mjs",
-      "require": "./dist/admin/*.cjs"
-    },
-    "./marketing": {
-      "types": "./dist/marketing.d.ts",
-      "import": "./dist/marketing.mjs",
-      "require": "./dist/marketing.cjs"
-    },
-    "./marketing/*": {
-      "types": "./dist/marketing/*.d.ts",
-      "import": "./dist/marketing/*.mjs",
-      "require": "./dist/marketing/*.cjs"
     },
     "./styles.css": "./dist/styles.css"
   },
@@ -57,15 +37,8 @@
     "@lockin90/tokens": "workspace:*"
   },
   "peerDependencies": {
-    "next": ">=14",
-    "next-intl": ">=3",
     "react": ">=18",
     "react-dom": ">=18"
-  },
-  "peerDependenciesMeta": {
-    "next-intl": {
-      "optional": true
-    }
   },
   "devDependencies": {
     "@storybook/react-vite": "^10.4.1",

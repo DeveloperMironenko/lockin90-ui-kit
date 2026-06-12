@@ -1,44 +1,37 @@
 // LOCKIN90 — design tokens (single source of truth)
-// Consumed directly by React Native (StyleSheet), and used to generate
-// the web `tokens.css` (:root custom properties) + Tailwind preset.
+// Consumed directly by React Native (StyleSheet), and used to generate the web
+// `tokens.css` (:root custom properties) + the Tailwind preset.
 //
 // VISUAL LANGUAGE: "Aurora Flux" — deep-void glassmorphism, a flowing
 // energy-spectrum gradient (lime → mint → cyan → indigo → violet → magenta),
 // glow / soft elevation, rounded glass radii, Space Grotesk display type.
-// This REPLACES the retired shipped look (single red #FF1F1F, Barlow Condensed,
-// flat / no shadows, sharp 4–6px radii). Key + CSS-var names are preserved so
-// existing consumers keep resolving; only the VALUES changed (plus new tokens).
+//
+// These values mirror the canonical design source `mockups/design/1/shared/
+// tokens.css` exactly — that preview is the contract the whole kit is rebuilt
+// against. CSS-var names below match the design (`--bg-0/1/2`, `--text-dim`,
+// `--text-faint`, `--accent`, `--grad-*`, …) so authored markup and the shipped
+// `styles.css` resolve identically to the mockups.
 
 export const colors = {
-  // ---- surfaces (deep void → elevated panels) ----
+  // ---- surfaces (deep void → elevated glass panels) ----
   void: '#05060B',
-  bgBase: '#080A12', // page base
-  bgSurface: '#0C0F1A', // panel
-  bgElevated: '#11151F', // elevated panel
-  bgElevated2: '#161B27', // hover / second elevation
+  bg0: '#080A12', // page base
+  bg1: '#0C0F1A', // panel
+  bg2: '#11151F', // elevated panel
 
-  // translucent glass fills (pair with backdrop-blur in CSS / BlurView in RN)
+  // translucent glass fills (pair with backdrop-blur on web / BlurView in RN)
   glass: 'rgba(255,255,255,0.045)',
   glass2: 'rgba(255,255,255,0.075)',
 
-  // ---- borders (hairlines over the void) ----
+  // ---- hairline borders over the void ----
   border: 'rgba(255,255,255,0.09)',
-  borderStrong: 'rgba(255,255,255,0.16)',
-  borderSubtle: 'rgba(255,255,255,0.05)',
+  border2: 'rgba(255,255,255,0.16)',
 
-  // ---- text ----
-  textPrimary: '#EEF1F8',
-  textSecondary: '#AAB2C6',
-  textMuted: '#6A7286',
-  textFaint: '#3A4154',
-
-  // ---- accents (electric indigo-violet primary + cyan / mint partners) ----
-  accent: '#7C5CFF',
-  accentBright: '#9B86FF',
-  accentDim: '#4B3F9E',
-  accentGlow: 'rgba(124,92,255,0.45)',
-  accent2: '#22D3EE', // cyan
-  accent3: '#34F5C5', // mint
+  // ---- text (3 tiers in the design + one darker "ghost" for disabled) ----
+  text: '#EEF1F8',
+  textDim: '#AAB2C6',
+  textFaint: '#6A7286',
+  textGhost: '#3A4154',
 
   // ---- energy spectrum (the signature gradient stops) ----
   lime: '#A8FF35',
@@ -48,28 +41,26 @@ export const colors = {
   violet: '#A855F7',
   magenta: '#FF3D81',
 
-  // ---- semantic status ----
-  good: '#34F5C5',
-  warn: '#FFB020',
-  bad: '#FF4D6D',
-  neutral: '#6A7286',
-  ok: '#34F5C5',
-  info: '#6E7BFF',
+  // ---- accents (electric indigo-violet primary + cyan / mint partners) ----
+  accent: '#7C5CFF',
+  accent2: '#22D3EE', // cyan
+  accent3: '#34F5C5', // mint
 
-  // ---- energy zone colors (recolored away from the shipped red) ----
+  // ---- energy zones (signal colors, recolored away from the shipped red) ----
   zoneHigh: '#34F5C5',
   zoneMid: '#FFB020',
   zoneLow: '#FF4D6D',
-  zoneNeutral: '#AAB2C6',
 
-  // ---- status (admin parity) ----
-  statusGreen: '#34F5C5',
-  statusAmber: '#FFB020',
-  statusRed: '#FF4D6D',
+  // ---- semantic status ----
+  ok: '#34F5C5',
+  warn: '#FFB020',
+  bad: '#FF4D6D',
+  info: '#6E7BFF',
 } as const;
 
 // Energy-spectrum gradients. Web: CSS `linear-gradient(...)` strings (emitted as
-// CSS vars). Native: use `gradientStops.*` with expo-linear-gradient.
+// CSS vars + a Tailwind `backgroundImage` preset). Native: use `gradientStops.*`
+// with expo-linear-gradient `colors={...}`.
 export const gradients = {
   flux: 'linear-gradient(100deg, #A8FF35, #34F5C5, #22D3EE, #7C5CFF, #FF3D81)',
   cta: 'linear-gradient(135deg, #7C5CFF 0%, #22D3EE 100%)',
@@ -80,8 +71,8 @@ export const gradients = {
 
 export type GradientName = keyof typeof gradients;
 
-// Ordered color stops for each gradient — for React Native (expo-linear-gradient
-// `colors={...}`) and SVG <linearGradient> stops on the web.
+// Ordered color stops for each gradient — for React Native (expo-linear-gradient)
+// and SVG <linearGradient> stops on the web.
 export const gradientStops: Record<GradientName, readonly string[]> = {
   flux: ['#A8FF35', '#34F5C5', '#22D3EE', '#7C5CFF', '#FF3D81'],
   cta: ['#7C5CFF', '#22D3EE'],
@@ -90,7 +81,7 @@ export const gradientStops: Record<GradientName, readonly string[]> = {
   warm: ['#FFB020', '#FF4D6D'],
 } as const;
 
-// Glow + elevation (opposite of the shipped "no shadows"). Web CSS box-shadow.
+// Glow + soft elevation (the opposite of the shipped "no shadows"). Web CSS box-shadow.
 export const shadows = {
   glowAccent: '0 0 40px rgba(124,92,255,0.35)',
   glowCyan: '0 0 36px rgba(34,211,238,0.30)',
@@ -99,21 +90,16 @@ export const shadows = {
   elev2: '0 18px 50px -12px rgba(0,0,0,0.7)',
 } as const;
 
-// React Native font family names (Space Grotesk display · Inter UI · JetBrains
-// Mono data). Space Grotesk has no italic/black cuts, so the legacy
-// italic/black keys map to the nearest real weight (700 Bold) — the API stays
-// stable for existing RN consumers; load these via @expo-google-fonts/*.
+// React Native font family names — Space Grotesk (display) · Inter (UI) ·
+// JetBrains Mono (data). Load these via @expo-google-fonts/* in the app.
 export const fonts = {
   display: 'SpaceGrotesk_700Bold',
-  displayItalic: 'SpaceGrotesk_700Bold',
-  displayBold: 'SpaceGrotesk_700Bold',
-  displayBoldItalic: 'SpaceGrotesk_700Bold',
-  displayBlack: 'SpaceGrotesk_700Bold',
-  displayBlackItalic: 'SpaceGrotesk_700Bold',
   displayMedium: 'SpaceGrotesk_500Medium',
+  displaySemibold: 'SpaceGrotesk_600SemiBold',
   ui: 'Inter_400Regular',
   uiMedium: 'Inter_500Medium',
   uiSemibold: 'Inter_600SemiBold',
+  uiBold: 'Inter_700Bold',
   mono: 'JetBrainsMono_400Regular',
   monoMedium: 'JetBrainsMono_500Medium',
 } as const;
@@ -156,17 +142,15 @@ export const spacing = {
 } as const;
 
 export const easing = {
-  smoothBezier: [0.16, 1, 0.3, 1] as const,
-  powerBezier: [0.7, 0, 0.3, 1] as const,
-  aurora: [0.22, 1, 0.36, 1] as const,
-  soft: [0.4, 0, 0.2, 1] as const,
+  aurora: [0.22, 1, 0.36, 1] as const, // --ease
+  soft: [0.4, 0, 0.2, 1] as const, // --ease-soft
 } as const;
 
 export const durations = {
   fast: 120,
   base: 220,
   slow: 360,
-  slower: 540,
+  slower: 550, // --dur 0.55s
   ring: 1500,
 } as const;
 
@@ -190,39 +174,33 @@ export function energyLabel(score: number): 'HIGH' | 'MODERATE' | 'LOW' {
   return 'LOW';
 }
 
+/** The gradient that matches a 0–100 energy score's zone. */
+export function zoneGradient(score: number): GradientName {
+  if (score >= 67) return 'mint';
+  return 'warm';
+}
+
 // --- Web bridge -----------------------------------------------------------
-// CSS custom properties. The legacy `--*` names are preserved (existing
-// `var(--accent)` / `ea-*` styles + Tailwind token classes keep working) — their
-// VALUES are now Aurora Flux. New `--*` tokens (spectrum, gradients, glass,
-// glow, radii) are added for the new components. Font vars reference per-app
-// next/font variables and fall back to the literal family (Google Fonts).
+// CSS custom properties — names mirror design/1/shared/tokens.css exactly so the
+// shipped components + the design mockups resolve identically. Font vars
+// reference per-app next/font variables first, then fall back to the literal
+// family (loaded via Google Fonts in standalone / Storybook contexts).
 export const cssVars: Record<string, string> = {
   // surfaces
   '--void': colors.void,
-  '--bg-base': colors.bgBase,
-  '--bg-surface': colors.bgSurface,
-  '--bg-elevated': colors.bgElevated,
-  '--bg-elevated-2': colors.bgElevated2,
+  '--bg-0': colors.bg0,
+  '--bg-1': colors.bg1,
+  '--bg-2': colors.bg2,
   '--glass': colors.glass,
   '--glass-2': colors.glass2,
   // borders
   '--border': colors.border,
-  '--border-strong': colors.borderStrong,
-  '--border-2': colors.borderStrong, // Aurora alias
-  '--border-subtle': colors.borderSubtle,
+  '--border-2': colors.border2,
   // text
-  '--text-primary': colors.textPrimary,
-  '--text-secondary': colors.textSecondary,
-  '--text-dim': colors.textSecondary, // Aurora alias
-  '--text-muted': colors.textMuted,
+  '--text': colors.text,
+  '--text-dim': colors.textDim,
   '--text-faint': colors.textFaint,
-  // accents
-  '--accent': colors.accent,
-  '--accent-bright': colors.accentBright,
-  '--accent-dim': colors.accentDim,
-  '--accent-glow': colors.accentGlow,
-  '--accent-2': colors.accent2,
-  '--accent-3': colors.accent3,
+  '--text-ghost': colors.textGhost,
   // spectrum
   '--lime': colors.lime,
   '--mint': colors.mint,
@@ -230,14 +208,18 @@ export const cssVars: Record<string, string> = {
   '--indigo': colors.indigo,
   '--violet': colors.violet,
   '--magenta': colors.magenta,
-  // status / zones
+  // accents
+  '--accent': colors.accent,
+  '--accent-2': colors.accent2,
+  '--accent-3': colors.accent3,
+  // zones / status
+  '--zone-high': colors.zoneHigh,
+  '--zone-mid': colors.zoneMid,
+  '--zone-low': colors.zoneLow,
   '--ok': colors.ok,
   '--warn': colors.warn,
   '--bad': colors.bad,
   '--info': colors.info,
-  '--zone-high': colors.zoneHigh,
-  '--zone-mid': colors.zoneMid,
-  '--zone-low': colors.zoneLow,
   // gradients
   '--grad-flux': gradients.flux,
   '--grad-cta': gradients.cta,
@@ -261,51 +243,45 @@ export const cssVars: Record<string, string> = {
   '--font-ui': "var(--font-inter), 'Inter', -apple-system, 'Helvetica Neue', sans-serif",
   '--font-mono': "var(--font-jetbrains), 'JetBrains Mono', 'SF Mono', 'Courier New', monospace",
   // motion
-  '--ease-smooth': 'cubic-bezier(0.16, 1, 0.3, 1)',
-  '--ease-power': 'cubic-bezier(0.7, 0, 0.3, 1)',
   '--ease': 'cubic-bezier(0.22, 1, 0.36, 1)',
   '--ease-soft': 'cubic-bezier(0.4, 0, 0.2, 1)',
+  '--dur': '0.55s',
 };
 
-// Tailwind `theme.extend` fragment — mirrors the legacy keys (so `bg-surface`,
-// `text-accent`, `font-display`, `border-strong` keep resolving) and adds the
-// Aurora palette so new components can use `text-accent-2`, `bg-mint`, etc.
+// Tailwind `theme.extend` fragment — exposes the Aurora palette as utility
+// classes (`text-accent-2`, `bg-mint`, `border-border-2`, `shadow-glow-accent`,
+// `bg-grad-flux`, `font-display`, …) for apps that opt into Tailwind. The shipped
+// components do NOT depend on Tailwind — they emit `lk-*` classes from styles.css.
 export const tailwindThemeExtend = {
   colors: {
     void: colors.void,
-    base: colors.bgBase,
-    surface: colors.bgSurface,
-    elevated: colors.bgElevated,
-    'elevated-2': colors.bgElevated2,
+    'bg-0': colors.bg0,
+    'bg-1': colors.bg1,
+    'bg-2': colors.bg2,
     glass: colors.glass,
     'glass-2': colors.glass2,
-    secondary: colors.textSecondary,
-    dim: colors.textSecondary,
-    muted: colors.textMuted,
+    border: colors.border,
+    'border-2': colors.border2,
+    text: colors.text,
+    dim: colors.textDim,
     faint: colors.textFaint,
-    accent: colors.accent,
-    'accent-bright': colors.accentBright,
-    'accent-dim': colors.accentDim,
-    'accent-2': colors.accent2,
-    'accent-3': colors.accent3,
+    ghost: colors.textGhost,
     lime: colors.lime,
     mint: colors.mint,
     cyan: colors.cyan,
     indigo: colors.indigo,
     violet: colors.violet,
     magenta: colors.magenta,
+    accent: colors.accent,
+    'accent-2': colors.accent2,
+    'accent-3': colors.accent3,
+    'zone-high': colors.zoneHigh,
+    'zone-mid': colors.zoneMid,
+    'zone-low': colors.zoneLow,
     ok: colors.ok,
     warn: colors.warn,
     bad: colors.bad,
     info: colors.info,
-    'zone-high': colors.zoneHigh,
-    'zone-mid': colors.zoneMid,
-    'zone-low': colors.zoneLow,
-    'green-zone': colors.statusGreen,
-    'amber-zone': colors.statusAmber,
-    border: colors.border,
-    'border-strong': colors.borderStrong,
-    'border-subtle': colors.borderSubtle,
   },
   fontFamily: {
     display: ['var(--font-space-grotesk)', 'Space Grotesk', 'system-ui', 'sans-serif'],
@@ -317,6 +293,7 @@ export const tailwindThemeExtend = {
     md: `${radius.md}px`,
     lg: `${radius.lg}px`,
     xl: `${radius.xl}px`,
+    pill: `${radius.pill}px`,
   },
   backgroundImage: {
     'grad-flux': gradients.flux,

@@ -1,17 +1,41 @@
-import type { PageHeaderProps } from './types';
+import type { ReactNode } from 'react';
+import { cn } from '../../cn';
 
-export default function PageHeader({ eyebrow, title, slashWidth = 60, actions }: PageHeaderProps) {
+export interface PageHeaderProps {
+  title: ReactNode;
+  subtitle?: ReactNode;
+  /** Small mono label shown above the title. */
+  eyebrow?: ReactNode;
+  /** Right-aligned action node(s) — buttons, chips, etc. */
+  actions?: ReactNode;
+  className?: string;
+}
+
+/** Page title block: eyebrow + display title + subtitle, with right-aligned actions. */
+export default function PageHeader({ title, subtitle, eyebrow, actions, className }: PageHeaderProps) {
   return (
-    <div className="mb-6 flex items-start justify-between gap-3">
+    <div
+      className={className}
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        gap: 16,
+        flexWrap: 'wrap',
+      }}
+    >
       <div>
-        <div className="ea-eyebrow mb-1">{eyebrow}</div>
-        <div className="ea-display text-[28px] text-white">{title}</div>
-        <div
-          className="mt-2 h-0.5 bg-accent origin-left rotate-[-8deg]"
-          style={{ width: slashWidth }}
-        />
+        {eyebrow && <span className="lk-eyebrow">{eyebrow}</span>}
+        <h1 className="lk-display" style={{ fontSize: 26 }}>
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="lk-muted" style={{ margin: '4px 0 0', fontSize: 14 }}>
+            {subtitle}
+          </p>
+        )}
       </div>
-      {actions}
+      {actions && <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>{actions}</div>}
     </div>
   );
 }

@@ -1,28 +1,44 @@
-import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, fonts } from '@lockin90/tokens';
+import type { ViewStyle, StyleProp } from 'react-native';
+import { colors, spacing, fonts, fontSizes } from '@lockin90/tokens';
 
-export type StatusTone = 'green' | 'amber' | 'red' | 'neutral' | 'info';
+export type StatusTone = 'ok' | 'warn' | 'bad';
 
-const TONE: Record<StatusTone, string> = {
-  green: colors.statusGreen,
-  amber: colors.statusAmber,
-  red: colors.statusRed,
-  neutral: colors.textSecondary,
-  info: colors.textPrimary,
+export interface StatusBadgeProps {
+  children: React.ReactNode;
+  tone?: StatusTone;
+  style?: StyleProp<ViewStyle>;
+}
+
+const TONE_COLORS: Record<StatusTone, string> = {
+  ok: colors.ok,
+  warn: colors.warn,
+  bad: colors.bad,
 };
 
-export function StatusBadge({ tone, dot = true, children }: { tone: StatusTone; dot?: boolean; children: React.ReactNode }) {
+export function StatusBadge({ children, tone = 'ok', style }: StatusBadgeProps) {
+  const color = TONE_COLORS[tone];
   return (
-    <View style={styles.row}>
-      {dot && <View style={[styles.dot, { backgroundColor: TONE[tone] }]} />}
-      <Text style={[styles.text, { color: TONE[tone] }]}>{children}</Text>
+    <View style={[styles.row, style]}>
+      <View style={[styles.dot, { backgroundColor: color }]} />
+      <Text style={[styles.label, { color }]}>{children}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  dot: { width: 6, height: 6, borderRadius: 3 },
-  text: { fontFamily: fonts.mono, fontSize: 10, letterSpacing: 1.4, textTransform: 'uppercase' },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dot: {
+    width: 7,
+    height: 7,
+    borderRadius: 999,
+    marginRight: spacing.xs,
+  },
+  label: {
+    fontFamily: fonts.mono,
+    fontSize: fontSizes.xs,
+  },
 });

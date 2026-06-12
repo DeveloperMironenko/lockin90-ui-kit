@@ -1,64 +1,51 @@
 import type { ReactNode } from 'react';
-import SparkLine from '../SparkLine';
+import Card from '../Card';
+import { cn } from '../../cn';
 
 export interface KpiCardProps {
-  /** Eyebrow label, e.g. "RESTING HR". */
-  label: string;
-  /** Primary value (already formatted). */
+  /** Small label in the top row. */
+  label: ReactNode;
+  /** The big tabular-number value. */
   value: ReactNode;
-  /** Small unit suffix, e.g. "bpm". */
-  unit?: string;
-  /** Signed change vs. baseline. */
-  delta?: { value: string; direction: 'up' | 'down' };
-  /** Optional sparkline series. */
-  spark?: number[];
-  /** Leading icon (inline SVG). */
+  /** Optional change indicator below the value. */
+  delta?: ReactNode;
+  /** Tint the delta green (up) or warm (down). */
+  deltaDir?: 'up' | 'down';
+  /** Optional icon shown on the right of the top row. */
   icon?: ReactNode;
-  /** Add the gradient top hairline. */
-  lit?: boolean;
+  /** Optional footer area — pass a <SparkLine/> or <BarFill/> here. */
+  footer?: ReactNode;
+  /** Lift + glow on hover (forwarded to Card). */
+  hover?: boolean;
   className?: string;
 }
 
-const ZONE_HIGH = '#34F5C5';
-const ZONE_LOW = '#FF4D6D';
-
-/** KPI stat tile: eyebrow label, big value, signed delta and an optional spark. */
+/** A metric tile: glass Card wrapping label + big value + delta + optional footer viz. */
 export default function KpiCard({
   label,
   value,
-  unit,
   delta,
-  spark,
+  deltaDir,
   icon,
-  lit = false,
-  className = '',
+  footer,
+  hover = false,
+  className,
 }: KpiCardProps) {
-  const deltaColor = delta?.direction === 'down' ? ZONE_LOW : ZONE_HIGH;
   return (
-    <div className={`ea-card ${lit ? 'ea-card-lit' : ''} ${className}`.trim()}>
-      <div className="flex items-start justify-between gap-2">
-        <span className="ea-stat-block-label">{label}</span>
-        {icon && <span className="text-secondary shrink-0">{icon}</span>}
+    <Card hover={hover} className={cn('lk-stat', className)}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span className="lk-stat-label">{label}</span>
+        {icon}
       </div>
-
-      <div className="flex items-baseline gap-1 mt-2">
-        <span className="ea-num text-white" style={{ fontSize: 30, lineHeight: 1 }}>
-          {value}
-        </span>
-        {unit && <span className="ea-stat-block-unit">{unit}</span>}
+      <div className="lk-stat-value lk-tnum" style={{ marginTop: 8 }}>
+        {value}
       </div>
-
-      {delta && (
-        <div className="font-mono text-[12px] mt-1.5 tabular-nums" style={{ color: deltaColor }}>
-          {delta.direction === 'up' ? '↑' : '↓'} {delta.value}
+      {delta != null && (
+        <div className={cn('lk-stat-delta', deltaDir === 'up' && 'lk-up', deltaDir === 'down' && 'lk-down')}>
+          {delta}
         </div>
       )}
-
-      {spark && spark.length > 1 && (
-        <div className="mt-3">
-          <SparkLine values={spark} width={240} height={40} color={delta?.direction === 'down' ? ZONE_LOW : '#7C5CFF'} className="block w-full" />
-        </div>
-      )}
-    </div>
+      {footer}
+    </Card>
   );
 }

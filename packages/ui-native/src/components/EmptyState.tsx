@@ -1,41 +1,51 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, fonts, radius } from '@lockin90/tokens';
-import { Eyebrow } from './Typography';
+import type { StyleProp, ViewStyle } from 'react-native';
+import { colors, fonts, fontSizes, spacing } from '@lockin90/tokens';
 
-interface EmptyStateProps {
-  icon?: React.ReactNode;
-  eyebrow?: string;
-  heading: string;
+export interface EmptyStateProps {
+  title: string;
   description?: string;
-  action?: React.ReactNode;
+  icon?: ReactNode;
+  action?: ReactNode;
+  style?: StyleProp<ViewStyle>;
 }
 
-export function EmptyState({ icon, eyebrow, heading, description, action }: EmptyStateProps) {
+export function EmptyState({ title, description, icon, action, style }: EmptyStateProps) {
   return (
-    <View style={styles.wrap}>
-      {icon && <View style={styles.iconBox}>{icon}</View>}
-      <View style={styles.center}>
-        {eyebrow && <Eyebrow style={{ marginBottom: 6 }}>{eyebrow}</Eyebrow>}
-        <Text style={styles.heading}>{heading}</Text>
-        <View style={styles.slash} />
-        {description && <Text style={styles.desc}>{description}</Text>}
-      </View>
-      {action}
+    <View style={[styles.wrap, style]}>
+      {icon ? <View style={styles.icon}>{icon}</View> : null}
+      <Text style={styles.title}>{title}</Text>
+      {description ? <Text style={styles.description}>{description}</Text> : null}
+      {action ? <View style={styles.action}>{action}</View> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { paddingVertical: 60, paddingHorizontal: 24, alignItems: 'center', gap: 16 },
-  iconBox: {
-    width: 64, height: 64, borderRadius: radius.sm,
-    backgroundColor: colors.bgElevated,
-    borderWidth: 1, borderColor: colors.borderStrong, borderStyle: 'dashed',
-    alignItems: 'center', justifyContent: 'center',
+  wrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.md,
+    paddingVertical: spacing.xxl,
+    paddingHorizontal: spacing.lg,
   },
-  center: { alignItems: 'center' },
-  heading: { fontFamily: fonts.displayItalic, fontSize: 24, color: colors.textPrimary, textTransform: 'uppercase', letterSpacing: -0.5 },
-  slash: { width: 80, height: 2, backgroundColor: colors.accent, marginVertical: 6, transform: [{ rotate: '-8deg' }] },
-  desc: { fontFamily: fonts.ui, fontSize: 13, color: colors.textSecondary, marginTop: 12, textAlign: 'center' },
+  icon: {
+    marginBottom: spacing.xs,
+  },
+  title: {
+    fontFamily: fonts.display,
+    fontSize: fontSizes.md,
+    color: colors.text,
+    textAlign: 'center',
+  },
+  description: {
+    fontFamily: fonts.ui,
+    fontSize: fontSizes.sm,
+    color: colors.textDim,
+    textAlign: 'center',
+  },
+  action: {
+    marginTop: spacing.sm,
+  },
 });

@@ -1,32 +1,19 @@
-import type { ReactNode, CSSProperties } from 'react';
+import type { ReactNode } from 'react';
+import { cn } from '../../cn';
 
 export interface MarqueeProps {
+  /** Track content. Rendered twice internally for a seamless -50% loop. */
   children: ReactNode;
-  /** Seconds per full loop. Lower = faster. */
-  speed?: number;
-  /** Gap between items, in px. */
-  gap?: number;
   className?: string;
 }
 
-/**
- * Infinite horizontal ticker — used for the trust / integrations band. The
- * children are duplicated for a seamless loop and the track pauses on hover.
- * Edges fade out via a mask. Respects reduced-motion (the keyframe is disabled).
- */
-export default function Marquee({ children, speed = 30, gap = 48, className = '' }: MarqueeProps) {
-  const groupStyle: CSSProperties = { display: 'flex', gap, alignItems: 'center', flexShrink: 0 };
+/** Infinite horizontal ticker that pauses on hover. */
+export default function Marquee({ children, className }: MarqueeProps) {
   return (
-    <div
-      className={`overflow-hidden ${className}`.trim()}
-      style={{
-        maskImage: 'linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)',
-        WebkitMaskImage: 'linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)',
-      }}
-    >
-      <div className="ea-marquee" style={{ display: 'flex', width: 'max-content', gap, animation: `ea-marquee ${speed}s linear infinite` }}>
-        <div style={groupStyle}>{children}</div>
-        <div style={groupStyle} aria-hidden="true">{children}</div>
+    <div className={cn('lk-marquee-mask', className)} style={{ overflow: 'hidden' }}>
+      <div className="lk-marquee" aria-hidden="false">
+        {children}
+        {children}
       </div>
     </div>
   );

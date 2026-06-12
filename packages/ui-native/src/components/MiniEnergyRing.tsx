@@ -1,68 +1,96 @@
-import React from 'react';
-import { View, Text } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
-import { colors, fonts } from '@lockin90/tokens';
+import { View, Text, StyleSheet } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
+import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
+import { colors, fonts, gradientStops } from '@lockin90/tokens';
 
-interface Props {
-  score?: number;
+export interface MiniEnergyRingProps {
+  /** Energy score, 0..100. */
+  score: number;
   size?: number;
+  stroke?: number;
+  gradient?: 'flux' | 'cta' | 'mint' | 'violet' | 'warm';
+  showValue?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 
-export default function MiniEnergyRing({ score = 72, size = 56 }: Props) {
-  const stroke = 4;
-  const r = (size - stroke) / 2;
-  const circumference = 2 * Math.PI * r;
-  const pct = Math.max(0, Math.min(1, score / 100));
-  const arcColor = score >= 67 ? colors.zoneHigh : score >= 34 ? colors.zoneMid : colors.zoneLow;
+export function MiniEnergyRing({
+  score,
+  size = 96,
+  stroke,
+  gradient = 'flux',
+  showValue = true,
+  style,
+}: MiniEnergyRingProps) {
+  // Unique per gradient family so multiple rings (e.g. a calendar strip) don't
+  // share one <Defs> id and inherit each other's stops.
+  const gradientId = `miniEnergyRingGradient-${gradient}`;
+  const strokeWidth = stroke ?? size * 0.08;
+  const clamped = Math.max(0, Math.min(100, score));
+  const radiusPx = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radiusPx;
+  const offset = circumference * (1 - clamped / 100);
+  const center = size / 2;
+  const stops = gradientStops[gradient];
 
-  const zoneLabel = score >= 67 ? 'high' : score >= 34 ? 'moderate' : 'low';
   return (
-    <View
-      style={{ width: size, height: size }}
-      accessible
-      accessibilityRole="image"
-      accessibilityLabel={`Energy ${score}, ${zoneLabel} zone`}
-    >
-      <Svg width={size} height={size} style={{ transform: [{ rotate: '-90deg' }] }}>
-        <Circle cx={size / 2} cy={size / 2} r={r} stroke="#1A1A1A" strokeWidth={stroke} fill="none" />
+    <View style={[styles.wrap, { width: size, height: size }, style]}>
+      <Svg width={size} height={size}>
+        <Defs>
+          <LinearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+            {stops.map((color, i) => (
+              <Stop
+                key={`${color}-${i}`}
+                offset={stops.length > 1 ? i / (stops.length - 1) : 0}
+                stopColor={color}
+              />
+            ))}
+          </LinearGradient>
+        </Defs>
         <Circle
-          cx={size / 2} cy={size / 2} r={r}
-          stroke={arcColor} strokeWidth={stroke} fill="none"
-          strokeLinecap="butt"
+          cx={center}
+          cy={center}
+          r={radiusPx}
+          stroke="rgba(255,255,255,0.07)"
+          strokeWidth={strokeWidth}
+          fill="none"
+        />
+        <Circle
+          cx={center}
+          cy={center}
+          r={radiusPx}
+          stroke={`url(#${gradientId})`}
+          strokeWidth={strokeWidth}
           strokeDasharray={circumference}
-          strokeDashoffset={circumference * (1 - pct)}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          fill="none"
+          rotation={-90}
+          origin={`${center}, ${center}`}
         />
       </Svg>
-      {/* Red slash (decorative) */}
-      <View
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
-        style={{
-          position: 'absolute',
-          top: size * 0.52,
-          left: 0,
-          width: size * 1.12,
-          height: 1.5,
-          backgroundColor: colors.accent,
-          opacity: 0.8,
-          transform: [{ rotate: '-12deg' }],
-          transformOrigin: '0% 50%',
-        } as any}
-      />
-      {/* Score */}
-      <View style={{
-        position: 'absolute',
-        top: 0, left: 0, right: 0, bottom: 0,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
-        <Text style={{
-          fontFamily: fonts.displayItalic,
-          fontSize: size * 0.34,
-          lineHeight: size * 0.34,
-          color: colors.textPrimary,
-        }}>{score}</Text>
-      </View>
+      {showValue ? (
+        <View style={styles.center} pointerEvents="none">
+          <Text style={[styles.value, { fontSize: size * 0.3 }]}>{Math.round(clamped)}</Text>
+        </View>
+      ) : null}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  wrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  center: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  value: {
+    fontFamily: fonts.display,
+    color: colors.text,
+  },
+});
+
+export default MiniEnergyRing;

@@ -1,29 +1,44 @@
-import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, fonts } from '@lockin90/tokens';
+import type { StyleProp, ViewStyle } from 'react-native';
+import { colors, fonts, fontSizes, spacing } from '@lockin90/tokens';
 
-interface StatBlockProps {
+export interface StatBlockProps {
   label: string;
-  value: string | number;
-  unit?: string;
+  value: string;
+  delta?: string;
+  deltaDir?: 'up' | 'down';
+  style?: StyleProp<ViewStyle>;
 }
 
-export function StatBlock({ label, value, unit }: StatBlockProps) {
+export function StatBlock({ label, value, delta, deltaDir, style }: StatBlockProps) {
   return (
-    <View style={styles.block}>
+    <View style={[styles.wrap, style]}>
       <Text style={styles.label}>{label}</Text>
-      <View style={styles.valueRow}>
-        <Text style={styles.value}>{value}</Text>
-        {unit && <Text style={styles.unit}>{unit}</Text>}
-      </View>
+      <Text style={styles.value}>{value}</Text>
+      {delta ? (
+        <Text
+          style={[
+            styles.delta,
+            deltaDir === 'up' && { color: colors.zoneHigh },
+            deltaDir === 'down' && { color: colors.zoneLow },
+          ]}
+        >
+          {delta}
+        </Text>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  block:    { flex: 1, backgroundColor: colors.bgSurface, borderWidth: 1, borderColor: colors.border, paddingHorizontal: 14, paddingTop: 14, paddingBottom: 12 },
-  label:    { fontFamily: fonts.displayBold, fontSize: 10, letterSpacing: 1.8, color: colors.textSecondary, textTransform: 'uppercase' },
-  valueRow: { flexDirection: 'row', alignItems: 'flex-end', marginTop: 6 },
-  value:    { fontFamily: fonts.displayItalic, fontSize: 30, color: colors.textPrimary, lineHeight: 30 },
-  unit:     { fontFamily: fonts.mono, fontSize: 10, color: colors.textMuted, marginLeft: 4, marginBottom: 4 },
+  wrap: { gap: spacing.xs },
+  label: {
+    fontFamily: fonts.mono,
+    fontSize: 10,
+    letterSpacing: 1.6,
+    textTransform: 'uppercase',
+    color: colors.textFaint,
+  },
+  value: { fontFamily: fonts.display, fontSize: fontSizes.xxl, color: colors.text },
+  delta: { fontFamily: fonts.mono, fontSize: 12, color: colors.textDim },
 });

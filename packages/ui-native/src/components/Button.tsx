@@ -1,64 +1,102 @@
-import React from 'react';
-import { Pressable, Text, View, ActivityIndicator, StyleSheet } from 'react-native';
-import type { GestureResponderEvent } from 'react-native';
-import { colors, fonts, radius } from '@lockin90/tokens';
+import { Pressable, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import type {
+  ViewStyle,
+  TextStyle,
+  StyleProp,
+  GestureResponderEvent,
+  PressableStateCallbackType,
+} from 'react-native';
+import { colors, radius, spacing, fonts, fontSizes } from '@lockin90/tokens';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
+export type ButtonVariant = 'primary' | 'ghost' | 'danger';
 
 export interface ButtonProps {
-  variant?: ButtonVariant;
-  loading?: boolean;
-  disabled?: boolean;
-  onPress?: (e: GestureResponderEvent) => void;
   children: React.ReactNode;
+  onPress?: (e: GestureResponderEvent) => void;
+  variant?: ButtonVariant;
+  disabled?: boolean;
+  loading?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 
-export function Button({ variant = 'primary', loading = false, disabled = false, onPress, children }: ButtonProps) {
+export function Button({
+  children,
+  onPress,
+  variant = 'primary',
+  disabled,
+  loading,
+  style,
+}: ButtonProps) {
   const isDisabled = disabled || loading;
-  const bg = variant === 'primary' ? '#FFFFFF' : variant === 'secondary' ? colors.bgElevated : 'transparent';
-  const fg = variant === 'primary' ? '#000000' : variant === 'ghost' ? colors.textSecondary : colors.textPrimary;
-  const border = variant === 'ghost' ? colors.border : variant === 'secondary' ? colors.borderStrong : 'transparent';
+  const variantStyle = styles[variant];
+  const variantText = textStyles[variant];
+  const spinnerColor = variant === 'primary' ? '#07080d' : colors.textDim;
+
   return (
     <Pressable
       onPress={onPress}
       disabled={isDisabled}
-      style={({ pressed }) => [
-        styles.btn,
-        { backgroundColor: bg, borderColor: border, opacity: isDisabled ? 0.6 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] },
+      style={(state: PressableStateCallbackType): StyleProp<ViewStyle> => [
+        styles.base,
+        variantStyle,
+        state.pressed && styles.pressed,
+        isDisabled && styles.disabled,
+        style,
       ]}
     >
-      {loading
-        ? <ActivityIndicator color={fg} />
-        : (typeof children === 'string'
-            ? <Text style={[styles.label, { color: fg }]}>{children}</Text>
-            : children)}
-      {variant === 'primary' && <View style={styles.accentBar} pointerEvents="none" />}
+      {loading ? (
+        <ActivityIndicator size="small" color={spinnerColor} />
+      ) : (
+        <Text style={[styles.label, variantText]}>{children}</Text>
+      )}
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  btn: {
-    width: '100%',
-    height: 56,
-    borderRadius: radius.sm,
-    borderWidth: 1,
+  base: {
+    height: 48,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.xl,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    overflow: 'hidden',
+  },
+  primary: {
+    backgroundColor: colors.accent,
+  },
+  ghost: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  danger: {
+    backgroundColor: colors.bad,
+  },
+  pressed: {
+    opacity: 0.85,
+  },
+  disabled: {
+    opacity: 0.5,
   },
   label: {
-    fontFamily: fonts.displayItalic,
-    fontSize: 17,
-    fontWeight: '800',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
+    fontFamily: fonts.uiSemibold,
+    fontSize: fontSizes.base,
   },
-  accentBar: {
-    position: 'absolute',
-    left: 0, right: 0, bottom: 0,
-    height: 3,
-    backgroundColor: colors.accent,
+});
+
+const textStyles = StyleSheet.create<{
+  primary: TextStyle;
+  ghost: TextStyle;
+  danger: TextStyle;
+}>({
+  primary: {
+    color: '#07080d',
+  },
+  ghost: {
+    color: colors.textDim,
+  },
+  danger: {
+    color: '#ffffff',
   },
 });

@@ -1,87 +1,90 @@
-import { energyColor } from '@lockin90/tokens';
+'use client';
+
+import type { CSSProperties } from 'react';
+import EnergyRing from '../EnergyRing';
+import { cn } from '../../cn';
 
 export interface CalendarDay {
-  /** Day-of-week letter, e.g. "M". */
-  label: string;
-  /** Date number or short string. */
+  /** Day-of-month number (or any short label). */
   date: string | number;
-  /** Energy score 0..100. */
-  value: number;
-  /** Flag a low-energy day (coral marker). */
-  low?: boolean;
-  /** Highlight today (cyan ring + glow). */
+  /** Three-letter day-of-week, e.g. "Wed". */
+  dow: string;
+  /** Energy score 0–100 for the mini ring. */
+  score: number;
+  /** Highlight as the selected/current day. */
   today?: boolean;
 }
 
 export interface CalendarStripProps {
-  days: CalendarDay[];
-  /** Mini-ring diameter in px. */
-  size?: number;
+  days: Array<CalendarDay>;
+  /** When given, each cell becomes a focusable button reporting its index. */
+  onSelect?: (index: number) => void;
   className?: string;
 }
 
-function MiniRing({ value, size, today }: { value: number; size: number; today?: boolean }) {
-  const stroke = Math.max(3, Math.round(size * 0.11));
-  const r = (size - stroke) / 2;
-  const c = 2 * Math.PI * r;
-  const pct = Math.max(0, Math.min(1, value / 100));
-  const color = energyColor(value);
+/** A horizontal week strip of tiny energy rings — one cell per day. */
+export default function CalendarStrip({ days, onSelect, className }: CalendarStripProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      style={{
-        transform: 'rotate(-90deg)',
-        borderRadius: '50%',
-        boxShadow: today ? '0 0 0 2px rgba(34,211,238,0.55)' : undefined,
-      }}
+    <div
+      className={cn(className)}
+      style={{ display: 'grid', gridTemplateColumns: `repeat(${days.length}, 1fr)`, gap: 8 }}
     >
-      <circle cx={size / 2} cy={size / 2} r={r} stroke="rgba(255,255,255,0.07)" strokeWidth={stroke} fill="none" />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        stroke={color}
-        strokeWidth={stroke}
-        fill="none"
-        strokeLinecap="round"
-        strokeDasharray={c}
-        strokeDashoffset={c * (1 - pct)}
-      />
-    </svg>
-  );
-}
-
-/**
- * Horizontal strip of mini energy rings — one per day. Flags low days (coral
- * dot) and highlights today (cyan ring). Used for "last N days" calendars.
- */
-export default function CalendarStrip({ days, size = 44, className = '' }: CalendarStripProps) {
-  return (
-    <div className={`flex gap-2 overflow-x-auto ${className}`.trim()}>
-      {days.map((d, i) => (
-        <div key={i} className="flex flex-col items-center gap-1.5 shrink-0">
-          <span className="font-mono text-[9px] uppercase tracking-[0.1em]" style={{ color: 'var(--text-muted)' }}>
-            {d.label}
-          </span>
-          <div className="relative">
-            <MiniRing value={d.value} size={size} today={d.today} />
-            {d.low && (
-              <span
-                className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full"
-                style={{ background: 'var(--zone-low)', boxShadow: '0 0 6px var(--zone-low)' }}
-                aria-label="low energy"
-              />
-            )}
-          </div>
-          <span
-            className="font-mono text-[10px] tabular-nums"
-            style={{ color: d.today ? 'var(--accent-2)' : 'var(--text-secondary)' }}
+      {days.map((d, i) => {
+        const cellStyle: CSSProperties = {
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 7,
+          padding: '10px 4px',
+          borderRadius: 'var(--r-sm)',
+          border: '1px solid transparent',
+          cursor: onSelect ? 'pointer' : undefined,
+          ...(d.today
+            ? { background: 'rgba(124,92,255,.10)', borderColor: 'rgba(124,92,255,.3)' }
+            : null),
+        };
+        return (
+          <div
+            key={i}
+            role={onSelect ? 'button' : undefined}
+            tabIndex={onSelect ? 0 : undefined}
+            onClick={onSelect ? () => onSelect(i) : undefined}
+            onKeyDown={
+              onSelect
+                ? (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onSelect(i);
+                    }
+                  }
+                : undefined
+            }
+            style={cellStyle}
           >
-            {d.date}
-          </span>
-        </div>
-      ))}
+            <div
+              className="lk-mono"
+              style={{ fontSize: 9, color: 'var(--text-faint)', textTransform: 'uppercase' }}
+            >
+              {d.dow}
+            </div>
+            <EnergyRing
+              score={d.score}
+              size={46}
+              stroke={5}
+              gradient="zone"
+              showValue={false}
+              showZone={false}
+              sub={null}
+            />
+            <div
+              className="lk-mono"
+              style={{ fontSize: 11, color: d.today ? 'var(--text)' : 'var(--text-dim)' }}
+            >
+              {d.date}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

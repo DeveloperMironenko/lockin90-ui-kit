@@ -1,35 +1,23 @@
-import React from 'react';
+import type { CSSProperties } from 'react';
+import { cn } from '../../cn';
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
-// Loading placeholder block. Pass height via className or the h prop shorthand.
-
-interface SkeletonProps {
-  h?: string;
+export interface SkeletonProps {
+  width?: number | string;
+  height?: number | string;
+  /** Corner radius. Ignored when `circle` is set. */
+  radius?: number | string;
+  /** Render a perfect circle (borderRadius 50%). */
+  circle?: boolean;
   className?: string;
 }
 
-export function Skeleton({ h, className }: SkeletonProps) {
-  return (
-    <div className={`bg-surface border border-border rounded ${h ? `h-[${h}]` : ''} ${className ?? ''}`} />
-  );
-}
-
-// ─── SkeletonList ─────────────────────────────────────────────────────────────
-// Renders n skeleton rows with a gap. Used for list loading states.
-
-interface SkeletonListProps {
-  count?: number;
-  h?: string;
-  gap?: string;
-  className?: string;
-}
-
-export function SkeletonList({ count = 3, h = '72px', gap = 'gap-2', className }: SkeletonListProps) {
-  return (
-    <div className={`flex flex-col ${gap} ${className ?? ''}`}>
-      {Array.from({ length: count }).map((_, i) => (
-        <Skeleton key={i} h={h} />
-      ))}
-    </div>
-  );
+/** Shimmering placeholder block for loading states. */
+export default function Skeleton({ width, height, radius, circle = false, className }: SkeletonProps) {
+  const style: CSSProperties = {
+    display: 'block',
+    width,
+    height,
+    borderRadius: circle ? '50%' : radius,
+  };
+  return <span className={cn('lk-skeleton', className)} style={style} aria-hidden />;
 }

@@ -1,24 +1,22 @@
+import { cn } from '../../cn';
+
 export interface PulseProps {
-  /** Status tone: ok (mint), warn (amber), bad (coral). */
+  /** Status tone (default 'ok' = mint). */
   tone?: 'ok' | 'warn' | 'bad';
-  /** Diameter in px. */
+  /** Diameter in px (default 9). */
   size?: number;
   className?: string;
+  'aria-label'?: string;
 }
 
-const TONE: Record<NonNullable<PulseProps['tone']>, string> = {
-  ok: 'var(--ok)',
-  warn: 'var(--warn)',
-  bad: 'var(--bad)',
-};
-
-/** Live, breathing status dot — a pinging ring in the tone color. */
-export default function Pulse({ tone = 'ok', size = 9, className = '' }: PulseProps) {
+/** A live, breathing status dot. */
+export default function Pulse({ tone = 'ok', size = 9, className, ...rest }: PulseProps) {
   return (
     <span
-      className={`ea-pulse-dot ${className}`.trim()}
-      style={{ background: TONE[tone], width: size, height: size }}
-      aria-hidden="true"
+      className={cn('lk-pulse', tone === 'warn' && 'lk-warn', tone === 'bad' && 'lk-bad', className)}
+      style={{ width: size, height: size }}
+      aria-hidden={rest['aria-label'] ? undefined : true}
+      {...rest}
     />
   );
 }

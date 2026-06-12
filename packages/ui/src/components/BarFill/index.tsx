@@ -1,73 +1,29 @@
 'use client';
 
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
-
-export type BarFillTone = 'cta' | 'mint' | 'warm' | 'violet';
+import type { CSSProperties } from 'react';
+import { useInView } from '../motion';
+import { cn } from '../../cn';
 
 export interface BarFillProps {
-  /** Fill fraction, 0..1. */
+  /** Fill fraction, 0..1. Clamped. */
   value: number;
-  /** Spectrum gradient used for the fill. */
-  tone?: BarFillTone;
-  /** Track height in px. */
-  height?: number;
-  /** Fill immediately instead of animating in on scroll. */
-  immediate?: boolean;
+  /** `accent` = default cta gradient, `pos` = mint, `neg` = warm. */
+  tone?: 'accent' | 'pos' | 'neg';
   className?: string;
 }
 
-const GRAD: Record<BarFillTone, string> = {
-  cta: 'var(--grad-cta)',
-  mint: 'var(--grad-mint)',
-  warm: 'var(--grad-warm)',
-  violet: 'var(--grad-violet)',
-};
+const clamp01 = (n: number): number => (n < 0 ? 0 : n > 1 ? 1 : n);
 
-/** Spectrum progress bar that fills (width tween) when it scrolls into view. */
-export default function BarFill({
-  value,
-  tone = 'cta',
-  height = 8,
-  immediate = false,
-  className = '',
-}: BarFillProps) {
-  const [filled, setFilled] = useState(immediate);
-  const ref = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    if (immediate) return;
-    const el = ref.current;
-    if (!el || typeof IntersectionObserver === 'undefined') {
-      setFilled(true);
-      return;
-    }
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setFilled(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.2 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [immediate]);
-
-  const v = Math.max(0, Math.min(1, value));
-
+/**
+ * Animated linear fill. Draws from 0 → `value` when it scrolls into view
+ * (reduced-motion safe — `useInView` reports true immediately when unobservable).
+ */
+export default function BarFill({ value, tone = 'accent', className }: BarFillProps) {
+  const { ref, inView } = useInView<HTMLDivElement>();
+  const v = inView ? clamp01(value) : 0;
   return (
-    <span
-      ref={ref}
-      className={`ea-barfill ${className}`.trim()}
-      style={{ height }}
-      data-filled={filled}
-      role="progressbar"
-      aria-valuenow={Math.round(v * 100)}
-      aria-valuemin={0}
-      aria-valuemax={100}
-    >
-      <i style={{ '--v': v, background: GRAD[tone] } as CSSProperties} />
-    </span>
+    <div ref={ref} className={cn('lk-barfill', tone === 'pos' && 'lk-pos', tone === 'neg' && 'lk-neg', className)}>
+      <i style={{ ['--v']: v } as CSSProperties} />
+    </div>
   );
 }

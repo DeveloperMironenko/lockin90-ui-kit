@@ -1,44 +1,67 @@
-import React from 'react';
-import { Text, type TextStyle } from 'react-native';
-import { colors, fonts, fontSizes, letterSpacing } from '@lockin90/tokens';
+import { Text, StyleSheet } from 'react-native';
+import type { TextStyle, StyleProp } from 'react-native';
+import { colors, fonts, fontSizes } from '@lockin90/tokens';
 
-type EyebrowColor = 'secondary' | 'accent' | 'muted';
-const EYEBROW_COLORS: Record<EyebrowColor, string> = {
-  secondary: colors.textSecondary, accent: colors.accent, muted: colors.textMuted,
-};
-
-export function Eyebrow({ children, color = 'secondary', style }: { children: React.ReactNode; color?: EyebrowColor; style?: TextStyle }) {
-  return (
-    <Text style={[{
-      fontFamily: fonts.displayBold,
-      fontSize: 11,
-      letterSpacing: 1.8,
-      textTransform: 'uppercase',
-      color: EYEBROW_COLORS[color],
-    }, style]}>{children}</Text>
-  );
+export interface TypographyProps {
+  children: React.ReactNode;
+  style?: StyleProp<TextStyle>;
 }
 
-type MonoColor = 'secondary' | 'accent' | 'muted' | 'white';
-const MONO_COLORS: Record<MonoColor, string> = {
-  secondary: colors.textSecondary, accent: colors.accent, muted: colors.textMuted, white: colors.textPrimary,
-};
-
-export function Mono({ children, color = 'muted', style }: { children: React.ReactNode; color?: MonoColor; style?: TextStyle }) {
-  return (
-    <Text style={[{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: 0.4, color: MONO_COLORS[color] }, style]}>
-      {children}
-    </Text>
-  );
+export function Display({ children, style }: TypographyProps) {
+  return <Text style={[styles.display, style]}>{children}</Text>;
 }
 
-export function Caption({ children, color = 'muted', style }: { children: React.ReactNode; color?: 'muted' | 'secondary' | 'white'; style?: TextStyle }) {
-  const c = color === 'white' ? colors.textPrimary : color === 'secondary' ? colors.textSecondary : colors.textMuted;
-  return <Text style={[{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: letterSpacing.eyebrow, color: c }, style]}>{children}</Text>;
+export function Heading({ children, style }: TypographyProps) {
+  return <Text style={[styles.heading, style]}>{children}</Text>;
 }
 
-export function Body({ children, size = 'sm', color = 'secondary', style }: { children: React.ReactNode; size?: 'sm' | 'base'; color?: 'secondary' | 'muted' | 'white'; style?: TextStyle }) {
-  const c = color === 'white' ? colors.textPrimary : color === 'muted' ? colors.textMuted : colors.textSecondary;
-  const fs = size === 'base' ? fontSizes.base : fontSizes.sm;
-  return <Text style={[{ fontFamily: fonts.ui, fontSize: fs, lineHeight: fs * 1.55, color: c }, style]}>{children}</Text>;
+export function Body({ children, style }: TypographyProps) {
+  return <Text style={[styles.body, style]}>{children}</Text>;
 }
+
+export function Muted({ children, style }: TypographyProps) {
+  return <Text style={[styles.muted, style]}>{children}</Text>;
+}
+
+export function Mono({ children, style }: TypographyProps) {
+  return <Text style={[styles.mono, style]}>{children}</Text>;
+}
+
+export function Eyebrow({ children, style }: TypographyProps) {
+  return <Text style={[styles.eyebrow, style]}>{children}</Text>;
+}
+
+const styles = StyleSheet.create({
+  display: {
+    fontFamily: fonts.display,
+    fontSize: fontSizes.xxl,
+    color: colors.text,
+  },
+  heading: {
+    fontFamily: fonts.displaySemibold,
+    fontSize: fontSizes.lg,
+    color: colors.text,
+  },
+  body: {
+    fontFamily: fonts.ui,
+    fontSize: fontSizes.base,
+    color: colors.text,
+  },
+  muted: {
+    fontFamily: fonts.ui,
+    fontSize: fontSizes.base,
+    color: colors.textDim,
+  },
+  mono: {
+    fontFamily: fonts.mono,
+    fontSize: fontSizes.base,
+    color: colors.text,
+  },
+  eyebrow: {
+    fontFamily: fonts.mono,
+    fontSize: fontSizes.xs,
+    color: colors.textFaint,
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+  },
+});

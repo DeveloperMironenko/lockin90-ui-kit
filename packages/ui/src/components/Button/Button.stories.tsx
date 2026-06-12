@@ -1,36 +1,29 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, ButtonLink } from './index';
+import Button from './index';
 
-const meta = {
-  title: 'Primitives/Button',
+const meta: Meta<typeof Button> = {
+  title: 'Foundation/Button',
   component: Button,
-  args: { children: 'Log Energy', variant: 'primary' },
-  argTypes: {
-    variant: { control: 'inline-radio', options: ['primary', 'secondary', 'ghost'] },
-    loading: { control: 'boolean' },
-    disabled: { control: 'boolean' },
-  },
-} satisfies Meta<typeof Button>;
-
+  args: { children: 'Log event' },
+};
 export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Primary: Story = { args: { variant: 'primary' } };
-export const Secondary: Story = { args: { variant: 'secondary', children: 'Cancel' } };
-export const Ghost: Story = { args: { variant: 'ghost', children: 'Skip' } };
-export const Loading: Story = { args: { loading: true, children: 'Saving…' } };
-export const Disabled: Story = { args: { disabled: true } };
+type Story = StoryObj<typeof Button>;
 
-export const AllVariants: Story = {
+export const Primary: Story = { args: { variant: 'primary', magnetic: true } };
+export const Ghost: Story = { args: { variant: 'ghost' } };
+export const Danger: Story = { args: { variant: 'danger', children: 'Refund $19.99' } };
+export const Small: Story = { args: { variant: 'primary', size: 'sm' } };
+export const AsLink: Story = { args: { href: '#start', children: 'Get started' } };
+export const Row: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: 12 }}>
+    <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
       <Button variant="primary">Primary</Button>
-      <Button variant="secondary">Secondary</Button>
+      <Button variant="default">Secondary</Button>
       <Button variant="ghost">Ghost</Button>
+      <Button variant="danger" size="sm">
+        Danger
+      </Button>
     </div>
   ),
-};
-
-export const AsLink: Story = {
-  render: () => <ButtonLink href="#">Go to dashboard</ButtonLink>,
 };
