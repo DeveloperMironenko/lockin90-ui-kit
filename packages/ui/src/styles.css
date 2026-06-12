@@ -201,6 +201,20 @@
 .lk-btn-block {
   width: 100%;
 }
+.lk-btn-spinner {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: lk-btn-spin 0.7s linear infinite;
+}
+@keyframes lk-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* ============================================================================
    CHIPS / BADGES / PILLS  (status = signal color)
@@ -653,6 +667,59 @@
 .lk-textarea.lk-invalid {
   border-color: var(--bad);
   box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.16);
+}
+
+/* Password field — Input + an overlaid show/hide eye toggle */
+.lk-password {
+  position: relative;
+  display: block;
+}
+.lk-password-input {
+  /* leave room for the toggle so text doesn't run under the icon */
+  padding-right: 42px;
+}
+.lk-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-faint);
+  cursor: pointer;
+  transition: color 0.2s var(--ease);
+}
+.lk-password-toggle:hover {
+  color: var(--text-dim);
+}
+.lk-password-toggle:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.lk-password-toggle:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+/* Segmented OTP / code entry */
+.lk-code {
+  display: inline-flex;
+  gap: 8px;
+}
+.lk-code-cell {
+  width: 44px;
+  padding: 11px 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  letter-spacing: 0;
 }
 
 .lk-form-row {

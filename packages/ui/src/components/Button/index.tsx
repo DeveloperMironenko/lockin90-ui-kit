@@ -19,6 +19,8 @@ interface CommonProps {
   block?: boolean;
   /** Magnetic pull toward the pointer (primary CTAs). `true` = 0.3 strength. */
   magnetic?: boolean | number;
+  /** Shows an inline spinner, sets `aria-busy`, and disables the button. */
+  loading?: boolean;
   children: ReactNode;
   className?: string;
 }
@@ -52,7 +54,8 @@ export default function Button(props: ButtonProps | ButtonLinkProps) {
     : {};
 
   if ('href' in props && props.href !== undefined) {
-    const { variant, size, block, magnetic: _m, className, children, ...rest } = props as ButtonLinkProps;
+    const { variant, size, block, magnetic: _m, loading: _l, className, children, ...rest } =
+      props as ButtonLinkProps;
     return (
       <a className={classes({ variant, size, block, className, children })} {...magProps} {...rest}>
         {children}
@@ -60,14 +63,18 @@ export default function Button(props: ButtonProps | ButtonLinkProps) {
     );
   }
 
-  const { variant, size, block, magnetic: _m, className, children, type, ...rest } = props as ButtonProps;
+  const { variant, size, block, magnetic: _m, loading, className, children, type, disabled, ...rest } =
+    props as ButtonProps;
   return (
     <button
       type={type ?? 'button'}
       className={classes({ variant, size, block, className, children })}
+      aria-busy={loading || undefined}
+      disabled={disabled || loading || undefined}
       {...magProps}
       {...rest}
     >
+      {loading && <span className="lk-btn-spinner" aria-hidden="true" />}
       {children}
     </button>
   );
