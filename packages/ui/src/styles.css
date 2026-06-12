@@ -722,17 +722,25 @@
   letter-spacing: 0;
 }
 
-/* Brand wordmark — flux-gradient "LockIn90", identical on web + native */
+/* Brand wordmark — flowing flux-gradient "LockIn90", identical on web + native.
+   Reuses the lk-flow-text keyframes (8s scroll) so the logo animates. */
 .lk-brandmark {
   display: inline-block;
   font-family: var(--font-display);
   font-weight: 700;
   line-height: 1.15;
-  background-image: var(--grad-flux);
+  background: var(--grad-flux);
+  background-size: 220% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
+  animation: lk-flow-text 8s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-brandmark {
+    animation: none;
+  }
 }
 
 .lk-form-row {
