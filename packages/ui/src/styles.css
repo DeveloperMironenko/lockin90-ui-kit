@@ -169,6 +169,11 @@
 .lk-btn-primary:hover {
   box-shadow: 0 0 56px rgba(124, 92, 255, 0.55);
 }
+.lk-btn-primary:disabled,
+.lk-btn-primary[aria-disabled='true'] {
+  animation: none;
+  box-shadow: none;
+}
 @keyframes lk-btn-flow {
   0%,
   100% {
@@ -200,6 +205,106 @@
 }
 .lk-btn-block {
   width: 100%;
+}
+.lk-btn-spinner {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: lk-btn-spin 0.7s linear infinite;
+}
+@keyframes lk-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================================
+   OAUTH / SOCIAL SIGN-IN BUTTONS  (Google + Apple — FIXED brand colors)
+   Full-width pill, 48px tall + pill radius like .lk-btn. Brand styling follows
+   the official Google / Apple sign-in guidelines and is intentionally NOT themed
+   by the Aurora tokens, so it passes OAuth / app-store brand review. Sits below
+   the email/password form on the auth screens.
+   ========================================================================== */
+.lk-oauth {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  padding: 0 20px;
+  border-radius: var(--r-pill);
+  font-family:
+    'Roboto', var(--font-ui), system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    transform 0.2s var(--ease),
+    box-shadow 0.25s var(--ease),
+    background 0.2s var(--ease),
+    border-color 0.2s var(--ease);
+  will-change: transform;
+}
+.lk-oauth:hover {
+  transform: translateY(-1px);
+}
+.lk-oauth:active {
+  transform: translateY(0) scale(0.99);
+}
+.lk-oauth:disabled,
+.lk-oauth[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+.lk-oauth-logo {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+.lk-oauth-label {
+  white-space: nowrap;
+}
+/* Google — white button, hairline #dadce0 border, dark #3c4043 text. */
+.lk-oauth-google {
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  color: #3c4043;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.12);
+}
+.lk-oauth-google:hover {
+  background: #f8faff;
+  border-color: #d2e3fc;
+  box-shadow: 0 2px 6px rgba(60, 64, 67, 0.18);
+}
+/* Apple — solid black button, white text + white Apple glyph. */
+.lk-oauth-apple {
+  background: #000000;
+  border: 1px solid #000000;
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+.lk-oauth-apple:hover {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+}
+/* Spinner inherits the provider's text color (dark on Google, white on Apple). */
+.lk-oauth-spinner {
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  flex: none;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  opacity: 0.85;
+  animation: lk-btn-spin 0.7s linear infinite;
 }
 
 /* ============================================================================
@@ -655,6 +760,80 @@
   box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.16);
 }
 
+/* Password field — Input + an overlaid show/hide eye toggle */
+.lk-password {
+  position: relative;
+  display: block;
+}
+.lk-password-input {
+  /* leave room for the toggle so text doesn't run under the icon */
+  padding-right: 42px;
+}
+.lk-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-faint);
+  cursor: pointer;
+  transition: color 0.2s var(--ease);
+}
+.lk-password-toggle:hover {
+  color: var(--text-dim);
+}
+.lk-password-toggle:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.lk-password-toggle:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+/* Segmented OTP / code entry */
+.lk-code {
+  display: inline-flex;
+  gap: 8px;
+}
+.lk-code-cell {
+  width: 44px;
+  padding: 11px 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
+/* Brand wordmark — flowing flux-gradient "LockIn90", identical on web + native.
+   Reuses the lk-flow-text keyframes (8s scroll) so the logo animates. */
+.lk-brandmark {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.15;
+  background: var(--grad-flux);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: lk-flow-text 8s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-brandmark {
+    animation: none;
+  }
+}
+
 .lk-form-row {
   display: flex;
   flex-direction: column;
@@ -666,6 +845,13 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--text-faint);
+}
+.lk-form-required {
+  color: var(--accent);
+  font-size: 0.85em;
+  vertical-align: super;
+  line-height: 0;
+  margin-left: 1px;
 }
 .lk-form-hint {
   font-size: 12px;
