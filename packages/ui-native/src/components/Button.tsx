@@ -63,7 +63,7 @@ export function Button({
         variant === 'primary' && styles.primary,
         variant === 'danger' && styles.danger,
         variant === 'ghost' && styles.ghost,
-        variant === 'primary' && styles.glow,
+        variant === 'primary' && !isDisabled && styles.glow,
         state.pressed && styles.pressed,
         isDisabled && styles.disabled,
         style,
