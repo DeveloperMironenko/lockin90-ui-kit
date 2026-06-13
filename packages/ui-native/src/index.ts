@@ -13,6 +13,7 @@ export * from './components/CodeInput';
 export * from './components/Divider';
 export * from './components/EmptyState';
 export * from './components/FormRow';
+export * from './components/GradientText';
 export * from './components/Input';
 export * from './components/MiniEnergyRing';
 export { default as MiniEnergyRing } from './components/MiniEnergyRing';
