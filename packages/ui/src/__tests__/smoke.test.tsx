@@ -21,6 +21,7 @@ import {
   PageHeader,
   Pulse,
   Reveal,
+  SectionCard,
   SparkLine,
   Stat,
   Toggle,
@@ -119,6 +120,17 @@ describe('@lockin90/ui — Aurora Flux smoke', () => {
     );
     expect(screen.getByText('System Overview')).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent('Impersonating');
+  });
+
+  it('renders a SectionCard with a title, subtitle, and body', () => {
+    render(
+      <SectionCard title="Danger zone" subtitle="Permanently delete your account.">
+        <span>body content</span>
+      </SectionCard>,
+    );
+    expect(screen.getByRole('heading', { name: 'Danger zone' })).toBeInTheDocument();
+    expect(screen.getByText('Permanently delete your account.')).toBeInTheDocument();
+    expect(screen.getByText('body content')).toBeInTheDocument();
   });
 
   it('opens a modal into a portal and closes it', () => {

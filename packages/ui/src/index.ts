@@ -84,6 +84,8 @@ export * from './components/Reveal';
 export { default as Reveal } from './components/Reveal';
 export * from './components/SearchField';
 export { default as SearchField } from './components/SearchField';
+export * from './components/SectionCard';
+export { default as SectionCard } from './components/SectionCard';
 export * from './components/SectionLabel';
 export { default as SectionLabel } from './components/SectionLabel';
 export * from './components/Select';
