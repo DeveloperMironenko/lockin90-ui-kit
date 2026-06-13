@@ -49,6 +49,18 @@ export default function Banner({ tone = 'info', icon, children, action, classNam
       className={cn(className)}
       style={style}
     >
+      {/* 3px tone-colored vertical accent bar — matches the native
+          @lockin90/ui-native Banner so web ≡ mobile. */}
+      <span
+        aria-hidden
+        style={{
+          alignSelf: 'stretch',
+          flex: 'none',
+          width: 3,
+          borderRadius: 999,
+          background: t.color,
+        }}
+      />
       {icon && (
         <span aria-hidden style={{ display: 'inline-flex', color: t.color }}>
           {icon}

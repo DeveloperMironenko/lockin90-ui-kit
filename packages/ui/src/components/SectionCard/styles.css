@@ -1,3 +1,5 @@
+/* Flat glass panel — matches the native @lockin90/ui-native SectionCard exactly
+   (no header divider, no drop-shadow/backdrop-blur) so web ≡ mobile. */
 .lk-section-card {
   position: relative;
   display: flex;
@@ -5,10 +7,7 @@
   background: var(--glass);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  box-shadow: var(--elev-1);
   overflow: hidden;
-  backdrop-filter: blur(16px) saturate(120%);
-  -webkit-backdrop-filter: blur(16px) saturate(120%);
 }
 .lk-section-card-head {
   flex-shrink: 0;
@@ -16,15 +15,14 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px 20px 12px;
-  border-bottom: 1px solid var(--border);
+  padding: 20px 20px 0;
 }
 .lk-section-card-headtext {
   min-width: 0;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
 }
 .lk-section-card-eyebrow {
   margin-bottom: 2px;
@@ -33,7 +31,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 16px;
+  font-size: 17px;
   letter-spacing: -0.01em;
   color: var(--text);
   white-space: nowrap;
@@ -42,7 +40,7 @@
 }
 .lk-section-card-subtitle {
   margin: 0;
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.5;
   color: var(--text-dim);
 }
@@ -55,6 +53,11 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+/* When a header precedes the body, the gap between them is the native md (12px)
+   regardless of the body's own padding scale — matches the native card rhythm. */
+.lk-section-card-head + .lk-section-card-body {
+  padding-top: 12px;
 }
 .lk-section-card-pad-tight {
   padding: 12px;

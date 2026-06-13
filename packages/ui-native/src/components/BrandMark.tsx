@@ -65,8 +65,9 @@ export function BrandMark({ size = 20, animated = true, style }: BrandMarkProps)
         </AnimatedLinearGradient>
       </Defs>
       <SvgText
-        x={0}
+        x={width / 2}
         y={Math.round(size * 0.92)}
+        textAnchor="middle"
         fontFamily={fonts.display}
         fontSize={size}
         fontWeight="700"

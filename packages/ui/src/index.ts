@@ -14,6 +14,8 @@ export * from './components/Badge';
 export { default as Badge } from './components/Badge';
 export * from './components/Banner';
 export { default as Banner } from './components/Banner';
+export * from './components/BackLink';
+export { default as BackLink } from './components/BackLink';
 export * from './components/BarFill';
 export { default as BarFill } from './components/BarFill';
 export * from './components/BrandMark';
