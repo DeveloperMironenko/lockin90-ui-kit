@@ -63,6 +63,14 @@ export default function ReauthDialog({
   const busy = submitting || loading;
   const canSubmit = password.length > 0 && !busy;
 
+  // Mark the dialog cancelled SYNCHRONOUSLY (before the openRef effect runs), so a
+  // verify() that resolves right after a dismiss can't slip past the liveness guard.
+  // Dismissal is always allowed — never trap the user behind a slow/hung verify().
+  function handleCancel() {
+    openRef.current = false;
+    onCancel();
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!canSubmit) return;
@@ -85,15 +93,12 @@ export default function ReauthDialog({
   return (
     <Modal
       open={open}
-      onClose={() => {
-        // Don't allow Escape/scrim dismissal while a verify() is in flight.
-        if (!busy) onCancel();
-      }}
+      onClose={handleCancel}
       title={title}
       danger
       footer={
         <>
-          <Button variant="ghost" size="sm" onClick={onCancel} disabled={busy}>
+          <Button variant="ghost" size="sm" onClick={handleCancel} disabled={busy}>
             Cancel
           </Button>
           <Button

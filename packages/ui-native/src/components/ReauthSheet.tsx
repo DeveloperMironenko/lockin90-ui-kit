@@ -68,6 +68,14 @@ export function ReauthSheet({
   const busy = submitting || loading;
   const canSubmit = password.length > 0 && !busy;
 
+  // Mark the sheet cancelled SYNCHRONOUSLY (before the openRef effect runs), so a
+  // verify() that resolves right after a dismiss can't slip past the liveness guard.
+  // Dismissal is always allowed — never trap the user behind a slow/hung verify().
+  function handleCancel() {
+    openRef.current = false;
+    onCancel();
+  }
+
   async function handleConfirm() {
     if (!canSubmit) return;
     setSubmitting(true);
@@ -92,10 +100,7 @@ export function ReauthSheet({
       transparent
       animationType="fade"
       statusBarTranslucent
-      onRequestClose={() => {
-        // Don't allow Android hardware-back dismissal while a verify() is in flight.
-        if (!busy) onCancel();
-      }}
+      onRequestClose={handleCancel}
     >
       <View style={styles.root}>
         {/* Dimmed, pressable backdrop — tap to cancel. */}
@@ -103,10 +108,7 @@ export function ReauthSheet({
           style={styles.backdrop}
           accessibilityRole="button"
           accessibilityLabel="Dismiss"
-          onPress={() => {
-            // Don't allow backdrop dismissal while a verify() is in flight.
-            if (!busy) onCancel();
-          }}
+          onPress={handleCancel}
         />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -138,7 +140,7 @@ export function ReauthSheet({
 
             <View style={styles.actions}>
               <View style={styles.action}>
-                <Button variant="ghost" onPress={onCancel} disabled={busy}>
+                <Button variant="ghost" onPress={handleCancel} disabled={busy}>
                   Cancel
                 </Button>
               </View>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { ReauthDialog } from '../index';
 
 describe('@lockin90/ui — ReauthDialog', () => {
@@ -90,5 +90,54 @@ describe('@lockin90/ui — ReauthDialog', () => {
     fireEvent.click(screen.getByText('toggle'));
     const reopened = document.getElementById('lk-reauth-password') as HTMLInputElement;
     expect(reopened.value).toBe('');
+  });
+
+  it('does NOT call onConfirmed when cancelled while verify() is in flight (resolve-after-cancel)', async () => {
+    // Security-critical: a verify() that resolves AFTER the user dismisses must not
+    // fire the gated destructive action.
+    let resolveVerify: () => void = () => {};
+    const verify = vi.fn().mockImplementation(
+      () => new Promise<void>((res) => { resolveVerify = res; }),
+    );
+    const onConfirmed = vi.fn();
+
+    function Harness() {
+      const [open, setOpen] = useState(true);
+      return (
+        <ReauthDialog open={open} verify={verify} onConfirmed={onConfirmed} onCancel={() => setOpen(false)} />
+      );
+    }
+    render(<Harness />);
+
+    const input = document.getElementById('lk-reauth-password') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'hunter2' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+    await waitFor(() => expect(verify).toHaveBeenCalledTimes(1));
+
+    // Dismiss (Escape) while verify() is still pending — dialog closes immediately.
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    // The in-flight verify now resolves SUCCESS — but the prompt was cancelled.
+    await act(async () => {
+      resolveVerify();
+      await Promise.resolve();
+    });
+
+    expect(onConfirmed).not.toHaveBeenCalled();
+  });
+
+  it('remains dismissable while verify() is in flight (never traps the user behind a hung verify)', async () => {
+    const verify = vi.fn().mockImplementation(() => new Promise<void>(() => {})); // never settles
+    const onCancel = vi.fn();
+    render(<ReauthDialog open verify={verify} onConfirmed={() => {}} onCancel={onCancel} />);
+
+    const input = document.getElementById('lk-reauth-password') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'x' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+    await waitFor(() => expect(verify).toHaveBeenCalled());
+
+    // verify() is hung; Escape must still dismiss.
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(onCancel).toHaveBeenCalledTimes(1);
   });
 });
