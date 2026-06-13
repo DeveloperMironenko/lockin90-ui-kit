@@ -103,6 +103,7 @@ export function CodeInput({
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
+    justifyContent: 'center',
     gap: spacing.sm,
   },
   cell: {
