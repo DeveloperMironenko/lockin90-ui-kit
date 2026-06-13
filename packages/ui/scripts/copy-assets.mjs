@@ -23,7 +23,11 @@ function findCss(dir) {
 }
 
 let css = readFileSync(join(src, 'styles.css'), 'utf8');
-const extra = [...findCss(join(src, 'admin')), ...findCss(join(src, 'marketing'))].sort();
+const extra = [
+  ...findCss(join(src, 'components')),
+  ...findCss(join(src, 'admin')),
+  ...findCss(join(src, 'marketing')),
+].sort();
 for (const file of extra) {
   css += `\n\n/* ${relative(src, file)} */\n${readFileSync(file, 'utf8')}`;
 }

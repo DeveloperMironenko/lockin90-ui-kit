@@ -1,0 +1,73 @@
+/* KebabMenu — ⋮ overflow dropdown.
+   Class layer alternative to the inline-style render; not imported by index.tsx. */
+.lk-kebab {
+  position: relative;
+  display: inline-block;
+}
+.lk-kebab-trigger {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition:
+    color 0.18s var(--ease),
+    background 0.18s var(--ease);
+}
+.lk-kebab-trigger:hover {
+  color: var(--text);
+  background: var(--glass-2);
+}
+.lk-kebab-menu {
+  position: absolute;
+  top: 100%;
+  margin-top: 4px;
+  z-index: 30;
+  min-width: 200px;
+  padding: 4px 0;
+  background: var(--bg-2);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-sm);
+  box-shadow: var(--elev-2);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+}
+.lk-kebab-menu.lk-left {
+  left: 0;
+}
+.lk-kebab-menu.lk-right {
+  right: 0;
+}
+.lk-kebab-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-dim);
+  transition:
+    background 0.18s var(--ease),
+    color 0.18s var(--ease);
+}
+.lk-kebab-item:hover {
+  color: var(--text);
+  background: var(--glass-2);
+}
+.lk-kebab-item.lk-destructive {
+  color: var(--bad);
+}
+.lk-kebab-item.lk-destructive:hover {
+  background: rgba(255, 77, 109, 0.1);
+}
+.lk-kebab-item:disabled {
+  color: var(--text-faint);
+  cursor: not-allowed;
+}

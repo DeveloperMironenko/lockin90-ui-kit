@@ -1,24 +1,51 @@
 'use client';
 
 import { useState } from 'react';
-import type { InputHTMLAttributes } from 'react';
+import type { InputHTMLAttributes, ReactNode } from 'react';
 import { cn } from '../../cn';
 
 export interface PasswordInputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'type'> {
   /** Renders the error/invalid styling (`lk-invalid`) and sets `aria-invalid`. */
   invalid?: boolean;
+  /** Back-compat: when given, renders a label above the field. */
+  label?: ReactNode;
+  /**
+   * Back-compat: controlled visibility. When BOTH `show` and `onToggle` are
+   * provided, reveal state is owned by the parent; otherwise the component
+   * manages it internally.
+   */
+  show?: boolean;
+  /** Back-compat: called when the eye button is pressed (controlled mode). */
+  onToggle?: () => void;
   className?: string;
 }
 
 /**
  * Aurora password field — visually identical to `Input`, plus a show/hide eye
  * toggle inside the field on the right. The component owns `type`
- * (`password`/`text`); reveal state is internal and starts hidden.
+ * (`password`/`text`); reveal state is internal and starts hidden unless
+ * controlled via `show`/`onToggle`.
  */
-export default function PasswordInput({ invalid, className, disabled, ...rest }: PasswordInputProps) {
-  const [visible, setVisible] = useState(false);
-  return (
+export default function PasswordInput({
+  invalid,
+  label,
+  show,
+  onToggle,
+  className,
+  disabled,
+  ...rest
+}: PasswordInputProps) {
+  const [internalVisible, setInternalVisible] = useState(false);
+  const controlled = show !== undefined && onToggle !== undefined;
+  const visible = controlled ? show : internalVisible;
+
+  function toggle() {
+    if (controlled) onToggle();
+    else setInternalVisible((v) => !v);
+  }
+
+  const field = (
     <span className="lk-password">
       <input
         type={visible ? 'text' : 'password'}
@@ -34,11 +61,24 @@ export default function PasswordInput({ invalid, className, disabled, ...rest }:
         aria-pressed={visible}
         disabled={disabled}
         tabIndex={disabled ? -1 : 0}
-        onClick={() => setVisible((v) => !v)}
+        onClick={toggle}
       >
         {visible ? <EyeOff /> : <Eye />}
       </button>
     </span>
+  );
+
+  if (label == null) return field;
+
+  return (
+    <div className="lk-form-row">
+      <div className="lk-form-label-row">
+        <label className={cn('lk-form-label', invalid && 'lk-error')} htmlFor={rest.id}>
+          {label}
+        </label>
+      </div>
+      {field}
+    </div>
   );
 }
 

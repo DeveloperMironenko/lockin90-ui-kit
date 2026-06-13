@@ -6,7 +6,9 @@ import { cn } from '../../cn';
 
 export interface SparkLineProps {
   /** Series of y-values; evenly spaced on the x-axis. */
-  data: number[];
+  data?: number[];
+  /** Back-compat (pre-Aurora) alias for `data`. Resolved as `values ?? data`. */
+  values?: number[];
   width?: number;
   height?: number;
   /** Stroke color (CSS color or var). Default mint. */
@@ -25,6 +27,7 @@ export interface SparkLineProps {
 /** A compact, self-drawing trend sparkline. */
 export default function SparkLine({
   data,
+  values,
   width = 120,
   height = 32,
   color = 'var(--mint)',
@@ -35,13 +38,14 @@ export default function SparkLine({
   className,
   ...rest
 }: SparkLineProps) {
+  const series = values ?? data ?? [];
   const pad = strokeWidth + 1;
   const pathRef = useRef<SVGPathElement | null>(null);
   const [len, setLen] = useState(0);
   const { ref, inView } = useInView<HTMLSpanElement>({ threshold: 0.3 });
   const reduced = useReducedMotion();
 
-  const { line, area, last } = buildPaths(data, width, height, pad);
+  const { line, area, last } = buildPaths(series, width, height, pad);
 
   useEffect(() => {
     if (pathRef.current) setLen(pathRef.current.getTotalLength());

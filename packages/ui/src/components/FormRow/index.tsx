@@ -11,7 +11,20 @@ export interface FormRowProps {
   hint?: ReactNode;
   /** Error message shown below the control (takes precedence over `hint`). */
   error?: ReactNode;
-  children: ReactNode;
+  /**
+   * Back-compat (pre-Aurora): right-aligned value shown next to the label.
+   * Useful for read-only "label … value" rows.
+   */
+  value?: ReactNode;
+  /**
+   * Back-compat (pre-Aurora): drop the bottom divider/margin (e.g. the last row
+   * in a stacked form). Aurora rows have no divider, so this just trims the
+   * trailing margin.
+   */
+  last?: boolean;
+  /** Back-compat (pre-Aurora): error/red styling on the label. */
+  danger?: boolean;
+  children?: ReactNode;
   className?: string;
 }
 
@@ -22,20 +35,39 @@ export default function FormRow({
   required,
   hint,
   error,
+  value,
+  last,
+  danger,
   children,
   className,
 }: FormRowProps) {
   return (
-    <div className={cn('lk-form-row', className)}>
-      {label && (
-        <label className="lk-form-label" htmlFor={htmlFor}>
-          {label}
-          {required && (
-            <span className="lk-form-required" aria-hidden="true">
-              *
+    <div className={cn('lk-form-row', last && 'lk-form-row-last', className)}>
+      {(label || value != null) && (
+        <div
+          className="lk-form-label-row"
+          style={
+            value != null
+              ? { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }
+              : undefined
+          }
+        >
+          {label && (
+            <label className={cn('lk-form-label', danger && 'lk-error')} htmlFor={htmlFor}>
+              {label}
+              {required && (
+                <span className="lk-form-required" aria-hidden="true">
+                  *
+                </span>
+              )}
+            </label>
+          )}
+          {value != null && (
+            <span className={cn('lk-form-value', 'lk-tnum', danger && 'lk-error')} style={{ textAlign: 'right' }}>
+              {value}
             </span>
           )}
-        </label>
+        </div>
       )}
       {children}
       {error ? (

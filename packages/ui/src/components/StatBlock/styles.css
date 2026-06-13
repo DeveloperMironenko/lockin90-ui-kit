@@ -1,0 +1,29 @@
+/* StatBlock — uppercase mono label over a large display value.
+   Class layer alternative to the inline-style render; not imported by index.tsx. */
+.lk-stat-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.lk-stat-block-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-faint);
+}
+.lk-stat-block-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.lk-stat-block-unit {
+  margin-left: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+}

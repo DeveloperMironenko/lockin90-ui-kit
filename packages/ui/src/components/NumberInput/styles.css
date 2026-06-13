@@ -1,0 +1,22 @@
+/* Aurora numeric input — composes `.lk-input` and adds an inline unit suffix. */
+
+.lk-number-field {
+  position: relative;
+  display: block;
+}
+
+.lk-number-input-unit {
+  padding-right: 36px;
+}
+
+.lk-number-unit {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+  pointer-events: none;
+}

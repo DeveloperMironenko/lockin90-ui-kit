@@ -18,9 +18,27 @@ interface ToastItem extends ToastOptions {
   id: number;
 }
 
+// Back-compat tone names the pre-Aurora `push(tone, message)` API accepted (still
+// used across the admin app). Mapped onto the Aurora ToastTone.
+export type PushTone = 'info' | 'ok' | 'success' | 'warn' | 'bad' | 'error' | 'audit';
+
+const PUSH_TONE: Record<PushTone, ToastTone> = {
+  info: 'info',
+  ok: 'ok',
+  success: 'ok',
+  warn: 'warn',
+  bad: 'bad',
+  error: 'bad',
+  audit: 'info',
+};
+
 interface ToastContextValue {
   toast: (opts: ToastOptions) => number;
   dismiss: (id: number) => void;
+  /** Back-compat: pre-Aurora `push(tone, message)` shorthand (admin app). */
+  push: (tone: PushTone, message: ReactNode) => void;
+  /** Back-compat: pre-Aurora audit toast (admin app). Prefixes "Logged: ". */
+  audit: (message: ReactNode) => void;
 }
 
 const ToastContext = createContext<ToastContextValue | null>(null);
@@ -54,7 +72,24 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     [dismiss],
   );
 
-  const value = useMemo(() => ({ toast, dismiss }), [toast, dismiss]);
+  const push = useCallback(
+    (tone: PushTone, message: ReactNode) => {
+      toast({ title: message, tone: PUSH_TONE[tone] ?? 'info' });
+    },
+    [toast],
+  );
+
+  const audit = useCallback(
+    (message: ReactNode) => {
+      toast({ title: <>Logged: {message}</>, tone: 'info' });
+    },
+    [toast],
+  );
+
+  const value = useMemo(
+    () => ({ toast, dismiss, push, audit }),
+    [toast, dismiss, push, audit],
+  );
 
   return (
     <ToastContext.Provider value={value}>

@@ -9,20 +9,27 @@ import { cn } from '../../cn';
 export interface ModalProps {
   open: boolean;
   onClose: () => void;
+  /** Small mono/uppercase label above the title (back-compat — admin app). */
+  eyebrow?: ReactNode;
   title?: ReactNode;
+  /** Muted line under the title (back-compat — admin app). */
+  subtitle?: ReactNode;
   icon?: ReactNode;
   children?: ReactNode;
   /** Footer content (usually buttons). */
   footer?: ReactNode;
-  /** Max width of the panel in px (default 440). */
-  width?: number;
+  /**
+   * Max width of the panel. A number is treated as px (default 440); a string
+   * (e.g. `"720px"`) is applied as-is.
+   */
+  width?: string | number;
   /** alertdialog semantics for destructive confirmations. */
   danger?: boolean;
   className?: string;
 }
 
 /** Centered glass dialog over a blurred scrim. Closes on Escape / scrim click. */
-export default function Modal({ open, onClose, title, icon, children, footer, width = 440, danger, className }: ModalProps) {
+export default function Modal({ open, onClose, eyebrow, title, subtitle, icon, children, footer, width = 440, danger, className }: ModalProps) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -59,13 +66,19 @@ export default function Modal({ open, onClose, title, icon, children, footer, wi
         aria-modal="true"
         onClick={(e) => e.stopPropagation()}
         className={cn('lk-card', 'lk-lit', className)}
-        style={{ width: '100%', maxWidth: width, boxShadow: 'var(--elev-2)' }}
+        style={{ width: '100%', maxWidth: typeof width === 'number' ? `${width}px` : width, boxShadow: 'var(--elev-2)' }}
       >
         {icon && <div style={{ marginBottom: 12 }}>{icon}</div>}
+        {eyebrow && <div className="lk-eyebrow" style={{ marginBottom: 4 }}>{eyebrow}</div>}
         {title && (
-          <h3 className="lk-display" style={{ fontSize: 18, marginBottom: children ? 8 : 0 }}>
+          <h3 className="lk-display" style={{ fontSize: 18, marginBottom: subtitle ? 4 : children ? 8 : 0 }}>
             {title}
           </h3>
+        )}
+        {subtitle && (
+          <div className="lk-muted" style={{ fontSize: 13, marginBottom: children ? 8 : 0 }}>
+            {subtitle}
+          </div>
         )}
         {children && (
           <div className="lk-muted" style={{ fontSize: 14, lineHeight: 1.55 }}>

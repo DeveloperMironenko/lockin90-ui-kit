@@ -1,0 +1,27 @@
+/* Alert — compact mono message box (error / success / info).
+   Class layer alternative to the inline-style render; not imported by index.tsx. */
+.lk-alert {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--glass);
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.lk-alert.lk-error {
+  border-color: rgba(255, 77, 109, 0.3);
+  background: rgba(255, 77, 109, 0.08);
+  color: var(--bad);
+}
+.lk-alert.lk-success {
+  border-color: rgba(52, 245, 197, 0.3);
+  background: rgba(52, 245, 197, 0.08);
+  color: var(--ok);
+}
+.lk-alert.lk-info {
+  border-color: var(--border);
+  background: var(--glass);
+  color: var(--text-dim);
+}

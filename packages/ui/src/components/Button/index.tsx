@@ -4,10 +4,12 @@ import type { ButtonHTMLAttributes, AnchorHTMLAttributes, ReactNode } from 'reac
 import { useMagnetic } from '../motion';
 import { cn } from '../../cn';
 
-export type ButtonVariant = 'primary' | 'ghost' | 'danger' | 'default';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'default';
 
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
   primary: 'lk-btn-primary',
+  // 'secondary' is a back-compat alias (pre-Aurora kit / admin app) → ghost styling.
+  secondary: 'lk-btn-ghost',
   ghost: 'lk-btn-ghost',
   danger: 'lk-btn-danger',
   default: '',
