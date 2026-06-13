@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Modal,
   View,
@@ -51,9 +51,13 @@ export function ReauthSheet({
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Tracks the live `open` value so an in-flight verify() that resolves AFTER the
+  // sheet is cancelled/closed can bail before firing the gated (destructive) action.
+  const openRef = useRef(open);
 
-  // Reset local state whenever the sheet (re)opens.
+  // Reset local state whenever the sheet (re)opens; keep openRef in sync.
   useEffect(() => {
+    openRef.current = open;
     if (open) {
       setPassword('');
       setSubmitting(false);
@@ -70,8 +74,12 @@ export function ReauthSheet({
     setError(null);
     try {
       await verify(password);
+      // Bail if the sheet was cancelled/closed while verify() was in flight — a
+      // cancelled prompt must NOT fire the gated (destructive) action.
+      if (!openRef.current) return;
       onConfirmed();
     } catch (err) {
+      if (!openRef.current) return;
       setError(err instanceof Error && err.message ? err.message : 'Incorrect password');
     } finally {
       setSubmitting(false);
@@ -84,7 +92,10 @@ export function ReauthSheet({
       transparent
       animationType="fade"
       statusBarTranslucent
-      onRequestClose={onCancel}
+      onRequestClose={() => {
+        // Don't allow Android hardware-back dismissal while a verify() is in flight.
+        if (!busy) onCancel();
+      }}
     >
       <View style={styles.root}>
         {/* Dimmed, pressable backdrop — tap to cancel. */}
@@ -92,10 +103,13 @@ export function ReauthSheet({
           style={styles.backdrop}
           accessibilityRole="button"
           accessibilityLabel="Dismiss"
-          onPress={onCancel}
+          onPress={() => {
+            // Don't allow backdrop dismissal while a verify() is in flight.
+            if (!busy) onCancel();
+          }}
         />
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.kav}
           pointerEvents="box-none"
         >

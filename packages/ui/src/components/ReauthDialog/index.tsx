@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import Modal from '../Modal';
 import Button from '../Button';
@@ -46,9 +46,13 @@ export default function ReauthDialog({
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Tracks the live `open` value so an in-flight verify() that resolves AFTER the
+  // dialog is cancelled/closed can bail before firing the gated (destructive) action.
+  const openRef = useRef(open);
 
-  // Reset local state whenever the dialog (re)opens.
+  // Reset local state whenever the dialog (re)opens; keep openRef in sync.
   useEffect(() => {
+    openRef.current = open;
     if (open) {
       setPassword('');
       setSubmitting(false);
@@ -66,8 +70,12 @@ export default function ReauthDialog({
     setError(null);
     try {
       await verify(password);
+      // Bail if the dialog was cancelled/closed while verify() was in flight — a
+      // cancelled prompt must NOT fire the gated (destructive) action.
+      if (!openRef.current) return;
       onConfirmed();
     } catch (err) {
+      if (!openRef.current) return;
       setError(err instanceof Error && err.message ? err.message : 'Incorrect password');
     } finally {
       setSubmitting(false);
@@ -77,7 +85,10 @@ export default function ReauthDialog({
   return (
     <Modal
       open={open}
-      onClose={onCancel}
+      onClose={() => {
+        // Don't allow Escape/scrim dismissal while a verify() is in flight.
+        if (!busy) onCancel();
+      }}
       title={title}
       danger
       footer={
