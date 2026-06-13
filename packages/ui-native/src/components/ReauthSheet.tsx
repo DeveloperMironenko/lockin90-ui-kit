@@ -172,6 +172,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(5,6,11,0.7)',
   },
   kav: {
+    // Fill the modal so KeyboardAvoidingView can actually reserve keyboard space
+    // and lift the sheet (without flex:1 it wraps height-tight and no-ops on iOS).
+    flex: 1,
     justifyContent: 'flex-end',
   },
   sheet: {
