@@ -20,6 +20,26 @@
       "import": "./dist/components/*.mjs",
       "require": "./dist/components/*.cjs"
     },
+    "./admin": {
+      "types": "./dist/admin.d.ts",
+      "import": "./dist/admin.mjs",
+      "require": "./dist/admin.cjs"
+    },
+    "./admin/*": {
+      "types": "./dist/admin/*.d.ts",
+      "import": "./dist/admin/*.mjs",
+      "require": "./dist/admin/*.cjs"
+    },
+    "./marketing": {
+      "types": "./dist/marketing.d.ts",
+      "import": "./dist/marketing.mjs",
+      "require": "./dist/marketing.cjs"
+    },
+    "./marketing/*": {
+      "types": "./dist/marketing/*.d.ts",
+      "import": "./dist/marketing/*.mjs",
+      "require": "./dist/marketing/*.cjs"
+    },
     "./styles.css": "./dist/styles.css"
   },
   "main": "./dist/index.cjs",

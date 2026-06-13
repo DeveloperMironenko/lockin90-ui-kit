@@ -1,0 +1,64 @@
+/* RolloutWaveWizard — Aurora multi-wave pipeline-rollout wizard (paths → wave →
+   preview, then a typed-confirm commit gate). Composes the base Button / FormRow
+   / Input / Stat / Modal primitives; the component sets active/preview accents
+   inline (var(--accent)), so this layer is the structural + hover fallback. */
+.lk-wave-wizard {
+  display: block;
+}
+.lk-wave-steps {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.lk-wave-step {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  color: var(--text-faint);
+}
+.lk-wave-step.lk-done {
+  border-color: var(--border-2);
+  color: var(--text-dim);
+}
+.lk-wave-step.lk-active {
+  border-color: var(--accent);
+  background: var(--glass-2);
+  color: var(--text);
+}
+.lk-wave-field {
+  margin-bottom: 14px;
+}
+.lk-wave-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.lk-wave-path {
+  flex: 1;
+  padding: 12px 16px;
+  text-align: left;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--glass);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    border-color 0.2s var(--ease),
+    background 0.2s var(--ease);
+}
+.lk-wave-path:hover {
+  border-color: var(--border-2);
+}
+.lk-wave-path.lk-active {
+  border-color: var(--accent);
+  background: var(--glass-2);
+}
+.lk-wave-sample {
+  border-radius: var(--r);
+}

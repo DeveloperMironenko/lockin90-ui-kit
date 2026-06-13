@@ -1,0 +1,14 @@
+/* AuditEntry — one row of an admin audit log: a fixed-width mono timestamp, then
+   actor · ACTION · target on one line with a summary line beneath. The action
+   word is colored by intent (destructive=bad, create=high, mutate=mid, read=text)
+   inline by the component. This layer is the structural fallback (hairline rows). */
+.lk-audit-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.lk-audit-entry:last-child {
+  border-bottom: 0;
+}

@@ -1,0 +1,27 @@
+/* AdminGateBanner — full-width amber alert shown when the back-end admin gate is
+   off (Fastify 404s on /admin/*). Mono "ADMIN GATE OFF" tag + an explanatory
+   body with inline mono code chips. The component sets colors inline; this layer
+   is the structural fallback. */
+.lk-admin-gate-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 24px;
+  border-bottom: 1px solid rgba(255, 176, 32, 0.4);
+  background: rgba(255, 176, 32, 0.1);
+}
+.lk-admin-gate-banner > span {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--zone-mid);
+}
+.lk-admin-gate-banner > div {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}

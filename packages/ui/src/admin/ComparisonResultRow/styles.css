@@ -1,0 +1,19 @@
+/* ComparisonResultRow — a <tr> for an A/B comparison result, meant to live
+   inside an `lk-table`. Numeric cells are mono + tabular; the mean-delta cell is
+   tinted inline by the component (var(--ok) positive, var(--accent) negative,
+   var(--text-dim) negligible). Status uses the shared StatusBadge pulse. This
+   layer just carries the clickable affordance + numeric alignment fallback. */
+.lk-comparison-row {
+  transition: background 0.2s var(--ease);
+}
+.lk-comparison-row[style*='cursor: pointer']:hover,
+.lk-comparison-row.lk-clickable:hover {
+  background: var(--glass);
+}
+.lk-comparison-row td {
+  font-feature-settings: 'tnum' 1;
+}
+.lk-comparison-row td.lk-num {
+  text-align: right;
+  font-family: var(--font-mono);
+}

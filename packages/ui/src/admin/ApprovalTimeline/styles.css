@@ -1,0 +1,51 @@
+/* ApprovalTimeline — Aurora vertical timeline of approval / rollback events.
+   A glowing signal dot per entry sits on a faded vertical rail; the action verb
+   reads as a tracked eyebrow, the actor + timestamp in mono. The component sets
+   per-tone dot color + glow inline (var(--ok) / var(--accent) / var(--text-faint));
+   this layer is the structural fallback (rail, spacing, dot ring). */
+.lk-timeline {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lk-timeline-rail {
+  position: absolute;
+  left: 7px;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--border-2), transparent);
+}
+.lk-timeline-item {
+  position: relative;
+  padding-left: 30px;
+  padding-bottom: 20px;
+}
+.lk-timeline-item:last-child {
+  padding-bottom: 0;
+}
+.lk-timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  border: 3px solid var(--bg-1);
+  box-shadow: 0 0 10px var(--text-faint);
+}
+.lk-timeline-item.lk-approved::before {
+  background: var(--ok);
+  box-shadow: 0 0 10px var(--ok);
+}
+.lk-timeline-item.lk-rolled_back::before {
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+.lk-timeline-empty {
+  color: var(--text-faint);
+  font-size: 12px;
+}
