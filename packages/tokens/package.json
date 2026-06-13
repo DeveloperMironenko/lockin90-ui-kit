@@ -39,6 +39,7 @@
     "vite": "^8.0.0"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }
