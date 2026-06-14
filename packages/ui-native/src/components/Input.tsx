@@ -1,5 +1,5 @@
 import { TextInput, StyleSheet } from 'react-native';
-import type { StyleProp, ViewStyle, TextStyle } from 'react-native';
+import type { StyleProp, ViewStyle, TextStyle, TextInputProps } from 'react-native';
 import { colors, fonts, fontSizes, radius, spacing } from '@lockin90/tokens';
 
 export interface InputProps {
@@ -8,10 +8,25 @@ export interface InputProps {
   placeholder?: string;
   invalid?: boolean;
   secureTextEntry?: boolean;
+  /** Keyboard variant (e.g. 'numeric' / 'number-pad' / 'decimal-pad' / 'email-address'). */
+  keyboardType?: TextInputProps['keyboardType'];
+  /** Semantic input mode (web parity; e.g. 'numeric' / 'decimal'). */
+  inputMode?: TextInputProps['inputMode'];
+  maxLength?: number;
   style?: StyleProp<TextStyle>;
 }
 
-export function Input({ value, onChangeText, placeholder, invalid, secureTextEntry, style }: InputProps) {
+export function Input({
+  value,
+  onChangeText,
+  placeholder,
+  invalid,
+  secureTextEntry,
+  keyboardType,
+  inputMode,
+  maxLength,
+  style,
+}: InputProps) {
   return (
     <TextInput
       value={value}
@@ -19,6 +34,9 @@ export function Input({ value, onChangeText, placeholder, invalid, secureTextEnt
       placeholder={placeholder}
       placeholderTextColor={colors.textFaint}
       secureTextEntry={secureTextEntry}
+      keyboardType={keyboardType}
+      inputMode={inputMode}
+      maxLength={maxLength}
       style={[styles.input, invalid && styles.invalid, style]}
     />
   );

@@ -396,7 +396,6 @@
   border-radius: var(--r-pill);
   background: var(--glass-2);
   transition:
-    flex-grow 0.4s var(--ease),
     background 0.4s var(--ease),
     box-shadow 0.4s var(--ease);
 }
@@ -404,7 +403,6 @@
   background: var(--accent);
 }
 .lk-stepdot-active {
-  flex-grow: 1.6;
   background: var(--accent);
   box-shadow: 0 0 10px rgba(124, 92, 255, 0.6);
 }

@@ -49,8 +49,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accent,
   },
   active: {
-    // emphasized active step: brighter accent + subtle glow
-    flex: 1.6,
+    // emphasized active step: brighter accent + glow (same width as the others)
     backgroundColor: colors.accent,
     shadowColor: colors.accent,
     shadowOpacity: 0.55,
