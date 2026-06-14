@@ -380,6 +380,121 @@
   box-shadow: 0 0 8px currentColor;
 }
 
+/* ============================================================================
+   STEP DOTS — segmented "step N of M" progress (onboarding header)
+   `current` is 1-based: < current = done, === current = active, > current = todo.
+   ========================================================================== */
+.lk-stepdots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+.lk-stepdot {
+  flex: 1 1 0;
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: var(--glass-2);
+  transition:
+    flex-grow 0.4s var(--ease),
+    background 0.4s var(--ease),
+    box-shadow 0.4s var(--ease);
+}
+.lk-stepdot-done {
+  background: var(--accent);
+}
+.lk-stepdot-active {
+  flex-grow: 1.6;
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(124, 92, 255, 0.6);
+}
+.lk-stepdot-todo {
+  background: var(--glass-2);
+}
+
+/* ============================================================================
+   OPTION CARD — selectable / actionable glass tile (onboarding pick / connect)
+   Reuses the card glass look; `lk-selected` adds accent border + glow + check.
+   ========================================================================== */
+.lk-optioncard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  padding: 18px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--glass);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  transition:
+    transform 0.3s var(--ease),
+    border-color 0.3s var(--ease),
+    background 0.3s var(--ease),
+    box-shadow 0.3s var(--ease);
+}
+.lk-optioncard:hover {
+  border-color: var(--border-2);
+  transform: translateY(-2px);
+}
+.lk-optioncard.lk-selected {
+  border-color: var(--accent);
+  background: rgba(124, 92, 255, 0.1);
+  box-shadow: var(--glow-accent);
+}
+.lk-optioncard.lk-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.lk-optioncard-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+}
+.lk-optioncard-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.lk-optioncard-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text);
+}
+.lk-optioncard-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+.lk-optioncard-trailing {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+}
+.lk-optioncard-check {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  color: #0a0a12;
+  box-shadow: 0 0 12px rgba(124, 92, 255, 0.5);
+}
+
 /* tiny mono micro-label (lighter than a chip) */
 .lk-badge {
   display: inline-flex;
