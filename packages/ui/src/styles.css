@@ -403,11 +403,19 @@
   background: var(--accent);
 }
 .lk-stepdot-active {
-  background: var(--accent);
+  /* active step wears the brand flux gradient, flowing like the logo wordmark */
+  background: var(--grad-flux);
+  background-size: 220% 100%;
+  animation: lk-flow-text 8s linear infinite;
   box-shadow: 0 0 10px rgba(124, 92, 255, 0.6);
 }
 .lk-stepdot-todo {
   background: var(--glass-2);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-stepdot-active {
+    animation: none;
+  }
 }
 
 /* ============================================================================
