@@ -52,21 +52,23 @@ export function StepDots({ current, total, style }: StepDotsProps) {
  * only once a width is known. Keeps equal-width (flex:1), the rounded corners, and glow.
  */
 function ActiveSegment() {
-  const [size, setSize] = useState({ width: 0, height: 0 });
+  // Two primitive state values (not an object) so React's Object.is bailout
+  // skips a re-render when onLayout fires with an unchanged size — mirrors
+  // GradientText's measured-width pattern.
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
   const gradId = useMemo(() => `lk-stepdot-grad-${(gradSeq += 1)}`, []);
   const flux = gradientStops.flux;
   return (
     <View
       style={[styles.dot, styles.active]}
-      onLayout={(e) =>
-        setSize({
-          width: Math.ceil(e.nativeEvent.layout.width),
-          height: Math.ceil(e.nativeEvent.layout.height),
-        })
-      }
+      onLayout={(e) => {
+        setWidth(Math.ceil(e.nativeEvent.layout.width));
+        setHeight(Math.ceil(e.nativeEvent.layout.height));
+      }}
     >
-      {size.width > 0 ? (
-        <Svg width={size.width} height={size.height}>
+      {width > 0 ? (
+        <Svg width={width} height={height}>
           <Defs>
             <LinearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
               {flux.map((color, j) => (
@@ -74,15 +76,7 @@ function ActiveSegment() {
               ))}
             </LinearGradient>
           </Defs>
-          <Rect
-            x="0"
-            y="0"
-            width={size.width}
-            height={size.height}
-            rx={2}
-            ry={2}
-            fill={`url(#${gradId})`}
-          />
+          <Rect x="0" y="0" width={width} height={height} rx={2} ry={2} fill={`url(#${gradId})`} />
         </Svg>
       ) : null}
     </View>
