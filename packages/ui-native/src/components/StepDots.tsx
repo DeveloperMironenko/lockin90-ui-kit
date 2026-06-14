@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import type { ViewStyle, StyleProp } from 'react-native';
 import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
@@ -25,8 +25,6 @@ export interface StepDotsProps {
  */
 export function StepDots({ current, total, style }: StepDotsProps) {
   const count = Math.max(0, Math.floor(total));
-  const gradId = useMemo(() => `lk-stepdot-grad-${(gradSeq += 1)}`, []);
-  const flux = gradientStops.flux;
   return (
     <View
       style={[styles.row, style]}
@@ -37,24 +35,56 @@ export function StepDots({ current, total, style }: StepDotsProps) {
         const step = i + 1;
         if (step === current) {
           // Active: brand flux gradient fill (rounded via the SVG Rect) + glow.
-          return (
-            <View key={step} style={[styles.dot, styles.active]}>
-              <Svg width="100%" height="100%">
-                <Defs>
-                  <LinearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
-                    {flux.map((color, j) => (
-                      <Stop key={`${color}-${j}`} offset={j / (flux.length - 1)} stopColor={color} />
-                    ))}
-                  </LinearGradient>
-                </Defs>
-                <Rect x="0" y="0" width="100%" height="100%" rx={2} ry={2} fill={`url(#${gradId})`} />
-              </Svg>
-            </View>
-          );
+          return <ActiveSegment key={step} />;
         }
         const segStyle = step < current ? styles.done : styles.todo;
         return <View key={step} style={[styles.dot, segStyle]} />;
       })}
+    </View>
+  );
+}
+
+/**
+ * The active segment paints the brand flux gradient with react-native-svg. Percentage
+ * SVG dimensions ('100%') can mis-measure before flex layout resolves, leaving the
+ * gradient blank on the first Android paint. Mirroring `GradientText`, we measure the
+ * segment's pixel size via onLayout and size both the Svg and its Rect in px, painting
+ * only once a width is known. Keeps equal-width (flex:1), the rounded corners, and glow.
+ */
+function ActiveSegment() {
+  const [size, setSize] = useState({ width: 0, height: 0 });
+  const gradId = useMemo(() => `lk-stepdot-grad-${(gradSeq += 1)}`, []);
+  const flux = gradientStops.flux;
+  return (
+    <View
+      style={[styles.dot, styles.active]}
+      onLayout={(e) =>
+        setSize({
+          width: Math.ceil(e.nativeEvent.layout.width),
+          height: Math.ceil(e.nativeEvent.layout.height),
+        })
+      }
+    >
+      {size.width > 0 ? (
+        <Svg width={size.width} height={size.height}>
+          <Defs>
+            <LinearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
+              {flux.map((color, j) => (
+                <Stop key={`${color}-${j}`} offset={j / (flux.length - 1)} stopColor={color} />
+              ))}
+            </LinearGradient>
+          </Defs>
+          <Rect
+            x="0"
+            y="0"
+            width={size.width}
+            height={size.height}
+            rx={2}
+            ry={2}
+            fill={`url(#${gradId})`}
+          />
+        </Svg>
+      ) : null}
     </View>
   );
 }
