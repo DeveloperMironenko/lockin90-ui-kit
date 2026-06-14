@@ -54,9 +54,10 @@
   flex-direction: column;
   gap: 12px;
 }
-/* When a header precedes the body, the gap between them is the native md (12px)
-   regardless of the body's own padding scale — matches the native card rhythm. */
-.lk-section-card-head + .lk-section-card-body {
+/* When a header precedes a NORMAL-padded body, tighten the top to the native md
+   (12px) header→body gap. Scoped to pad-normal ONLY so pad-none stays flush (0 —
+   for full-bleed tables/diffs) and pad-tight/loose keep their own uniform padding. */
+.lk-section-card-head + .lk-section-card-pad-normal {
   padding-top: 12px;
 }
 .lk-section-card-pad-tight {
