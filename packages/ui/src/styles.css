@@ -228,6 +228,32 @@
    by the Aurora tokens, so it passes OAuth / app-store brand review. Sits below
    the email/password form on the auth screens.
    ========================================================================== */
+/* ============================================================================
+   BackLink — left chevron + label, back-navigation affordance for sub-pages.
+   Mirrors the native @lockin90/ui-native BackLink (muted tone, same chevron).
+   ========================================================================== */
+.lk-backlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text-dim);
+  transition: color 0.15s var(--ease);
+}
+.lk-backlink:hover {
+  color: var(--text);
+}
+.lk-backlink-icon {
+  flex: none;
+}
+
 .lk-oauth {
   display: inline-flex;
   align-items: center;

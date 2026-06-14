@@ -2,6 +2,7 @@
 
 export * from './components/AuroraBackground';
 export * from './components/Avatar';
+export * from './components/BackLink';
 export * from './components/Badge';
 export * from './components/Banner';
 export * from './components/BarFill';
