@@ -45,6 +45,7 @@ export const colors = {
   accent: '#7C5CFF',
   accent2: '#22D3EE', // cyan
   accent3: '#34F5C5', // mint
+  crimson: '#E11D48', // quick-action accent (Log FAB)
 
   // ---- energy zones (signal colors, recolored away from the shipped red) ----
   zoneHigh: '#34F5C5',
@@ -212,6 +213,7 @@ export const cssVars: Record<string, string> = {
   '--accent': colors.accent,
   '--accent-2': colors.accent2,
   '--accent-3': colors.accent3,
+  '--crimson': colors.crimson,
   // zones / status
   '--zone-high': colors.zoneHigh,
   '--zone-mid': colors.zoneMid,

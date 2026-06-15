@@ -1292,7 +1292,7 @@
 /* Emphasised quick-action tab — a raised accent circle (FAB). The label sits
    below in the accent colour; the icon (currentColor) reads dark on the circle. */
 .lk-tabbar-item.lk-tabbar-primary {
-  color: var(--accent);
+  color: var(--crimson);
 }
 .lk-tabbar-item.lk-tabbar-primary:hover {
   transform: none;
@@ -1305,9 +1305,13 @@
   height: 46px;
   border-radius: var(--r-pill);
   margin-top: -20px;
-  background: var(--accent);
-  color: #07080d;
-  box-shadow: 0 4px 14px rgba(124, 92, 255, 0.5);
+  background: var(--crimson);
+  color: #fff;
+  /* Crimson glow ("lighting") — soft ring + halo + drop. */
+  box-shadow:
+    0 0 0 4px rgba(225, 29, 72, 0.16),
+    0 0 24px rgba(225, 29, 72, 0.7),
+    0 6px 16px rgba(225, 29, 72, 0.55);
 }
 
 /* ============================================================================
