@@ -1308,6 +1308,13 @@
 }
 .lk-appheader-left {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.lk-appheader-titles {
+  display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;

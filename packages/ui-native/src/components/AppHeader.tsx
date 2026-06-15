@@ -44,14 +44,11 @@ export function AppHeader({
     ? accountInitials.trim().split('').join(' ')
     : accountName;
 
+  // Account avatar on the LEFT, then the (optional) eyebrow + title stack; any
+  // trailing node is right-aligned.
   return (
     <View style={[styles.row, style]}>
       <View style={styles.left}>
-        {eyebrow ? <Text style={styles.eyebrow}>{eyebrow}</Text> : null}
-        {title ? <Text style={styles.title}>{title}</Text> : null}
-      </View>
-      <View style={styles.right}>
-        {trailing}
         <Pressable
           onPress={onAccountPress}
           accessibilityRole="button"
@@ -60,7 +57,14 @@ export function AppHeader({
         >
           <Avatar gradient="flux" name={avatarName} size={36} />
         </Pressable>
+        {eyebrow || title ? (
+          <View style={styles.titles}>
+            {eyebrow ? <Text style={styles.eyebrow}>{eyebrow}</Text> : null}
+            {title ? <Text style={styles.title}>{title}</Text> : null}
+          </View>
+        ) : null}
       </View>
+      {trailing ? <View style={styles.right}>{trailing}</View> : null}
     </View>
   );
 }
@@ -74,6 +78,13 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
   },
   left: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    flexShrink: 1,
+    minWidth: 0,
+  },
+  titles: {
     flexShrink: 1,
     minWidth: 0,
     gap: 2,

@@ -40,7 +40,18 @@ describe('@lockin90/ui — AppHeader', () => {
     expect(screen.getByRole('button', { name: 'Account' })).toBeInTheDocument();
   });
 
-  it('renders the trailing node before the avatar', () => {
+  it('renders the account avatar on the left, before the title', () => {
+    const { container } = render(<AppHeader title="Today" accountName="Mia Kohl" />);
+    const left = container.querySelector('.lk-appheader-left');
+    const account = left?.querySelector('.lk-appheader-account');
+    const titles = left?.querySelector('.lk-appheader-titles');
+    expect(account).toBeInTheDocument();
+    expect(titles).toBeInTheDocument();
+    // avatar (account button) comes before the title stack within the left group
+    expect(account?.compareDocumentPosition(titles!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('renders a right-aligned trailing node', () => {
     render(
       <AppHeader
         title="Today"

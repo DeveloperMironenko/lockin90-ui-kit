@@ -45,36 +45,36 @@ export default function AppHeader({
     : accountName;
   const avatar = <Avatar gradient="flux" name={avatarName} size={36} />;
   const accountLabel = accountName ?? 'Account';
+  const accountButton =
+    accountHref != null ? (
+      <a className="lk-appheader-account" href={accountHref} aria-label={accountLabel}>
+        {avatar}
+      </a>
+    ) : (
+      <button
+        type="button"
+        className="lk-appheader-account"
+        onClick={onAccountPress}
+        aria-label={accountLabel}
+      >
+        {avatar}
+      </button>
+    );
 
+  // Account avatar sits on the LEFT, then the (optional) eyebrow + title stack.
+  // Any `trailing` node is right-aligned.
   return (
     <header className={cn('lk-appheader', className)}>
       <div className="lk-appheader-left">
-        {eyebrow && <span className="lk-eyebrow">{eyebrow}</span>}
-        {title && (
-          <h1 className="lk-display lk-appheader-title">{title}</h1>
+        {accountButton}
+        {(eyebrow || title) && (
+          <div className="lk-appheader-titles">
+            {eyebrow && <span className="lk-eyebrow">{eyebrow}</span>}
+            {title && <h1 className="lk-display lk-appheader-title">{title}</h1>}
+          </div>
         )}
       </div>
-      <div className="lk-appheader-right">
-        {trailing}
-        {accountHref != null ? (
-          <a
-            className="lk-appheader-account"
-            href={accountHref}
-            aria-label={accountLabel}
-          >
-            {avatar}
-          </a>
-        ) : (
-          <button
-            type="button"
-            className="lk-appheader-account"
-            onClick={onAccountPress}
-            aria-label={accountLabel}
-          >
-            {avatar}
-          </button>
-        )}
-      </div>
+      {trailing && <div className="lk-appheader-right">{trailing}</div>}
     </header>
   );
 }
