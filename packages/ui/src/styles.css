@@ -1248,16 +1248,21 @@
 }
 
 /* mobile bottom tab bar */
+/* Floating glass pill (Aurora Flux mockup): rounded, blurred, hovering off the
+   bottom edge (the app positions it with margins). */
 .lk-tabbar {
   display: flex;
   align-items: center;
   justify-content: space-around;
   gap: 4px;
+  height: 62px;
   padding: 8px 10px;
-  border-top: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(8, 10, 18, 0.55), rgba(8, 10, 18, 0.92));
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  border-radius: 26px;
+  border: 1px solid var(--border);
+  background: rgba(12, 15, 26, 0.82);
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  box-shadow: 0 -8px 30px -10px rgba(0, 0, 0, 0.7);
 }
 .lk-tabbar-item {
   display: flex;
@@ -1279,6 +1284,24 @@
 }
 .lk-tabbar-item.lk-active {
   color: var(--text);
+}
+/* Active icon glows (energy gradient stroke + violet halo); a cyan dot sits
+   beneath the active tab. Mirrors the Aurora Flux mockup's `.tab.active`. */
+.lk-tabbar-item.lk-active svg {
+  stroke: url(#lk-tabgrad);
+  filter: drop-shadow(0 0 6px rgba(124, 92, 255, 0.6));
+}
+.lk-tabbar-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 6px var(--accent-2);
+  opacity: 0;
+  transition: opacity 0.25s var(--ease);
+}
+.lk-tabbar-item.lk-active .lk-tabbar-dot {
+  opacity: 1;
 }
 /* Inert "coming soon" tab — dim, non-interactive, rendered as a <span>. */
 .lk-tabbar-item.lk-disabled {

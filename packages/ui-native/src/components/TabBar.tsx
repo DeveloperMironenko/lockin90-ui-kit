@@ -62,6 +62,7 @@ export function TabBar({ items, style }: TabBarProps) {
           >
             {it.icon}
             <Text style={[styles.label, { color: tone }]}>{it.label}</Text>
+            <View style={[styles.dot, it.active && styles.dotActive]} />
           </Pressable>
         );
       })}
@@ -70,16 +71,24 @@ export function TabBar({ items, style }: TabBarProps) {
 }
 
 const styles = StyleSheet.create({
+  // Floating glass pill (Aurora Flux mockup). RN has no backdrop blur, so a
+  // near-opaque dark fill stands in for the web's blur.
   bar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
     gap: spacing.xs,
-    paddingVertical: spacing.sm,
+    height: 62,
     paddingHorizontal: 10,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    backgroundColor: colors.bg0,
+    borderRadius: 26,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: 'rgba(12,15,26,0.95)',
+    shadowColor: '#000',
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: -8 },
+    elevation: 16,
   },
   item: {
     flexDirection: 'column',
@@ -112,5 +121,21 @@ const styles = StyleSheet.create({
     fontSize: 9.5,
     letterSpacing: 0.6,
     textTransform: 'uppercase',
+  },
+  // Cyan dot beneath the active tab (web parity).
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.accent2,
+    opacity: 0,
+  },
+  dotActive: {
+    opacity: 1,
+    shadowColor: colors.accent2,
+    shadowOpacity: 0.9,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 4,
   },
 });
