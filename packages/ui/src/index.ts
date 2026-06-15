@@ -4,6 +4,8 @@ export * from './components/Accordion';
 export { default as Accordion } from './components/Accordion';
 export * from './components/Alert';
 export { default as Alert } from './components/Alert';
+export * from './components/AppHeader';
+export { default as AppHeader } from './components/AppHeader';
 export * from './components/AuroraBackground';
 export { default as AuroraBackground } from './components/AuroraBackground';
 export * from './components/AuthPanel';

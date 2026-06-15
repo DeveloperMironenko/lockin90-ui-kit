@@ -1270,6 +1270,66 @@
 .lk-tabbar-item.lk-active {
   color: var(--text);
 }
+/* Inert "coming soon" tab — dim, non-interactive, rendered as a <span>. */
+.lk-tabbar-item.lk-disabled {
+  color: var(--text-ghost);
+  cursor: default;
+  pointer-events: none;
+}
+.lk-tabbar-item.lk-disabled:hover {
+  transform: none;
+}
+
+/* ============================================================================
+   APP HEADER — top app bar (brand/title left · account avatar right)
+   Glass surface with a hairline bottom border; sticky-friendly. Mirrors the
+   look of `.lk-tabbar` (translucent glass + blur) but anchored to the top.
+   ========================================================================== */
+.lk-appheader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(8, 10, 18, 0.92), rgba(8, 10, 18, 0.55));
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+}
+.lk-appheader-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.lk-appheader-title {
+  font-size: 22px;
+  margin: 0;
+}
+.lk-appheader-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.lk-appheader-account {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.25s var(--ease);
+}
+.lk-appheader-account:hover {
+  transform: scale(1.06);
+}
+.lk-appheader-account:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
 /* ============================================================================
    TABLE

@@ -1,5 +1,6 @@
 // Generated barrel for @lockin90/ui-native — run scripts/gen-index.mjs to refresh.
 
+export * from './components/AppHeader';
 export * from './components/AuroraBackground';
 export * from './components/Avatar';
 export * from './components/BackLink';
@@ -31,5 +32,6 @@ export * from './components/Skeleton';
 export * from './components/StatBlock';
 export * from './components/StatusBadge';
 export * from './components/StepDots';
+export * from './components/TabBar';
 export * from './components/Toggle';
 export * from './components/Typography';
