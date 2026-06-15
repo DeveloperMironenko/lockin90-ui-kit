@@ -9,6 +9,8 @@ export interface TabBarItem {
   active?: boolean;
   /** Inert "coming soon" tab — rendered dim as a non-link `<span>`. */
   disabled?: boolean;
+  /** Emphasised quick-action tab — rendered as a raised accent circle (FAB). */
+  primary?: boolean;
 }
 
 export interface TabBarProps {
@@ -38,6 +40,16 @@ export default function TabBar({ items, className, linkComponent }: TabBarProps)
             {it.icon}
             <span>{it.label}</span>
           </span>
+        ) : it.primary ? (
+          <Link
+            key={it.key}
+            className={cn('lk-tabbar-item', 'lk-tabbar-primary')}
+            href={it.href}
+            aria-current={it.active ? 'page' : undefined}
+          >
+            <span className="lk-tabbar-fab">{it.icon}</span>
+            <span>{it.label}</span>
+          </Link>
         ) : (
           <Link
             key={it.key}

@@ -1289,6 +1289,26 @@
 .lk-tabbar-item.lk-disabled:hover {
   transform: none;
 }
+/* Emphasised quick-action tab — a raised accent circle (FAB). The label sits
+   below in the accent colour; the icon (currentColor) reads dark on the circle. */
+.lk-tabbar-item.lk-tabbar-primary {
+  color: var(--accent);
+}
+.lk-tabbar-item.lk-tabbar-primary:hover {
+  transform: none;
+}
+.lk-tabbar-fab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--r-pill);
+  margin-top: -20px;
+  background: var(--accent);
+  color: #07080d;
+  box-shadow: 0 4px 14px rgba(124, 92, 255, 0.5);
+}
 
 /* ============================================================================
    APP HEADER — top app bar (brand/title left · account avatar right)
