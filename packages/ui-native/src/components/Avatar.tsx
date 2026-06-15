@@ -24,11 +24,17 @@ export interface AvatarProps {
 // multiple gradient avatars on one screen don't share a gradient def).
 let gradSeq = 0;
 
+// Up-to-2-letter initials — first letter of up to two words. Kept byte-identical to
+// the web @lockin90/ui Avatar (`initialsFrom`) so the shared AppHeader renders the
+// SAME letters on both platforms for every name shape (web↔native parity).
 function initials(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return '';
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  return name
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('');
 }
 
 export function Avatar({ name = '', size = 38, gradient = 'flux', style }: AvatarProps) {

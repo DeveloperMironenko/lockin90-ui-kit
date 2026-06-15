@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import type { ViewStyle, StyleProp } from 'react-native';
-import { colors, fonts, spacing, letterSpacing } from '@lockin90/tokens';
+import { colors, fonts, spacing, letterSpacing, fontSizes } from '@lockin90/tokens';
 import { Avatar } from './Avatar';
 
 export interface AppHeaderProps {
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   eyebrow: {
     fontFamily: fonts.mono,
-    fontSize: 11,
+    fontSize: fontSizes.xs,
     letterSpacing: letterSpacing.eyebrow,
     textTransform: 'uppercase',
     color: colors.textDim,
