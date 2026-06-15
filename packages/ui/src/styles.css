@@ -1196,6 +1196,16 @@
   background: var(--grad-cta);
   box-shadow: 0 0 12px rgba(124, 92, 255, 0.7);
 }
+/* Inert "coming soon" item — dim, non-interactive, rendered as a <span>. */
+.lk-nav-item.lk-disabled {
+  color: var(--text-ghost);
+  cursor: default;
+  pointer-events: none;
+}
+.lk-nav-item.lk-disabled:hover {
+  background: transparent;
+  color: var(--text-ghost);
+}
 .lk-nav-badge {
   margin-left: auto;
   font-family: var(--font-mono);
