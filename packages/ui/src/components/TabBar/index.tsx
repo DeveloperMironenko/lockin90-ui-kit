@@ -30,6 +30,25 @@ export default function TabBar({ items, className, linkComponent }: TabBarProps)
   const Link: ElementType = linkComponent ?? 'a';
   return (
     <nav className={cn('lk-tabbar', className)} aria-label="Primary">
+      {/* Energy-spectrum gradient for the ACTIVE tab's icon stroke. A gradient
+          stroke has no CSS equivalent — it needs an SVG <defs> in the DOM — so
+          this hidden, out-of-flow 0×0 svg is that gradient source, referenced by
+          `.lk-tabbar-item.lk-active svg { stroke: url(#lk-tabgrad) }`. */}
+      <svg
+        width="0"
+        height="0"
+        aria-hidden="true"
+        focusable="false"
+        style={{ position: 'absolute' }}
+      >
+        <defs>
+          <linearGradient id="lk-tabgrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#A8FF35" />
+            <stop offset="0.5" stopColor="#22D3EE" />
+            <stop offset="1" stopColor="#7C5CFF" />
+          </linearGradient>
+        </defs>
+      </svg>
       {items.map((it) =>
         it.disabled ? (
           <span

@@ -1285,9 +1285,11 @@
 .lk-tabbar-item.lk-active {
   color: var(--text);
 }
-/* Active icon glows (bright currentColor + violet halo); a cyan dot sits beneath
-   the active tab. Mirrors the Aurora Flux mockup's `.tab.active` (web ≡ native). */
+/* Active icon: energy-spectrum gradient stroke (via the #lk-tabgrad def the
+   TabBar renders) + a violet halo; a cyan dot sits beneath. Mirrors the Aurora
+   Flux mockup's `.tab.active .icon { stroke: url(#tabgrad) }`. */
 .lk-tabbar-item.lk-active svg {
+  stroke: url(#lk-tabgrad);
   filter: drop-shadow(0 0 6px rgba(124, 92, 255, 0.6));
 }
 .lk-tabbar-dot {
@@ -1314,7 +1316,7 @@
 /* Emphasised quick-action tab — a raised accent circle (FAB). The label sits
    below in the accent colour; the icon (currentColor) reads dark on the circle. */
 .lk-tabbar-item.lk-tabbar-primary {
-  color: var(--crimson);
+  color: var(--accent);
 }
 .lk-tabbar-item.lk-tabbar-primary:hover {
   transform: none;
@@ -1327,13 +1329,13 @@
   height: 46px;
   border-radius: var(--r-pill);
   margin-top: -20px;
-  background: var(--crimson);
+  background: var(--accent);
   color: #fff;
-  /* Crimson glow ("lighting") — soft ring + halo + drop. */
+  /* Accent (indigo-violet) glow — soft ring + halo + drop. */
   box-shadow:
-    0 0 0 4px rgba(225, 29, 72, 0.16),
-    0 0 24px rgba(225, 29, 72, 0.7),
-    0 6px 16px rgba(225, 29, 72, 0.55);
+    0 0 0 4px rgba(124, 92, 255, 0.16),
+    0 0 24px rgba(124, 92, 255, 0.7),
+    0 6px 16px rgba(124, 92, 255, 0.55);
 }
 
 /* ============================================================================

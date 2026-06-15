@@ -42,7 +42,7 @@ export function TabBar({ items, style }: TabBarProps) {
               style={({ pressed }) => [styles.item, pressed && styles.pressed]}
             >
               <View style={styles.fab}>{it.icon}</View>
-              <Text style={[styles.label, { color: colors.crimson }]}>{it.label}</Text>
+              <Text style={[styles.label, { color: colors.accent }]}>{it.label}</Text>
             </Pressable>
           );
         }
@@ -105,9 +105,9 @@ const styles = StyleSheet.create({
     marginTop: -20,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.crimson,
-    // Crimson glow ("lighting").
-    shadowColor: colors.crimson,
+    backgroundColor: colors.accent,
+    // Accent (indigo-violet) glow.
+    shadowColor: colors.accent,
     shadowOpacity: 0.8,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 2 },
