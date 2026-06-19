@@ -72,6 +72,8 @@ export * from './components/KebabMenu';
 export { default as KebabMenu } from './components/KebabMenu';
 export * from './components/KpiCard';
 export { default as KpiCard } from './components/KpiCard';
+export * from './components/Mark';
+export { default as Mark } from './components/Mark';
 export * from './components/Marquee';
 export { default as Marquee } from './components/Marquee';
 export * from './components/MiniEnergyRing';

@@ -17,6 +17,7 @@ export * from './components/EmptyState';
 export * from './components/FormRow';
 export * from './components/GradientText';
 export * from './components/Input';
+export * from './components/Mark';
 export * from './components/MiniEnergyRing';
 export { default as MiniEnergyRing } from './components/MiniEnergyRing';
 export * from './components/OAuthButton';
