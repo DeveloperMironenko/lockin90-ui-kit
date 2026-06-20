@@ -1,30 +1,7 @@
-// @lockin90/ui/admin — operator-surface primitives (Aurora rebuild).
-// Each component lives in ./admin/<Name>/{index.tsx,types.ts}; the per-component `types`
-// is also reachable directly via the `@lockin90/ui/admin/<Name>/types` subpath export.
+// @lockin90/ui/admin — operator-surface primitives.
+//
+// CLEAN-SLATE REBUILD (2026-06-20): emptied ahead of the all-new kit. Old admin
+// components are preserved at branch `archive/ui-kit-aurora-flux`. Re-add exports
+// here as the admin surface is rebuilt (`export * from './admin/<Name>'`).
 
-export * from './admin/AdminGateBanner';
-export { default as AdminGateBanner } from './admin/AdminGateBanner';
-export * from './admin/ApprovalTimeline';
-export { default as ApprovalTimeline } from './admin/ApprovalTimeline';
-export * from './admin/AuditEntry';
-export { default as AuditEntry } from './admin/AuditEntry';
-export * from './admin/CommandPalette';
-export { default as CommandPalette } from './admin/CommandPalette';
-export * from './admin/ComparisonResultRow';
-export { default as ComparisonResultRow } from './admin/ComparisonResultRow';
-export * from './admin/DataTable';
-export { default as DataTable } from './admin/DataTable';
-export * from './admin/EnvIndicator';
-export { default as EnvIndicator } from './admin/EnvIndicator';
-export * from './admin/FilterBuilder';
-export { default as FilterBuilder } from './admin/FilterBuilder';
-export * from './admin/ParameterDiffPreview';
-export { default as ParameterDiffPreview } from './admin/ParameterDiffPreview';
-export * from './admin/RolloutScopeBadge';
-export { default as RolloutScopeBadge } from './admin/RolloutScopeBadge';
-export * from './admin/RolloutWaveWizard';
-export { default as RolloutWaveWizard } from './admin/RolloutWaveWizard';
-export * from './admin/TypedConfirmModal';
-export { default as TypedConfirmModal } from './admin/TypedConfirmModal';
-export * from './admin/VersionStatusPill';
-export { default as VersionStatusPill } from './admin/VersionStatusPill';
+export {};

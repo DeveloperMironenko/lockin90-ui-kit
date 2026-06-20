@@ -1,4 +1,0 @@
-/* StandalonePasswordInput reuses the shared `.lk-input`, `.lk-password`,
-   `.lk-password-input`, and `.lk-password-toggle` classes (defined alongside
-   Input / PasswordInput). This file exists for per-component css convention
-   parity; no extra rules are required. */

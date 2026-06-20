@@ -1,3 +1,0 @@
-/* ButtonLink reuses the shared `.lk-btn` / `.lk-btn-primary` / `.lk-btn-ghost`
-   classes (defined alongside Button). Nothing extra is required here; this file
-   exists for parity with the per-component css convention. */

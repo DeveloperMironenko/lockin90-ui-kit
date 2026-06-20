@@ -1,16 +1,7 @@
-// @lockin90/ui/marketing — presentational primitives for the marketing site (Aurora rebuild).
-// Named exports only (the marketing app imports { Section, Container, ... }). Typography
-// provides Heading/Body/Eyebrow/Mono; Field provides Input/Textarea; Section provides
-// Section + SectionHeader; Icon provides Icon + the IconName type; Accordion the AccordionItem type.
+// @lockin90/ui/marketing — presentational primitives for the marketing site.
+//
+// CLEAN-SLATE REBUILD (2026-06-20): emptied ahead of the all-new kit. Old
+// marketing components are preserved at branch `archive/ui-kit-aurora-flux`.
+// Re-add exports here as the marketing surface is rebuilt.
 
-export * from './marketing/Container';
-export * from './marketing/Section';
-export * from './marketing/Card';
-export * from './marketing/Pill';
-export * from './marketing/Stat';
-export * from './marketing/Icon';
-export * from './marketing/IconBadge';
-export * from './marketing/Typography';
-export * from './marketing/Accordion';
-export * from './marketing/Field';
-export * from './marketing/Reveal';
+export {};

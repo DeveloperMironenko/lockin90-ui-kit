@@ -1,6 +1,0 @@
-/* SkeletonList stacks shared `.lk-skeleton` rows; layout is inline (flex column
-   + gap). This file exists for per-component css convention parity. */
-.lk-skeleton-list {
-  display: flex;
-  flex-direction: column;
-}
