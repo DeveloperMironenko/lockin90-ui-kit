@@ -1,58 +1,48 @@
-# UI Kit — Clean-Slate Rebuild
+# UI Kit — Full Wipe for 100% Rebuild
 
-**2026-06-20.** The kit was stripped to a buildable skeleton ahead of an
-**all-new** setup: new design tokens, new component library, and new build
-tooling. This file is the map of what was removed, what was kept, and where the
-old kit lives.
+**2026-06-20.** Every package was wiped to a **bare empty directory** ahead of a
+**100% from-scratch rebuild** — new design tokens, new component library, and new
+build tooling. Nothing of the old kit's source or scaffolding remains in-tree.
 
-## The old setup is fully saved
+## The old kit is fully saved
 
-The complete previous kit ("Aurora Flux" — tokens, all components, and every
-build config) is preserved verbatim. Nothing is lost:
+The complete previous kit ("Aurora Flux" — tokens, all components, and every build
+config) is preserved verbatim. Nothing is lost:
 
 | Ref | Points at |
 | --- | --- |
 | branch `archive/ui-kit-aurora-flux` | full kit at commit `5144a99` |
 | tag `archive/ui-kit-aurora-flux-2026-06-20` | same snapshot, immutable |
 
-Restore or copy any old component with e.g.
+Restore or copy anything with e.g.
 `git checkout archive/ui-kit-aurora-flux -- packages/ui/src/components/EnergyRing`.
 
-> ⚠️ `main` is **untouched** — every consuming app still builds the old kit from
-> `ui-kit@main` via its `build-image.yml`. Do **not** merge this rebuild branch
-> to `main` until the apps are migrated to the new kit, or every app build breaks.
+> ⚠️ `main` (this branch) now has **no buildable packages**. Every consuming app
+> builds `@lockin90/ui` from `ui-kit@main` — their builds will fail until the new
+> kit is built and the apps are migrated. Don't push to the apps' build pipeline
+> expecting green until the rebuild lands.
 
-## What was removed on this branch (`rebuild/clean-slate`)
+## What was wiped
 
-- `@lockin90/ui` — **83** web components + **13** admin + **11** marketing + tests
-- `@lockin90/ui-native` — **33** native components
-- `@lockin90/tokens` — old token values (`tokens.ts`) + token test
-- the `lk-*` base stylesheet (`packages/ui/src/styles.css`, ~1500 lines)
+All three packages were emptied completely — source **and** build scaffolding
+(`package.json`, `tsup`/`builder-bob`/Storybook/vitest configs, `tsconfig*`, the
+`gen-index`/`copy-assets`/`generate-css` scripts, `cn.ts`, placeholder tokens):
 
-## What was kept (the skeleton)
+- `packages/tokens/`  → bare (only `.gitkeep`)
+- `packages/ui/`      → bare (only `.gitkeep`)
+- `packages/ui-native/` → bare (only `.gitkeep`)
 
-The **workspace + per-package shell** is intact so the rebuild has a foundation:
+## What remains (workspace shell only)
 
-- pnpm workspace (`pnpm-workspace.yaml`, root `package.json`, `tsconfig.base.json`)
-- each package's `package.json` (incl. its `exports` map), `tsup.config.ts` /
-  builder-bob config, `tsconfig*.json`, vitest config, Storybook config
-- the barrel generators (`scripts/gen-index.mjs`) and `scripts/copy-assets.mjs`,
-  `scripts/generate-css.mjs`
-- `packages/ui/src/cn.ts` (generic classNames util)
-- emptied, still-valid entry points: each package's `src/index.ts`,
-  `packages/ui/src/{admin,marketing}.ts`, base `styles.css`, placeholder `tokens.ts`
+The monorepo container is intact so the rebuild has somewhere to land:
 
-> The kept build tooling (tsup / builder-bob / Storybook) is a **placeholder**.
-> The rebuild is "all-new" tooling too — these files stay only so the repo stays
-> coherent and are expected to be replaced once the new setup target is chosen.
+- `pnpm-workspace.yaml`, root `package.json`, `tsconfig.base.json`
+- `.changeset/`, `.gitignore`, `README.md`, `MIGRATION-AURORA.md`, this file
 
-## Next: the all-new setup (pending input)
+These were **not** part of the "packages" wipe. Replace/rebuild them too if the
+new setup calls for it — say the word and I'll wipe the root shell as well.
 
-Still needed before rebuilding components:
+## Next
 
-1. **New build tooling target** — bundler / framework (e.g. tsup vs Vite library
-   mode vs tsc, Tailwind/shadcn vs CSS-vars, Storybook vs alternative).
-2. **New token system** — the values + the CSS-var / TS-export shape.
-3. **Package shape** — confirm the 3-package split (tokens / ui / ui-native) stays.
-
-Once those are decided, the rebuild lands here on `rebuild/clean-slate`.
+Rebuild the three packages 100% with the new tooling + tokens + components.
+Confirm whether the `tokens` / `ui` / `ui-native` split stays before scaffolding.

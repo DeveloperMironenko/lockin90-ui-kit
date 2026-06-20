@@ -1,8 +1,0 @@
-/* Storybook-only base. The Aurora tokens + component layer are imported as JS
- * modules in preview.ts (Vite resolves them); this just dresses the docs canvas
- * on the deep-void background in Inter. Consuming apps supply their own body. */
-body {
-  font-family: var(--font-ui);
-  color: var(--text);
-  background: var(--bg-0);
-}
