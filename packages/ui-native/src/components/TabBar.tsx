@@ -1,7 +1,10 @@
 import type { ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import type { ViewStyle, StyleProp } from 'react-native';
-import { colors, fonts, spacing } from '@lockin90/tokens';
+import Svg, { Defs, LinearGradient, Stop, Circle } from 'react-native-svg';
+import { colors, fonts, spacing, gradientStops } from '@lockin90/tokens';
+
+const FAB_SIZE = 46;
 
 export interface TabBarItem {
   key: string;
@@ -41,7 +44,37 @@ export function TabBar({ items, style }: TabBarProps) {
               accessibilityState={{ selected: !!it.active, disabled: !!it.disabled }}
               style={({ pressed }) => [styles.item, pressed && styles.pressed]}
             >
-              <View style={styles.fab}>{it.icon}</View>
+              <View style={styles.fab}>
+                {/* Violet→cyan gradient (the kit's `cta` — same as the primary
+                    Button), painted via react-native-svg behind the icon. */}
+                <Svg
+                  width={FAB_SIZE}
+                  height={FAB_SIZE}
+                  style={StyleSheet.absoluteFill}
+                  pointerEvents="none"
+                >
+                  <Defs>
+                    <LinearGradient
+                      id="lk-fabgrad"
+                      x1="0"
+                      y1="0"
+                      x2={FAB_SIZE}
+                      y2={FAB_SIZE}
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      {gradientStops.cta.map((c, i) => (
+                        <Stop
+                          key={`${c}-${i}`}
+                          offset={i / (gradientStops.cta.length - 1)}
+                          stopColor={c}
+                        />
+                      ))}
+                    </LinearGradient>
+                  </Defs>
+                  <Circle cx={FAB_SIZE / 2} cy={FAB_SIZE / 2} r={FAB_SIZE / 2} fill="url(#lk-fabgrad)" />
+                </Svg>
+                {it.icon}
+              </View>
               <Text style={[styles.label, { color: colors.accent }]}>{it.label}</Text>
             </Pressable>
           );

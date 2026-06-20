@@ -1329,9 +1329,10 @@
   height: 46px;
   border-radius: var(--r-pill);
   margin-top: -20px;
-  background: var(--accent);
+  /* The same violet→cyan gradient the primary buttons use (--grad-cta) — not a
+     bespoke colour. White icon on top; violet glow. */
+  background: var(--grad-cta);
   color: #fff;
-  /* Accent (indigo-violet) glow — soft ring + halo + drop. */
   box-shadow:
     0 0 0 4px rgba(124, 92, 255, 0.16),
     0 0 24px rgba(124, 92, 255, 0.7),
