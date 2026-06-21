@@ -125,7 +125,7 @@ export function ActivityTimeline({ items = DEFAULT_ITEMS, style }: ActivityTimel
 
 export type { TimelineItem as ActivityTimelineItem };
 
-const RAIL_LEFT = 44 + 13 + 24 / 2 - 0.75; // align with center of the 24px node column
+const RAIL_LEFT = 2 + 4 + 44 + 13 + 24 / 2 - 0.75; // center on node col: tlPad(2)+rowPad(4)+time(44)+gap(13)+half(12)
 
 const styles = StyleSheet.create({
   tl: { position: 'relative', paddingLeft: 2 },

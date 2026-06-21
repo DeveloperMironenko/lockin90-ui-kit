@@ -6,7 +6,8 @@
 
 /* the connecting line behind the nodes */
 .lk-tl-rail {
-  position: absolute; left: 60px; top: 18px; bottom: 18px; width: 1.5px;
+  /* center on the node column: padding-left(2) + time(44) + gap(13) + ½ node col(12) = 75px */
+  position: absolute; left: 75px; transform: translateX(-50%); top: 18px; bottom: 18px; width: 1.5px;
   background: linear-gradient(180deg, var(--border-2), var(--border) 60%, transparent);
 }
 
