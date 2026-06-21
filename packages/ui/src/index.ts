@@ -143,3 +143,17 @@ export { SegmentedDonut } from './components/SegmentedDonut';
 export type { SegmentedDonutProps, DonutSegment } from './components/SegmentedDonut';
 export { InsightOfDay } from './components/InsightOfDay';
 export type { InsightOfDayProps } from './components/InsightOfDay';
+
+// — Wave 9a —
+export { ChatThread } from './components/ChatThread';
+export type { ChatThreadProps, ChatMessage } from './components/ChatThread';
+export { CorrelationCallout } from './components/CorrelationCallout';
+export type { CorrelationCalloutProps, CorrelationItem } from './components/CorrelationCallout';
+export { JournalComposer } from './components/JournalComposer';
+export type { JournalComposerProps, JournalPrompt, JournalMood } from './components/JournalComposer';
+export { PersonaSwitch } from './components/PersonaSwitch';
+export type { PersonaSwitchProps, Persona } from './components/PersonaSwitch';
+export { AthleteRosterCard } from './components/AthleteRosterCard';
+export type { AthleteRosterCardProps, Athlete } from './components/AthleteRosterCard';
+export { PersonalRecords } from './components/PersonalRecords';
+export type { PersonalRecordsProps, PersonalRecord } from './components/PersonalRecords';

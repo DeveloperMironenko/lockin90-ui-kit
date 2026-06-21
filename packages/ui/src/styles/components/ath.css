@@ -1,0 +1,48 @@
+/* ============================================================================
+   Athlete roster card — a coach-side card for one athlete: a gradient avatar
+   (good=cta / warn=violet) with an online/offline status dot, name + status
+   chip + last-sync line, a 4-tile metric grid (energy / sleep / readiness /
+   compliance, each tinted by zone), a 7-day trend sparkline in the footer and
+   an amber attention treatment + alert chip when the athlete needs attention.
+   Key: .lk-ath  —  attention flag: .lk-ath-card.lk-ath-flag
+        metric zones: .lk-ath-tile.lk-ath-zh / .lk-ath-zm / .lk-ath-zl
+   ========================================================================== */
+.lk-ath-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+@media (max-width: 720px) { .lk-ath-grid { grid-template-columns: 1fr; } }
+
+.lk-ath-card { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; cursor: pointer; transition: border-color .25s ease, transform .25s ease; }
+.lk-ath-card:hover { transform: translateY(-2px); }
+.lk-ath-card.lk-ath-flag { border-color: rgba(255,176,32,.55); box-shadow: inset 0 0 0 1px rgba(255,176,32,.18), 0 0 24px -10px rgba(255,176,32,.4); }
+
+/* header — avatar + status dot, name + status chip, last-sync line, chevron */
+.lk-ath-top { display: flex; align-items: center; gap: 13px; }
+.lk-ath-av { position: relative; width: 50px; height: 50px; flex: 0 0 50px; border-radius: 15px; display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: 17px; color: #07080d; }
+.lk-ath-av.lk-ath-good { background: var(--grad-cta); }
+.lk-ath-av.lk-ath-warn { background: var(--grad-violet); }
+.lk-ath-av .lk-ath-st { position: absolute; right: -4px; bottom: -4px; width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; background: var(--glass); border: 2px solid var(--glass); }
+.lk-ath-av .lk-ath-dot { width: 8px; height: 8px; border-radius: 50%; }
+.lk-ath-av .lk-ath-dot.lk-ath-on { background: var(--zone-high); box-shadow: 0 0 8px var(--zone-high); }
+.lk-ath-av .lk-ath-dot.lk-ath-off { background: var(--zone-low); box-shadow: 0 0 8px var(--zone-low); }
+.lk-ath-id { min-width: 0; }
+.lk-ath-name { font-family: var(--font-display); font-weight: 700; font-size: 16px; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; color: var(--text); }
+.lk-ath-spec { font-size: 12px; color: var(--text-dim); margin-top: 1px; }
+.lk-ath-chev { margin-left: auto; width: 18px; height: 18px; stroke: var(--text-faint); stroke-width: 1.8; fill: none; flex: 0 0 18px; transition: transform .25s ease; }
+.lk-ath-card:hover .lk-ath-chev { transform: translateX(3px); stroke: var(--text); }
+
+/* metric grid — 4 zone-tinted tiles */
+.lk-ath-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.lk-ath-tile { padding: 9px 10px; border-radius: var(--r-sm); background: var(--glass-2); border: 1px solid var(--border); position: relative; overflow: hidden; }
+.lk-ath-tile::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+.lk-ath-tile.lk-ath-zh::before { background: var(--zone-high); }
+.lk-ath-tile.lk-ath-zm::before { background: var(--zone-mid); }
+.lk-ath-tile.lk-ath-zl::before { background: var(--zone-low); }
+.lk-ath-k { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .1em; }
+.lk-ath-v { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -.01em; margin-top: 2px; color: var(--text); display: flex; align-items: baseline; gap: 3px; }
+.lk-ath-v .lk-ath-u { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); font-weight: 400; }
+
+/* footer — optional alert chip, 7-day trend label + sparkline */
+.lk-ath-foot { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; padding-top: 12px; border-top: 1px solid var(--border); }
+.lk-ath-sync { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); display: inline-flex; align-items: center; gap: 6px; }
+.lk-ath-sync svg { width: 12px; height: 12px; stroke: currentColor; stroke-width: 1.7; fill: none; }
+.lk-ath-spark { width: 84px; height: 26px; margin-left: auto; overflow: visible; flex: 0 0 84px; }
+.lk-ath-alert { width: 100%; }
