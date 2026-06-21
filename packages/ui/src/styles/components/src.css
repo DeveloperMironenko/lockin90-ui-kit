@@ -1,0 +1,51 @@
+/* ============================================================================
+   Data-source card (.lk-src) — connected-integration card: provider logo tile,
+   name + kind, and a connected / disconnected status pill.
+   Bare shared bits reuse primitives (.lk-card on the article; .lk-chip on the
+   status pill). Only .lk-src-* layout/visuals live here.
+   ========================================================================== */
+
+.lk-src-card { display: flex; flex-direction: column; }
+
+.lk-src-top { display: flex; align-items: flex-start; gap: 14px; }
+
+.lk-src-logo {
+  width: 52px; height: 52px; flex: 0 0 52px;
+  border-radius: 14px;
+  display: grid; place-items: center;
+  border: 1px solid var(--border);
+  background: var(--bg-1);
+  position: relative; overflow: hidden;
+}
+.lk-src-logo svg { width: 28px; height: 28px; }
+
+.lk-src-head { flex: 1; min-width: 0; }
+.lk-src-name {
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: 700; letter-spacing: -0.01em;
+  color: var(--text);
+}
+.lk-src-kind {
+  font-family: var(--font-mono);
+  font-size: 10.5px; color: var(--text-faint);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-top: 2px;
+}
+
+/* Status pill — a .lk-chip; .lk-connected lights it green, default reads dim. */
+.lk-src-status { margin-left: auto; }
+.lk-src-status::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor; box-shadow: 0 0 8px currentColor;
+}
+.lk-src-status.lk-connected {
+  color: var(--zone-high);
+  border-color: rgba(52, 245, 197, 0.35);
+  background: rgba(52, 245, 197, 0.08);
+}
+.lk-src-status.lk-connected::before { animation: lk-src-pulse 1.8s ease infinite; }
+
+@keyframes lk-src-pulse {
+  0%, 100% { box-shadow: 0 0 8px currentColor; opacity: 1; }
+  50%      { box-shadow: 0 0 14px currentColor; opacity: 0.55; }
+}

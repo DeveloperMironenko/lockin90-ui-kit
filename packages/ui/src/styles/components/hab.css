@@ -1,0 +1,67 @@
+/* ============================================================================
+   Habit row — name + streak flame + 7-day dot strip (done/missed) + compliance.
+   Renamed from design `.uik-hab-*`. Bare shared classes use kit primitives
+   (.lk-chip, .lk-card, .lk-mono, .lk-tnum, .lk-display).
+   ========================================================================== */
+
+.lk-hab-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px 16px;
+  align-items: center;
+  padding: 13px 15px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--glass);
+  transition: border-color .3s var(--ease), background .3s var(--ease);
+}
+.lk-hab-row:hover { border-color: var(--border-2); }
+
+/* main column: name + meta */
+.lk-hab-main { min-width: 0; }
+.lk-hab-name {
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.lk-hab-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+}
+.lk-hab-when { color: var(--text-dim); }
+
+/* streak flame */
+.lk-hab-flame {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--zone-mid);
+}
+.lk-hab-flame svg { width: 13px; height: 13px; stroke: var(--zone-mid); stroke-width: 1.6; fill: none; }
+
+/* 7-day dot strip */
+.lk-hab-strip {
+  display: inline-grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.lk-hab-cell {
+  width: 11px;
+  height: 11px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+}
+.lk-hab-cell.lk-hab-done { background: rgba(52, 245, 197, 0.7); }
+.lk-hab-cell.lk-hab-missed { background: rgba(255, 77, 109, 0.55); }

@@ -1,0 +1,67 @@
+/* ============================================================================
+   Activity timeline — vertical rail of connected dots; each row is
+   time · node · body (title + sub + category) · impact.  Key: .lk-tl
+   ========================================================================== */
+.lk-tl { position: relative; padding-left: 2px; }
+
+/* the connecting line behind the nodes */
+.lk-tl-rail {
+  position: absolute; left: 60px; top: 18px; bottom: 18px; width: 1.5px;
+  background: linear-gradient(180deg, var(--border-2), var(--border) 60%, transparent);
+}
+
+.lk-tl-row {
+  position: relative;
+  display: grid; grid-template-columns: 44px 24px 1fr auto; gap: 13px;
+  align-items: start; padding: 12px 4px;
+}
+
+.lk-tl-time {
+  font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint);
+  text-align: right; padding-top: 5px; white-space: nowrap;
+}
+
+/* node = ring with inner dot, sits on the rail */
+.lk-tl-node {
+  position: relative; z-index: 1; width: 16px; height: 16px; margin: 3px auto 0;
+  border-radius: 50%; display: grid; place-items: center;
+  border: 1.5px solid var(--border-2); background: var(--glass-2);
+}
+.lk-tl-node i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-faint); }
+
+.lk-tl-row.lk-active .lk-tl-node {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.12), 0 0 14px -2px var(--accent);
+}
+.lk-tl-row.lk-active .lk-tl-node i { background: var(--accent); }
+.lk-tl-row.lk-high .lk-tl-node { border-color: var(--zone-high); }
+.lk-tl-row.lk-high .lk-tl-node i { background: var(--zone-high); }
+.lk-tl-row.lk-low .lk-tl-node { border-color: var(--zone-low); }
+.lk-tl-row.lk-low .lk-tl-node i { background: var(--zone-low); }
+
+.lk-tl-body { min-width: 0; padding-top: 1px; }
+.lk-tl-title {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-weight: 600; font-size: 14px; color: var(--text);
+}
+.lk-tl-ic {
+  width: 26px; height: 26px; border-radius: 8px; flex: 0 0 26px;
+  display: grid; place-items: center;
+  border: 1px solid var(--border); background: rgba(255, 255, 255, 0.04);
+  color: var(--lk-tl-ecol, var(--accent));
+}
+.lk-tl-ic svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 1.6; fill: none; }
+
+.lk-tl-sub { font-size: 12.5px; color: var(--text-dim); margin-top: 4px; line-height: 1.45; }
+.lk-tl-cat {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-faint); margin-top: 6px;
+}
+
+.lk-tl-impact {
+  align-self: center; font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+  padding: 3px 9px; border-radius: var(--r-pill); white-space: nowrap;
+  color: var(--text-dim); border: 1px solid var(--border); background: var(--glass);
+}
+.lk-tl-impact.lk-high { color: var(--zone-high); border-color: rgba(52, 245, 197, 0.35); background: rgba(52, 245, 197, 0.08); }
+.lk-tl-impact.lk-low { color: var(--zone-low); border-color: rgba(255, 77, 109, 0.35); background: rgba(255, 77, 109, 0.08); }

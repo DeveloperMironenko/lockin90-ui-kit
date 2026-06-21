@@ -28,3 +28,20 @@ export { Pulse } from './components/Pulse';
 export type { PulseProps } from './components/Pulse';
 export { Divider } from './components/Divider';
 export type { DividerProps } from './components/Divider';
+export { HabitRow } from './components/HabitRow';
+export type { HabitRowProps } from './components/HabitRow';
+export { DataSourceCard } from './components/DataSourceCard';
+export type { DataSourceCardProps, DataSourceStatus } from './components/DataSourceCard';
+export { InsightCard } from './components/InsightCard';
+export type { InsightCardProps, InsightChips } from './components/InsightCard';
+export { GoalProgress } from './components/GoalProgress';
+export type { GoalProgressProps, GoalDomain, GoalProgressTone } from './components/GoalProgress';
+export { ActivityTimeline } from './components/ActivityTimeline';
+export type {
+  ActivityTimelineProps,
+  ActivityTimelineItem,
+  TimelineItem,
+  TimelineTone,
+} from './components/ActivityTimeline';
+export { MealEntry } from './components/MealEntry';
+export type { MealEntryProps, MealMacros } from './components/MealEntry';
