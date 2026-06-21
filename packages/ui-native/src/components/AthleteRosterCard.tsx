@@ -165,7 +165,7 @@ export function AthleteRosterCard({ athletes = DEFAULT_ATHLETES, style }: Athlet
               {a.metrics.map((m, mi) => (
                 <View key={mi} style={styles.tile}>
                   <View style={[styles.tileRail, { backgroundColor: ZONE_COLOR[m.zone ?? 'high'] }]} />
-                  <Text style={styles.k}>{m.label.toUpperCase()}</Text>
+                  <Text style={styles.k} numberOfLines={1}>{m.label.toUpperCase()}</Text>
                   <View style={styles.vRow}>
                     <Text style={styles.v}>{m.value}</Text>
                     {m.unit ? <Text style={styles.u}>{m.unit}</Text> : null}
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   tileRail: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 3 },
-  k: { fontFamily: fonts.mono, fontSize: 9, color: colors.textFaint, textTransform: 'uppercase', letterSpacing: 0.9 },
+  k: { fontFamily: fonts.mono, fontSize: 8.5, color: colors.textFaint, textTransform: 'uppercase', letterSpacing: 0.45 },
   vRow: { flexDirection: 'row', alignItems: 'baseline', gap: 3, marginTop: 2 },
   v: { fontFamily: fonts.display, fontWeight: '700', fontSize: 17, letterSpacing: -0.17, color: colors.text },
   u: { fontFamily: fonts.mono, fontSize: 10, color: colors.textFaint, fontWeight: '400' },
