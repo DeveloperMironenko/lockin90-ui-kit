@@ -1,0 +1,14 @@
+/* ============================================================================
+   Icon — shared inline-SVG glyph set. The SVG strokes/fills use currentColor,
+   so an icon takes the text color of whatever it sits in.
+   Key: .lk-icon — inline-flex wrapper that vertically centers the glyph.
+   ========================================================================== */
+.lk-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+.lk-icon svg {
+  display: block;
+}

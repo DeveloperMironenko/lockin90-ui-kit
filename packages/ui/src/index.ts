@@ -171,3 +171,13 @@ export { VisionViewport } from './components/VisionViewport';
 export type { VisionViewportProps, VisionDetection } from './components/VisionViewport';
 export { GoalSettingCard } from './components/GoalSettingCard';
 export type { GoalSettingCardProps, GoalFrequency } from './components/GoalSettingCard';
+
+// — Exercise-detail foundation —
+export { Icon } from './components/Icon';
+export type { IconProps, IconName } from './components/Icon';
+export { SegmentedTabs } from './components/SegmentedTabs';
+export type { SegmentedTabsProps } from './components/SegmentedTabs';
+export { ProGate, LockedRow } from './components/ProGate';
+export type { ProGateProps, LockedRowProps } from './components/ProGate';
+export { Avatar } from './components/Avatar';
+export type { AvatarProps } from './components/Avatar';

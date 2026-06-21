@@ -1,0 +1,40 @@
+/* ============================================================================
+   Segmented tabs — an iOS-style segmented control: a pill track of equal-width
+   segments; the active one is a raised lighter pill (glass-2 + soft shadow).
+   Key: .lk-seg (track) > .lk-seg-tab.is-active
+   ========================================================================== */
+.lk-seg {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--r-pill);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+}
+
+.lk-seg-tab {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--text-dim);
+  padding: 7px 10px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);
+}
+
+.lk-seg-tab:hover { color: var(--text); }
+
+.lk-seg-tab.is-active {
+  color: var(--text);
+  background: var(--glass-2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.lk-seg-tab.is-active:hover { color: var(--text); }
