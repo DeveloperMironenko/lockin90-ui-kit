@@ -55,17 +55,6 @@ const DEFAULT_SLIDERS: CheckinSlider[] = [
 
 const DEFAULT_COMPOSITE: CheckinComposite = { value: 72, tag: '· High', color: colors.zoneHigh };
 
-/* track zone-gradient stops (low → mid → high), matching the web track */
-const TRACK_STOPS = [
-  colors.zoneLow,
-  colors.zoneLow,
-  colors.zoneMid,
-  colors.zoneMid,
-  colors.zoneHigh,
-  colors.zoneHigh,
-];
-const TRACK_LOCATIONS = [0, 0.28, 0.4, 0.6, 0.74, 1];
-
 /* composite ring geometry (46x46 viewBox, r=19) */
 const RING_R = 19;
 const RING_CIRC = 2 * Math.PI * RING_R; // 119.38
@@ -92,13 +81,8 @@ function SliderCell({ slider, max }: { slider: CheckinSlider; max: number }) {
 
       <View style={styles.wrap}>
         {/* zone-gradient track (dimmed) */}
-        <LinearGradient
-          colors={TRACK_STOPS as unknown as [string, string, ...string[]]}
-          locations={TRACK_LOCATIONS as unknown as [number, number, ...number[]]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.track}
-        />
+        {/* neutral gray rail — only the fill carries color */}
+        <View style={styles.track} />
         {/* fill up to value%, with a soft glow */}
         <LinearGradient
           colors={fillStops(slider.fill) as unknown as [string, string, ...string[]]}
@@ -210,7 +194,7 @@ const styles = StyleSheet.create({
   val: { fontFamily: fonts.mono, fontWeight: '700', fontSize: 15, lineHeight: 15 },
 
   wrap: { position: 'relative', height: 10, marginVertical: 2, justifyContent: 'center' },
-  track: { ...StyleSheet.absoluteFillObject, height: 10, borderRadius: 999, opacity: 0.5 },
+  track: { ...StyleSheet.absoluteFillObject, height: 10, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.10)' },
   fill: {
     position: 'absolute',
     left: 0,

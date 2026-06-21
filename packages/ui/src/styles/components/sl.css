@@ -39,13 +39,8 @@
 .lk-sl-wrap { position: relative; height: 10px; margin: 2px 0; }
 .lk-sl-track {
   position: absolute; inset: 0; height: 10px; border-radius: 999px; overflow: hidden;
-  background: linear-gradient(
-    90deg,
-    var(--zone-low) 0%, var(--zone-low) 28%,
-    var(--zone-mid) 40%, var(--zone-mid) 60%,
-    var(--zone-high) 74%, var(--zone-high) 100%
-  );
-  opacity: 0.5;
+  /* neutral gray rail — the unfilled remainder stays gray; only .lk-sl-fill carries color */
+  background: rgba(255, 255, 255, 0.10);
 }
 .lk-sl-fill {
   position: absolute; left: 0; top: 0; height: 10px; width: var(--v); border-radius: 999px;
