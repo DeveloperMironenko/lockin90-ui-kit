@@ -1,7 +1,7 @@
 /* ConversationList — DM/thread rows with gradient avatar (online dot + E2EE lock badge),
    name (+ verified tick), last-message preview, time + unread count badge, an inline
    "Encrypted" E2EE chip, and a Follow / Following toggle button pair. */
-.lk-conv { display: flex; flex-direction: column; gap: 3px; }
+.lk-conv { display: flex; flex-direction: column; gap: 10px; }
 
 .lk-conv-row { display: grid; grid-template-columns: 46px 1fr auto; gap: 12px; align-items: center; padding: 11px; border-radius: var(--r); border: 1px solid transparent; cursor: pointer; text-align: left; background: transparent; width: 100%; font: inherit; color: var(--text); transition: background .22s ease, border-color .22s ease; }
 .lk-conv-row:hover { background: var(--glass); }

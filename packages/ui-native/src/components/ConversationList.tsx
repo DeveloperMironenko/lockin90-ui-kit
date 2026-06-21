@@ -230,7 +230,7 @@ export function ConversationList({
 }
 
 const styles = StyleSheet.create({
-  wrap: { gap: 3 },
+  wrap: { gap: 10 },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
