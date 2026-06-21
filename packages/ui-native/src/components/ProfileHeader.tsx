@@ -249,7 +249,8 @@ const styles = StyleSheet.create({
   name: { fontFamily: fonts.display, fontSize: 20, fontWeight: '700', letterSpacing: -0.4, color: colors.text, flexShrink: 1 },
   handle: { fontFamily: fonts.mono, fontSize: 11.5, color: colors.textFaint, marginTop: 4 },
 
-  actions: { flexDirection: 'row', gap: 8 },
+  // sit the follow button on the cover/body boundary (~half gradient, half gray)
+  actions: { flexDirection: 'row', gap: 8, alignSelf: 'flex-start', marginTop: 23 },
   follow: {
     flexDirection: 'row',
     alignItems: 'center',
