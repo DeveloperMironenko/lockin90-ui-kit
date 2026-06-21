@@ -1,0 +1,64 @@
+/* ============================================================================
+   Exercise history entry — a read-only past-session card for an exercise's
+   History tab: a date header + relative "ago" label, then a compact
+   SET · UNIT · REPS · 1RM column table. Warm-up ('W') rows read muted; the
+   session's top-set 1RM is bold/highlighted. The shared `lk-card` shell is
+   reused; only the history-specific layout lives here.
+   ========================================================================== */
+.lk-hist { display: flex; flex-direction: column; gap: 10px; }
+
+/* date header — date on the left, "ago" pushed to the right */
+.lk-hist-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.lk-hist-date {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.2;
+}
+.lk-hist-ago {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+  flex: none;
+}
+
+/* shared 4-column grid: label · weight · reps · 1RM */
+.lk-hist-cols,
+.lk-hist-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 1fr 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.lk-hist-cols {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.lk-hist-rows { display: flex; flex-direction: column; }
+.lk-hist-row {
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+.lk-hist-row:last-child { border-bottom: 0; padding-bottom: 0; }
+
+.lk-hist-set {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+}
+.lk-hist-set.is-warmup { color: var(--zone-low); }
+
+.lk-hist-wt { font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); }
+.lk-hist-reps { font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); }
+
+.lk-hist-orm { font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); }
+.lk-hist-orm.is-top { font-weight: 700; color: var(--text); }

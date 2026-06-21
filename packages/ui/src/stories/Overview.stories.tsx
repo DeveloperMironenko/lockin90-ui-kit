@@ -1,7 +1,23 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { type ReactNode } from 'react';
 
-const meta = { title: 'Docs/Overview' } satisfies Meta;
+interface OverviewArgs {
+  /** Container width: 'fit' caps it (centered), 'full' spans the canvas. */
+  width: 'fit' | 'full';
+}
+
+const meta = {
+  title: 'Docs/Overview',
+  argTypes: {
+    width: {
+      name: 'Width',
+      control: 'inline-radio',
+      options: ['fit', 'full'],
+      description: 'fit = capped + centered · full = span the canvas',
+    },
+  },
+  args: { width: 'fit' },
+} satisfies Meta<OverviewArgs>;
 export default meta;
 
 type Status = 'have' | 'partial' | 'missing';
@@ -40,7 +56,7 @@ function CoverRow({ s, name, note }: { s: Status; name: string; note: string }) 
         gridTemplateColumns: '78px 200px 1fr',
         gap: 14,
         alignItems: 'center',
-        padding: '9px 0',
+        padding: '10px 0',
         borderBottom: '1px solid var(--border)',
       }}
     >
@@ -68,13 +84,27 @@ function H({ children }: { children: ReactNode }) {
   );
 }
 
-export const Overview: StoryObj = {
-  render: () => (
-    <div style={{ maxWidth: 760, color: 'var(--text)' }}>
+export const Overview: StoryObj<OverviewArgs> = {
+  render: ({ width }) => (
+    <div
+      style={{
+        maxWidth: width === 'fit' ? 760 : '100%',
+        color: 'var(--text)',
+      }}
+    >
       <span className="lk-display lk-gradient-text" style={{ fontSize: 30 }}>
         LockIn90 UI Kit
       </span>
-      <p style={{ fontFamily: 'var(--font-ui)', fontSize: 14, color: 'var(--text-dim)', lineHeight: 1.6, maxWidth: 600 }}>
+      <p
+        style={{
+          fontFamily: 'var(--font-ui)',
+          fontSize: 14,
+          color: 'var(--text-dim)',
+          lineHeight: 1.6,
+          maxWidth: 580,
+          margin: '8px 0 0',
+        }}
+      >
         “Aurora Flux” — a dark glassmorphism design system on the energy-spectrum gradient. Plain <code>lk-*</code> CSS (no
         Tailwind), fully tokens-driven. Shipped as <b>@lockin90/ui</b> (web, React) ↔ <b>@lockin90/ui-native</b> (React
         Native) in lockstep, with <b>@lockin90/tokens</b> as the shared source of truth.
@@ -109,12 +139,13 @@ export const Overview: StoryObj = {
         <CoverRow s="have" name="SegmentedTabs" note="Stats·History·Guide·Ranks switcher (new)" />
         <CoverRow s="have" name="Icon · Avatar · ProGate" note="header chrome + premium lock gate (new)" />
         <CoverRow s="have" name="Input · NoteField" note="form primitives + private notes (new)" />
-        <CoverRow s="partial" name="ExerciseCard" note="reuse for similar-exercise row + real video thumbs" />
-        <CoverRow s="partial" name="MuscleTags" note="ExerciseCard / TagCloud pattern — needs an inline list" />
-        <CoverRow s="missing" name="RepMaxTable" note="reps → estimated → achieved, lock-gated rows" />
-        <CoverRow s="missing" name="InstructionList" note="Guide → numbered setup steps + More" />
-        <CoverRow s="missing" name="VideoStrip" note="Guide → play-thumbnail row" />
-        <CoverRow s="missing" name="ExerciseHistoryEntry" note="History → date + read-only sets" />
+        <CoverRow s="have" name="SimilarExerciseRow" note="Guide → similar-exercise list row (new)" />
+        <CoverRow s="have" name="MuscleTags" note="Guide → muscles worked, text + chips (new)" />
+        <CoverRow s="have" name="RepMaxTable" note="Stats → rep-max table, lock-gated rows (new)" />
+        <CoverRow s="have" name="InstructionList" note="Guide → setup steps + More (new)" />
+        <CoverRow s="have" name="VideoStrip" note="Guide → video thumbnail strip (new)" />
+        <CoverRow s="have" name="ExerciseHistoryEntry" note="History → date + read-only sets (new)" />
+        <CoverRow s="missing" name="ExerciseDetailHeader" note="Back · title · share · ⋯ — not built yet" />
       </div>
     </div>
   ),

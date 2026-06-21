@@ -185,3 +185,17 @@ export { Input } from './components/Input';
 export type { InputProps } from './components/Input';
 export { NoteField } from './components/NoteField';
 export type { NoteFieldProps } from './components/NoteField';
+
+// — Exercise-detail components —
+export { RepMaxTable } from './components/RepMaxTable';
+export type { RepMaxTableProps, RepMaxRow } from './components/RepMaxTable';
+export { InstructionList } from './components/InstructionList';
+export type { InstructionListProps } from './components/InstructionList';
+export { VideoStrip } from './components/VideoStrip';
+export type { VideoStripProps, VideoThumb } from './components/VideoStrip';
+export { ExerciseHistoryEntry } from './components/ExerciseHistoryEntry';
+export type { ExerciseHistoryEntryProps, HistorySet } from './components/ExerciseHistoryEntry';
+export { MuscleTags } from './components/MuscleTags';
+export type { MuscleTagsProps } from './components/MuscleTags';
+export { SimilarExerciseRow } from './components/SimilarExerciseRow';
+export type { SimilarExerciseRowProps } from './components/SimilarExerciseRow';
