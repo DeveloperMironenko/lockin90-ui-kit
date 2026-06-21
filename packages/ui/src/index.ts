@@ -45,3 +45,17 @@ export type {
 } from './components/ActivityTimeline';
 export { MealEntry } from './components/MealEntry';
 export type { MealEntryProps, MealMacros } from './components/MealEntry';
+
+// — Wave 2 —
+export { CalendarHeatmap } from './components/CalendarHeatmap';
+export type { CalendarHeatmapProps, CalendarDay, CalendarZone } from './components/CalendarHeatmap';
+export { BiomarkerRow, BiomarkerGroupHead } from './components/BiomarkerRow';
+export type { BiomarkerRowProps, BiomarkerGroupHeadProps, BiomarkerStatus, BiomarkerTrend } from './components/BiomarkerRow';
+export { SupplementCard } from './components/SupplementCard';
+export type { SupplementCardProps, AdherenceTone } from './components/SupplementCard';
+export { AchievementBadges } from './components/AchievementBadges';
+export type { AchievementBadgesProps, Achievement, AchievementTier, AchievementIcon } from './components/AchievementBadges';
+export { QuickCapture, QUICK_CAPTURE_TILES } from './components/QuickCapture';
+export type { QuickCaptureProps, QuickCaptureTile } from './components/QuickCapture';
+export { ChangelogEntry } from './components/ChangelogEntry';
+export type { ChangelogEntryProps, ChangelogGroups } from './components/ChangelogEntry';

@@ -1,0 +1,121 @@
+/* ============================================================================
+   Biomarker row — lab marker: name + status-colored value/unit, a low/optimal/
+   high reference band with a positioned value marker, and a trend chip. Optional
+   group header. Renamed from design `.uik-bio-*`. Shared primitives
+   (lk-card, lk-chip, lk-mono, lk-tnum, lk-display) are reused, not redefined.
+   The range track + band + marker are the key piece — ported faithfully.
+   ========================================================================== */
+.lk-bio { display: flex; flex-direction: column; gap: 2px; }
+
+/* group header — icon + title + count */
+.lk-bio-group-head { display: flex; align-items: center; gap: 10px; padding: 14px 4px 8px; }
+.lk-bio-group-head svg { width: 17px; height: 17px; stroke-width: 1.7; fill: none; stroke: var(--accent); }
+.lk-bio-group-head h4 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+.lk-bio-gcount { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); margin-left: auto; }
+
+/* the row grid — name | value | range | trend */
+.lk-bio-row {
+  display: grid;
+  grid-template-columns: 168px 104px 1fr 86px;
+  gap: 18px;
+  align-items: center;
+  padding: 14px 6px;
+  border-bottom: 1px solid var(--border);
+  transition: background .25s var(--ease);
+  border-radius: 8px;
+}
+.lk-bio-row:hover { background: var(--glass); }
+.lk-bio-row:last-child { border-bottom: 0; }
+
+/* name + subtitle */
+.lk-bio-name { font-weight: 600; font-size: 14px; color: var(--text); }
+.lk-bio-bsub { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); margin-top: 2px; }
+
+/* value + unit */
+.lk-bio-v {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: -.02em;
+  color: var(--text);
+}
+.lk-bio-v.lk-bio-flag { color: var(--zone-low); }
+.lk-bio-v.lk-bio-warn { color: var(--zone-mid); }
+.lk-bio-u { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); margin-left: 3px; }
+
+/* reference range — the key piece */
+.lk-bio-range { position: relative; }
+.lk-bio-range-track {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 77, 109, .30) 0%,
+    rgba(255, 77, 109, .30) var(--low, 18%),
+    rgba(52, 245, 197, .28) var(--low, 18%),
+    rgba(52, 245, 197, .28) var(--high, 78%),
+    rgba(255, 77, 109, .30) var(--high, 78%),
+    rgba(255, 77, 109, .30) 100%
+  );
+  border: 1px solid var(--border);
+}
+.lk-bio-range-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--low, 18%);
+  right: calc(100% - var(--high, 78%));
+  background: linear-gradient(90deg, rgba(52, 245, 197, .45), rgba(34, 211, 238, .40));
+  border-radius: 999px;
+  box-shadow: inset 0 0 8px rgba(52, 245, 197, .3);
+}
+.lk-bio-range-marker {
+  position: absolute;
+  top: 50%;
+  left: var(--pos, 50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--zone-high);
+  border: 2.5px solid #0A0C14;
+  box-shadow: 0 0 0 2px var(--zone-high), 0 0 12px var(--zone-high);
+  z-index: 3;
+}
+.lk-bio-range-marker.lk-bio-out {
+  background: var(--zone-low);
+  box-shadow: 0 0 0 2px var(--zone-low), 0 0 12px var(--zone-low);
+}
+.lk-bio-range-marker.lk-bio-warn {
+  background: var(--zone-mid);
+  box-shadow: 0 0 0 2px var(--zone-mid), 0 0 12px var(--zone-mid);
+}
+.lk-bio-range-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--text-faint);
+}
+.lk-bio-opt { color: var(--zone-high); }
+
+/* trend spark + delta */
+.lk-bio-trend { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.lk-bio-trend svg { width: 78px; height: 26px; overflow: visible; }
+.lk-bio-td { font-family: var(--font-mono); font-size: 10px; }
+.lk-bio-td.lk-bio-up { color: var(--zone-high); }
+.lk-bio-td.lk-bio-down { color: var(--zone-low); }
+.lk-bio-td.lk-bio-flat { color: var(--text-faint); }
+
+@media (max-width: 560px) {
+  .lk-bio-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .lk-bio-row .lk-bio-range { grid-column: 1 / -1; }
+}

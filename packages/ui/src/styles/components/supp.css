@@ -1,0 +1,64 @@
+/* ============================================================================
+   Supplement card — a supplement in the stack: icon, name + dose, a timing
+   status chip, a purpose/benefit line, and an adherence bar (taken X/7 days)
+   with a zone-colored value. Renamed from design `.uik-supp-*`. Shared
+   primitives (lk-card, lk-chip, lk-mono, lk-tnum, lk-barfill) are reused, not
+   redefined here.
+   ========================================================================== */
+.lk-supp { padding: 16px 17px; border-radius: var(--r); }
+.lk-supp + .lk-supp { margin-top: 12px; }
+
+.lk-supp-head { display: flex; align-items: center; gap: 11px; }
+
+.lk-supp-ico {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  background: var(--glass);
+}
+.lk-supp-ico svg { width: 18px; height: 18px; stroke-width: 1.6; fill: none; }
+
+.lk-supp-name { font-weight: 600; font-size: 14.5px; color: var(--text); }
+.lk-supp-dose { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); margin-top: 1px; }
+
+.lk-supp-timing {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent-2);
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  background: rgba(34, 211, 238, 0.07);
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  white-space: nowrap;
+}
+.lk-supp-timing svg { width: 11px; height: 11px; stroke-width: 1.8; fill: none; }
+
+.lk-supp-purpose { font-size: 12.5px; color: var(--text-dim); margin: 11px 0 12px; line-height: 1.45; }
+
+.lk-supp-adh { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.lk-supp-adh-lbl {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+.lk-supp-adh .lk-barfill { flex: 1; }
+.lk-supp-adh-val {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.lk-supp-adh-val.lk-high { color: var(--zone-high); }
+.lk-supp-adh-val.lk-mid { color: var(--zone-mid); }
+.lk-supp-adh-val.lk-low { color: var(--zone-low); }

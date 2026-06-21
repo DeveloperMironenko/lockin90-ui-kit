@@ -1,0 +1,88 @@
+/* ============================================================================
+   Calendar heatmap — month grid of day cells tinted by energy intensity, with
+   low-day flags, a today cell, weekday header, month-nav and a legend.
+   Key: .lk-cal
+   ========================================================================== */
+.lk-cal { display: flex; flex-direction: column; }
+
+/* header: title + month-nav */
+.lk-cal-top { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+.lk-cal-top h3 {
+  font-family: var(--font-display); font-size: 19px; font-weight: 700;
+  letter-spacing: -0.01em; color: var(--text); margin: 0;
+}
+.lk-cal-nav { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; }
+.lk-cal-nav button {
+  width: 32px; height: 32px; display: grid; place-items: center;
+  border-radius: 9px; border: 1px solid var(--border); background: var(--glass);
+  color: var(--text-dim); cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+.lk-cal-nav button:hover { color: var(--text); border-color: var(--border-2); }
+.lk-cal-nav button svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.8; fill: none; }
+.lk-cal-nav .lk-cal-mlabel {
+  font-family: var(--font-mono); font-size: 12px; color: var(--text-dim);
+  min-width: 96px; text-align: center;
+}
+
+/* weekday header */
+.lk-cal-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin: 4px 0 8px; }
+.lk-cal-dow span {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-faint); text-align: center;
+}
+
+/* day grid */
+.lk-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.lk-cal-cell {
+  position: relative; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  min-height: 56px; padding: 9px 4px 8px;
+  border-radius: var(--r-sm); border: 1px solid transparent;
+  cursor: pointer; overflow: hidden;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+/* radial intensity wash — opacity driven by --lvl, color by zone */
+.lk-cal-cell::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  opacity: var(--lvl, 0);
+  background: radial-gradient(120% 120% at 50% 30%, var(--zone-high) 0%, transparent 72%);
+  transition: opacity 0.3s ease; pointer-events: none;
+}
+.lk-cal-cell.lk-cal-mid::before { background: radial-gradient(120% 120% at 50% 30%, var(--zone-mid) 0%, transparent 72%); }
+.lk-cal-cell.lk-cal-lo::before  { background: radial-gradient(120% 120% at 50% 30%, var(--zone-low) 0%, transparent 72%); }
+.lk-cal-cell:hover { background: var(--glass); border-color: var(--border); transform: translateY(-2px); }
+
+/* leading/trailing blanks */
+.lk-cal-cell.lk-cal-empty { cursor: default; }
+.lk-cal-cell.lk-cal-empty::before { display: none; }
+.lk-cal-cell.lk-cal-empty:hover { background: transparent; border-color: transparent; transform: none; }
+
+/* today */
+.lk-cal-cell.lk-cal-today { background: rgba(124, 92, 255, 0.12); border-color: rgba(124, 92, 255, 0.32); }
+
+.lk-cal-cell .lk-cal-num { position: relative; font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+.lk-cal-cell .lk-cal-val { position: relative; font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--text); line-height: 1; }
+.lk-cal-cell.lk-cal-today .lk-cal-num { color: var(--text); }
+.lk-cal-cell.lk-cal-lo .lk-cal-num, .lk-cal-cell.lk-cal-lo .lk-cal-val { color: var(--zone-low); }
+
+/* low-day flag dot */
+.lk-cal-cell .lk-cal-flag {
+  position: absolute; top: 6px; right: 7px; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--zone-low); box-shadow: 0 0 7px var(--zone-low);
+}
+
+/* legend */
+.lk-cal-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 16px; }
+.lk-cal-legend span {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim);
+}
+.lk-cal-legend i { width: 9px; height: 9px; border-radius: 3px; }
+.lk-cal-legend i.lk-cal-lg-hi { background: var(--zone-high); }
+.lk-cal-legend i.lk-cal-lg-mid { background: var(--zone-mid); }
+.lk-cal-legend i.lk-cal-lg-lo { background: var(--zone-low); }
+.lk-cal-legend i.lk-cal-lg-flag {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--zone-low); box-shadow: 0 0 7px var(--zone-low);
+}
