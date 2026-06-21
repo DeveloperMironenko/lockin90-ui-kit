@@ -12,7 +12,7 @@
 .lk-iotd-prose .lk-iotd-pos { color: var(--zone-high); font-weight: 600; }
 .lk-iotd-prose .lk-iotd-caution { color: var(--zone-mid); font-weight: 600; }
 .lk-iotd-prose .lk-iotd-bad { color: var(--zone-low); font-weight: 600; }
-.lk-iotd-pull { display: flex; align-items: baseline; gap: 12px; margin: 22px 0; padding: 16px 18px; border-radius: var(--r); border: 1px solid var(--border); background: var(--glass); }
+.lk-iotd-pull { display: flex; align-items: center; gap: 12px; margin: 22px 0; padding: 16px 18px; border-radius: var(--r); border: 1px solid var(--border); background: var(--glass); }
 .lk-iotd-pull .lk-iotd-num { font-family: var(--font-display); font-weight: 700; font-size: 38px; line-height: 1; letter-spacing: -.03em; background: var(--grad-flux); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; white-space: nowrap; }
 .lk-iotd-pull .lk-iotd-pulllbl { font-family: var(--font-ui); font-size: 13px; line-height: 1.4; color: var(--text-faint); }
 .lk-iotd-cta { display: flex; align-items: center; gap: 12px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); flex-wrap: wrap; }

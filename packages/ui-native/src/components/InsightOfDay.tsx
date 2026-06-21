@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   paragraphGap: { marginBottom: 12 },
   pull: {
     flexDirection: 'row',
-    alignItems: 'baseline',
+    alignItems: 'center',
     gap: 12,
     marginVertical: 22,
     paddingVertical: 16,
