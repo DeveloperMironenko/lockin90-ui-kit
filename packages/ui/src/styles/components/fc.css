@@ -1,0 +1,64 @@
+/* ============================================================================
+   Energy forecast — a 12h prediction card: a forecast curve (gradient area +
+   glowing line) with a "now" marker line, peak/dip annotation dots, absolutely-
+   positioned tag labels, an x-axis of hour ticks, a HIGH/MODERATE/LOW + now
+   legend, a plain-language outlook line and a drivers chip row.
+   Key: .lk-fc
+   ========================================================================== */
+.lk-fc { display: flex; flex-direction: column; gap: 14px; }
+
+/* header: title + sub eyebrow, with a trailing accent "FORECAST" chip */
+.lk-fc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.lk-fc-title { font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--text); letter-spacing: -0.01em; }
+.lk-fc-sub { margin-top: 3px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); }
+
+/* curve + overlaid tag labels live in this positioned wrapper */
+.lk-fc-curve { position: relative; }
+.lk-fc-spark { display: block; height: 168px; width: 100%; overflow: visible; }
+.lk-fc-line { filter: drop-shadow(0 0 8px rgba(52, 245, 197, 0.4)); }
+
+/* "now" pill, anchored along the x-axis via inline left/top */
+.lk-fc-now-tag {
+  position: absolute; transform: translateX(-50%);
+  font-family: var(--font-mono); font-size: 9.5px; padding: 1px 6px;
+  border-radius: 999px; background: rgba(124, 92, 255, 0.16);
+  border: 1px solid rgba(124, 92, 255, 0.4); color: #cbbcff; white-space: nowrap;
+}
+
+/* peak / dip annotation labels, anchored via inline left/top */
+.lk-fc-dot-tag {
+  position: absolute; transform: translateX(-50%);
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.04em;
+  padding: 1px 5px; border-radius: 6px; background: var(--glass-2);
+  border: 1px solid var(--border); white-space: nowrap;
+}
+.lk-fc-dot-tag.lk-peak { color: var(--zone-high); border-color: rgba(52, 245, 197, 0.35); }
+.lk-fc-dot-tag.lk-dip { color: var(--zone-low); border-color: rgba(255, 77, 109, 0.35); }
+.lk-fc-dot-tag b { font-family: var(--font-display); font-weight: 700; }
+
+/* x-axis hour ticks */
+.lk-fc-axis {
+  display: flex; justify-content: space-between; margin-top: 8px;
+  font-family: var(--font-mono); font-size: 9.5px; color: var(--text-faint);
+}
+
+/* HIGH / MODERATE / LOW / now legend */
+.lk-fc-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+.lk-fc-legend span { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); }
+.lk-fc-legend i { width: 9px; height: 9px; border-radius: 3px; }
+
+/* plain-language outlook callout */
+.lk-fc-pred {
+  display: flex; gap: 9px; align-items: flex-start; padding: 11px 12px;
+  border-radius: var(--r-sm); border: 1px solid var(--border); background: var(--glass);
+}
+.lk-fc-pred svg { width: 16px; height: 16px; flex: none; margin-top: 1px; fill: none; stroke: var(--accent); stroke-width: 1.6; }
+.lk-fc-pred p { margin: 0; font-size: 11.5px; color: var(--text-dim); line-height: 1.45; }
+.lk-fc-pred p b { color: var(--text); }
+
+/* drivers chip row */
+.lk-fc-drivers { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.lk-fc-drivers .lk-fc-dlabel {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-faint); margin-right: 2px;
+}

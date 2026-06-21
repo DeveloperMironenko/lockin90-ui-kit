@@ -82,3 +82,17 @@ export { CoverageMatrix } from './components/CoverageMatrix';
 export type { CoverageMatrixProps, CoverageCell } from './components/CoverageMatrix';
 export { NotificationCenter } from './components/NotificationCenter';
 export type { NotificationCenterProps, NotifItem, NotifFilter, NotifType } from './components/NotificationCenter';
+
+// — Wave 5 —
+export { OnboardingWizard } from './components/OnboardingWizard';
+export type { OnboardingWizardProps, OnboardingStep, OnboardingProvider } from './components/OnboardingWizard';
+export { ActiveSubstanceCard } from './components/ActiveSubstanceCard';
+export type { ActiveSubstanceCardProps, ActiveSubstance } from './components/ActiveSubstanceCard';
+export { MacroRings } from './components/MacroRings';
+export type { MacroRingsProps, Macro } from './components/MacroRings';
+export { EnergyForecast } from './components/EnergyForecast';
+export type { EnergyForecastProps } from './components/EnergyForecast';
+export { GeneticInsightCard } from './components/GeneticInsightCard';
+export type { GeneticInsightCardProps, GeneInsight } from './components/GeneticInsightCard';
+export { BillingCard } from './components/BillingCard';
+export type { BillingCardProps, BillingPaymentCard, BillingQuota } from './components/BillingCard';
