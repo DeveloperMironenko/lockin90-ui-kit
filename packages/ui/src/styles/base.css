@@ -1,0 +1,85 @@
+/* ============================================================================
+   Base — global resets, aurora background, typography & layout utilities.
+   Every kit class is namespaced `lk-*`. Requires @lockin90/tokens/tokens.css.
+   ========================================================================== */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+/* opt-in page base: add class `lk-app` to <body> or your root */
+.lk-app {
+  margin: 0;
+  font-family: var(--font-ui);
+  color: var(--text);
+  background: var(--bg-0);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.lk-app ::selection { background: rgba(124, 92, 255, 0.35); color: #fff; }
+.lk-app ::-webkit-scrollbar { width: 11px; height: 11px; }
+.lk-app ::-webkit-scrollbar-track { background: transparent; }
+.lk-app ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.10); border-radius: 999px; border: 3px solid transparent; background-clip: content-box; }
+.lk-app ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.20); background-clip: content-box; }
+
+/* ---- aurora background: <div class="lk-aurora"><span/><span/><span/></div> ---- */
+.lk-aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.lk-aurora::before {
+  content: ""; position: absolute; inset: -2px;
+  background:
+    radial-gradient(60% 50% at 12% 8%, rgba(124, 92, 255, 0.20), transparent 60%),
+    radial-gradient(55% 45% at 88% 14%, rgba(34, 211, 238, 0.16), transparent 60%),
+    radial-gradient(60% 55% at 70% 88%, rgba(255, 61, 129, 0.12), transparent 62%),
+    radial-gradient(50% 50% at 22% 92%, rgba(52, 245, 197, 0.12), transparent 60%);
+}
+.lk-aurora span { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.5; mix-blend-mode: screen; will-change: transform; }
+.lk-aurora span:nth-child(1) { width: 46vw; height: 46vw; left: -8vw; top: -10vw; background: radial-gradient(circle, #7C5CFF, transparent 70%); animation: lk-drift1 26s var(--ease-soft) infinite; }
+.lk-aurora span:nth-child(2) { width: 40vw; height: 40vw; right: -10vw; top: -6vw; background: radial-gradient(circle, #22D3EE, transparent 70%); animation: lk-drift2 30s var(--ease-soft) infinite; }
+.lk-aurora span:nth-child(3) { width: 44vw; height: 44vw; left: 30vw; bottom: -16vw; background: radial-gradient(circle, #FF3D81, transparent 70%); animation: lk-drift3 34s var(--ease-soft) infinite; }
+@keyframes lk-drift1 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(14vw,8vw) scale(1.15)} 66%{transform:translate(6vw,-6vw) scale(0.9)} }
+@keyframes lk-drift2 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-12vw,10vw) scale(0.9)} 66%{transform:translate(-6vw,4vw) scale(1.2)} }
+@keyframes lk-drift3 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-10vw,-8vw) scale(1.12)} }
+
+/* ---- typography utilities ---- */
+.lk-display { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; line-height: 1.02; }
+.lk-mono { font-family: var(--font-mono); font-feature-settings: "tnum" 1; }
+.lk-eyebrow { font-family: var(--font-mono); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.22em; color: var(--text-dim); }
+.lk-gradient-text {
+  background: var(--grad-flux); background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  -webkit-text-fill-color: transparent; animation: lk-flow-text 8s linear infinite;
+}
+.lk-gradient-text.lk-cta { background-image: var(--grad-cta); }
+.lk-gradient-text.lk-violet { background-image: var(--grad-violet); }
+@keyframes lk-flow-text { to { background-position: 220% 0; } }
+.lk-muted { color: var(--text-dim); }
+.lk-faint { color: var(--text-faint); }
+.lk-tnum { font-variant-numeric: tabular-nums; }
+
+/* ---- dividers ---- */
+.lk-hr { height: 1px; border: 0; background: var(--border); margin: 0; }
+.lk-hr-grad { height: 1px; border: 0; background: linear-gradient(90deg, transparent, var(--border-2), transparent); }
+
+/* ---- layout helpers ---- */
+.lk-wrap { width: min(1240px, 92vw); margin-inline: auto; }
+.lk-row { display: flex; gap: 16px; }
+.lk-col { display: flex; flex-direction: column; }
+.lk-grid { display: grid; gap: 16px; }
+.lk-center { display: grid; place-items: center; }
+
+/* ---- screen-reader only ---- */
+.lk-sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* ============================================================================
+   Scroll-reveal + count-up (driven by initMotion / useReveal)
+   ========================================================================== */
+[data-reveal] { opacity: 0; transform: translateY(26px); transition: opacity .7s var(--ease), transform .7s var(--ease); will-change: opacity, transform; }
+[data-reveal="left"] { transform: translateX(-28px); }
+[data-reveal="right"] { transform: translateX(28px); }
+[data-reveal="scale"] { transform: scale(.94); }
+[data-reveal].is-visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+}

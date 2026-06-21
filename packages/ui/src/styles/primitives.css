@@ -1,0 +1,94 @@
+/* ============================================================================
+   Primitives — glass cards, buttons, chips, stats, bars, rings, skeletons.
+   ========================================================================== */
+
+/* ---- glass card ---- */
+.lk-card {
+  position: relative;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  padding: 22px;
+  box-shadow: var(--elev-1);
+  transition: transform .4s var(--ease), border-color .4s var(--ease), box-shadow .4s var(--ease);
+}
+.lk-card.lk-hover:hover { transform: translateY(-4px); border-color: var(--border-2); box-shadow: var(--elev-2); }
+.lk-card.lk-lit::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 1px; border-radius: var(--r) var(--r) 0 0;
+  background: linear-gradient(90deg, transparent, rgba(124, 92, 255, 0.7), rgba(34, 211, 238, 0.7), transparent);
+}
+.lk-card.lk-pad-lg { padding: 30px; }
+.lk-card.lk-flat { box-shadow: none; }
+
+/* ---- buttons ---- */
+.lk-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px; white-space: nowrap;
+  font-family: var(--font-ui); font-weight: 600; font-size: 14px;
+  padding: 12px 20px; border-radius: var(--r-pill); border: 1px solid var(--border-2);
+  background: var(--glass-2); color: var(--text); cursor: pointer;
+  transition: transform .25s var(--ease), box-shadow .3s var(--ease), background .3s var(--ease), border-color .3s var(--ease);
+  will-change: transform;
+}
+.lk-btn:hover { transform: translateY(-2px); border-color: var(--border-2); }
+.lk-btn:active { transform: translateY(0) scale(.98); }
+.lk-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.lk-btn svg { width: 16px; height: 16px; flex: 0 0 auto; }
+.lk-btn-primary {
+  border: none; color: #0A0A12; background: var(--grad-cta); background-size: 160% 160%;
+  box-shadow: var(--glow-accent); animation: lk-btn-flow 6s var(--ease-soft) infinite;
+}
+.lk-btn-primary:hover { box-shadow: 0 0 56px rgba(124, 92, 255, 0.55); }
+.lk-btn-primary svg { width: 17px; height: 17px; }
+@keyframes lk-btn-flow { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+.lk-btn-ghost { background: transparent; border-color: var(--border); color: var(--text-dim); }
+.lk-btn-ghost:hover { color: var(--text); border-color: var(--border-2); }
+.lk-btn-sm { padding: 8px 14px; font-size: 13px; }
+.lk-btn-sm svg { width: 14px; height: 14px; }
+
+/* ---- chips / badges / pills ---- */
+.lk-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
+  padding: 5px 11px; border-radius: var(--r-pill);
+  border: 1px solid var(--border); background: var(--glass); color: var(--text-dim);
+}
+.lk-chip.lk-high { color: var(--zone-high); border-color: rgba(52, 245, 197, 0.35); background: rgba(52, 245, 197, 0.08); }
+.lk-chip.lk-mid { color: var(--zone-mid); border-color: rgba(255, 176, 32, 0.35); background: rgba(255, 176, 32, 0.08); }
+.lk-chip.lk-low { color: var(--zone-low); border-color: rgba(255, 77, 109, 0.35); background: rgba(255, 77, 109, 0.08); }
+.lk-chip.lk-accent { color: #cbbcff; border-color: rgba(124, 92, 255, 0.4); background: rgba(124, 92, 255, 0.10); }
+.lk-chip.lk-dot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+
+/* ---- live pulse dot ---- */
+.lk-pulse { position: relative; width: 9px; height: 9px; border-radius: 50%; background: var(--ok); display: inline-block; }
+.lk-pulse::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: inherit; animation: lk-ping 1.8s var(--ease) infinite; }
+.lk-pulse.lk-warn { background: var(--warn); }
+.lk-pulse.lk-bad { background: var(--bad); }
+@keyframes lk-ping { 0%{transform:scale(1);opacity:.7} 70%,100%{transform:scale(2.6);opacity:0} }
+
+/* ---- stat block ---- */
+.lk-stat { display: flex; flex-direction: column; gap: 6px; }
+.lk-stat .lk-label { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-faint); }
+.lk-stat .lk-value { font-family: var(--font-display); font-weight: 700; font-size: 30px; letter-spacing: -0.02em; }
+.lk-delta { font-family: var(--font-mono); font-size: 12px; }
+.lk-delta.lk-up { color: var(--zone-high); }
+.lk-delta.lk-down { color: var(--zone-low); }
+
+/* ---- bar fill (fills to --v on .is-visible) ---- */
+.lk-barfill { height: 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); overflow: hidden; }
+.lk-barfill > i { display: block; height: 100%; width: 0; border-radius: 999px; background: var(--grad-cta); transition: width 1.1s var(--ease); }
+.lk-barfill.is-visible > i { width: calc(var(--v, 0) * 100%); }
+
+/* ---- energy ring (SVG; animate the arc with useRing / data-ring) ---- */
+.lk-ring { position: relative; display: inline-grid; place-items: center; }
+.lk-ring svg { transform: rotate(-90deg); overflow: visible; }
+.lk-ring .lk-track { fill: none; stroke: rgba(255, 255, 255, 0.07); }
+.lk-ring .lk-arc { fill: none; stroke-linecap: round; filter: drop-shadow(0 0 10px rgba(124, 92, 255, 0.5)); }
+.lk-ring-center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.lk-ring-center .lk-num { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+
+/* ---- shimmer skeleton ---- */
+.lk-skeleton { position: relative; overflow: hidden; background: var(--glass); border-radius: var(--r-sm); }
+.lk-skeleton::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent); animation: lk-shimmer 1.6s infinite; }
+@keyframes lk-shimmer { 100% { transform: translateX(100%); } }
