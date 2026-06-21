@@ -1,0 +1,88 @@
+/* ============================================================================
+   Tooltip — pure-CSS hover/focus bubble. Wrap any trigger; the glassy bubble
+   reveals on `.lk-tip:hover` / `.lk-tip:focus-within`. No JS positioning.
+   Placement classes `lk-tip-top|bottom|left|right` anchor the bubble + arrow.
+   ========================================================================== */
+.lk-tip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* default "?" trigger when no children are supplied */
+.lk-tip-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border-2);
+  background: var(--glass-2);
+  color: var(--text-dim);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: help;
+}
+
+.lk-tip-bubble {
+  position: absolute;
+  z-index: 60;
+  width: max-content;
+  max-width: 220px;
+  padding: 6px 9px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-2);
+  background: var(--bg-1);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  line-height: 1.35;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+/* the arrow — a rotated square sharing the bubble's surface + border */
+.lk-tip-bubble::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background: var(--bg-1);
+  border: 1px solid var(--border-2);
+}
+
+/* ---- resting offsets (hidden state nudged toward the trigger) ---- */
+.lk-tip-top    { bottom: 100%; left: 50%; transform: translate(-50%, 4px); margin-bottom: 8px; }
+.lk-tip-bottom { top: 100%;    left: 50%; transform: translate(-50%, -4px); margin-top: 8px; }
+.lk-tip-left   { right: 100%;  top: 50%;  transform: translate(4px, -50%); margin-right: 8px; }
+.lk-tip-right  { left: 100%;   top: 50%;  transform: translate(-4px, -50%); margin-left: 8px; }
+
+/* ---- arrow placement (point toward the trigger) ---- */
+.lk-tip-top::after    { bottom: -4px; left: 50%; margin-left: -4px; border-top: 0; border-left: 0; }
+.lk-tip-bottom::after { top: -4px;    left: 50%; margin-left: -4px; border-bottom: 0; border-right: 0; }
+.lk-tip-left::after   { right: -4px;  top: 50%;  margin-top: -4px;  border-bottom: 0; border-left: 0; }
+.lk-tip-right::after  { left: -4px;   top: 50%;  margin-top: -4px;  border-top: 0; border-right: 0; }
+
+/* ---- reveal on hover / keyboard focus ---- */
+.lk-tip:hover .lk-tip-bubble,
+.lk-tip:focus-within .lk-tip-bubble {
+  opacity: 1;
+}
+.lk-tip:hover .lk-tip-top,
+.lk-tip:focus-within .lk-tip-top,
+.lk-tip:hover .lk-tip-bottom,
+.lk-tip:focus-within .lk-tip-bottom {
+  transform: translate(-50%, 0);
+}
+.lk-tip:hover .lk-tip-left,
+.lk-tip:focus-within .lk-tip-left,
+.lk-tip:hover .lk-tip-right,
+.lk-tip:focus-within .lk-tip-right {
+  transform: translate(0, -50%);
+}

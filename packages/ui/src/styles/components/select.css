@@ -1,0 +1,92 @@
+/* ============================================================================
+   Select — dark glassy native <select>. Optional mono uppercase label above, a
+   custom chevron on the right, and an invalid state. Matches the design's
+   `select.sel` (glass fill, accent focus glow) in the kit's house style.
+   ========================================================================== */
+.lk-select-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.lk-select-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+}
+
+.lk-select-field {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-2);
+  background: var(--glass-2);
+  color: var(--text);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.lk-select-field:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
+}
+
+.lk-select-field.lk-select-invalid {
+  border-color: var(--zone-low);
+}
+.lk-select-field.lk-select-invalid:focus-within {
+  border-color: var(--zone-low);
+  box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.16);
+}
+
+.lk-select-field.lk-select-disabled {
+  opacity: 0.55;
+}
+
+.lk-select {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.4;
+  padding: 9px 34px 9px 12px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.lk-select:disabled {
+  cursor: not-allowed;
+}
+/* placeholder + disabled options render dim; chosen value full-strength */
+.lk-select option {
+  color: var(--text);
+  background: var(--bg-1);
+}
+.lk-select:invalid,
+.lk-select option[disabled] {
+  color: var(--text-faint);
+}
+
+.lk-select-chevron {
+  position: absolute;
+  right: 11px;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  stroke: var(--text-dim);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+.lk-select-field:focus-within .lk-select-chevron {
+  stroke: var(--accent-2);
+}

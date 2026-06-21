@@ -1,0 +1,53 @@
+/* ============================================================================
+   Underline tabs — a horizontal row of text tabs along a 1px bottom rail; the
+   active tab is brighter and carries a 2px accent underline that sits on the
+   rail. Distinct from the pill-track .lk-seg (SegmentedTabs).
+   Key: .lk-tabs (rail) > .lk-tabs-tab.is-active
+   ========================================================================== */
+.lk-tabs {
+  display: flex;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--border);
+}
+
+.lk-tabs-tab {
+  position: relative;
+  margin-right: 22px;
+  padding: 10px 4px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--text-dim);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .25s var(--ease);
+}
+
+.lk-tabs-tab:last-child { margin-right: 0; }
+
+.lk-tabs-tab:hover { color: var(--text); }
+
+/* 2px underline sitting on the rail; scales in from center when active. */
+.lk-tabs-tab::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--grad-cta);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform .25s var(--ease);
+}
+
+.lk-tabs-tab.is-active {
+  color: var(--text);
+}
+.lk-tabs-tab.is-active::after {
+  transform: scaleX(1);
+}

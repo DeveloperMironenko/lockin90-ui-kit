@@ -1,0 +1,72 @@
+/* ============================================================================
+   Accordion — collapsible disclosure list (FAQ + settings sections). A header
+   row with a chevron that rotates 180deg open while the body expands via a
+   max-height transition. Items separated by a 1px hairline.
+   Key: .lk-acc (list) > .lk-acc-item.is-open > .lk-acc-head + .lk-acc-body
+   ========================================================================== */
+.lk-acc {
+  display: flex;
+  flex-direction: column;
+}
+
+.lk-acc-item {
+  border-bottom: 1px solid var(--border);
+}
+.lk-acc-item:first-child {
+  border-top: 1px solid var(--border);
+}
+
+.lk-acc-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  text-align: left;
+  padding: 16px 4px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  transition: color .2s var(--ease);
+}
+.lk-acc-head:hover { color: var(--text); }
+
+.lk-acc-title {
+  min-width: 0;
+}
+
+.lk-acc-chev {
+  flex-shrink: 0;
+  color: var(--text-faint);
+  transition: transform .35s var(--ease), color .2s var(--ease);
+}
+.lk-acc-head:hover .lk-acc-chev { color: var(--accent); }
+.lk-acc-item.is-open .lk-acc-chev {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+.lk-acc-body {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .4s var(--ease), opacity .3s var(--ease), padding .4s var(--ease);
+  padding: 0 4px;
+}
+.lk-acc-item.is-open .lk-acc-body {
+  max-height: 480px;
+  opacity: 1;
+  padding: 0 4px 18px;
+}
+
+.lk-acc-content {
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
