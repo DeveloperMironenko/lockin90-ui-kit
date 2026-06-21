@@ -1,0 +1,55 @@
+{
+  "name": "@lockin90/ui-native",
+  "version": "0.0.0",
+  "description": "LockIn90 \"Aurora Flux\" React Native component library — StyleSheet primitives driven by @lockin90/tokens.",
+  "source": "./src/index.ts",
+  "main": "./lib/commonjs/index.js",
+  "module": "./lib/module/index.js",
+  "types": "./lib/typescript/index.d.ts",
+  "react-native": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/typescript/index.d.ts",
+      "react-native": "./src/index.ts",
+      "import": "./lib/module/index.js",
+      "require": "./lib/commonjs/index.js"
+    }
+  },
+  "files": [
+    "src",
+    "lib"
+  ],
+  "scripts": {
+    "build": "bob build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-native": ">=0.74",
+    "react-native-svg": ">=15",
+    "expo-linear-gradient": ">=13"
+  },
+  "dependencies": {
+    "@lockin90/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-builder-bob": "^0.40.0",
+    "react-native-svg": "^15.8.0",
+    "expo-linear-gradient": "^14.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      "typescript"
+    ]
+  }
+}
