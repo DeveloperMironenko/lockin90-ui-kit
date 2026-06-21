@@ -126,7 +126,7 @@ export function MuscleMap({
                 </Text>
               </View>
               <View style={styles.statusCell}>
-                <Chip tone={status.chip} dot label={status.label} />
+                <Chip tone={status.chip} dot label={status.label} style={styles.statusChip} />
               </View>
             </View>
           );
@@ -166,7 +166,9 @@ const styles = StyleSheet.create({
 
   barCell: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 },
   // fixed-width status cell so the flex bar stays the same width on every row
-  statusCell: { width: 104, alignItems: 'flex-end' },
+  statusCell: { width: 108 },
+  // chip fills the cell + centers its content → all chips same width, centered
+  statusChip: { width: '100%', justifyContent: 'center' },
   bar: { flex: 1 },
   sets: { fontFamily: fonts.mono, fontSize: 12.5, fontWeight: '600', color: colors.textDim, minWidth: 52 },
   setsUnit: { color: colors.textFaint, fontWeight: '400', fontSize: 10 },
