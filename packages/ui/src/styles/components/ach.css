@@ -16,12 +16,14 @@
 .lk-ach-badge.lk-earned { border-color: transparent; background: var(--glass-2); }
 .lk-ach-badge.lk-earned::before {
   content: ""; position: absolute; inset: 0; padding: 1px; border-radius: inherit;
-  background: var(--grad-flux); background-size: 220% 100%;
+  /* mirrored spectrum + 200%/one-tile scroll = seamless flow, no red→green seam */
+  background: linear-gradient(100deg, #A8FF35, #34F5C5, #22D3EE, #7C5CFF, #FF3D81, #7C5CFF, #22D3EE, #34F5C5, #A8FF35);
+  background-size: 200% 100%;
   animation: lkAchFlow 9s linear infinite;
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
 }
-@keyframes lkAchFlow { to { background-position: 220% 0; } }
+@keyframes lkAchFlow { to { background-position: 200% 0; } }
 .lk-ach-badge.lk-earned:hover { transform: translateY(-5px); box-shadow: 0 14px 40px -16px rgba(124, 92, 255, .5); }
 
 .lk-ach-badge.lk-locked { opacity: .62; filter: saturate(.55); }
