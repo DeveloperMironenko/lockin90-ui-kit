@@ -1,0 +1,38 @@
+/* ShareCard — branded shareable "story" card: mesh-gradient canvas with a big
+   energy-score ring, a headline stat, a weekly sparkline, the date, and the
+   LockIn90 brand mark, plus a row of share targets below.
+
+   Shared primitives (lk-card, lk-mono, lk-tnum, lk-display, lk-gradient-text,
+   BrandMark) are reused, not redefined here. Only .lk-share-* structure lives
+   here. The mesh radial-gradient literals are intentional (the design's mesh
+   canvas) and kept verbatim. */
+
+.lk-share { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+.lk-share-card { position: relative; width: 320px; aspect-ratio: 4 / 5; border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--border); background: #0B0E1A; box-shadow: 0 24px 60px -20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04) inset; font-family: var(--font-ui); color: var(--text); isolation: isolate; }
+.lk-share-card::before { content: ""; position: absolute; inset: -12%; z-index: 0; pointer-events: none; background: radial-gradient(46% 42% at 14% 8%, rgba(124,92,255,.55), transparent 60%), radial-gradient(44% 40% at 90% 14%, rgba(34,211,238,.42), transparent 60%), radial-gradient(52% 50% at 82% 94%, rgba(168,255,53,.34), transparent 62%), radial-gradient(48% 46% at 10% 92%, rgba(52,245,197,.28), transparent 60%); }
+.lk-share-card::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .5; background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size: 30px 30px; -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 35%, transparent 80%); mask-image: radial-gradient(ellipse at 50% 0%, #000 35%, transparent 80%); }
+.lk-share-pad { position: relative; z-index: 2; height: 100%; box-sizing: border-box; padding: 22px 22px 20px; display: flex; flex-direction: column; }
+.lk-share-eyb { font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: .26em; color: var(--text-dim); }
+.lk-share-mid { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+.lk-share-ringwrap { display: flex; align-items: center; gap: 18px; }
+.lk-share-ring { width: 116px; height: 116px; flex: 0 0 116px; filter: drop-shadow(0 0 18px rgba(34,211,238,.5)); }
+.lk-share-ring text.lk-share-num { font-family: var(--font-display); font-weight: 700; fill: var(--text); }
+.lk-share-ring text.lk-share-zone { font-family: var(--font-mono); fill: var(--zone-high); }
+.lk-share-head { display: flex; flex-direction: column; gap: 4px; }
+.lk-share-headline { font-family: var(--font-display); font-weight: 700; font-size: 26px; line-height: 1.05; letter-spacing: -.02em; color: var(--text); }
+.lk-share-grad { background: var(--grad-flux); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; padding-bottom: .1em; }
+.lk-share-sub { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; font-family: var(--font-mono); font-size: 12px; color: var(--zone-high); padding: 4px 10px; border-radius: var(--r-pill); background: rgba(52,245,197,.12); border: 1px solid rgba(52,245,197,.35); }
+.lk-share-sub svg { width: 12px; height: 12px; stroke: currentColor; stroke-width: 2.2; fill: none; }
+.lk-share-spark { display: flex; align-items: flex-end; gap: 7px; height: 44px; margin-top: 6px; }
+.lk-share-bar { flex: 1; border-radius: 4px 4px 2px 2px; min-width: 0; background: linear-gradient(180deg, var(--cyan), var(--violet)); box-shadow: 0 0 10px rgba(34,211,238,.25); }
+.lk-share-bar.lk-share-bar-peak { background: linear-gradient(180deg, var(--lime), var(--cyan)); }
+.lk-share-foot { margin-top: 18px; display: flex; align-items: center; justify-content: space-between; }
+.lk-share-brand { display: inline-flex; align-items: center; gap: 9px; }
+.lk-share-brand .lk-share-nm { font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: -.01em; color: var(--text); }
+.lk-share-tag { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 5px 12px; background: rgba(255,255,255,.05); }
+.lk-share-targets { display: flex; align-items: center; gap: 8px; width: 320px; flex-wrap: wrap; }
+.lk-share-tgt { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; font-family: var(--font-ui); font-size: 12.5px; font-weight: 500; color: var(--text-dim); padding: 9px 13px; border-radius: var(--r-pill); border: 1px solid var(--border); background: var(--glass); transition: transform .18s ease, border-color .18s ease, color .18s ease, background .18s ease; }
+.lk-share-tgt svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 1.7; fill: none; }
+.lk-share-tgt:hover { transform: translateY(-2px); color: var(--text); border-color: var(--accent); }
+.lk-share-tgt.lk-share-tgt-primary { color: #0A0A12; background: var(--grad-cta); border-color: transparent; font-weight: 600; }
+.lk-share-tgt.lk-share-tgt-primary:hover { color: #0A0A12; }

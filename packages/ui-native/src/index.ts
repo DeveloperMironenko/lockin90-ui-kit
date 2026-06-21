@@ -110,3 +110,17 @@ export { ReauthSheet } from './components/ReauthSheet';
 export type { ReauthSheetProps, ReauthAction } from './components/ReauthSheet';
 export { TagCloud } from './components/TagCloud';
 export type { TagCloudProps, TagCloudItem, TagSize } from './components/TagCloud';
+
+// — Wave 7 —
+export { ProfileHeader } from './components/ProfileHeader';
+export type { ProfileHeaderProps, ProfileUser, ProfileStat } from './components/ProfileHeader';
+export { FeedPost } from './components/FeedPost';
+export type { FeedPostProps, FeedPostAuthor, FeedPostEngagement } from './components/FeedPost';
+export { Leaderboard } from './components/Leaderboard';
+export type { LeaderboardProps, LeaderboardRow } from './components/Leaderboard';
+export { ShareCard } from './components/ShareCard';
+export type { ShareCardProps, ShareTarget } from './components/ShareCard';
+export { ConversationList } from './components/ConversationList';
+export type { ConversationListProps, ConvThread, ConvFollow } from './components/ConversationList';
+export { AiRationaleCard } from './components/AiRationaleCard';
+export type { AiRationaleCardProps, AiFactor, AiProseSegment } from './components/AiRationaleCard';

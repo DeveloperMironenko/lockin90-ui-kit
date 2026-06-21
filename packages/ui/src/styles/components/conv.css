@@ -1,0 +1,37 @@
+/* ConversationList — DM/thread rows with gradient avatar (online dot + E2EE lock badge),
+   name (+ verified tick), last-message preview, time + unread count badge, an inline
+   "Encrypted" E2EE chip, and a Follow / Following toggle button pair. */
+.lk-conv { display: flex; flex-direction: column; gap: 3px; }
+
+.lk-conv-row { display: grid; grid-template-columns: 46px 1fr auto; gap: 12px; align-items: center; padding: 11px; border-radius: var(--r); border: 1px solid transparent; cursor: pointer; text-align: left; background: transparent; width: 100%; font: inherit; color: var(--text); transition: background .22s ease, border-color .22s ease; }
+.lk-conv-row:hover { background: var(--glass); }
+.lk-conv-row.lk-conv-active { background: rgba(124, 92, 255, .10); border-color: rgba(124, 92, 255, .26); }
+
+.lk-conv-av { position: relative; width: 46px; height: 46px; flex: 0 0 46px; border-radius: 14px; display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: 15px; color: #07080d; }
+.lk-conv-av svg { width: 22px; height: 22px; stroke: #07080d; stroke-width: 1.8; fill: none; }
+.lk-conv-av .lk-conv-dot { position: absolute; right: -3px; bottom: -3px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #07080d; background: var(--text-faint); }
+.lk-conv-av .lk-conv-dot.lk-conv-online { background: var(--zone-high); box-shadow: 0 0 8px rgba(52, 245, 197, .7); }
+.lk-conv-av .lk-conv-lock { position: absolute; right: -4px; top: -4px; width: 17px; height: 17px; border-radius: 50%; background: #07080d; display: grid; place-items: center; border: 1px solid rgba(52, 245, 197, .4); }
+.lk-conv-av .lk-conv-lock svg { width: 9px; height: 9px; stroke: var(--zone-high); stroke-width: 2.2; fill: none; }
+
+.lk-conv-meta { min-width: 0; }
+.lk-conv-name { font-weight: 600; font-size: 13.5px; color: var(--text); display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lk-conv-name .lk-conv-vtick { width: 14px; height: 14px; flex: 0 0 14px; stroke: var(--accent-2); stroke-width: 1.8; fill: none; }
+.lk-conv-preview { font-size: 12.5px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.lk-conv-preview.lk-conv-unread { color: var(--text); font-weight: 500; }
+.lk-conv-preview .lk-conv-from { color: var(--text-dim); font-weight: 600; }
+
+.lk-conv-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.lk-conv-time { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); white-space: nowrap; }
+.lk-conv-badge { min-width: 19px; height: 19px; padding: 0 5px; border-radius: var(--r-pill); display: grid; place-items: center; font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: #08090f; background: var(--grad-cta); box-shadow: 0 0 12px rgba(124, 92, 255, .5); }
+
+.lk-conv-e2ee { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: var(--r-pill); background: rgba(52, 245, 197, .07); border: 1px solid rgba(52, 245, 197, .28); font-family: var(--font-mono); font-size: 9px; letter-spacing: .04em; color: var(--zone-high); white-space: nowrap; margin-top: 5px; }
+.lk-conv-e2ee svg { width: 9px; height: 9px; stroke: currentColor; stroke-width: 2; fill: none; }
+
+.lk-conv-follows { display: flex; gap: 10px; align-items: center; padding: 14px 2px 2px; }
+.lk-conv-follow { flex: none; display: inline-flex; align-items: center; gap: 4px; padding: 7px 14px; border-radius: var(--r-pill); border: 1px solid transparent; background: var(--grad-cta); color: #08090f; font-family: var(--font-ui); font-size: 11px; font-weight: 700; cursor: pointer; transition: filter .25s ease, transform .12s ease; white-space: nowrap; }
+.lk-conv-follow svg { width: 11px; height: 11px; stroke: currentColor; stroke-width: 2.6; fill: none; }
+.lk-conv-follow:hover { filter: brightness(1.08); }
+.lk-conv-follow:active { transform: translateY(1px); }
+.lk-conv-follow.lk-conv-following { background: var(--glass); border-color: rgba(52, 245, 197, .4); color: var(--zone-high); filter: none; }
+.lk-conv-follow.lk-conv-following:hover { background: rgba(52, 245, 197, .10); }

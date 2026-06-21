@@ -1,0 +1,115 @@
+/* ============================================================================
+   Profile header — a gradient cover banner + an overlapping initials avatar,
+   identity (name + verified tick + @handle), follow/message actions, a bio
+   paragraph, and a 4-up stat grid (streak / followers / following / avg score).
+   Renamed from design `.uik-pf-*`. Shared primitives (lk-chip, lk-mono, lk-tnum,
+   lk-display, lk-gradient-text) are reused, not redefined.
+   ========================================================================== */
+.lk-pf { border-radius: var(--r); border: 1px solid var(--border); background: var(--glass); overflow: hidden; }
+
+/* cover banner — flux gradient with two soft radial blooms + bottom scrim */
+.lk-pf-cover { height: 120px; position: relative; background: var(--grad-flux); background-size: 220% 100%; }
+.lk-pf-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 90% at 22% 18%, rgba(124, 92, 255, .55), transparent 60%),
+    radial-gradient(55% 95% at 82% 80%, rgba(34, 211, 238, .45), transparent 60%);
+}
+.lk-pf-cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 35%, rgba(8, 10, 18, .72)); }
+
+/* body overlaps the cover so the avatar straddles the seam */
+.lk-pf-body { padding: 0 16px 16px; margin-top: -42px; position: relative; z-index: 1; display: flex; flex-direction: column; gap: 13px; }
+.lk-pf-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.lk-pf-id { display: flex; align-items: flex-end; gap: 12px; min-width: 0; }
+
+/* overlapping initials avatar */
+.lk-pf-avatar {
+  width: 76px;
+  height: 76px;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 3px solid var(--bg-0, #080a12);
+  background: var(--grad-violet);
+  box-shadow: 0 8px 26px rgba(124, 92, 255, .35);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: -.02em;
+  color: #0A0A12;
+}
+
+/* identity */
+.lk-pf-who { padding-bottom: 5px; min-width: 0; }
+.lk-pf-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.lk-pf-name svg { width: 16px; height: 16px; flex: none; fill: none; stroke: var(--accent); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.lk-pf-handle { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* actions — follow (CTA) + message (ghost) */
+.lk-pf-actions { display: flex; gap: 8px; align-self: flex-end; flex: none; }
+.lk-pf-follow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 9px 16px;
+  border-radius: var(--r-pill);
+  border: 1px solid transparent;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  color: #0A0A12;
+  background: var(--grad-cta);
+  background-size: 160% 160%;
+  box-shadow: 0 6px 20px rgba(34, 211, 238, .28);
+  transition: transform .2s ease, filter .2s ease;
+}
+.lk-pf-follow:hover { transform: translateY(-1px); filter: brightness(1.06); }
+.lk-pf-follow svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.lk-pf-msg {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 9px 14px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  border: 1px solid var(--border-2);
+  background: var(--glass);
+  transition: color .2s ease, border-color .2s ease;
+}
+.lk-pf-msg:hover { color: var(--text); border-color: var(--accent); }
+.lk-pf-msg svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* bio */
+.lk-pf-bio { font-size: 12.5px; color: var(--text-dim); line-height: 1.55; margin: 0; }
+.lk-pf-bio b { color: var(--text); font-weight: 600; }
+
+/* 4-up stat grid */
+.lk-pf-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.lk-pf-stat { text-align: center; padding: 11px 4px; border-radius: var(--r-sm); border: 1px solid var(--border); background: var(--glass-2); }
+.lk-pf-stat .v { font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: -.02em; line-height: 1; display: flex; align-items: baseline; justify-content: center; gap: 3px; }
+.lk-pf-stat .v small { font-family: var(--font-mono); font-size: 9px; font-weight: 500; color: var(--text-faint); letter-spacing: .04em; }
+.lk-pf-stat .l { font-family: var(--font-mono); font-size: 8px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-faint); margin-top: 5px; }
+
+@media (max-width: 520px) {
+  .lk-pf-top { flex-direction: column; align-items: stretch; gap: 12px; }
+  .lk-pf-actions { align-self: stretch; }
+  .lk-pf-follow,
+  .lk-pf-msg { flex: 1; justify-content: center; }
+  .lk-pf-stats { grid-template-columns: repeat(2, 1fr); }
+}

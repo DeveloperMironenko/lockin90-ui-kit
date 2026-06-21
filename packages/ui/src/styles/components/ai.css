@@ -1,0 +1,35 @@
+/* AiRationaleCard — AI explains a score in prose with colour-coded highlight
+   spans, a "what drove this" factor list, and a sparkle · confidence footer.
+   Renamed from design `.uik-ai-*`. Shared primitives (lk-card, lk-chip,
+   lk-mono, lk-tnum, lk-display, lk-gradient-text) are reused, not redefined. */
+.lk-ai { padding: 22px; }
+.lk-ai-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px; }
+.lk-ai-ic { width: 36px; height: 36px; flex: 0 0 36px; border-radius: var(--r-sm); display: grid; place-items: center; background: var(--glass-2); border: 1px solid var(--border-2); }
+.lk-ai-ic svg { width: 19px; height: 19px; stroke: var(--accent); stroke-width: 1.6; fill: none; }
+.lk-ai-head h3 { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; color: var(--text); margin: 0; }
+.lk-ai-eyebrow { display: block; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .14em; color: var(--accent); margin-bottom: 4px; }
+.lk-ai-head .lk-chip { margin-left: auto; flex: none; }
+.lk-ai-prose p { margin: 0 0 12px; font-size: 14.5px; line-height: 1.65; color: var(--text); }
+.lk-ai-prose p:last-child { margin-bottom: 0; }
+.lk-ai-good { color: var(--zone-high); font-weight: 600; background: rgba(52,245,197,.10); padding: 1px 5px; border-radius: 5px; }
+.lk-ai-bad { color: var(--zone-low); font-weight: 600; background: rgba(255,77,109,.10); padding: 1px 5px; border-radius: 5px; }
+.lk-ai-factors { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 1px; }
+.lk-ai-flbl { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .14em; color: var(--text-faint); margin-bottom: 7px; }
+.lk-ai-frow { display: flex; align-items: center; gap: 10px; padding: 7px 9px; border-radius: var(--r-sm); }
+.lk-ai-frow:hover { background: var(--glass); }
+.lk-ai-fdot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+.lk-ai-frow.is-pos .lk-ai-fdot { background: var(--zone-high); box-shadow: 0 0 6px rgba(52,245,197,.5); }
+.lk-ai-frow.is-neg .lk-ai-fdot { background: var(--zone-low); box-shadow: 0 0 6px rgba(255,77,109,.5); }
+.lk-ai-fname { font-size: 13px; color: var(--text-dim); flex: 1; min-width: 0; }
+.lk-ai-ftrack { width: 56px; height: 4px; border-radius: var(--r-pill); background: var(--glass-2); overflow: hidden; flex: none; position: relative; }
+.lk-ai-ftrack i { position: absolute; top: 0; bottom: 0; border-radius: var(--r-pill); }
+.lk-ai-frow.is-pos .lk-ai-ftrack i { left: 0; background: var(--zone-high); box-shadow: 0 0 6px rgba(52,245,197,.45); }
+.lk-ai-frow.is-neg .lk-ai-ftrack i { right: 0; background: var(--zone-low); box-shadow: 0 0 6px rgba(255,77,109,.45); }
+.lk-ai-fpts { font-family: var(--font-mono); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; flex: none; width: 36px; text-align: right; }
+.lk-ai-frow.is-pos .lk-ai-fpts { color: var(--zone-high); }
+.lk-ai-frow.is-neg .lk-ai-fpts { color: var(--zone-low); }
+.lk-ai-foot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 15px; padding-top: 13px; border-top: 1px solid var(--border); }
+.lk-ai-src { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+.lk-ai-conf { margin-left: auto; display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+.lk-ai-conf .lk-ai-sparkle { color: var(--accent); }
+.lk-ai-conf b { color: var(--zone-high); font-weight: 600; font-variant-numeric: tabular-nums; }
