@@ -149,10 +149,10 @@ export function ShareCard({
                   strokeDashoffset={dashoffset}
                   transform="rotate(-90 60 60)"
                 />
-                <text className="lk-share-num lk-tnum" x="60" y="58" textAnchor="middle" fontSize="40">
+                <text className="lk-share-num lk-tnum" x="60" y="67" textAnchor="middle" fontSize="40">
                   {score}
                 </text>
-                <text className="lk-share-zone" x="60" y="80" textAnchor="middle" fontSize="11" letterSpacing="4">
+                <text className="lk-share-zone" x="60" y="84" textAnchor="middle" fontSize="11" letterSpacing="4">
                   {zone}
                 </text>
               </svg>
