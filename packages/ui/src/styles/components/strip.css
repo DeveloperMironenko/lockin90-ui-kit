@@ -1,0 +1,68 @@
+/* ============================================================================
+   Contribution heat strip — a fixed 30-day logging-streak strip: 30 cells
+   tinted by intensity (5 levels l0–l4), a current-streak readout and a
+   less→more legend. Reuses primitives (.lk-card, .lk-chip, .lk-mono,
+   .lk-tnum, .lk-display); only .lk-strip-* structure lives here.
+   Key: .lk-strip
+   ========================================================================== */
+.lk-strip { display: flex; flex-direction: column; gap: 14px; }
+
+/* header: title + chip + last-30-days label */
+.lk-strip-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.lk-strip-title {
+  font-family: var(--font-display); font-size: 16px; font-weight: 700;
+  letter-spacing: -0.01em; color: var(--text);
+}
+.lk-strip-sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); margin-left: auto; }
+
+/* 30-cell heat grid */
+.lk-strip-grid { display: grid; grid-template-columns: repeat(30, 1fr); gap: 3px; }
+.lk-strip-cell {
+  height: 26px; border-radius: 5px; border: 1px solid var(--border); background: var(--glass);
+  transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease; cursor: pointer;
+}
+.lk-strip-cell:hover { transform: translateY(-3px) scaleY(1.08); filter: brightness(1.22); }
+.lk-strip-cell.l0 { background: rgba(255, 255, 255, 0.045); border-color: var(--border); }
+.lk-strip-cell.l1 { background: rgba(52, 245, 197, 0.18); border-color: rgba(52, 245, 197, 0.22); }
+.lk-strip-cell.l2 { background: rgba(52, 245, 197, 0.38); border-color: rgba(52, 245, 197, 0.4); }
+.lk-strip-cell.l3 { background: rgba(52, 245, 197, 0.62); border-color: rgba(52, 245, 197, 0.6); box-shadow: 0 0 9px rgba(52, 245, 197, 0.28); }
+.lk-strip-cell.l4 {
+  background: linear-gradient(150deg, var(--mint) 0%, var(--lime) 100%);
+  border-color: rgba(168, 255, 53, 0.55); box-shadow: 0 0 13px rgba(52, 245, 197, 0.42);
+}
+
+/* 30d-ago → today axis */
+.lk-strip-axis {
+  display: flex; justify-content: space-between; margin-top: -4px;
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.06em; color: var(--text-faint);
+}
+
+/* footer: streak readout + meta + legend */
+.lk-strip-foot {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding-top: 12px; border-top: 1px solid var(--border);
+}
+.lk-strip-streak {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--text);
+}
+.lk-strip-streak .flame { font-size: 16px; line-height: 1; filter: drop-shadow(0 0 8px rgba(255, 176, 32, 0.6)); }
+.lk-strip-streak .n { color: var(--zone-high); font-variant-numeric: tabular-nums; }
+.lk-strip-meta { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+.lk-strip-meta b { color: var(--text); font-weight: 600; }
+
+.lk-strip-legend {
+  display: inline-flex; align-items: center; gap: 5px; margin-left: auto;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; color: var(--text-faint);
+}
+.lk-strip-legend i { width: 11px; height: 11px; border-radius: 3px; border: 1px solid var(--border); }
+.lk-strip-legend i.l0 { background: rgba(255, 255, 255, 0.045); }
+.lk-strip-legend i.l1 { background: rgba(52, 245, 197, 0.18); border-color: rgba(52, 245, 197, 0.22); }
+.lk-strip-legend i.l2 { background: rgba(52, 245, 197, 0.38); border-color: rgba(52, 245, 197, 0.4); }
+.lk-strip-legend i.l3 { background: rgba(52, 245, 197, 0.62); border-color: rgba(52, 245, 197, 0.6); }
+.lk-strip-legend i.l4 { background: linear-gradient(150deg, var(--mint), var(--lime)); border-color: rgba(168, 255, 53, 0.55); }
+
+@media (max-width: 520px) {
+  .lk-strip-grid { grid-template-columns: repeat(15, 1fr); gap: 4px; }
+  .lk-strip-cell { height: 22px; }
+}

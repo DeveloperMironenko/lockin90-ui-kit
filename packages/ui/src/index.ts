@@ -157,3 +157,17 @@ export { AthleteRosterCard } from './components/AthleteRosterCard';
 export type { AthleteRosterCardProps, Athlete } from './components/AthleteRosterCard';
 export { PersonalRecords } from './components/PersonalRecords';
 export type { PersonalRecordsProps, PersonalRecord } from './components/PersonalRecords';
+
+// — Wave 9b (final) —
+export { QuickAddFavorites } from './components/QuickAddFavorites';
+export type { QuickAddFavoritesProps, QuickAddFavorite } from './components/QuickAddFavorites';
+export { ContributionStrip } from './components/ContributionStrip';
+export type { ContributionStripProps } from './components/ContributionStrip';
+export { WorkoutTemplate } from './components/WorkoutTemplate';
+export type { WorkoutTemplateProps, WorkoutTemplateItem } from './components/WorkoutTemplate';
+export { VitalsGrid } from './components/VitalsGrid';
+export type { VitalsGridProps, Vital } from './components/VitalsGrid';
+export { VisionViewport } from './components/VisionViewport';
+export type { VisionViewportProps, VisionDetection } from './components/VisionViewport';
+export { GoalSettingCard } from './components/GoalSettingCard';
+export type { GoalSettingCardProps, GoalFrequency } from './components/GoalSettingCard';
