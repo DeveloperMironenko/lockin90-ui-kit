@@ -1,0 +1,36 @@
+/* ============================================================================
+   Private-notes field — a small mono uppercase label over a glass multiline
+   textarea ("PRIVATE NOTES" → "Add a note…"). House input style mirrors
+   .lk-set-inp: glass surface, accent focus ring. NoteField primitive.
+   ========================================================================== */
+.lk-note-wrap { display: block; }
+
+.lk-note-label {
+  display: block;
+  margin-bottom: 7px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+}
+
+.lk-note {
+  width: 100%;
+  padding: 11px 13px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-2);
+  background: var(--glass-2);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  line-height: 1.5;
+  resize: vertical;
+  outline: 0;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.lk-note::placeholder { color: var(--text-faint); }
+.lk-note:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
+}

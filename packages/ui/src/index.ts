@@ -181,3 +181,7 @@ export { ProGate, LockedRow } from './components/ProGate';
 export type { ProGateProps, LockedRowProps } from './components/ProGate';
 export { Avatar } from './components/Avatar';
 export type { AvatarProps } from './components/Avatar';
+export { Input } from './components/Input';
+export type { InputProps } from './components/Input';
+export { NoteField } from './components/NoteField';
+export type { NoteFieldProps } from './components/NoteField';

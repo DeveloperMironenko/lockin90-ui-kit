@@ -1,0 +1,79 @@
+/* ============================================================================
+   Input — dark glassy text field. Optional mono uppercase label above, a faint
+   unit suffix inside (right), an optional leading icon, and an invalid state.
+   Matches the kit's `.lk-set-inp` house style (glass fill, accent focus glow).
+   ========================================================================== */
+.lk-input-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.lk-input-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+}
+
+.lk-input-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-2);
+  background: var(--glass-2);
+  color: var(--text);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.lk-input-field:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
+}
+
+.lk-input-field.lk-input-invalid {
+  border-color: var(--zone-low);
+}
+.lk-input-field.lk-input-invalid:focus-within {
+  border-color: var(--zone-low);
+  box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.16);
+}
+
+.lk-input-lead {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  color: var(--text-faint);
+}
+.lk-input-lead svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; }
+
+.lk-input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.lk-input::placeholder { color: var(--text-faint); }
+
+.lk-input-unit {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+/* sm — tighter density */
+.lk-input-field.lk-input-sm { padding: 6px 10px; gap: 6px; }
+.lk-input-sm .lk-input { font-size: 12.5px; }
+.lk-input-sm .lk-input-lead svg { width: 14px; height: 14px; }
+.lk-input-sm .lk-input-unit { font-size: 10px; }
