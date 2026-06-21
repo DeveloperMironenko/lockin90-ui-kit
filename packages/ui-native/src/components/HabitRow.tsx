@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   flame: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   flameNum: { fontFamily: fonts.mono, fontSize: 11, color: colors.zoneMid },
   strip: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  cell: { width: 11, height: 11, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.06)' },
-  cellDone: { backgroundColor: 'rgba(52,245,197,0.7)' },
-  cellMissed: { backgroundColor: 'rgba(255,77,109,0.55)' },
+  cell: { width: 11, height: 11, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.08)' },
+  cellDone: { backgroundColor: 'rgba(52,245,197,0.9)' },
+  cellMissed: { backgroundColor: 'rgba(255,77,109,0.78)' },
 });
