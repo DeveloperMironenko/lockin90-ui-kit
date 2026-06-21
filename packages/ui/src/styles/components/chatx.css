@@ -1,0 +1,27 @@
+/* ChatExtras — three messaging primitives in one card: a typing indicator (3 animated
+   dots in a bubble), a voice-note player (play button + animated waveform bars + duration),
+   and an E2EE encryption badge (lock pill + subtext). */
+.lk-chatx { display: flex; flex-direction: column; gap: 16px; padding: 18px; }
+.lk-chatx-row { display: flex; flex-direction: column; gap: 9px; }
+.lk-chatx-lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); }
+
+.lk-chatx-typing { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; padding: 12px 16px; border-radius: 16px; border-bottom-left-radius: 5px; background: var(--glass-2); border: 1px solid var(--border); }
+.lk-chatx-typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim); animation: lkChatxTypeDot 1.2s var(--ease-soft, cubic-bezier(.4,0,.2,1)) infinite; }
+.lk-chatx-typing i:nth-child(2) { animation-delay: .2s; } .lk-chatx-typing i:nth-child(3) { animation-delay: .4s; }
+@keyframes lkChatxTypeDot { 0%, 60%, 100% { opacity: .25; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-4px); } }
+
+.lk-chatx-rich { width: min(300px, 100%); border-radius: var(--r); border: 1px solid var(--border); overflow: hidden; background: var(--glass); }
+.lk-chatx-voice { display: flex; align-items: center; gap: 11px; padding: 11px 14px; min-width: 220px; }
+.lk-chatx-voice .lk-chatx-play { width: 36px; height: 36px; flex: 0 0 36px; border-radius: 50%; border: none; cursor: pointer; display: grid; place-items: center; color: #08090f; background: var(--grad-cta); box-shadow: var(--glow-accent); }
+.lk-chatx-voice .lk-chatx-play svg { width: 15px; height: 15px; stroke: none; fill: currentColor; }
+.lk-chatx-voice .lk-chatx-wave { flex: 1; display: flex; align-items: center; gap: 2px; height: 28px; }
+.lk-chatx-voice .lk-chatx-wave i { flex: 1; border-radius: 999px; background: var(--text-faint); opacity: .42; transform-origin: center; min-height: 3px; }
+.lk-chatx-voice .lk-chatx-wave i.lk-chatx-on { background: var(--accent-2); opacity: 1; animation: lkChatxWaveBar 1.4s var(--ease-soft, cubic-bezier(.4,0,.2,1)) infinite; }
+@keyframes lkChatxWaveBar { 0%, 100% { transform: scaleY(.55); } 50% { transform: scaleY(1); } }
+.lk-chatx-voice .lk-chatx-time { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); }
+
+.lk-chatx-enc { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.lk-chatx-e2ee { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: var(--r-pill); background: rgba(52,245,197,.07); border: 1px solid rgba(52,245,197,.28); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .03em; color: var(--zone-high); animation: lkChatxE2eePulse 3.4s var(--ease-soft, cubic-bezier(.4,0,.2,1)) infinite; }
+.lk-chatx-e2ee svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 1.8; fill: none; }
+@keyframes lkChatxE2eePulse { 0%, 100% { box-shadow: 0 0 0 rgba(52,245,197,0); border-color: rgba(52,245,197,.28); } 50% { box-shadow: 0 0 20px rgba(52,245,197,.28); border-color: rgba(52,245,197,.5); } }
+.lk-chatx-enc-sub { font-size: 12px; color: var(--text-dim); line-height: 1.5; }

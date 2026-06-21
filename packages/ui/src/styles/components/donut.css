@@ -1,0 +1,70 @@
+/* ============================================================================
+   Segmented donut + legend — a category breakdown as a multi-segment SVG donut
+   with a center total, beside a legend of rows (colored dot · label · value · %).
+   Key: .lk-donut
+   ========================================================================== */
+.lk-donut { padding: 18px; }
+
+/* header: title + trailing total chip */
+.lk-donut-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; margin-bottom: 14px;
+}
+.lk-donut-title {
+  margin: 0; font-family: var(--font-display); font-weight: 700;
+  font-size: 15px; letter-spacing: -0.01em; color: var(--text);
+}
+
+/* ring (200px) beside legend (1fr) */
+.lk-donut-grid {
+  display: grid; grid-template-columns: 200px 1fr; gap: 26px;
+  align-items: center;
+}
+
+/* donut ring */
+.lk-donut-ring { position: relative; }
+.lk-donut-svg { display: block; }
+.lk-donut-seg {
+  stroke-linecap: butt;
+  filter: drop-shadow(0 0 6px rgba(124, 92, 255, 0.18));
+}
+
+/* center readout */
+.lk-donut-center {
+  position: absolute; inset: 0; display: grid; place-content: center;
+  text-align: center;
+}
+.lk-donut-center .lk-donut-big {
+  font-family: var(--font-display); font-weight: 700; font-size: 26px;
+  letter-spacing: -0.02em; color: var(--text);
+}
+.lk-donut-center .lk-donut-lbl {
+  font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase;
+  letter-spacing: 0.14em; color: var(--text-faint); margin-top: 2px;
+}
+
+/* legend list */
+.lk-donut-list { display: flex; flex-direction: column; gap: 2px; }
+.lk-donut-row {
+  display: grid; grid-template-columns: 13px 1fr 64px 44px; gap: 12px;
+  align-items: center; padding: 9px 2px; border-bottom: 1px solid var(--border);
+}
+.lk-donut-row:last-child { border-bottom: 0; }
+.lk-donut-row .lk-donut-sw { width: 13px; height: 13px; border-radius: 4px; }
+.lk-donut-row .lk-donut-name {
+  font-family: var(--font-ui); font-weight: 600; font-size: 13.5px;
+  color: var(--text);
+}
+.lk-donut-row .lk-donut-hrs {
+  font-family: var(--font-mono); font-size: 12.5px; color: var(--text-dim);
+  text-align: right;
+}
+.lk-donut-row .lk-donut-pct {
+  font-family: var(--font-mono); font-weight: 600; font-size: 13px;
+  text-align: right;
+}
+
+@media (max-width: 560px) {
+  .lk-donut-grid { grid-template-columns: 1fr; justify-items: center; gap: 18px; }
+  .lk-donut-list { width: 100%; }
+}

@@ -129,3 +129,17 @@ export { ConversationList } from './components/ConversationList';
 export type { ConversationListProps, ConvThread, ConvFollow } from './components/ConversationList';
 export { AiRationaleCard } from './components/AiRationaleCard';
 export type { AiRationaleCardProps, AiFactor } from './components/AiRationaleCard';
+
+// — Wave 8 —
+export { EnergyLogger } from './components/EnergyLogger';
+export type { EnergyLoggerProps, EnergyLoggerMood, MoodFace } from './components/EnergyLogger';
+export { ConfidenceZones } from './components/ConfidenceZones';
+export type { ConfidenceZonesProps, ConfidenceZone } from './components/ConfidenceZones';
+export { ChatExtras } from './components/ChatExtras';
+export type { ChatExtrasProps } from './components/ChatExtras';
+export { WeekdayBars } from './components/WeekdayBars';
+export type { WeekdayBarsProps, WeekdayBar } from './components/WeekdayBars';
+export { SegmentedDonut } from './components/SegmentedDonut';
+export type { SegmentedDonutProps, DonutSegment } from './components/SegmentedDonut';
+export { InsightOfDay } from './components/InsightOfDay';
+export type { InsightOfDayProps } from './components/InsightOfDay';
