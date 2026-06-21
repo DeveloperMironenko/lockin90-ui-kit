@@ -88,10 +88,8 @@ function RingGauge({ pct, color }: { pct: number; color: string }) {
         />
       </Svg>
       <View style={styles.pctWrap} pointerEvents="none">
-        <Text style={styles.pct}>
-          {Math.round(clamped)}
-          <Text style={styles.pctUnit}>%</Text>
-        </Text>
+        <Text style={styles.pct}>{Math.round(clamped)}</Text>
+        <Text style={styles.pctUnit}>%</Text>
       </View>
     </View>
   );
@@ -230,8 +228,8 @@ const styles = StyleSheet.create({
   gauge: { width: 60, height: 60 },
   gaugeSvg: { transform: [{ rotate: '-90deg' }] },
   pctWrap: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' },
-  pct: { fontFamily: fonts.mono, fontSize: 11, fontWeight: '600', color: colors.text, letterSpacing: -0.2 },
-  pctUnit: { fontSize: 7, color: colors.textFaint },
+  pct: { fontFamily: fonts.mono, fontSize: 12, fontWeight: '600', color: colors.text, letterSpacing: -0.2, lineHeight: 13 },
+  pctUnit: { fontSize: 7, color: colors.textFaint, marginTop: 2, lineHeight: 8 },
   body: { flex: 1, minWidth: 0 },
   head: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   name: { fontWeight: '600', fontSize: 14, color: colors.text },

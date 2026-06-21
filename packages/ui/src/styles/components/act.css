@@ -47,15 +47,18 @@
 .lk-act-pct {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text);
   letter-spacing: -0.02em;
 }
-.lk-act-pct small { font-size: 7px; color: var(--text-faint); }
+.lk-act-pct small { font-size: 7px; line-height: 1; color: var(--text-faint); margin-top: 2px; }
 
 .lk-act-body { min-width: 0; }
 .lk-act-head { display: flex; align-items: center; gap: 8px; }
