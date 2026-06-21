@@ -96,3 +96,17 @@ export { GeneticInsightCard } from './components/GeneticInsightCard';
 export type { GeneticInsightCardProps, GeneInsight } from './components/GeneticInsightCard';
 export { BillingCard } from './components/BillingCard';
 export type { BillingCardProps, BillingPaymentCard, BillingQuota } from './components/BillingCard';
+
+// — Wave 6 —
+export { PendingPatternCard } from './components/PendingPatternCard';
+export type { PendingPatternCardProps, PendingPatternChips } from './components/PendingPatternCard';
+export { DayTimeline } from './components/DayTimeline';
+export type { DayTimelineProps, DayBlock, DayLegendItem } from './components/DayTimeline';
+export { MuscleMap } from './components/MuscleMap';
+export type { MuscleMapProps, MuscleGroup, MuscleTone } from './components/MuscleMap';
+export { SymptomGrid } from './components/SymptomGrid';
+export type { SymptomGridProps, SymptomTile, SymptomRecent } from './components/SymptomGrid';
+export { ReauthSheet } from './components/ReauthSheet';
+export type { ReauthSheetProps, ReauthAction } from './components/ReauthSheet';
+export { TagCloud } from './components/TagCloud';
+export type { TagCloudProps, TagCloudItem, TagSize } from './components/TagCloud';

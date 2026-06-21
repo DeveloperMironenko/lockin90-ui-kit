@@ -1,0 +1,163 @@
+/* ============================================================================
+   Reauth / step-up sheet — a security confirmation sheet: a lock badge + a
+   "step-up · expires" chip, a "Confirm it's you" title + subtitle, a framed
+   protected-action row (amber), a big Face ID button (circular gradient ring
+   + face-scan icon + animated scan glow), a "use password instead" link, and
+   a Cancel button. Renamed from design `.uik-reauth-*`. Shared primitives
+   (lk-card, lk-chip, lk-mono, lk-display) are reused, not redefined here.
+   ========================================================================== */
+.lk-reauth {
+  width: 100%;
+  max-width: 340px;
+  padding: 22px 20px 18px;
+  border-radius: var(--r);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 18px 50px -20px rgba(0, 0, 0, 0.7);
+}
+.lk-reauth::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+}
+
+.lk-reauth-top { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.lk-reauth-lock {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-sm);
+  display: grid;
+  place-items: center;
+  background: rgba(124, 92, 255, 0.12);
+  border: 1px solid var(--border-2);
+}
+.lk-reauth-lock svg { width: 15px; height: 15px; stroke: var(--accent); stroke-width: 1.7; fill: none; }
+.lk-reauth .lk-chip.lk-reauth-exp { font-size: 9.5px; }
+.lk-reauth-exp .lk-dot { background: var(--accent-2); }
+
+.lk-reauth-head { display: flex; flex-direction: column; gap: 3px; }
+.lk-reauth-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.lk-reauth-head p { margin: 0; font-size: 11.5px; color: var(--text-dim); line-height: 1.4; max-width: 240px; }
+
+.lk-reauth-action {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 176, 32, 0.28);
+  background: rgba(255, 176, 32, 0.05);
+  text-align: left;
+}
+.lk-reauth-action svg { width: 14px; height: 14px; flex: none; stroke: var(--zone-mid); stroke-width: 1.7; fill: none; }
+.lk-reauth-act-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.lk-reauth-act-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--zone-mid);
+  font-weight: 700;
+}
+.lk-reauth-action .lk-mono {
+  font-size: 11px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lk-reauth-action .lk-mono b { color: var(--accent-2); font-weight: 600; }
+
+.lk-reauth-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  margin: 4px 0 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.lk-reauth-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(124, 92, 255, 0.6);
+  background: rgba(124, 92, 255, 0.08);
+  box-shadow: 0 0 30px rgba(124, 92, 255, 0.35), inset 0 0 20px rgba(124, 92, 255, 0.2);
+  animation: lkReauthScan 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  transition: transform 0.2s ease;
+}
+.lk-reauth-face:hover .lk-reauth-ring { transform: scale(1.04); }
+.lk-reauth-ring svg { width: 36px; height: 36px; stroke: var(--accent); stroke-width: 1.6; fill: none; }
+
+@keyframes lkReauthScan {
+  0%, 100% {
+    box-shadow: 0 0 30px rgba(124, 92, 255, 0.35), inset 0 0 20px rgba(124, 92, 255, 0.2);
+    border-color: rgba(124, 92, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 52px rgba(34, 211, 238, 0.5), inset 0 0 30px rgba(34, 211, 238, 0.3);
+    border-color: rgba(34, 211, 238, 0.55);
+  }
+}
+
+.lk-reauth-scan {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  background: var(--grad-cta);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--accent);
+}
+
+.lk-reauth-pass {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 12px;
+}
+.lk-reauth-pass:hover { text-decoration: underline; }
+
+.lk-reauth-cancel {
+  width: 100%;
+  margin-top: 2px;
+  padding: 10px;
+  border-radius: var(--r-sm);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  background: var(--glass-2);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.lk-reauth-cancel:hover { color: var(--text); background: rgba(255, 255, 255, 0.06); }
