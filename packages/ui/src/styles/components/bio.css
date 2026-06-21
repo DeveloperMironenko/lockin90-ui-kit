@@ -72,9 +72,10 @@
   bottom: 0;
   left: var(--low, 18%);
   right: calc(100% - var(--high, 78%));
-  background: linear-gradient(90deg, rgba(52, 245, 197, .45), rgba(34, 211, 238, .40));
+  /* green-to-green (mint → lime) instead of mint → cyan, so the optimal band reads green */
+  background: linear-gradient(90deg, rgba(52, 245, 197, .50), rgba(168, 255, 53, .42));
   border-radius: 999px;
-  box-shadow: inset 0 0 8px rgba(52, 245, 197, .3);
+  box-shadow: inset 0 0 8px rgba(52, 245, 197, .35);
 }
 .lk-bio-range-marker {
   position: absolute;
