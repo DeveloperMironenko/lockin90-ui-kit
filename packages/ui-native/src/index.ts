@@ -54,3 +54,17 @@ export { QuickCapture, QUICK_CAPTURE_TILES } from './components/QuickCapture';
 export type { QuickCaptureProps, QuickCaptureTile } from './components/QuickCapture';
 export { ChangelogEntry } from './components/ChangelogEntry';
 export type { ChangelogEntryProps, ChangelogGroups } from './components/ChangelogEntry';
+
+// — Wave 3 —
+export { WorkoutSetLogger } from './components/WorkoutSetLogger';
+export type { WorkoutSetLoggerProps, WorkoutSet } from './components/WorkoutSetLogger';
+export { ExerciseCard } from './components/ExerciseCard';
+export type { ExerciseCardProps, ExerciseLevel } from './components/ExerciseCard';
+export { Hypnogram } from './components/Hypnogram';
+export type { HypnogramProps, SleepStage, SleepSegment, SleepStageTotal } from './components/Hypnogram';
+export { CyclePhaseWheel } from './components/CyclePhaseWheel';
+export type { CyclePhaseWheelProps, CyclePhase } from './components/CyclePhaseWheel';
+export { AccountPanel } from './components/AccountPanel';
+export type { AccountPanelProps, AccountUser, AccountRow, AccountRowIcon } from './components/AccountPanel';
+export { RestTimer } from './components/RestTimer';
+export type { RestTimerProps } from './components/RestTimer';

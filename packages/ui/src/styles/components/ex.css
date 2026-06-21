@@ -1,0 +1,149 @@
+/* ============================================================================
+   Exercise card — a library exercise: a 16:9 video-style thumbnail (gradient +
+   waveline overlay) with a centered play button and a duration badge, then the
+   exercise name, muscle-group chips, and a level-dot difficulty footer.
+   Renamed from design `.uik-ex-*`. Shared primitives (lk-card, lk-chip with
+   lk-accent/lk-dot) are reused, not redefined here. The paired-grid is just
+   layout — consumers compose multiple <ExerciseCard /> themselves.
+   ========================================================================== */
+.lk-ex {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+.lk-ex:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-2);
+  background: var(--glass-2);
+}
+
+.lk-ex-thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+.lk-ex-grad {
+  position: absolute;
+  inset: 0;
+}
+.lk-ex-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 50% 30%, transparent, rgba(5, 6, 11, 0.55));
+}
+.lk-ex-wavelines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.35;
+}
+
+.lk-ex-play {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(8, 10, 18, 0.42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+}
+.lk-ex-play svg {
+  width: 20px;
+  height: 20px;
+  fill: #fff;
+  margin-left: 2px;
+}
+.lk-ex:hover .lk-ex-play {
+  transform: scale(1.12);
+  background: rgba(124, 92, 255, 0.55);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.lk-ex-dur {
+  position: absolute;
+  right: 9px;
+  bottom: 9px;
+  z-index: 3;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  color: #fff;
+  background: rgba(5, 6, 11, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.lk-ex-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: 1;
+}
+.lk-ex-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.lk-ex-tags {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.lk-ex-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 4px;
+}
+.lk-ex-diff {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.lk-ex-diff i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+}
+.lk-ex-diff i.on {
+  background: var(--accent-3);
+  box-shadow: 0 0 7px var(--accent-3);
+}
+.lk-ex-diff.lvl3 i.on {
+  background: var(--zone-high);
+  box-shadow: 0 0 7px var(--zone-high);
+}
+.lk-ex-diff.lvl2 i.on {
+  background: var(--zone-mid);
+  box-shadow: 0 0 7px var(--zone-mid);
+}
+.lk-ex-difflbl {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--text-faint);
+  margin-left: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}

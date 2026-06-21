@@ -1,0 +1,48 @@
+/* ============================================================================
+   Cycle phase wheel — circular SVG of 4 menstrual-cycle phase arcs (menstrual /
+   follicular / ovulation / luteal) with a glowing current-day marker, a center
+   day/phase readout and a colored 2-column legend.
+   Key: .lk-cyc
+   ========================================================================== */
+.lk-cyc-wrap { display: grid; place-items: center; position: relative; padding: 8px 0 4px; }
+
+/* the square wheel stage; the marker + center overlay the svg */
+.lk-cyc-wheel { position: relative; width: 232px; height: 232px; }
+.lk-cyc-wheel svg.lk-cyc-svg {
+  width: 232px; height: 232px;
+  transform: rotate(-90deg); /* start the arc sweep at 12 o'clock */
+  overflow: visible; display: block;
+}
+
+.lk-cyc-arc { fill: none; stroke-linecap: round; }
+
+/* current-day marker — own svg, rotated to share the arc frame */
+.lk-cyc-marker { position: absolute; inset: 0; transform: rotate(-90deg); overflow: visible; }
+
+/* center readout — day number + phase + cycle length */
+.lk-cyc-center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.lk-cyc-day {
+  font-family: var(--font-display); font-weight: 700; font-size: 38px;
+  line-height: 0.9; letter-spacing: -0.03em; color: var(--text);
+}
+.lk-cyc-phase {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; margin-top: 7px; color: var(--mint);
+}
+.lk-cyc-of { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); margin-top: 4px; }
+
+/* top chip row */
+.lk-cyc-head { text-align: center; margin-bottom: 6px; }
+
+/* legend — 2 columns of phase rows */
+.lk-cyc-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 18px 0 0; }
+.lk-cyc-lg {
+  display: flex; align-items: flex-start; gap: 9px; padding: 9px 11px;
+  border-radius: var(--r-sm); border: 1px solid var(--border); background: var(--glass);
+}
+.lk-cyc-swatch {
+  width: 10px; height: 10px; border-radius: 3px; margin-top: 3px; flex: 0 0 10px;
+  background: currentColor; box-shadow: 0 0 8px currentColor;
+}
+.lk-cyc-ln1 { font-weight: 600; font-size: 13px; color: var(--text); }
+.lk-cyc-ln2 { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); margin-top: 1px; }
