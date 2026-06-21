@@ -36,3 +36,17 @@ export { Skeleton } from './components/Skeleton';
 export type { SkeletonProps } from './components/Skeleton';
 export { Stat } from './components/Stat';
 export type { StatProps } from './components/Stat';
+
+// — chart & interactive primitives —
+export { Ring } from './components/Ring';
+export type { RingProps } from './components/Ring';
+export { DonutChart } from './components/DonutChart';
+export type { DonutChartProps, DonutSegment } from './components/DonutChart';
+export { Sparkline } from './components/Sparkline';
+export type { SparklineProps } from './components/Sparkline';
+export { LineChart } from './components/LineChart';
+export type { LineChartProps, LineMarker } from './components/LineChart';
+export { BarChart } from './components/BarChart';
+export type { BarChartProps, BarItem } from './components/BarChart';
+export { Slider } from './components/Slider';
+export type { SliderProps } from './components/Slider';

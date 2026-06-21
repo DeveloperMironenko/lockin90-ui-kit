@@ -1,0 +1,58 @@
+/* ============================================================================
+   Bar chart — a generic vertical bar chart primitive: a flex row of columns,
+   each a gradient-filled bar sized by `value / max` of the chart area, with an
+   optional value label above and a mono/uppercase label below. Highlighted bars
+   get a brighter mint gradient (set inline) + a soft mint glow. Tokens-driven,
+   no Tailwind.
+   Key: .lk-bc (--bc-h = chart height) > .lk-bc-col > .lk-bc-val + .lk-bc-bar + .lk-bc-label
+   ========================================================================== */
+.lk-bc {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+/* one column: value (top) · bar (grows) · label (bottom) */
+.lk-bc-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  /* reserve the chart area; bar height is a fraction of it */
+  height: calc(var(--bc-h, 150px) + 30px);
+}
+
+/* the bar itself — height = pct of the chart area, rounded top */
+.lk-bc-bar {
+  width: 100%;
+  height: calc(var(--bc-pct, 0) * var(--bc-h, 150px));
+  border-radius: 8px 8px 4px 4px;
+  border: 1px solid var(--border);
+  transition: height 1.1s var(--ease, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+/* highlighted bar — gradient is set inline; CSS adds the glow + clears the border */
+.lk-bc-col.lk-bc-hl .lk-bc-bar {
+  border-color: transparent;
+  box-shadow: 0 0 18px rgba(52, 245, 197, 0.22);
+}
+
+/* value label above each bar */
+.lk-bc-val {
+  order: -1;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.lk-bc-col.lk-bc-hl .lk-bc-val { color: var(--zone-high); }
+
+/* label below each bar */
+.lk-bc-label {
+  font-size: 10px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.lk-bc-col.lk-bc-hl .lk-bc-label { color: var(--text-dim); }

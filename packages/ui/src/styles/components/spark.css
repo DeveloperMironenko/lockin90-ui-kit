@@ -1,0 +1,25 @@
+/* ============================================================================
+   Sparkline — a generic mini trend line: a rounded polyline normalized into a
+   width×height box, an optional faint area fill (gradient of the line color),
+   and an optional glowing dot at the last point. preserveAspectRatio="none",
+   so the line stretches to fill whatever box it's given. Color, fill and dot
+   are driven by props; this stylesheet only handles the trailing-dot glow and
+   crisp rendering. Mirrors the inline sparks from the old PR / roster cards.
+   ========================================================================== */
+.lk-spark {
+  display: block;
+  overflow: visible;
+}
+
+.lk-spark-line {
+  vector-effect: non-scaling-stroke;
+}
+
+.lk-spark-area {
+  stroke: none;
+}
+
+/* trailing glow dot — a soft halo in the dot's own color */
+.lk-spark-dot {
+  filter: drop-shadow(0 0 4px currentColor);
+}

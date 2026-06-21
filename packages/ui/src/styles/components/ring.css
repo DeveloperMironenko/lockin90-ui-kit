@@ -1,0 +1,53 @@
+/* ============================================================================
+   Ring — a generic, prop-driven circular-progress primitive: an SVG track +
+   colored progress arc (rotated −90° to start at 12 o'clock, round linecap,
+   soft color glow) with absolutely-centered readout content. Color, track,
+   gradient, glow and size are all driven by props (inline), so this stylesheet
+   only owns the static geometry/layout. Mirrors the Aurora Flux ring look
+   (energy / goal / substance gauges).
+   Key: .lk-ring
+   ========================================================================== */
+.lk-ring {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+}
+
+/* rotate so the arc begins at 12 o'clock; let the glow spill past the box */
+.lk-ring > svg {
+  display: block;
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+.lk-ring-track {
+  fill: none;
+}
+
+.lk-ring-arc {
+  fill: none;
+  stroke-linecap: round;
+  /* arc color glow — `--lk-ring-glow` is set inline (or transparent when off) */
+  filter: drop-shadow(0 0 8px var(--lk-ring-glow, transparent));
+  transition: stroke-dashoffset 1.1s var(--ease, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+/* centered readout, layered over the rotated svg */
+.lk-ring-center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  place-items: center;
+  text-align: center;
+}
+
+.lk-ring-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-size: 32px;
+  color: var(--text);
+}

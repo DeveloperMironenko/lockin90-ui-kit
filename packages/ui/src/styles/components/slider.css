@@ -1,0 +1,55 @@
+/* ============================================================================
+   Slider — generic Aurora-Flux range slider primitive. A neutral gray remainder
+   rail, a gradient fill up to the value with a soft glow, and a glowing white
+   thumb with a colored ring. A real <input type="range"> is overlaid (opacity 0)
+   so keyboard + drag interaction work on top of the custom visual.
+   Key: .lk-slider — per-instance vars: --pct (value%), --fill, --glow, --track
+   ========================================================================== */
+.lk-slider { position: relative; height: 18px; display: block; }
+
+/* the unfilled remainder rail */
+.lk-slider-track {
+  position: absolute; top: 50%; left: 0; right: 0; height: 10px;
+  transform: translateY(-50%); border-radius: var(--r-pill); overflow: hidden;
+  background: var(--track, rgba(255, 255, 255, 0.10));
+  pointer-events: none;
+}
+
+/* the gradient fill up to the value */
+.lk-slider-fill {
+  position: absolute; top: 50%; left: 0; height: 10px; width: var(--pct, 72%);
+  transform: translateY(-50%); border-radius: var(--r-pill);
+  background: var(--fill, linear-gradient(90deg, var(--accent), var(--cyan)));
+  box-shadow: 0 0 14px -2px var(--glow, var(--accent));
+  pointer-events: none;
+}
+
+/* glowing white thumb with a colored ring */
+.lk-slider-thumb {
+  position: absolute; top: 50%; left: var(--pct, 72%);
+  width: 18px; height: 18px; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff; border: 4px solid var(--glow, var(--accent));
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.10), 0 0 12px -2px var(--glow, var(--accent));
+  pointer-events: none;
+}
+
+/* the real accessible input — overlaid, transparent, drives interaction */
+.lk-slider-input {
+  position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+  opacity: 0; cursor: pointer; -webkit-appearance: none; appearance: none;
+  background: transparent;
+}
+.lk-slider-input:focus-visible { outline: none; }
+.lk-slider-input:focus-visible ~ .lk-slider-thumb {
+  box-shadow: 0 0 0 3px var(--border-2), 0 0 14px -1px var(--glow, var(--accent));
+}
+/* keep the native thumb sized so the full track is draggable, but invisible */
+.lk-slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%; background: transparent; border: none;
+}
+.lk-slider-input::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%; background: transparent; border: none;
+}
+.lk-slider-input::-moz-range-track { background: transparent; }

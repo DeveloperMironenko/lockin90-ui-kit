@@ -1,0 +1,45 @@
+/* ============================================================================
+   Donut chart — a generic segmented-donut primitive: an SVG ring split into
+   colored arcs sized by each segment's share of the total, with a small gap
+   between them, over a faint track ring; center shows custom content or the
+   summed total. Tokens-driven, no Tailwind.
+   Key: .lk-donut (square box) > .lk-donut-svg + .lk-donut-center
+   ========================================================================== */
+.lk-donut {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+}
+
+.lk-donut-svg {
+  display: block;
+  /* subtle per-segment glow — kept soft so colors stay legible */
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.35));
+}
+
+.lk-donut-seg {
+  transition: stroke-dasharray 0.7s var(--ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    stroke-dashoffset 0.7s var(--ease, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+/* center overlay (custom children or the summed total) */
+.lk-donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  text-align: center;
+  pointer-events: none;
+  color: var(--text);
+}
+
+.lk-donut-total {
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
