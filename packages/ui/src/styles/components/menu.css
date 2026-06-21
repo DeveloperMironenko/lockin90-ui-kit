@@ -1,0 +1,123 @@
+/* ============================================================================
+   Menu — popover menu of actions. A small ⋯ trigger toggles a rounded glass
+   panel of item rows anchored below it (left/right aligned). Rows hover-lift
+   with a subtle highlight; danger rows tint `--zone-low`; `divider` rows draw
+   a 1px hairline. Click-outside + ESC close it (handled in the component).
+   ========================================================================== */
+.lk-menu {
+  position: relative;
+  display: inline-flex;
+}
+
+/* ---- trigger (default ⋯ icon button) ---- */
+.lk-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.lk-menu-trigger:hover {
+  color: var(--text);
+  background: var(--glass-2);
+}
+.lk-menu-trigger[aria-expanded='true'] {
+  color: var(--text);
+  background: var(--glass-2);
+  border-color: var(--border-2);
+}
+
+/* ---- floating panel ---- */
+.lk-menu-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  z-index: 80;
+  min-width: 160px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--bg-1, var(--glass-2));
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+  backdrop-filter: blur(18px) saturate(130%);
+  animation: lk-menu-in 0.16s ease;
+}
+.lk-menu-right { right: 0; }
+.lk-menu-left { left: 0; }
+
+@keyframes lk-menu-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- item rows ---- */
+.lk-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.lk-menu-item:hover,
+.lk-menu-item:focus-visible {
+  background: var(--glass-2);
+  color: var(--text);
+  outline: none;
+}
+
+.lk-menu-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--text-faint);
+}
+.lk-menu-item:hover .lk-menu-icon {
+  color: var(--text-dim);
+}
+
+.lk-menu-label {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---- danger row ---- */
+.lk-menu-danger {
+  color: var(--zone-low);
+}
+.lk-menu-danger .lk-menu-icon {
+  color: var(--zone-low);
+}
+.lk-menu-danger:hover,
+.lk-menu-danger:focus-visible {
+  color: var(--zone-low);
+  background: color-mix(in srgb, var(--zone-low) 14%, transparent);
+}
+.lk-menu-danger:hover .lk-menu-icon {
+  color: var(--zone-low);
+}
+
+/* ---- divider ---- */
+.lk-menu-divider {
+  height: 1px;
+  margin: 5px 6px;
+  background: var(--border);
+}

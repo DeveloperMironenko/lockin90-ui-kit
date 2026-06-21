@@ -1,0 +1,115 @@
+/* ============================================================================
+   Alert / Banner — tinted callout box (info / success / warn / danger).
+   A tone-tinted background + 1px tone border + a 3px left accent bar (::before),
+   a tone-colored leading icon, a font-display title + font-ui dim body, and an
+   optional × dismiss button top-right. Mirrors the design `.callout` vocab.
+   Key: .lk-alert — the box; .lk-alert-{info,success,warn,danger} — tone tints.
+   ========================================================================== */
+.lk-alert {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 15px 14px 17px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--glass-2);
+  overflow: hidden;
+}
+
+/* 3px left accent bar in the tone color */
+.lk-alert::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--lk-alert-c, var(--accent));
+}
+
+.lk-alert-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  color: var(--lk-alert-c, var(--accent));
+}
+.lk-alert-icon svg {
+  display: block;
+}
+
+.lk-alert-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.lk-alert-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.lk-alert-text {
+  margin: 3px 0 0;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+/* dismiss × — mirrors .lk-modal-close */
+.lk-alert-close {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin: -3px -4px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-faint);
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.lk-alert-close:hover {
+  color: var(--text);
+  background: var(--glass-2);
+}
+.lk-alert-close svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---- tone tints: set --lk-alert-c, tinted bg + border ---- */
+.lk-alert-info {
+  --lk-alert-c: var(--accent);
+  background: rgba(124, 92, 255, 0.08);
+  border-color: rgba(124, 92, 255, 0.3);
+}
+.lk-alert-success {
+  --lk-alert-c: var(--mint);
+  background: rgba(52, 245, 197, 0.08);
+  border-color: rgba(52, 245, 197, 0.3);
+}
+.lk-alert-warn {
+  --lk-alert-c: var(--zone-mid);
+  background: rgba(255, 176, 32, 0.08);
+  border-color: rgba(255, 176, 32, 0.3);
+}
+.lk-alert-danger {
+  --lk-alert-c: var(--zone-low);
+  background: rgba(255, 77, 109, 0.08);
+  border-color: rgba(255, 77, 109, 0.3);
+}

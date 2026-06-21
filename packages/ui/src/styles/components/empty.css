@@ -1,0 +1,69 @@
+/* ============================================================================
+   EmptyState — centered zero-state used on the .zero pages: a circular glass
+   icon tile, headline, body sentence, then an action (.lk-empty-*).
+   ========================================================================== */
+
+.lk-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 40px 24px;
+}
+
+.lk-empty-tile {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background: var(--glass-2);
+  border: 1px solid var(--border-2);
+  color: var(--accent);
+}
+.lk-empty-tile svg {
+  stroke: currentColor;
+}
+
+.lk-empty-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.lk-empty-desc {
+  margin: 0;
+  max-width: 340px;
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.lk-empty-action {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* ---- compact ---- */
+.lk-empty-compact {
+  gap: 9px;
+  padding: 24px 18px;
+}
+.lk-empty-compact .lk-empty-tile {
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+}
+.lk-empty-compact .lk-empty-title {
+  font-size: 15px;
+}
+.lk-empty-compact .lk-empty-desc {
+  font-size: 12.5px;
+}

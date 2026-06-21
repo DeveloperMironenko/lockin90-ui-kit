@@ -1,0 +1,131 @@
+/* ============================================================================
+   Toast + Badge — a compact floating notification card and a tiny count/status
+   pill. Both are tone-driven; the Toast tints its icon + a subtle left accent
+   rail, the Badge fills in the tone color (or renders as a glowing dot).
+   ========================================================================== */
+
+/* ---- Toast: compact floating glass card ---- */
+.lk-toast {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  width: min(360px, 92vw);
+  padding: 11px 13px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-2);
+  background: var(--bg-1);
+  background-image: linear-gradient(var(--glass-2), var(--glass-2));
+  box-shadow: var(--elev-2);
+  overflow: hidden;
+}
+
+/* subtle left accent rail — neutral by default, tinted per tone */
+.lk-toast::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--border-2);
+}
+
+.lk-toast-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: var(--text-dim);
+}
+.lk-toast-icon svg { width: 17px; height: 17px; }
+
+.lk-toast-body { min-width: 0; flex: 1 1 auto; }
+
+.lk-toast-title {
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text);
+}
+
+.lk-toast-msg {
+  margin-top: 2px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--text-dim);
+}
+
+.lk-toast-x {
+  flex: 0 0 auto;
+  margin: -2px -2px 0 2px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-faint);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color .2s ease, background .2s ease;
+}
+.lk-toast-x:hover { color: var(--text); background: var(--glass-2); }
+
+/* tone tints: icon color + left rail */
+.lk-toast-success .lk-toast-icon { color: var(--zone-high); }
+.lk-toast-success::before { background: var(--zone-high); }
+
+.lk-toast-warn .lk-toast-icon { color: var(--zone-mid); }
+.lk-toast-warn::before { background: var(--zone-mid); }
+
+.lk-toast-danger .lk-toast-icon { color: var(--zone-low); }
+.lk-toast-danger::before { background: var(--zone-low); }
+
+/* ---- Badge: tiny count/status pill ---- */
+.lk-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 2px 6px;
+  border-radius: var(--r-pill);
+  border: 1px solid transparent;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lk-badge-accent {
+  color: #0A0A12;
+  background: var(--grad-cta);
+  border-color: transparent;
+}
+.lk-badge-high { color: var(--zone-high); background: rgba(52, 245, 197, 0.10); border-color: rgba(52, 245, 197, 0.35); }
+.lk-badge-mid { color: var(--zone-mid); background: rgba(255, 176, 32, 0.10); border-color: rgba(255, 176, 32, 0.35); }
+.lk-badge-low { color: var(--zone-low); background: rgba(255, 77, 109, 0.10); border-color: rgba(255, 77, 109, 0.35); }
+.lk-badge-neutral { color: var(--text-dim); background: var(--glass-2); border-color: var(--border); }
+
+/* dot variant: a small glowing circle, no text */
+.lk-badge-dot {
+  min-width: 0;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+.lk-badge-dot.lk-badge-accent { color: var(--accent); background: currentColor; }
+.lk-badge-dot.lk-badge-high { color: var(--zone-high); background: currentColor; }
+.lk-badge-dot.lk-badge-mid { color: var(--zone-mid); background: currentColor; }
+.lk-badge-dot.lk-badge-low { color: var(--zone-low); background: currentColor; }
+.lk-badge-dot.lk-badge-neutral { color: var(--text-faint); background: currentColor; box-shadow: none; }

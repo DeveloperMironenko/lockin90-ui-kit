@@ -1,0 +1,118 @@
+/* ============================================================================
+   Pagination + Breadcrumb — admin/CMS navigation atoms.
+
+   Pagination: a row of ~32px square buttons — mono numerals, a glass hover
+   highlight, the active page filled with the violet accent; chevron prev/next
+   that dim and disable at the ends; `…` gaps for collapsed ranges.
+   Key: .lk-pager > .lk-pager-btn(.is-active) + .lk-pager-gap
+
+   Breadcrumb: an inline trail (font-ui ~12.5px) — dim clickable ancestors that
+   brighten on hover, a bold current leaf, faint chevron separators.
+   Key: .lk-crumb > .lk-crumb-item(.lk-crumb-link / .is-current) + .lk-crumb-sep
+   ========================================================================== */
+
+/* ── Pagination ───────────────────────────────────────────────────────────*/
+.lk-pager {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lk-pager-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--glass);
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+}
+
+.lk-pager-btn:hover {
+  color: var(--text);
+  background: var(--glass-2);
+  border-color: var(--border-2);
+}
+
+.lk-pager-btn.is-active {
+  color: var(--text);
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.lk-pager-btn.is-active:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.lk-pager-edge .lk-icon {
+  display: inline-flex;
+}
+
+.lk-pager-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+  color: var(--text-faint);
+}
+.lk-pager-btn:disabled:hover {
+  background: var(--glass);
+  border-color: var(--border);
+  color: var(--text-faint);
+}
+
+.lk-pager-gap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 32px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  user-select: none;
+}
+
+/* ── Breadcrumb ───────────────────────────────────────────────────────────*/
+.lk-crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1;
+}
+
+.lk-crumb-item {
+  color: var(--text-dim);
+  text-decoration: none;
+  letter-spacing: -0.005em;
+  transition: color .2s var(--ease);
+}
+
+.lk-crumb-link {
+  cursor: pointer;
+}
+.lk-crumb-link:hover {
+  color: var(--text);
+}
+
+.lk-crumb-item.is-current {
+  color: var(--text);
+  font-weight: 600;
+  cursor: default;
+}
+
+.lk-crumb-sep {
+  display: inline-flex;
+  color: var(--text-faint);
+  opacity: 0.6;
+}
