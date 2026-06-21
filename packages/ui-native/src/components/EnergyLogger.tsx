@@ -189,7 +189,9 @@ export function EnergyLogger({
               style={styles.sliderTrack}
             />
             <ExpoGradient
-              colors={gradients.cta.stops as unknown as [string, string]}
+              // same stops as the ring arc (accent → cyan → lime) so progress + slider match
+              colors={[colors.accent, colors.cyan, colors.lime] as unknown as [string, string, string]}
+              locations={[0, 0.55, 1] as unknown as [number, number, number]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={[styles.sliderFill, { width: `${fillPct}%` }]}
