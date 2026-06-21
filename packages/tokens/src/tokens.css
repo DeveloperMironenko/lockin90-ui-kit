@@ -1,0 +1,81 @@
+/* ============================================================================
+   @lockin90/tokens — LockIn90 "Aurora Flux" design tokens (CSS custom properties)
+   Glassmorphism + flowing energy-spectrum gradients + glow + motion.
+   Fonts: Space Grotesk (display) · Inter (UI) · JetBrains Mono (data)
+
+   Import ONCE at your app root:  import '@lockin90/tokens/tokens.css';
+   (Native/JS consumers import the typed raw values from '@lockin90/tokens'.)
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* ---- surfaces (deep void → glass) ---- */
+  --void: #05060B;
+  --bg-0: #080A12;
+  --bg-1: #0C0F1A;
+  --bg-2: #11151F;
+  --glass: rgba(255, 255, 255, 0.045);
+  --glass-2: rgba(255, 255, 255, 0.075);
+  --border: rgba(255, 255, 255, 0.09);
+  --border-2: rgba(255, 255, 255, 0.16);
+
+  /* ---- text ---- */
+  --text: #EEF1F8;
+  --text-dim: #AAB2C6;
+  --text-faint: #828B9F;
+
+  /* ---- energy spectrum (the signature) ---- */
+  --lime: #A8FF35;
+  --mint: #34F5C5;
+  --cyan: #22D3EE;
+  --indigo: #6E7BFF;
+  --violet: #A855F7;
+  --magenta: #FF3D81;
+
+  /* ---- accents ---- */
+  --accent: #7C5CFF;
+  --accent-2: #22D3EE;
+  --accent-3: #34F5C5;
+
+  /* ---- energy zones (signal colors) ---- */
+  --zone-high: #34F5C5;
+  --zone-mid: #FFB020;
+  --zone-low: #FF4D6D;
+
+  /* ---- status ---- */
+  --ok: #34F5C5;
+  --warn: #FFB020;
+  --bad: #FF4D6D;
+  --info: #6E7BFF;
+
+  /* ---- gradients ---- */
+  --grad-flux: linear-gradient(100deg, #A8FF35, #34F5C5, #22D3EE, #7C5CFF, #FF3D81);
+  --grad-cta: linear-gradient(135deg, #7C5CFF 0%, #22D3EE 100%);
+  --grad-mint: linear-gradient(135deg, #34F5C5 0%, #22D3EE 100%);
+  --grad-violet: linear-gradient(135deg, #A855F7 0%, #6E7BFF 100%);
+  --grad-warm: linear-gradient(135deg, #FFB020 0%, #FF4D6D 100%);
+
+  /* ---- geometry ---- */
+  --r-sm: 10px;
+  --r: 16px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  /* ---- glow / elevation ---- */
+  --glow-accent: 0 0 40px rgba(124, 92, 255, 0.35);
+  --glow-cyan: 0 0 36px rgba(34, 211, 238, 0.30);
+  --glow-mint: 0 0 36px rgba(52, 245, 197, 0.30);
+  --elev-1: 0 2px 20px rgba(0, 0, 0, 0.45);
+  --elev-2: 0 18px 50px -12px rgba(0, 0, 0, 0.7);
+
+  /* ---- motion ---- */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur: 0.55s;
+
+  /* ---- type ---- */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-ui: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
