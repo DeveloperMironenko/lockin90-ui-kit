@@ -146,16 +146,18 @@ export function ConversationList({
                   </svg>
                 )}
               </span>
-              <span className={cn('lk-conv-preview', unread && 'lk-conv-unread')}>
-                {t.from && <span className="lk-conv-from">{t.from} </span>}
-                {t.preview}
-              </span>
-              {t.encrypted && (
-                <span className="lk-conv-e2ee lk-mono">
-                  <LockGlyph />
-                  Encrypted
+              <span className="lk-conv-line">
+                <span className={cn('lk-conv-preview', unread && 'lk-conv-unread')}>
+                  {t.from && <span className="lk-conv-from">{t.from} </span>}
+                  {t.preview}
                 </span>
-              )}
+                {t.encrypted && (
+                  <span className="lk-conv-e2ee lk-mono">
+                    <LockGlyph />
+                    Encrypted
+                  </span>
+                )}
+              </span>
             </span>
             <span className="lk-conv-right">
               <span className="lk-conv-time lk-mono">{t.time}</span>

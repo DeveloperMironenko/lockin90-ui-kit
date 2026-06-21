@@ -151,16 +151,18 @@ function ThreadRow({ thread }: { thread: ConvThread }) {
             </Svg>
           )}
         </View>
-        <Text style={[styles.preview, unread && styles.previewUnread]} numberOfLines={1}>
-          {thread.from && <Text style={styles.from}>{thread.from} </Text>}
-          {thread.preview}
-        </Text>
-        {thread.encrypted && (
-          <View style={styles.e2ee}>
-            <LockGlyph size={9} stroke={colors.zoneHigh} />
-            <Text style={styles.e2eeText}>Encrypted</Text>
-          </View>
-        )}
+        <View style={styles.line}>
+          <Text style={[styles.preview, unread && styles.previewUnread]} numberOfLines={1}>
+            {thread.from && <Text style={styles.from}>{thread.from} </Text>}
+            {thread.preview}
+          </Text>
+          {thread.encrypted && (
+            <View style={styles.e2ee}>
+              <LockGlyph size={9} stroke={colors.zoneHigh} />
+              <Text style={styles.e2eeText}>Encrypted</Text>
+            </View>
+          )}
+        </View>
       </View>
       <View style={styles.right}>
         <Text style={styles.time}>{thread.time}</Text>
@@ -285,7 +287,8 @@ const styles = StyleSheet.create({
   meta: { flex: 1, minWidth: 0 },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   name: { fontFamily: fonts.ui, fontWeight: '600', fontSize: 13.5, color: colors.text, flexShrink: 1 },
-  preview: { fontSize: 12.5, color: colors.textDim, marginTop: 2 },
+  line: { flexDirection: 'row', alignItems: 'center', gap: 9, marginTop: 2 },
+  preview: { fontSize: 12.5, color: colors.textDim, flexShrink: 1 },
   previewUnread: { color: colors.text, fontWeight: '500' },
   from: { color: colors.textDim, fontWeight: '600' },
 
@@ -293,14 +296,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    alignSelf: 'flex-start',
     paddingVertical: 3,
     paddingHorizontal: 8,
     borderRadius: radii.pill,
     backgroundColor: 'rgba(52,245,197,0.07)',
     borderWidth: 1,
     borderColor: 'rgba(52,245,197,0.28)',
-    marginTop: 5,
   },
   e2eeText: {
     fontFamily: fonts.mono,
@@ -309,7 +310,7 @@ const styles = StyleSheet.create({
     color: colors.zoneHigh,
   },
 
-  right: { alignItems: 'flex-end', gap: 6 },
+  right: { alignItems: 'center', gap: 6 },
   time: { fontFamily: fonts.mono, fontSize: 10, color: colors.textFaint },
   badge: {
     minWidth: 19,
