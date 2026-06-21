@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   mini: { width: 50, height: 50, alignItems: 'center', justifyContent: 'center' },
   miniSvg: { position: 'absolute' },
   miniHole: { position: 'absolute', width: 38, height: 38, borderRadius: 19, backgroundColor: colors.glass2 },
-  miniLabel: { fontFamily: fonts.mono, fontSize: 10, fontWeight: '600', color: colors.textDim },
+  miniLabel: { fontFamily: fonts.mono, fontSize: 11, fontWeight: '700', color: colors.text },
   vals: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
   cur: { fontFamily: fonts.display, fontWeight: '700', fontSize: 26, letterSpacing: -0.52, lineHeight: 26, color: colors.text },
   curSmall: { fontFamily: fonts.mono, fontSize: 14, fontWeight: '400', color: colors.textFaint },
