@@ -1,0 +1,159 @@
+/* ============================================================================
+   Stepper + NumberStepper — flow-progress + quantity atoms.
+
+   Stepper: a horizontal numbered rail — each step is a circular node (its
+   number, or a check when completed) with a label beneath; completed nodes
+   fill mint, the current node fills accent, future nodes stay faint glass; a
+   thin connecting line runs between nodes, accent up to the current step and
+   faint beyond.
+   Key: .lk-step > .lk-step-item(.is-done/.is-current/.is-future)
+        [ .lk-step-node + .lk-step-label ]  ·  .lk-step-line(.is-filled)
+
+   NumberStepper: a compact glass pill — a − button, the mono centered value,
+   and a + button; the end buttons dim and disable at min / max.
+   Key: .lk-numstep > .lk-numstep-btn + .lk-numstep-value + .lk-numstep-btn
+   ========================================================================== */
+
+/* ── Stepper ──────────────────────────────────────────────────────────────*/
+.lk-step {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.lk-step-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.lk-step-node {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border-2);
+  background: var(--glass-2);
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  transition: background .25s var(--ease), border-color .25s var(--ease),
+    color .25s var(--ease), box-shadow .3s var(--ease);
+}
+
+.lk-step-node .lk-icon {
+  display: inline-flex;
+}
+
+.lk-step-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: -0.005em;
+  color: var(--text-faint);
+  white-space: nowrap;
+  transition: color .25s var(--ease);
+}
+
+/* completed — filled mint with a check */
+.lk-step-item.is-done .lk-step-node {
+  background: var(--grad-mint, var(--mint));
+  border-color: transparent;
+  color: var(--bg-1);
+  box-shadow: var(--glow-mint);
+}
+.lk-step-item.is-done .lk-step-label {
+  color: var(--text-dim);
+}
+
+/* current — filled accent */
+.lk-step-item.is-current .lk-step-node {
+  background: var(--grad-cta, var(--accent));
+  border-color: transparent;
+  color: var(--bg-1);
+  box-shadow: var(--glow-accent);
+}
+.lk-step-item.is-current .lk-step-label {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* future — faint glass (default node colors already apply) */
+.lk-step-item.is-future .lk-step-label {
+  color: var(--text-faint);
+}
+
+/* connecting line — sits beside the node row */
+.lk-step-line {
+  flex: 1 1 auto;
+  min-width: 18px;
+  height: 2px;
+  margin-top: 14px;
+  border-radius: 2px;
+  background: var(--border);
+  transition: background .3s var(--ease);
+}
+.lk-step-line.is-filled {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+/* ── NumberStepper ────────────────────────────────────────────────────────*/
+.lk-numstep {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-pill);
+  background: var(--glass-2);
+}
+
+.lk-numstep-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: color .2s var(--ease), background .2s var(--ease);
+}
+.lk-numstep-btn:hover {
+  color: var(--text);
+  background: var(--glass);
+}
+.lk-numstep-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+  color: var(--text-faint);
+}
+.lk-numstep-btn:disabled:hover {
+  background: transparent;
+  color: var(--text-faint);
+}
+
+.lk-numstep-value {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  padding: 0 6px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  font-feature-settings: "tnum" 1;
+  text-align: center;
+  user-select: none;
+}

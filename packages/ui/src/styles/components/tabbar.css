@@ -1,0 +1,97 @@
+/* ============================================================================
+   Mobile atoms — TabBar (bottom nav) + FAB (floating action button).
+   TabBar: a glass row of icon-over-label tabs; the active tab glows accent,
+   inactive sit faint. Sits pinned at the bottom of a screen.
+   FAB: a circular grad-cta button with a strong glow + hover lift; `extended`
+   variant grows into a labelled pill.
+   Keys: .lk-tabbar > .lk-tabbar-item.is-active ; .lk-fab(.lk-fab-extended)
+   ========================================================================== */
+.lk-tabbar {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 6px;
+  background: var(--bg-1);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  box-shadow: 0 -8px 30px -12px rgba(0, 0, 0, 0.6);
+}
+
+.lk-tabbar-item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 4px 2px;
+  border: 0;
+  background: transparent;
+  color: var(--text-faint);
+  cursor: pointer;
+  transition: color .25s var(--ease);
+}
+
+.lk-tabbar-item:hover { color: var(--text-dim); }
+
+.lk-tabbar-icon {
+  display: grid;
+  place-items: center;
+  line-height: 0;
+}
+.lk-tabbar-icon svg { width: 22px; height: 22px; }
+
+.lk-tabbar-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+.lk-tabbar-item.is-active { color: var(--accent); }
+.lk-tabbar-item.is-active .lk-tabbar-icon {
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 55%, transparent));
+}
+
+/* ---- FAB ---- */
+.lk-fab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-pill);
+  color: #0A0A12;
+  background: var(--grad-cta);
+  background-size: 160% 160%;
+  box-shadow: var(--glow-accent), 0 8px 24px -8px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: transform .25s var(--ease), box-shadow .3s var(--ease);
+  will-change: transform;
+}
+.lk-fab:hover { transform: translateY(-2px); box-shadow: 0 0 56px rgba(124, 92, 255, 0.55), 0 10px 28px -8px rgba(0, 0, 0, 0.6); }
+.lk-fab:active { transform: translateY(0) scale(.96); }
+.lk-fab:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.lk-fab-icon { display: grid; place-items: center; line-height: 0; }
+.lk-fab-icon svg { width: 22px; height: 22px; stroke-width: 2.2; }
+
+.lk-fab-extended {
+  width: auto;
+  height: 52px;
+  padding: 0 22px 0 18px;
+}
+.lk-fab-label {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}

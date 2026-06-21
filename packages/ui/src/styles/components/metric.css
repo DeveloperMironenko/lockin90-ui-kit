@@ -1,0 +1,127 @@
+/* ============================================================================
+   MetricTile — a small KPI tile: glass card with a mono label, optional
+   top-right faint icon, a big display value + unit, and a tone-colored delta
+   pill. Mirrors the admin KPI / vitals stat-cell tiles.   (.lk-metric-*)
+
+   ProgressDots — a flex row of segment dots showing progress, e.g. the
+   onboarding "calibration" day-dot rows: filled dots glow, the rest stay
+   faint, the current dot reads slightly larger.   (.lk-dots / .lk-dot)
+   ========================================================================== */
+
+/* ── MetricTile ──────────────────────────────────────────────────────────── */
+
+.lk-metric {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--glass);
+}
+
+.lk-metric-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.lk-metric-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-faint);
+}
+
+.lk-metric-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-faint);
+  opacity: 0.8;
+}
+.lk-metric-icon svg {
+  stroke: currentColor;
+}
+
+.lk-metric-body {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+}
+
+.lk-metric-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.lk-metric-unit {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+.lk-metric-delta {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+.lk-metric-delta-up {
+  color: var(--zone-high);
+  background: color-mix(in srgb, var(--zone-high) 12%, transparent);
+}
+.lk-metric-delta-down {
+  color: var(--zone-low);
+  background: color-mix(in srgb, var(--zone-low) 12%, transparent);
+}
+.lk-metric-delta-flat {
+  color: var(--text-faint);
+  background: var(--glass-2);
+}
+
+/* ── ProgressDots ────────────────────────────────────────────────────────── */
+
+.lk-dots {
+  --lk-dot-color: var(--accent);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.lk-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--border-2);
+  transition:
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.lk-dot-on {
+  background: var(--lk-dot-color);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--lk-dot-color) 55%, transparent);
+}
+
+.lk-dot-now {
+  transform: scale(1.35);
+}

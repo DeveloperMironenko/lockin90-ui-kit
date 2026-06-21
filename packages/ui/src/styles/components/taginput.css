@@ -1,0 +1,91 @@
+/* ============================================================================
+   TagInput — CMS post-editor tag box: a glassy field shell that flex-wraps the
+   current tags as small removable mono pills, followed by a borderless input.
+   Mirrors `.tag-box`/`.tag` from the CMS post-editor design.
+   ========================================================================== */
+.lk-taginput {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  padding: 8px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-2);
+  background: var(--glass-2);
+}
+
+.lk-taginput-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px 3px 9px;
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  background: rgba(34, 211, 238, 0.1);
+  color: var(--mint);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.4;
+}
+
+.lk-taginput-x {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: currentColor;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+.lk-taginput-x:hover { opacity: 1; }
+.lk-taginput-x svg { width: 10px; height: 10px; stroke: currentColor; fill: none; }
+
+.lk-taginput-input {
+  flex: 1;
+  min-width: 90px;
+  padding: 3px 2px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 12px;
+}
+.lk-taginput-input::placeholder { color: var(--text-faint); }
+
+/* ============================================================================
+   CodeInput — segmented verification-code boxes: a row of single-char mono
+   inputs. Focused box gets accent border + glow; filled box a subtle accent
+   tint. Mirrors `.code-row`/`.code-box` from the auth design.
+   ========================================================================== */
+.lk-code {
+  display: flex;
+  gap: 10px;
+}
+
+.lk-code-box {
+  width: 44px;
+  height: 52px;
+  flex: none;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--text);
+  background: var(--glass-2);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-sm);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.lk-code-box:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(124, 92, 255, 0.06);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.16);
+}
+.lk-code-box.lk-code-filled {
+  border-color: rgba(34, 211, 238, 0.45);
+  background: rgba(34, 211, 238, 0.05);
+}

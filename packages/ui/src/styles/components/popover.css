@@ -1,0 +1,150 @@
+/* ============================================================================
+   Popover — click-triggered floating panel of arbitrary content. A small "?"
+   info trigger toggles a glass card anchored below it (left/right/center
+   aligned) with a small pointing arrow. Click-outside + ESC close it (handled
+   in the component).
+
+   CopyButton — copy-to-clipboard control. The copy glyph swaps to a check for
+   ~1.2s after a successful copy; an optional label sits beside the icon.
+   ========================================================================== */
+.lk-pop {
+  position: relative;
+  display: inline-flex;
+}
+
+/* ---- trigger (default "?" info button) ---- */
+.lk-pop-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--glass-2);
+  color: var(--text-dim);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.lk-pop-trigger:hover {
+  color: var(--text);
+  border-color: var(--border-2);
+}
+.lk-pop-trigger[aria-expanded='true'] {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+/* ---- floating panel ---- */
+.lk-pop-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  z-index: 90;
+  max-width: 260px;
+  width: max-content;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--bg-1, var(--glass-2));
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.52);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+  backdrop-filter: blur(18px) saturate(130%);
+  animation: lk-pop-in 0.16s ease;
+}
+.lk-pop-left { left: 0; }
+.lk-pop-right { right: 0; }
+.lk-pop-center { left: 50%; transform: translateX(-50%); }
+
+@keyframes lk-pop-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.lk-pop-center { animation: lk-pop-in-center 0.16s ease; }
+@keyframes lk-pop-in-center {
+  from { opacity: 0; transform: translate(-50%, -4px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ---- arrow — a rotated square sharing the panel's surface + border ---- */
+.lk-pop-arrow {
+  position: absolute;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  background: var(--bg-1, var(--glass-2));
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  transform: rotate(45deg);
+}
+.lk-pop-left .lk-pop-arrow { left: 14px; }
+.lk-pop-right .lk-pop-arrow { right: 14px; }
+.lk-pop-center .lk-pop-arrow { left: 50%; margin-left: -4px; }
+
+/* ---- body content ---- */
+.lk-pop-body {
+  position: relative;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-dim);
+}
+.lk-pop-text {
+  margin: 0;
+  color: var(--text-dim);
+}
+
+/* ============================================================================
+   CopyButton
+   ========================================================================== */
+.lk-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 28px;
+  padding: 0 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--glass-2);
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+.lk-copy:hover,
+.lk-copy:focus-visible {
+  color: var(--text);
+  background: var(--bg-1, var(--glass-2));
+  border-color: var(--border-2);
+  outline: none;
+}
+
+.lk-copy-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--text-faint);
+  transition: color 0.18s ease;
+}
+.lk-copy:hover .lk-copy-icon {
+  color: var(--text-dim);
+}
+
+.lk-copy-label {
+  min-width: 0;
+}
+
+/* ---- success flash ---- */
+.lk-copy-done,
+.lk-copy-done:hover {
+  color: var(--mint, var(--zone-high));
+  border-color: color-mix(in srgb, var(--zone-high) 50%, var(--border));
+}
+.lk-copy-done .lk-copy-icon {
+  color: var(--mint, var(--zone-high));
+}
