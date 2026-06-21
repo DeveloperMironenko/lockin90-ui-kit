@@ -135,7 +135,8 @@ export function VitalsGrid({
               </div>
               {v.trend ? (
                 <span className={cn('lk-vit-trend', `is-${kind}`)}>
-                  <span className="lk-vit-arrow">{arrow}</span> {v.trend.text}
+                  <span className="lk-vit-arrow">{arrow}</span>
+                  {v.trend.text}
                 </span>
               ) : null}
             </article>
