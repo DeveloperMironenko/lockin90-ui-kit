@@ -73,14 +73,14 @@ function RingGauge({ pct, color }: { pct: number; color: string }) {
   const dashoffset = RING_C * (1 - clamped / 100);
   return (
     <View style={styles.gauge}>
-      <Svg width={56} height={56} viewBox="0 0 56 56" style={styles.gaugeSvg}>
-        <Circle cx={28} cy={28} r={RING_R} fill="none" strokeWidth={5} stroke={colors.border2} />
+      <Svg width={60} height={60} viewBox="0 0 56 56" style={styles.gaugeSvg}>
+        <Circle cx={28} cy={28} r={RING_R} fill="none" strokeWidth={4} stroke={colors.border2} />
         <Circle
           cx={28}
           cy={28}
           r={RING_R}
           fill="none"
-          strokeWidth={5}
+          strokeWidth={4}
           stroke={color}
           strokeLinecap="round"
           strokeDasharray={RING_C}
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     elevation: 6,
   },
-  gauge: { width: 56, height: 56 },
+  gauge: { width: 60, height: 60 },
   gaugeSvg: { transform: [{ rotate: '-90deg' }] },
   pctWrap: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' },
   pct: { fontFamily: fonts.mono, fontSize: 11, fontWeight: '600', color: colors.text, letterSpacing: -0.2 },

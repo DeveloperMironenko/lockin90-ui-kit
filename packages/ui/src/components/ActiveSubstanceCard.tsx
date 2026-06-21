@@ -84,14 +84,14 @@ function Row({
         aria-label={`${Math.round(pct)}% of peak remaining`}
       >
         <svg viewBox="0 0 56 56">
-          <circle className="lk-act-track" cx="28" cy="28" r={RING_R} fill="none" strokeWidth="5" />
+          <circle className="lk-act-track" cx="28" cy="28" r={RING_R} fill="none" strokeWidth="4" />
           <circle
             className="lk-act-prog"
             cx="28"
             cy="28"
             r={RING_R}
             fill="none"
-            strokeWidth="5"
+            strokeWidth="4"
             strokeDasharray={RING_C.toFixed(1)}
             strokeDashoffset={dashoffset.toFixed(1)}
           />

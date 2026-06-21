@@ -12,7 +12,7 @@
 .lk-act-card {
   position: relative;
   display: grid;
-  grid-template-columns: 56px 1fr auto;
+  grid-template-columns: 60px 1fr auto;
   align-items: center;
   gap: 14px;
   padding: 15px 16px 15px 18px;
@@ -36,8 +36,8 @@
   border-color: color-mix(in srgb, var(--ac, var(--accent)) 26%, var(--border));
 }
 
-.lk-act-gauge { position: relative; width: 56px; height: 56px; }
-.lk-act-gauge svg { width: 56px; height: 56px; transform: rotate(-90deg); display: block; }
+.lk-act-gauge { position: relative; width: 60px; height: 60px; }
+.lk-act-gauge svg { width: 60px; height: 60px; transform: rotate(-90deg); display: block; }
 .lk-act-gauge .lk-act-track { stroke: var(--border-2); }
 .lk-act-gauge .lk-act-prog {
   stroke: var(--ac, var(--accent));
