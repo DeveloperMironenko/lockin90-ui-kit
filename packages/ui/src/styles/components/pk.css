@@ -1,0 +1,87 @@
+/* ============================================================================
+   Caffeine decay (PK) curve — a pharmacokinetic concentration-over-day chart:
+   a decay curve with labeled dose dots, a dashed "sleep cutoff" vertical line,
+   a faint threshold line, x-axis time ticks, a concentration / dose / cutoff
+   legend, and an "active at bedtime" readout with a warning chip.
+   Key: .lk-pk
+   ========================================================================== */
+.lk-pk {
+  border: 1px solid var(--border); background: var(--glass); border-radius: var(--r);
+  padding: 16px 16px 14px; position: relative; overflow: hidden;
+}
+.lk-pk::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, var(--zone-mid), var(--warn)); box-shadow: 0 0 12px var(--warn);
+}
+
+/* header: caffeine icon + name + half-life sub-line, with a status chip on the right */
+.lk-pk-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.lk-pk-title { display: flex; align-items: center; gap: 9px; }
+.lk-pk-title svg { width: 18px; height: 18px; stroke: var(--zone-mid); stroke-width: 1.6; fill: none; flex: 0 0 18px; }
+.lk-pk-name { font-family: var(--font-display); font-weight: 700; font-size: 16px; letter-spacing: -0.01em; color: var(--text); }
+.lk-pk-half { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); margin-top: 2px; }
+.lk-pk-half b { color: var(--text-dim); font-weight: 500; }
+
+/* chart canvas (SVG curve) + absolutely-positioned dose markers / cutoff label over it */
+.lk-pk-wrap { position: relative; margin-top: 12px; }
+.lk-pk-chart { width: 100%; height: 168px; display: block; overflow: visible; }
+.lk-pk-fill { opacity: 0.85; }
+.lk-pk-line { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 8px rgba(255, 176, 32, 0.4)); }
+.lk-pk-grid { stroke: rgba(255, 255, 255, 0.05); stroke-width: 1; }
+.lk-pk-cut { stroke: var(--zone-low); stroke-width: 1.5; stroke-dasharray: 3 4; opacity: 0.7; }
+.lk-pk-thresh { stroke: var(--border-2); stroke-width: 1; stroke-dasharray: 2 5; }
+
+/* a labeled dose marker — a glowing dot with mg label above and time label below */
+.lk-pk-dose { position: absolute; transform: translate(-50%, -50%); }
+.lk-pk-dose .lk-pk-dot {
+  display: block; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--zone-mid); border: 2px solid #0c0f1a;
+  box-shadow: 0 0 0 3px rgba(52, 245, 197, 0.16), 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: transform 0.18s ease;
+}
+.lk-pk-dose:hover .lk-pk-dot { transform: scale(1.25); }
+.lk-pk-dose.lk-pk-warn .lk-pk-dot {
+  background: var(--warn);
+  box-shadow: 0 0 0 3px rgba(255, 176, 32, 0.22), 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+.lk-pk-dose .lk-pk-dmg {
+  position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); white-space: nowrap;
+}
+.lk-pk-dose .lk-pk-dtime {
+  position: absolute; left: 50%; top: 22px; transform: translateX(-50%);
+  font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); white-space: nowrap;
+}
+
+/* "sleep 11pm" label pinned to the cutoff line */
+.lk-pk-cutlabel {
+  position: absolute; top: 4px; transform: translateX(-50%);
+  font-family: var(--font-mono); font-size: 9px; color: var(--zone-low); white-space: nowrap;
+}
+
+/* x-axis time ticks */
+.lk-pk-axis {
+  display: flex; justify-content: space-between; margin-top: 9px;
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-faint);
+}
+
+/* concentration / dose / cutoff legend */
+.lk-pk-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 11px; }
+.lk-pk-legend span {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim);
+}
+.lk-pk-legend i { width: 14px; height: 3px; border-radius: 3px; flex: 0 0 14px; }
+
+/* "active at bedtime" readout strip with a warn chip */
+.lk-pk-readout {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 13px;
+  padding: 11px 13px; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--glass-2);
+}
+.lk-pk-active { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+.lk-pk-active b { color: var(--text); font-weight: 600; }
+.lk-pk-active .lk-pk-mg {
+  font-family: var(--font-display); font-weight: 700; font-size: 19px;
+  letter-spacing: -0.02em; color: var(--warn); vertical-align: -1px;
+}
+.lk-pk-active .lk-pk-over { color: var(--warn); font-weight: 600; }

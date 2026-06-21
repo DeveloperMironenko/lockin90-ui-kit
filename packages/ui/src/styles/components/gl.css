@@ -1,0 +1,57 @@
+/* ============================================================================
+   Glycemic curve — a post-meal blood-glucose response area chart (rise to a
+   peak ~45min then back to baseline) drawn in SVG, with a baseline line, a peak
+   marker, a time axis and a 3-stat readout row (peak / glycemic load /
+   time-to-baseline).
+   Key: .lk-gl
+   ========================================================================== */
+.lk-gl { padding: 16px 17px; }
+
+/* header: title + sub eyebrow, with a trailing tone chip */
+.lk-gl-top { display: flex; align-items: center; gap: 8px; margin-bottom: 11px; }
+.lk-gl-head { margin-right: auto; }
+.lk-gl-ttl {
+  font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  color: var(--text); line-height: 1.25;
+}
+.lk-gl-sub {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.04em;
+  color: var(--text-faint); text-transform: uppercase; display: block; margin-top: 2px;
+}
+
+/* chart */
+.lk-gl-svg { width: 100%; height: 130px; display: block; overflow: visible; }
+.lk-gl-line { filter: drop-shadow(0 0 7px rgba(34, 211, 238, 0.5)); }
+.lk-gl-peakdot { filter: drop-shadow(0 0 6px rgba(255, 176, 32, 0.7)); }
+.lk-gl-peaklbl {
+  font-family: var(--font-mono); font-size: 8.5px; font-weight: 600; fill: var(--warn);
+}
+
+/* time axis under the chart */
+.lk-gl-axis {
+  display: flex; justify-content: space-between; margin-top: 5px; padding: 0 1px;
+  font-family: var(--font-mono); font-size: 8px; color: var(--text-faint);
+}
+
+/* 3-stat readout row */
+.lk-gl-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  margin-top: 13px; padding-top: 12px; border-top: 1px solid var(--border);
+}
+.lk-gl-stat { text-align: center; }
+.lk-gl-stat .lk-gl-l {
+  font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-faint);
+}
+.lk-gl-stat .lk-gl-v {
+  font-family: var(--font-display); font-weight: 700; font-size: 18px;
+  line-height: 1.1; margin: 3px 0 2px; color: var(--text);
+}
+.lk-gl-stat .lk-gl-v .lk-gl-u {
+  font-family: var(--font-mono); font-size: 9px; font-weight: 500;
+  color: var(--text-dim); margin-left: 1px;
+}
+.lk-gl-stat .lk-gl-d { font-family: var(--font-mono); font-size: 8px; }
+.lk-gl-stat:nth-child(1) .lk-gl-v { color: var(--warn); }
+.lk-gl-stat .lk-gl-d.lk-gl-mid { color: var(--zone-mid); }
+.lk-gl-stat .lk-gl-d.lk-gl-low { color: var(--zone-low); }

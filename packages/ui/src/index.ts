@@ -73,3 +73,17 @@ export { AccountPanel } from './components/AccountPanel';
 export type { AccountPanelProps, AccountUser, AccountRow, AccountRowIcon } from './components/AccountPanel';
 export { RestTimer } from './components/RestTimer';
 export type { RestTimerProps } from './components/RestTimer';
+
+// — Wave 4 —
+export { GlycemicCurve } from './components/GlycemicCurve';
+export type { GlycemicCurveProps, GlycemicStat } from './components/GlycemicCurve';
+export { CaffeineDecayCurve } from './components/CaffeineDecayCurve';
+export type { CaffeineDecayCurveProps, PkSample, PkDose } from './components/CaffeineDecayCurve';
+export { SleepDebtChart } from './components/SleepDebtChart';
+export type { SleepDebtChartProps, SleepDebtChip } from './components/SleepDebtChart';
+export { CheckinSliders } from './components/CheckinSliders';
+export type { CheckinSlidersProps, CheckinSlider, CheckinComposite } from './components/CheckinSliders';
+export { CoverageMatrix } from './components/CoverageMatrix';
+export type { CoverageMatrixProps, CoverageCell } from './components/CoverageMatrix';
+export { NotificationCenter } from './components/NotificationCenter';
+export type { NotificationCenterProps, NotifItem, NotifFilter, NotifType } from './components/NotificationCenter';
