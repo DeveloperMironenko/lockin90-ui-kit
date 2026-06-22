@@ -38,3 +38,14 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .lk-seg-tab.is-active:hover { color: var(--text); }
+
+/* Locked segment — dimmed + non-interactive; lock glyph sits after the label. */
+.lk-seg-tab.lk-seg-locked {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.lk-seg-tab.lk-seg-locked:hover { color: var(--text-dim); }

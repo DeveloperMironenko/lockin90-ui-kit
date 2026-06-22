@@ -31,6 +31,11 @@ export interface LineChartProps extends HTMLAttributes<HTMLDivElement> {
   markers?: LineMarker[];
   /** faint horizontal gridlines */
   grid?: boolean;
+  /** show value labels down the right edge, on the data's y-scale */
+  yAxis?: boolean;
+  /** explicit y-axis tick values; if omitted (and `yAxis`), ~4 evenly-spaced
+   *  ticks are derived from the data min..max */
+  yTicks?: number[];
   /** accessible description of the chart shape */
   ariaLabel?: string;
 }
@@ -40,6 +45,31 @@ const VB_W = 560;
 const PAD_Y = 14;
 /** number of interior horizontal gridlines */
 const GRID_LINES = 3;
+/** number of derived y-axis ticks when `yTicks` is omitted.
+ *  The gutter width is defined in lc.css (--lk-lc-gutter, 40px). */
+const Y_TICKS = 4;
+
+/** Map a value to its y position (viewBox units) using the same inverted,
+ *  auto-scaled mapping as `toPoints` (max → top, min → bottom). */
+function valueToY(v: number, min: number, span: number, height: number): number {
+  const top = PAD_Y;
+  const bottom = height - PAD_Y;
+  const t = (v - min) / span;
+  return bottom - t * (bottom - top);
+}
+
+/** Derive ~`Y_TICKS` evenly-spaced tick values across [min, max]. */
+function deriveTicks(min: number, max: number): number[] {
+  if (max === min) return [min];
+  const ticks: number[] = [];
+  for (let i = 0; i < Y_TICKS; i++) {
+    ticks.push(min + ((max - min) * i) / (Y_TICKS - 1));
+  }
+  return ticks;
+}
+
+/** Compact label for a tick value: integers as-is, else 1 decimal. */
+const tickLabel = (v: number) => (Number.isInteger(v) ? String(v) : v.toFixed(1));
 
 const DEFAULT_DATA = [52, 40, 30, 28, 38, 56, 80, 104, 116, 118, 108, 90, 76, 66, 60, 58];
 const DEFAULT_AXIS = ['9am', '12pm', '3pm', '6pm', '9pm'];
@@ -107,6 +137,8 @@ export function LineChart({
   height = 180,
   markers,
   grid = true,
+  yAxis = false,
+  yTicks,
   ariaLabel,
   className,
   ...rest
@@ -123,17 +155,32 @@ export function LineChart({
   const useGradient = Array.isArray(gradient) && gradient.length >= 2;
   const stroke = useGradient ? `url(#${strokeId})` : color;
 
-  // interior gridline y-positions
-  const gridYs: number[] = [];
+  // y-axis tick values + their y positions (same scale as the plotted line)
+  const dMin = data.length ? Math.min(...data) : 0;
+  const dMax = data.length ? Math.max(...data) : 0;
+  const dSpan = dMax - dMin || 1;
+  const ticks = yAxis ? (yTicks && yTicks.length > 0 ? yTicks : deriveTicks(dMin, dMax)) : [];
+  const tickRows = ticks.map((v) => ({ v, y: valueToY(v, dMin, dSpan, height) }));
+
+  // interior gridline y-positions — align with the ticks when the y-axis is on,
+  // otherwise the evenly-spaced default interior lines.
+  let gridYs: number[] = [];
   if (grid) {
-    for (let i = 1; i <= GRID_LINES; i++) {
-      gridYs.push((height / (GRID_LINES + 1)) * i);
+    if (yAxis && tickRows.length > 0) {
+      gridYs = tickRows.map((t) => t.y);
+    } else {
+      for (let i = 1; i <= GRID_LINES; i++) {
+        gridYs.push((height / (GRID_LINES + 1)) * i);
+      }
     }
   }
 
   return (
-    <div className={cn('lk-lc', className)} {...rest}>
+    <div className={cn('lk-lc', yAxis && 'lk-lc--yaxis', className)} {...rest}>
       <div className="lk-lc-plot" style={{ height }}>
+        {/* drawing area: shrinks by the gutter width when the y-axis is on, so
+            the line/markers stay in lock-step with the value labels */}
+        <div className="lk-lc-canvas">
         <svg
           className="lk-lc-svg"
           viewBox={`0 0 ${VB_W} ${height}`}
@@ -199,6 +246,18 @@ export function LineChart({
             </div>
           );
         })}
+        </div>
+
+        {/* y-axis value labels, pinned in the right gutter at each tick's y */}
+        {yAxis && tickRows.length > 0 && (
+          <div className="lk-lc-yaxis" aria-hidden="true">
+            {tickRows.map((t, i) => (
+              <span key={i} className="lk-lc-ytick" style={{ top: `${(t.y / height) * 100}%` }}>
+                {tickLabel(t.v)}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {axis && axis.length > 0 && (

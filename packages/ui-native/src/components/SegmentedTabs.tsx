@@ -1,5 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { Icon } from './Icon';
 
 export interface SegmentedTabsProps {
   /** Segment labels, one button each. */
@@ -8,32 +9,43 @@ export interface SegmentedTabsProps {
   active?: number;
   /** Fires with the pressed segment index. */
   onChange?: (index: number) => void;
+  /**
+   * Indices of segments that are locked — dimmed, non-interactive (never fire
+   * `onChange`), and rendered with a small lock glyph (e.g. the `1Y🔒 / All🔒`
+   * upsell pattern on a time-range control).
+   */
+  locked?: number[];
 }
 
 /**
  * iOS-style segmented control — a glass pill track of equal-width segments; the
- * active one is a raised lighter pill (glass-2 + soft shadow). Mirrors the web
+ * active one is a raised lighter pill (glass-2 + soft shadow). Locked segments
+ * are dimmed, non-interactive, and show a lock glyph. Mirrors the web
  * `@lockin90/ui` `SegmentedTabs`.
  */
 export function SegmentedTabs({
   tabs = ['Stats', 'History', 'Guide', 'Ranks'],
   active = 0,
   onChange,
+  locked,
 }: SegmentedTabsProps) {
   return (
     <View style={styles.track} accessibilityRole="tablist">
       {tabs.map((label, i) => {
         const isActive = i === active;
+        const isLocked = locked?.includes(i) ?? false;
         return (
           <Pressable
             key={i}
             accessibilityRole="tab"
-            accessibilityState={{ selected: isActive }}
-            onPress={() => onChange?.(i)}
+            accessibilityState={{ selected: isActive, disabled: isLocked }}
+            disabled={isLocked}
+            onPress={isLocked ? undefined : () => onChange?.(i)}
             style={({ pressed }) => [
               styles.tab,
               isActive && styles.tabActive,
-              pressed && !isActive && styles.tabPressed,
+              pressed && !isActive && !isLocked && styles.tabPressed,
+              isLocked && styles.tabLocked,
             ]}
           >
             <Text
@@ -42,6 +54,7 @@ export function SegmentedTabs({
             >
               {label}
             </Text>
+            {isLocked && <Icon name="lock" size={12} color={colors.textDim} />}
           </Pressable>
         );
       })}
@@ -62,13 +75,16 @@ const styles = StyleSheet.create({
   tab: {
     flex: 1,
     minWidth: 0,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 4,
     paddingVertical: 7,
     paddingHorizontal: 10,
     borderRadius: radii.pill,
     backgroundColor: 'transparent',
   },
+  tabLocked: { opacity: 0.5 },
   tabActive: {
     backgroundColor: colors.glass2,
     shadowColor: '#000',

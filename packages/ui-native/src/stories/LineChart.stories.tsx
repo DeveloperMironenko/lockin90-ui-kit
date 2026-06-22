@@ -29,3 +29,15 @@ export const WithMarkers: StoryObj = {
     </View>
   ),
 };
+
+export const WithYAxis: StoryObj = {
+  render: () => (
+    <View style={{ width: 360 }}>
+      <LineChart
+        yAxis
+        data={[280, 286, 292, 288, 296, 302, 308, 305, 300, 296, 290, 284]}
+        axis={['Mon', 'Wed', 'Fri', 'Sun']}
+      />
+    </View>
+  ),
+};

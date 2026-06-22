@@ -34,6 +34,55 @@
   -webkit-backdrop-filter: blur(8px);
 }
 
+/* active sorted header brightens */
+.lk-table-th-active {
+  color: var(--text);
+}
+
+/* ---- sortable header ------------------------------------------------------*/
+/* The header label becomes a button so the whole "APR 17 ↕" is one click target.
+   It inherits the th's mono-uppercase type and faint color (brightens when active). */
+.lk-table-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: color 0.18s var(--ease);
+}
+.lk-table-sort:hover {
+  color: var(--text);
+}
+.lk-table-sort:focus-visible {
+  outline: none;
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+/* right/center-aligned header cells: keep the button packed to the same edge */
+.lk-table-right .lk-table-sort {
+  flex-direction: row-reverse;
+}
+
+.lk-table-sort-icon {
+  flex: none;
+  color: var(--text-faint);
+  transition: color 0.18s var(--ease);
+}
+/* the active column's chevron picks up the accent for a clear "sorted by this" cue */
+.lk-table-sort-active {
+  color: var(--accent);
+}
+
 /* ---- body -----------------------------------------------------------------*/
 .lk-table-row {
   transition: background 0.18s var(--ease);

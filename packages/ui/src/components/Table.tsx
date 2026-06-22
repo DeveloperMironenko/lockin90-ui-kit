@@ -12,6 +12,8 @@ export interface TableColumn {
   width?: string;
   /** Render this column's cells in the mono font with tabular numerals. */
   mono?: boolean;
+  /** Make this header clickable to sort by `key`. Pair with the Table sort props. */
+  sortable?: boolean;
 }
 
 export interface TableProps extends TableHTMLAttributes<HTMLTableElement> {
@@ -23,6 +25,34 @@ export interface TableProps extends TableHTMLAttributes<HTMLTableElement> {
   onRowClick?: (row: Record<string, ReactNode>, index: number) => void;
   /** Tighter vertical padding for data-dense admin tables. */
   dense?: boolean;
+  /** Key of the currently-sorted column — that header brightens + shows its direction. */
+  sortKey?: string;
+  /** Sort direction of the active column. Default 'asc'. */
+  sortDir?: 'asc' | 'desc';
+  /** Fired with a sortable column's `key` when its header is clicked. */
+  onSort?: (key: string) => void;
+}
+
+/** Sort indicator glyph next to a sortable header: a neutral up/down chevron pair
+ *  (↕) when the column isn't the active sort, a single up/down chevron when it is. */
+function SortIcon({ state }: { state: 'none' | 'asc' | 'desc' }) {
+  return (
+    <svg
+      className={cn('lk-table-sort-icon', state !== 'none' && 'lk-table-sort-active')}
+      width="11"
+      height="11"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {state !== 'desc' && <path d="M7 10l5-5 5 5" />}
+      {state !== 'asc' && <path d="M7 14l5 5 5-5" />}
+    </svg>
+  );
 }
 
 const DEFAULT_COLUMNS: TableColumn[] = [
@@ -47,6 +77,9 @@ export function Table({
   rows = DEFAULT_ROWS,
   onRowClick,
   dense,
+  sortKey,
+  sortDir = 'asc',
+  onSort,
   className,
   ...rest
 }: TableProps) {
@@ -56,20 +89,45 @@ export function Table({
     <table className={cn('lk-table', dense && 'lk-table-dense', className)} {...rest}>
       <thead className="lk-table-head">
         <tr>
-          {columns.map((col) => (
-            <th
-              key={col.key}
-              scope="col"
-              className={cn(
-                'lk-table-th',
-                col.align === 'right' && 'lk-table-right',
-                col.align === 'center' && 'lk-table-center',
-              )}
-              style={col.width ? { width: col.width } : undefined}
-            >
-              {col.header}
-            </th>
-          ))}
+          {columns.map((col) => {
+            const isActive = sortKey === col.key;
+            const sortable = Boolean(col.sortable) && typeof onSort === 'function';
+            return (
+              <th
+                key={col.key}
+                scope="col"
+                aria-sort={
+                  col.sortable
+                    ? isActive
+                      ? sortDir === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none'
+                    : undefined
+                }
+                className={cn(
+                  'lk-table-th',
+                  col.align === 'right' && 'lk-table-right',
+                  col.align === 'center' && 'lk-table-center',
+                  isActive && 'lk-table-th-active',
+                )}
+                style={col.width ? { width: col.width } : undefined}
+              >
+                {sortable ? (
+                  <button
+                    type="button"
+                    className="lk-table-sort"
+                    onClick={() => onSort!(col.key)}
+                  >
+                    <span>{col.header}</span>
+                    <SortIcon state={isActive ? sortDir : 'none'} />
+                  </button>
+                ) : (
+                  col.header
+                )}
+              </th>
+            );
+          })}
         </tr>
       </thead>
       <tbody className="lk-table-body">

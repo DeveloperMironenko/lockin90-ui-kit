@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 
 export interface TableColumn {
@@ -13,6 +14,8 @@ export interface TableColumn {
   width?: number;
   /** Render this column's cells in the mono font with tabular numerals. */
   mono?: boolean;
+  /** Make this header pressable to sort by `key`. Pair with the Table sort props. */
+  sortable?: boolean;
 }
 
 export interface TableProps {
@@ -24,6 +27,33 @@ export interface TableProps {
   onRowClick?: (row: Record<string, ReactNode>, index: number) => void;
   /** Tighter vertical padding for data-dense admin tables. */
   dense?: boolean;
+  /** Key of the currently-sorted column — that header brightens + shows its direction. */
+  sortKey?: string;
+  /** Sort direction of the active column. Default 'asc'. */
+  sortDir?: 'asc' | 'desc';
+  /** Fired with a sortable column's `key` when its header is pressed. */
+  onSort?: (key: string) => void;
+}
+
+/** Sort indicator glyph next to a sortable header: a neutral up/down chevron pair
+ *  (↕) when the column isn't the active sort, a single up/down chevron when it is.
+ *  Mirrors the web glyph (`M7 10l5-5 5 5` up / `M7 14l5 5 5-5` down). */
+function SortIcon({ state }: { state: 'none' | 'asc' | 'desc' }) {
+  return (
+    <Svg
+      width={11}
+      height={11}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={state === 'none' ? colors.textFaint : colors.accent}
+      strokeWidth={2.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {state !== 'desc' && <Path d="M7 10l5-5 5 5" />}
+      {state !== 'asc' && <Path d="M7 14l5 5 5-5" />}
+    </Svg>
+  );
 }
 
 const DEFAULT_COLUMNS: TableColumn[] = [
@@ -53,6 +83,9 @@ export function Table({
   rows = DEFAULT_ROWS,
   onRowClick,
   dense,
+  sortKey,
+  sortDir = 'asc',
+  onSort,
 }: TableProps) {
   const clickable = typeof onRowClick === 'function';
 
@@ -68,13 +101,42 @@ export function Table({
       <View style={styles.table}>
         {/* header */}
         <View style={[styles.head, dense && styles.headDense]}>
-          {columns.map((col) => (
-            <View key={col.key} style={cellBox(col)}>
-              <Text style={[styles.th, { textAlign: textAlign(col.align) }]} numberOfLines={1}>
+          {columns.map((col) => {
+            const isActive = sortKey === col.key;
+            const sortable = Boolean(col.sortable) && typeof onSort === 'function';
+            const label = (
+              <Text
+                style={[styles.th, isActive && styles.thActive, { textAlign: textAlign(col.align) }]}
+                numberOfLines={1}
+              >
                 {col.header.toUpperCase()}
               </Text>
-            </View>
-          ))}
+            );
+
+            if (!sortable) {
+              return (
+                <View key={col.key} style={cellBox(col)}>
+                  {label}
+                </View>
+              );
+            }
+
+            return (
+              <View key={col.key} style={cellBox(col)}>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => onSort!(col.key)}
+                  style={[
+                    styles.sortHead,
+                    col.align === 'right' && styles.sortHeadReverse,
+                  ]}
+                >
+                  {label}
+                  <SortIcon state={isActive ? sortDir : 'none'} />
+                </Pressable>
+              </View>
+            );
+          })}
         </View>
 
         {/* body */}
@@ -137,6 +199,11 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
     color: colors.textFaint,
   },
+  // active sorted header brightens to match web (.lk-table-th-active)
+  thActive: { color: colors.text },
+  // sortable header: label + chevron on one pressable line; reversed for right-aligned cols
+  sortHead: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  sortHeadReverse: { flexDirection: 'row-reverse' },
   row: {
     flexDirection: 'row',
     alignItems: 'center',

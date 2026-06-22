@@ -22,3 +22,12 @@ export const TwoUp: Story = {
     </View>
   ),
 };
+
+/** Time-range control where the longer ranges are gated behind an upsell. */
+export const Locked: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <SegmentedTabs tabs={['1M', '3M', '1Y', 'All']} active={0} locked={[2, 3]} />
+    </View>
+  ),
+};

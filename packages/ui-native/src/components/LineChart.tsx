@@ -34,6 +34,11 @@ export interface LineChartProps {
   markers?: LineMarker[];
   /** faint horizontal gridlines */
   grid?: boolean;
+  /** show value labels down the right edge, on the data's y-scale */
+  yAxis?: boolean;
+  /** explicit y-axis tick values; if omitted (and `yAxis`), ~4 evenly-spaced
+   *  ticks are derived from the data min..max */
+  yTicks?: number[];
   /** optional container style */
   style?: StyleProp<ViewStyle>;
 }
@@ -47,6 +52,32 @@ const PAD_Y = 14;
 const PAD_X = 14;
 /** number of interior horizontal gridlines */
 const GRID_LINES = 3;
+/** width (px) of the right gutter reserved for y-axis value labels */
+const Y_GUTTER = 36;
+/** number of derived y-axis ticks when `yTicks` is omitted */
+const Y_TICKS = 4;
+
+/** Map a value to its y position (viewBox units) using the same inverted,
+ *  auto-scaled mapping as `toPoints` (max → top, min → bottom). */
+function valueToY(v: number, min: number, span: number, height: number): number {
+  const top = PAD_Y;
+  const bottom = height - PAD_Y;
+  const t = (v - min) / span;
+  return bottom - t * (bottom - top);
+}
+
+/** Derive ~`Y_TICKS` evenly-spaced tick values across [min, max]. */
+function deriveTicks(min: number, max: number): number[] {
+  if (max === min) return [min];
+  const ticks: number[] = [];
+  for (let i = 0; i < Y_TICKS; i++) {
+    ticks.push(min + ((max - min) * i) / (Y_TICKS - 1));
+  }
+  return ticks;
+}
+
+/** Compact label for a tick value: integers as-is, else 1 decimal. */
+const tickLabel = (v: number) => (Number.isInteger(v) ? String(v) : v.toFixed(1));
 
 const DEFAULT_DATA = [52, 40, 30, 28, 38, 56, 80, 104, 116, 118, 108, 90, 76, 66, 60, 58];
 const DEFAULT_AXIS = ['9am', '12pm', '3pm', '6pm', '9pm'];
@@ -117,6 +148,8 @@ export function LineChart({
   height = 180,
   markers,
   grid = true,
+  yAxis = false,
+  yTicks,
   style,
 }: LineChartProps) {
   const [width, setWidth] = useState(0);
@@ -133,20 +166,38 @@ export function LineChart({
   const useGradient = Array.isArray(gradient) && gradient.length >= 2;
   const stroke = useGradient ? 'url(#lk-lc-stroke)' : color;
 
-  // interior gridline y-positions
-  const gridYs: number[] = [];
+  // y-axis tick values + their y positions (same scale as the plotted line)
+  const dMin = data.length ? Math.min(...data) : 0;
+  const dMax = data.length ? Math.max(...data) : 0;
+  const dSpan = dMax - dMin || 1;
+  const ticks = yAxis ? (yTicks && yTicks.length > 0 ? yTicks : deriveTicks(dMin, dMax)) : [];
+  const tickRows = ticks.map((v) => ({ v, y: valueToY(v, dMin, dSpan, height) }));
+
+  // the drawing area shrinks by the gutter width when the y-axis is on, so the
+  // line/markers stay in lock-step with the value labels (the line still uses
+  // the full data range — only the rendered width changes).
+  const canvasW = yAxis ? Math.max(0, width - Y_GUTTER) : width;
+
+  // interior gridline y-positions — align with the ticks when the y-axis is on,
+  // otherwise the evenly-spaced default interior lines.
+  let gridYs: number[] = [];
   if (grid) {
-    for (let i = 1; i <= GRID_LINES; i++) {
-      gridYs.push((height / (GRID_LINES + 1)) * i);
+    if (yAxis && tickRows.length > 0) {
+      gridYs = tickRows.map((t) => t.y);
+    } else {
+      for (let i = 1; i <= GRID_LINES; i++) {
+        gridYs.push((height / (GRID_LINES + 1)) * i);
+      }
     }
   }
 
   return (
     <View style={[styles.root, style]}>
       <View style={[styles.plot, { height }]} onLayout={onLayout}>
-        {width > 0 && (
+        <View style={[styles.canvas, { width: canvasW }]}>
+        {canvasW > 0 && (
           <Svg
-            width={width}
+            width={canvasW}
             height={height}
             viewBox={`0 0 ${VB_W} ${height}`}
             preserveAspectRatio="none"
@@ -205,10 +256,26 @@ export function LineChart({
             </View>
           );
         })}
+        </View>
+
+        {/* y-axis value labels, pinned in the right gutter at each tick's y */}
+        {yAxis && tickRows.length > 0 ? (
+          <View style={styles.yaxis} pointerEvents="none">
+            {tickRows.map((t, i) => (
+              <Text
+                key={i}
+                style={[styles.ytick, { top: `${(t.y / height) * 100}%` as DimensionValue }]}
+                numberOfLines={1}
+              >
+                {tickLabel(t.v)}
+              </Text>
+            ))}
+          </View>
+        ) : null}
       </View>
 
       {axis && axis.length > 0 && (
-        <View style={styles.axis}>
+        <View style={[styles.axis, yAxis ? { paddingRight: Y_GUTTER } : null]}>
           {axis.map((t, i) => (
             <Text key={i} style={styles.axisText}>{t}</Text>
           ))}
@@ -220,7 +287,23 @@ export function LineChart({
 
 const styles = StyleSheet.create({
   root: { flexDirection: 'column', gap: 8, width: '100%' },
-  plot: { position: 'relative', width: '100%' },
+  plot: { position: 'relative', flexDirection: 'row', width: '100%' },
+  // drawing area: holds the Svg + marker overlays; markers anchor against it
+  canvas: { position: 'relative', height: '100%' },
+  // right gutter holding the y-axis value labels
+  yaxis: { width: Y_GUTTER, height: '100%' },
+  ytick: {
+    position: 'absolute',
+    right: 0,
+    marginTop: -5,
+    paddingLeft: 6,
+    fontFamily: fonts.mono,
+    fontSize: 10,
+    lineHeight: 10,
+    letterSpacing: 0.2,
+    color: colors.textFaint,
+    textAlign: 'right',
+  },
   marker: {
     position: 'absolute',
     // translate(-50%, -50%) on an 11px dot

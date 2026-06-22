@@ -8,11 +8,40 @@
    ========================================================================== */
 .lk-lc { display: flex; flex-direction: column; gap: 8px; }
 
-/* positioned wrapper: the SVG fills it; marker overlays anchor against it */
+/* positioned wrapper: the canvas fills it; the y-axis gutter sits on the right */
 .lk-lc-plot { position: relative; width: 100%; }
+
+/* width (px) reserved on the right for y-axis value labels */
+.lk-lc { --lk-lc-gutter: 40px; }
+
+/* the drawing area: holds the SVG + marker overlays. Fills the plot, but when
+   the y-axis is on it shrinks by the gutter width so the line/markers stay in
+   lock-step with the value labels (the line still uses the full data range). */
+.lk-lc-canvas { position: absolute; inset: 0; }
+.lk-lc--yaxis .lk-lc-canvas { right: var(--lk-lc-gutter); }
 
 /* the stretchable chart canvas */
 .lk-lc-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* right gutter: value labels pinned at each tick's y (via inline top %) */
+.lk-lc-yaxis {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: var(--lk-lc-gutter);
+  pointer-events: none;
+}
+.lk-lc-ytick {
+  position: absolute; right: 0;
+  transform: translateY(-50%);
+  padding-left: 6px;
+  font-family: var(--font-mono); font-size: 10px; line-height: 1;
+  letter-spacing: 0.02em; white-space: nowrap;
+  color: var(--text-faint);
+  text-align: right;
+}
+
+/* when the y-axis is on, indent the x-axis row so its labels line up under the
+   shrunken canvas rather than spanning into the gutter */
+.lk-lc--yaxis .lk-lc-axis { padding-right: var(--lk-lc-gutter); }
 
 /* faint horizontal gridlines */
 .lk-lc-grid line { stroke: var(--border); stroke-width: 1; opacity: 0.6; }
