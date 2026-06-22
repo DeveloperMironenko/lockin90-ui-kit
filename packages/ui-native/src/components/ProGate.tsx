@@ -2,6 +2,7 @@ import { type ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet, type ViewProps } from 'react-native';
 import Svg, { Path, Rect } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { OptionalBlurView } from '../internal/optionalBlur';
 
 export interface ProGateProps extends Omit<ViewProps, 'children'> {
   /** Lock-card heading. */
@@ -23,9 +24,10 @@ function LockIcon({ size, color, strokeWidth }: { size: number; color: string; s
 }
 
 /**
- * Premium-lock overlay: dimmed gated content behind a centered lock card.
- * Native has no `backdrop-filter` blur — the gated content is dimmed (opacity)
- * rather than blurred, otherwise visually identical to the web `ProGate`.
+ * Premium-lock overlay: frosted, dimmed gated content behind a centered lock card.
+ * Web uses `filter: blur(6px); opacity: 0.35` on the gated content; native keeps
+ * the 0.35 dim and lays a real expo-blur frost over it when the optional
+ * `expo-blur` peer is installed (otherwise just the dim — graceful fallback).
  */
 export function ProGate({
   title = 'PRO Feature',
@@ -39,6 +41,9 @@ export function ProGate({
       <View style={[styles.content, children == null && styles.contentEmpty]} pointerEvents="none">
         {children}
       </View>
+      {OptionalBlurView ? (
+        <OptionalBlurView intensity={12} tint="dark" style={styles.frost} pointerEvents="none" />
+      ) : null}
       <View style={styles.overlay} pointerEvents="none">
         <View style={styles.card}>
           <LockIcon size={24} color={colors.textFaint} strokeWidth={1.8} />
@@ -93,6 +98,9 @@ const styles = StyleSheet.create({
   },
   content: {
     opacity: 0.35,
+  },
+  frost: {
+    ...StyleSheet.absoluteFillObject,
   },
   contentEmpty: {
     minHeight: 150,

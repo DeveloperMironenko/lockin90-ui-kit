@@ -142,7 +142,19 @@ export function CodeInput({ length = 6, value = '', onChange, style, ...rest }: 
   };
 
   const onBoxChange = (index: number, raw: string) => {
-    const ch = raw.slice(-1);
+    // Paste or iOS SMS autofill can deliver the whole code into one box — spread
+    // it across the remaining boxes from here (mirrors the web `onPaste`).
+    const digits = raw.replace(/\s/g, '');
+    if (digits.length > 1) {
+      const next = chars.slice();
+      for (let i = 0; i < digits.length && index + i < length; i++) {
+        next[index + i] = digits[i];
+      }
+      commit(next.join(''));
+      focusBox(Math.min(index + digits.length, length - 1));
+      return;
+    }
+    const ch = digits.slice(-1);
     const next = chars.slice();
     next[index] = ch;
     commit(next.join(''));
@@ -187,7 +199,9 @@ export function CodeInput({ length = 6, value = '', onChange, style, ...rest }: 
             style={[styles.codeBox, { borderColor, backgroundColor }]}
             keyboardType="number-pad"
             textContentType={i === 0 ? 'oneTimeCode' : 'none'}
-            maxLength={1}
+            // box 0 accepts the full code so paste / iOS SMS autofill lands and
+            // spreads across boxes; the rest stay single-char for clean typing.
+            maxLength={i === 0 ? length : 1}
             value={ch}
             accessibilityLabel={`Digit ${i + 1}`}
             selectionColor={colors.accent}

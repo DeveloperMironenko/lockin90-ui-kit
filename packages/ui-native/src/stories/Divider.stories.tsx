@@ -15,12 +15,22 @@ export const Default: Story = {
   ),
 };
 
+export const Gradient: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <Divider gradient />
+    </View>
+  ),
+};
+
 export const BetweenContent: Story = {
   render: () => (
     <View style={{ width: 320, gap: 12 }}>
       <Text style={{ color: '#fff' }}>Above the divider</Text>
       <Divider />
       <Text style={{ color: '#fff' }}>Below the divider</Text>
+      <Divider gradient />
+      <Text style={{ color: '#fff' }}>Below the gradient divider</Text>
     </View>
   ),
 };

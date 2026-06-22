@@ -3,6 +3,21 @@ import { View, Text, Pressable, StyleSheet, type StyleProp, type ViewStyle } fro
 import Svg, { Path, Circle, Rect } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 
+/* expo-document-picker is an optional peer dependency. Resolve it lazily so the
+ * kit never hard-depends on it: when installed, tapping the Dropzone opens the
+ * OS file picker and forwards results via `onFiles`; when absent, only the
+ * `onPress` hook fires (graceful fallback — mirrors the CopyButton/expo-clipboard
+ * pattern). RN has no OS file-drag-drop, so tap-to-pick is the native analogue. */
+let documentPicker: {
+  getDocumentAsync?: (opts?: Record<string, unknown>) => Promise<unknown>;
+} | null = null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  documentPicker = require('expo-document-picker');
+} catch {
+  documentPicker = null;
+}
+
 /* ============================================================================
    Toolbar — a rich-text formatting bar: a horizontal group of ~30px icon
    Pressables in a glass strip, with thin vertical divider Views between groups.
@@ -125,9 +140,10 @@ export function Toolbar({ items = DEFAULT_ITEMS, style }: ToolbarProps) {
 
 /* ============================================================================
    Dropzone — a large dashed-border file-drop area: centered round icon badge +
-   label + hint. Native can't receive OS file drops, so the box is a Pressable
-   that calls `onPress` (best-effort `onFiles`); the dashed visual is preserved.
-   Mirrors the web `Dropzone`.
+   label + hint. Native can't receive OS file *drops*, so the box is a Pressable;
+   when the optional `expo-document-picker` peer is present, tapping opens the OS
+   picker and forwards results via `onFiles` (else just `onPress`). Mirrors the
+   web `Dropzone` (where tapping opens the file dialog).
    ========================================================================== */
 
 export interface DropzoneProps {
@@ -138,11 +154,12 @@ export interface DropzoneProps {
   /** glyph rendered in the round badge; defaults to an upload icon */
   icon?: ReactNode;
   /**
-   * Tap handler. RN has no file-drop, so wire this to your own picker
-   * (e.g. expo-document-picker) and forward results via `onFiles`.
+   * Fires on tap, before any picker opens. RN has no file-drop; when the optional
+   * `expo-document-picker` peer is installed the Dropzone opens the OS picker
+   * automatically, otherwise wire your own picker here.
    */
   onPress?: () => void;
-  /** best-effort: forwarded an array of picked-file descriptors, if any */
+  /** receives the picked-file descriptors (from `expo-document-picker`, if present) */
   onFiles?: (files: unknown[]) => void;
   style?: StyleProp<ViewStyle>;
 }
@@ -163,14 +180,28 @@ export function Dropzone({
   onFiles,
   style,
 }: DropzoneProps) {
+  const pick = async () => {
+    onPress?.();
+    if (typeof documentPicker?.getDocumentAsync !== 'function') return;
+    try {
+      const res = (await documentPicker.getDocumentAsync({
+        multiple: true,
+        copyToCacheDirectory: true,
+      })) as { canceled?: boolean; assets?: unknown[]; type?: string } | undefined;
+      if (!res || res.canceled) return;
+      // expo-document-picker v12+ → { canceled, assets }; older → { type:'success', … }
+      const files = res.assets ?? (res.type === 'success' ? [res] : []);
+      if (files.length) onFiles?.(files);
+    } catch {
+      /* user dismissed or picker unavailable — no-op */
+    }
+  };
+
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
-      onPress={() => {
-        onPress?.();
-        onFiles?.([]);
-      }}
+      onPress={pick}
       style={({ pressed }) => [styles.dropzone, pressed && styles.dropzoneActive, style]}
     >
       <View style={styles.dzIco}>{icon}</View>

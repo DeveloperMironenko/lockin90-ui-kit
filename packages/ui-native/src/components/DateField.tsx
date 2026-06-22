@@ -1,13 +1,46 @@
-import { useState, type ReactNode } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, type ViewProps } from 'react-native';
+import { useState, type ComponentType, type ReactNode } from 'react';
+import { View, Text, TextInput, Pressable, Platform, StyleSheet, type ViewProps } from 'react-native';
 import Svg, { Path, Rect, Polyline } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 
+/* @react-native-community/datetimepicker is an optional peer dependency. When
+ * installed, tapping the field opens the OS date picker — the native analogue of
+ * web's `<input type="date">`; when absent the field falls back to an editable
+ * text input. Resolved lazily so the kit never hard-depends on it. */
+let DateTimePicker: ComponentType<{
+  value: Date;
+  mode?: 'date' | 'time' | 'datetime';
+  display?: string;
+  onChange?: (event: { type: string }, date?: Date) => void;
+}> | null = null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  DateTimePicker = require('@react-native-community/datetimepicker').default;
+} catch {
+  DateTimePicker = null;
+}
+
+/** Parse a `YYYY-MM-DD` string into a local Date (or undefined). */
+function parseDate(v?: string): Date | undefined {
+  if (!v) return undefined;
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v);
+  if (!m) return undefined;
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  return Number.isNaN(d.getTime()) ? undefined : d;
+}
+
+/** Format a Date as `YYYY-MM-DD`. */
+function formatDate(d: Date): string {
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
 /* ============================================================================
    DateField — a dark glassy date field. Mono uppercase label above, a leading
-   calendar glyph, and an accent focus border. React Native has no native date
-   input, so this renders a plain text field (default placeholder 'YYYY-MM-DD');
-   accept value / onChange as text. Mirrors the web `@lockin90/ui` DateField.
+   calendar glyph, and an accent focus border. When the optional datetimepicker
+   peer is present, tapping opens the OS date picker (the native analogue of web's
+   `<input type="date">`) and `onChange` receives a 'YYYY-MM-DD' string; otherwise
+   it falls back to a plain text field. Mirrors the web `@lockin90/ui` DateField.
    ========================================================================== */
 
 export interface DateFieldProps extends Omit<ViewProps, 'onChange'> {
@@ -32,7 +65,9 @@ function CalendarIcon({ color }: { color: string }) {
   );
 }
 
-/** Dark glassy date field — leading calendar glyph, accent focus border. */
+/** Dark glassy date field — leading calendar glyph, accent focus border.
+ *  Opens the OS date picker when the optional datetimepicker peer is installed;
+ *  otherwise an editable text field (graceful fallback). */
 export function DateField({
   value,
   onChange,
@@ -42,11 +77,60 @@ export function DateField({
   ...rest
 }: DateFieldProps) {
   const [focused, setFocused] = useState(false);
-  const borderColor = focused ? colors.accent : colors.border2;
+  const [show, setShow] = useState(false);
+  const borderColor = focused || show ? colors.accent : colors.border2;
 
+  const labelEl = label ? <Text style={styles.dateLabel}>{label.toUpperCase()}</Text> : null;
+
+  // OS picker path — tap the field to open the platform date picker.
+  if (DateTimePicker) {
+    return (
+      <View style={[styles.dateWrap, style]} {...rest}>
+        {labelEl}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={label ?? placeholder}
+          onPress={() => setShow(true)}
+          style={[styles.dateField, { borderColor }]}
+        >
+          <View style={styles.dateLead}>
+            <CalendarIcon color={colors.textFaint} />
+          </View>
+          <Text style={[styles.dateInput, !value && styles.datePlaceholder]} numberOfLines={1}>
+            {value || placeholder}
+          </Text>
+        </Pressable>
+        {show ? (
+          <>
+            <DateTimePicker
+              value={parseDate(value) ?? new Date()}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={(event, date) => {
+                if (Platform.OS !== 'ios') setShow(false);
+                if (event.type === 'dismissed') return;
+                if (date) onChange?.(formatDate(date));
+              }}
+            />
+            {Platform.OS === 'ios' ? (
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setShow(false)}
+                style={styles.dateDone}
+              >
+                <Text style={styles.dateDoneText}>Done</Text>
+              </Pressable>
+            ) : null}
+          </>
+        ) : null}
+      </View>
+    );
+  }
+
+  // Fallback path — editable text field (no picker installed).
   return (
     <View style={[styles.dateWrap, style]} {...rest}>
-      {label ? <Text style={styles.dateLabel}>{label.toUpperCase()}</Text> : null}
+      {labelEl}
       <View style={[styles.dateField, { borderColor }]}>
         <View style={styles.dateLead}>
           <CalendarIcon color={colors.textFaint} />
@@ -190,6 +274,18 @@ const styles = StyleSheet.create({
     fontFamily: fonts.ui,
     fontSize: 14,
     lineHeight: 20,
+  },
+  datePlaceholder: { color: colors.textFaint },
+  dateDone: {
+    alignSelf: 'flex-end',
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+  },
+  dateDoneText: {
+    fontFamily: fonts.ui,
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.accent,
   },
   /* ---- TreeItem ---- */
   treeItem: {},

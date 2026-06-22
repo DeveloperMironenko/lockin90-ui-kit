@@ -31,10 +31,22 @@
     "react-native": ">=0.74",
     "react-native-svg": ">=15",
     "expo-linear-gradient": ">=13",
-    "expo-clipboard": ">=6"
+    "expo-clipboard": ">=6",
+    "expo-blur": ">=12",
+    "expo-document-picker": ">=12",
+    "@react-native-community/datetimepicker": ">=7"
   },
   "peerDependenciesMeta": {
     "expo-clipboard": {
+      "optional": true
+    },
+    "expo-blur": {
+      "optional": true
+    },
+    "expo-document-picker": {
+      "optional": true
+    },
+    "@react-native-community/datetimepicker": {
       "optional": true
     }
   },
