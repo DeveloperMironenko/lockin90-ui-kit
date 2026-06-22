@@ -1,7 +1,7 @@
 /* ============================================================================
-   Select — dark glassy native <select>. Optional mono uppercase label above, a
-   custom chevron on the right, and an invalid state. Matches the design's
-   `select.sel` (glass fill, accent focus glow) in the kit's house style.
+   Select — a CUSTOM dropdown (not the browser <select>). A glass field trigger
+   opens a portaled listbox panel of styled options with a selected checkmark and
+   an active-row highlight. Matches the native Select + the kit's Menu/Popover.
    ========================================================================== */
 .lk-select-wrap {
   display: inline-flex;
@@ -19,74 +19,148 @@
   color: var(--text-faint);
 }
 
-.lk-select-field {
-  position: relative;
+/* ---- trigger field ---- */
+.lk-select-trigger {
   display: inline-flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
   min-width: 0;
+  padding: 9px 11px 9px 12px;
   border-radius: var(--r-sm);
   border: 1px solid var(--border-2);
   background: var(--glass-2);
   color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
-.lk-select-field:focus-within {
+.lk-select-trigger:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
+}
+.lk-select-trigger[aria-expanded='true'] {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
 }
 
-.lk-select-field.lk-select-invalid {
+.lk-select-trigger.lk-select-invalid {
   border-color: var(--zone-low);
 }
-.lk-select-field.lk-select-invalid:focus-within {
+.lk-select-trigger.lk-select-invalid:focus-visible,
+.lk-select-trigger.lk-select-invalid[aria-expanded='true'] {
   border-color: var(--zone-low);
   box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.16);
 }
 
-.lk-select-field.lk-select-disabled {
+.lk-select-trigger.lk-select-disabled {
   opacity: 0.55;
-}
-
-.lk-select {
-  width: 100%;
-  min-width: 0;
-  border: 0;
-  outline: 0;
-  background: none;
-  color: var(--text);
-  font-family: var(--font-ui);
-  font-size: 14px;
-  line-height: 1.4;
-  padding: 9px 34px 9px 12px;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-}
-.lk-select:disabled {
   cursor: not-allowed;
 }
-/* placeholder + disabled options render dim; chosen value full-strength */
-.lk-select option {
-  color: var(--text);
-  background: var(--bg-1);
+
+.lk-select-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.lk-select:invalid,
-.lk-select option[disabled] {
+.lk-select-placeholder {
   color: var(--text-faint);
 }
 
 .lk-select-chevron {
-  position: absolute;
-  right: 11px;
+  flex: 0 0 auto;
   width: 16px;
   height: 16px;
-  pointer-events: none;
   stroke: var(--text-dim);
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
   fill: none;
+  transition: transform 0.2s ease, stroke 0.2s ease;
 }
-.lk-select-field:focus-within .lk-select-chevron {
+.lk-select-trigger[aria-expanded='true'] .lk-select-chevron {
+  transform: rotate(180deg);
   stroke: var(--accent-2);
+}
+
+/* ---- portaled listbox panel ---- */
+.lk-select-panel {
+  position: fixed;
+  z-index: 1000;
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+  max-height: 280px;
+  overflow-y: auto;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-1);
+  box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.7);
+  transform-origin: top center;
+  transition: opacity 0.13s ease, transform 0.13s ease;
+}
+.lk-select-panel.lk-select-top {
+  transform-origin: bottom center;
+}
+.lk-select-panel.is-open {
+  animation: lk-select-in 0.13s ease;
+}
+@keyframes lk-select-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.985);
+  }
+}
+
+.lk-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 11px;
+  border-radius: calc(var(--r-sm) - 4px);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text-dim);
+  cursor: pointer;
+  user-select: none;
+}
+.lk-select-option.is-active {
+  background: var(--glass-2);
+  color: var(--text);
+}
+.lk-select-option.is-selected {
+  color: var(--accent-2);
+}
+.lk-select-option.is-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.lk-select-option-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lk-select-check {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  stroke: var(--accent-2);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lk-select-panel.is-open {
+    animation: none;
+  }
 }

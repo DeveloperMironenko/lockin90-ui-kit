@@ -7,6 +7,8 @@ import { colors, radii, fonts } from '@lockin90/tokens';
 export interface SelectOption {
   value: string;
   label: string;
+  /** render the option dimmed and unselectable */
+  disabled?: boolean;
 }
 
 export interface SelectProps {
@@ -50,8 +52,18 @@ function Chevron({ color }: { color: string }) {
   );
 }
 
-/** Dark glassy field standing in for the web `<select>`. RN has no native
- *  `<select>`, so pressing the field opens a bottom-sheet Modal of options. */
+/** Checkmark shown on the selected option row (mirrors the web Select). */
+function Check({ color }: { color: string }) {
+  return (
+    <Svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
+      <Path d="M5 13l4 4L19 7" />
+    </Svg>
+  );
+}
+
+/** Dark glassy custom select (NOT a browser `<select>`). RN has no native
+ *  `<select>`, so pressing the field opens a bottom-sheet Modal of styled options
+ *  with a selected checkmark. Mirrors the web Select look + prop API. */
 export function Select({
   options = DEFAULT_OPTIONS,
   value,
@@ -97,14 +109,19 @@ export function Select({
               return (
                 <Pressable
                   key={opt.value}
-                  style={styles.row}
+                  style={({ pressed }) => [styles.row, pressed && !opt.disabled && styles.rowPressed]}
                   accessibilityRole="button"
-                  accessibilityState={{ selected: isSel }}
+                  accessibilityState={{ selected: isSel, disabled: opt.disabled }}
+                  disabled={opt.disabled}
                   onPress={() => choose(opt.value)}
                 >
-                  <Text style={[styles.rowLabel, isSel && styles.rowLabelSel]} numberOfLines={1}>
+                  <Text
+                    style={[styles.rowLabel, isSel && styles.rowLabelSel, opt.disabled && styles.rowLabelDisabled]}
+                    numberOfLines={1}
+                  >
                     {opt.label}
                   </Text>
+                  {isSel ? <Check color={colors.accent} /> : null}
                 </Pressable>
               );
             })}
@@ -154,7 +171,16 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     paddingVertical: 8,
   },
-  row: { paddingVertical: 14, paddingHorizontal: 20 },
-  rowLabel: { fontFamily: fonts.ui, fontSize: 15, color: colors.textDim },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+  },
+  rowPressed: { backgroundColor: colors.glass2 },
+  rowLabel: { flexShrink: 1, fontFamily: fonts.ui, fontSize: 15, color: colors.textDim },
   rowLabelSel: { color: colors.accent, fontWeight: '600' },
+  rowLabelDisabled: { color: colors.textFaint, opacity: 0.6 },
 });
