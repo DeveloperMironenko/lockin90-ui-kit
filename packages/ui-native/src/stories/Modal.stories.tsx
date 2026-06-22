@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { Modal } from '../components/Modal';
 import { Button } from '../components/Button';
 
@@ -26,10 +26,8 @@ export const Default: Story = {
         </>
       }
     >
-      <Text>
-        This action will recalculate your energy baseline and cannot be undone.
-        Are you sure you want to continue?
-      </Text>
+      This action will recalculate your energy baseline and cannot be undone. Are you sure you want to
+      continue?
     </Modal>
   ),
 };
@@ -37,7 +35,7 @@ export const Default: Story = {
 export const Small: Story = {
   render: () => (
     <Modal open size="sm" title="Delete note?">
-      <Text>This note will be permanently removed.</Text>
+      This note will be permanently removed.
     </Modal>
   ),
 };

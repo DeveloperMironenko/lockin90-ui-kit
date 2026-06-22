@@ -11,13 +11,14 @@ export default meta;
 
 type Story = StoryObj<typeof VideoThumbnail>;
 
-/** The Guide "Videos" strip — a row of thumbnails, some with a duration badge. */
+/** The Guide "Videos" strip — a row of thumbnails (gradient placeholders), some
+ *  with a duration badge. (No remote images so it renders offline.) */
 export const Strip: Story = {
   render: () => (
     <View style={{ flexDirection: 'row', gap: 10 }}>
-      <VideoThumbnail src="https://picsum.photos/240/170" alt="Warm-up routine" duration="0:45" />
-      <VideoThumbnail duration="2:10" alt="Recovery breathing" />
-      <VideoThumbnail src="https://picsum.photos/241/171" alt="Mobility flow" />
+      <VideoThumbnail alt="Warm-up routine" duration="0:45" />
+      <VideoThumbnail alt="Recovery breathing" duration="2:10" />
+      <VideoThumbnail alt="Mobility flow" />
     </View>
   ),
 };

@@ -17,7 +17,7 @@ type Story = StoryObj<typeof Popover>;
 export const Default: Story = {
   render: () => (
     <View style={{ gap: 8 }}>
-      <Text>Tap "?" — the panel opens as a full-screen overlay.</Text>
+      <Text style={{ color: '#9AA4B8', fontSize: 13 }}>Tap "?" — the panel opens as an overlay.</Text>
       <Popover />
     </View>
   ),
@@ -26,10 +26,8 @@ export const Default: Story = {
 export const CustomTrigger: Story = {
   render: () => (
     <Popover trigger={<Button size="sm" title="Why?" />}>
-      <Text>
-        Your readiness score blends recent training load, sleep, and recovery
-        into one number — higher means you can push harder today.
-      </Text>
+      Your readiness score blends recent training load, sleep, and recovery into one number — higher
+      means you can push harder today.
     </Popover>
   ),
 };

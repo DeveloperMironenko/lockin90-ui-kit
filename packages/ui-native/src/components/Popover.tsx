@@ -87,7 +87,11 @@ export function Popover({ trigger, children, align = 'center' }: PopoverProps) {
               if (width !== pw || height !== ph) setSize({ pw: width, ph: height });
             }}
           >
-            {children ?? <Text style={styles.text}>{DEFAULT_TEXT}</Text>}
+            {typeof children === 'string' ? (
+              <Text style={styles.text}>{children}</Text>
+            ) : (
+              children ?? <Text style={styles.text}>{DEFAULT_TEXT}</Text>
+            )}
           </View>
         )}
       </Modal>
