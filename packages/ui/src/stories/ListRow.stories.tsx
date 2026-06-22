@@ -15,7 +15,7 @@ type Story = StoryObj<typeof meta>;
 /** A picker — stacked rows with a leading letter badge + a trailing info icon. */
 export const Picker: Story = {
   render: () => (
-    <div style={{ width: 340 }}>
+    <div style={{ width: 340, background: 'var(--glass-2)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden' }}>
       <ListRow leading={<Badge tone="low">W</Badge>} title="Warmup Set" trailing={<Icon name="info" />} />
       <ListRow
         leading={<Badge tone="mid">A</Badge>}
@@ -33,7 +33,7 @@ export const Picker: Story = {
 /** Tappable rows — render as buttons with an onClick + a trailing chevron. */
 export const Tappable: Story = {
   render: () => (
-    <div style={{ width: 340 }}>
+    <div style={{ width: 340, background: 'var(--glass-2)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden' }}>
       <ListRow
         title="Account"
         subtitle="Profile, email, password"

@@ -18,7 +18,7 @@ type Story = StoryObj<typeof ListRow>;
  *  The first row sets `divider={false}` so the stack has no leading hairline. */
 export const Picker: Story = {
   render: () => (
-    <View style={{ width: 320 }}>
+    <View style={{ width: 320, backgroundColor: colors.glass2, borderWidth: 1, borderColor: colors.border, borderRadius: 16, overflow: 'hidden' }}>
       <ListRow
         leading={<Badge tone="low">W</Badge>}
         title="Warmup Set"
@@ -49,7 +49,7 @@ export const Picker: Story = {
 /** Tappable rows — render as Pressables with an onPress + a trailing chevron. */
 export const Tappable: Story = {
   render: () => (
-    <View style={{ width: 320 }}>
+    <View style={{ width: 320, backgroundColor: colors.glass2, borderWidth: 1, borderColor: colors.border, borderRadius: 16, overflow: 'hidden' }}>
       <ListRow
         title="Account"
         subtitle="Profile, email, password"
