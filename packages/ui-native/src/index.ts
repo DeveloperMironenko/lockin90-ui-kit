@@ -126,3 +126,19 @@ export { StackedBar } from './components/StackedBar';
 export type { StackedSegment, StackedBarProps } from './components/StackedBar';
 export { Heatmap, lerpColor } from './components/Heatmap';
 export type { HeatmapCell, HeatmapProps } from './components/Heatmap';
+
+// --- Wave 3 primitives (utility/text) ---
+export { Highlight } from './components/Highlight';
+export type { HighlightTone, HighlightProps } from './components/Highlight';
+export { TagCloud, weightToSize } from './components/TagCloud';
+export type { TagCloudItem, TagCloudSize, TagCloudProps } from './components/TagCloud';
+export { CodeBlock } from './components/CodeBlock';
+export type { CodeBlockProps } from './components/CodeBlock';
+export { Countdown } from './components/Countdown';
+export type { CountdownUnit, CountdownProps } from './components/Countdown';
+export { VersionBadge } from './components/VersionBadge';
+export type { VersionEnv, VersionBadgeProps } from './components/VersionBadge';
+export { SplitButton } from './components/SplitButton';
+export type { SplitButtonVariant, SplitButtonProps } from './components/SplitButton';
+export { CharCounter } from './components/CharCounter';
+export type { CharCounterStatus, CharCounterProps } from './components/CharCounter';

@@ -1,0 +1,64 @@
+/* ---- VersionBadge: compact monospace version · build · env chip with status dot ---- */
+.lk-verbadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: var(--glass-2);
+  overflow: hidden;
+  color: var(--text-dim);
+}
+.lk-verbadge-ver,
+.lk-verbadge-seg {
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.lk-verbadge-seg {
+  border-left: 1px solid var(--border);
+  color: var(--text-faint);
+}
+.lk-verbadge-env {
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.lk-verbadge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 7px var(--mint);
+}
+
+/* prod — mint / ok */
+.lk-verbadge.lk-verbadge-prod .lk-verbadge-env {
+  color: var(--mint);
+}
+
+/* staging — warn / amber */
+.lk-verbadge.lk-verbadge-staging {
+  border-color: rgba(255, 176, 32, 0.4);
+}
+.lk-verbadge.lk-verbadge-staging .lk-verbadge-env {
+  color: var(--warn);
+}
+.lk-verbadge.lk-verbadge-staging .lk-verbadge-dot {
+  background: var(--warn);
+  box-shadow: 0 0 7px var(--warn);
+}
+
+/* dev — accent / cyan */
+.lk-verbadge.lk-verbadge-dev {
+  border-color: rgba(124, 92, 255, 0.4);
+}
+.lk-verbadge.lk-verbadge-dev .lk-verbadge-env {
+  color: var(--accent);
+}
+.lk-verbadge.lk-verbadge-dev .lk-verbadge-dot {
+  background: var(--accent);
+  box-shadow: 0 0 7px var(--accent);
+}

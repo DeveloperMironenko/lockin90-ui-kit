@@ -1,0 +1,61 @@
+/* ============================================================================
+   CharCounter — an input-aware character-count feedback row.
+   A thin fill bar (fraction = value/max) + a "value / max" mono readout that
+   turns warn (approaching max) then over (exceeds max). For SEO meta fields,
+   post titles, bio fields — any length-limited input. Distinct from Meter
+   (generic value-in-range) and BarFill (raw fraction): this is the count/limit
+   form-field adornment with an over-limit state + "x / max" text.
+   Mirrors the .charbar from the CMS page-/post-editor.
+   Per-instance var: --v (0..1 fraction).
+   ========================================================================== */
+.lk-charcount {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 6px;
+}
+
+/* thin track + fill — fill width is the value/max fraction */
+.lk-charcount-track {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.lk-charcount-fill {
+  display: block;
+  height: 100%;
+  width: calc(var(--v, 0) * 100%);
+  border-radius: var(--r-pill);
+  background: var(--mint);
+  transition: width 0.4s var(--ease), background 0.3s var(--ease);
+}
+
+/* mono "value / max" readout — never wraps, sits inline after the bar */
+.lk-charcount-ct {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--text-faint);
+  transition: color 0.3s var(--ease);
+}
+
+/* ── states ─────────────────────────────────────────────────────────────────
+   ok   → mint fill, faint count (default)
+   warn → amber (zone-mid / warn) fill + count, approaching the limit
+   over → red (bad) fill (pinned full) + count, exceeds the limit            */
+.lk-charcount-warn .lk-charcount-fill {
+  background: var(--zone-mid);
+}
+.lk-charcount-warn .lk-charcount-ct {
+  color: var(--warn);
+}
+
+.lk-charcount-over .lk-charcount-fill {
+  background: var(--bad);
+}
+.lk-charcount-over .lk-charcount-ct {
+  color: var(--bad);
+}

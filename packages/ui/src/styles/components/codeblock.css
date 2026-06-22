@@ -1,0 +1,78 @@
+/* ============================================================================
+   CodeBlock — monospace code / JSON viewer on a dark inset surface.
+   Optional header (traffic-light dots + label + copy) over a scrolling <pre>.
+   Used for admin raw-record/JSON viewers, incident IDs, OTP/keys.
+   Tokens from @lockin90/tokens. All classes namespaced `lk-*`.
+   ========================================================================== */
+
+.lk-codeblock {
+  position: relative;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-0);
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+
+/* ---- header --------------------------------------------------------- */
+.lk-codeblock-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--glass);
+}
+
+.lk-codeblock-dots {
+  display: flex;
+  gap: 5px;
+  flex: none;
+}
+.lk-codeblock-dots i {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.lk-codeblock-dots i:nth-child(1) { background: var(--zone-low); }
+.lk-codeblock-dots i:nth-child(2) { background: var(--zone-mid); }
+.lk-codeblock-dots i:nth-child(3) { background: var(--mint); }
+
+.lk-codeblock-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lk-codeblock-copy {
+  margin-left: auto;
+  flex: none;
+}
+
+/* ---- body ----------------------------------------------------------- */
+.lk-codeblock-pre {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--text-dim);
+  tab-size: 2;
+}
+
+.lk-codeblock-wrap {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  overflow-x: hidden;
+}
+
+.lk-codeblock-code {
+  font-family: inherit;
+  color: inherit;
+}

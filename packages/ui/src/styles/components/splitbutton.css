@@ -1,0 +1,98 @@
+/* ============================================================================
+   SplitButton — a primary action joined to a small chevron toggle that opens a
+   Menu of secondary actions. The two segments share one rounded pill group with
+   a hairline divider between them; the chevron reuses the Menu component for the
+   dropdown panel (portaled, outside-close). For CMS/admin editors.
+   ========================================================================== */
+.lk-split {
+  display: inline-flex;
+  align-items: stretch;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+
+/* ---- primary action (wide left segment) ---- */
+.lk-split-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.2;
+  transition: filter 0.2s var(--ease-soft), background 0.2s var(--ease-soft);
+}
+.lk-split-icon {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+.lk-split-icon svg {
+  width: 15px;
+  height: 15px;
+}
+.lk-split-label {
+  white-space: nowrap;
+}
+
+/* ---- chevron toggle (right segment) — the Menu trigger lives here ---- */
+.lk-split .lk-menu {
+  display: inline-flex;
+}
+.lk-split .lk-menu-trigger {
+  min-width: 30px;
+  width: 30px;
+  height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  border-left: 1px solid var(--border);
+  transition: filter 0.2s var(--ease-soft), background 0.2s var(--ease-soft);
+}
+.lk-split-chev {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.lk-split-chev svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ---- primary variant: energy-gradient CTA ---- */
+.lk-split-primary {
+  box-shadow: var(--glow-accent);
+}
+.lk-split-primary .lk-split-main,
+.lk-split-primary .lk-menu-trigger {
+  color: #0a0a12;
+  background: var(--grad-cta);
+  background-size: 160% 160%;
+  animation: lk-btn-flow 6s var(--ease-soft) infinite;
+}
+.lk-split-primary .lk-menu-trigger {
+  border-left-color: rgba(0, 0, 0, 0.22);
+}
+.lk-split-primary .lk-split-main:hover,
+.lk-split-primary .lk-menu-trigger:hover {
+  filter: brightness(1.06);
+  background: var(--grad-cta);
+  background-size: 160% 160%;
+}
+
+/* ---- default variant: neutral glass ---- */
+.lk-split-default {
+  border: 1px solid var(--border);
+}
+.lk-split-default .lk-split-main,
+.lk-split-default .lk-menu-trigger {
+  color: var(--text);
+  background: var(--glass-2);
+}
+.lk-split-default .lk-split-main:hover,
+.lk-split-default .lk-menu-trigger:hover {
+  background: color-mix(in srgb, var(--accent) 14%, var(--glass-2));
+}

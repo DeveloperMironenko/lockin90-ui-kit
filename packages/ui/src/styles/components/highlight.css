@@ -1,0 +1,17 @@
+/* ============================================================================
+   Highlight — inline tone-colored text emphasis for AI-summary / insight prose.
+   A color-coded keyword inside a paragraph: bold signal-colored text on a faint
+   tinted background. Flows inline (<span> inside <p>). Mirrors the design's
+   .hl / .hl-mint / .hl-warm / .hl-low. Highlight primitive.
+   ========================================================================== */
+.lk-hl {
+  font-weight: 600;
+  color: #cbbcff; /* accent — softened violet for legibility on dark */
+  background: rgba(124, 92, 255, 0.1);
+  padding: 0 5px;
+  border-radius: 5px;
+}
+
+.lk-hl.lk-hl-mint { color: var(--zone-high); background: rgba(52, 245, 197, 0.1); }
+.lk-hl.lk-hl-warm { color: var(--zone-mid); background: rgba(255, 176, 32, 0.1); }
+.lk-hl.lk-hl-low { color: var(--zone-low); background: rgba(255, 77, 109, 0.1); }
