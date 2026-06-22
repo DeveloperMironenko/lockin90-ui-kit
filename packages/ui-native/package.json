@@ -30,7 +30,13 @@
     "react": ">=18",
     "react-native": ">=0.74",
     "react-native-svg": ">=15",
-    "expo-linear-gradient": ">=13"
+    "expo-linear-gradient": ">=13",
+    "expo-clipboard": ">=6"
+  },
+  "peerDependenciesMeta": {
+    "expo-clipboard": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@lockin90/tokens": "workspace:*"
