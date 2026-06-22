@@ -1,0 +1,68 @@
+/* ============================================================================
+   ChoiceChip — a pressable, selectable filter pill (multi-select). A real
+   <button aria-pressed>; the `.on` state uses the accent token, mirroring the
+   studio's `.pill`/`.pill.on`. Display-only status pills stay on `.lk-chip`.
+   Key: .lk-choicechip(.lk-choicechip-on)(.lk-choicechip-sm)
+   ========================================================================== */
+.lk-choicechip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: var(--glass);
+  color: var(--text-dim);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.18s var(--ease), background 0.18s var(--ease), color 0.18s var(--ease);
+}
+.lk-choicechip:hover {
+  border-color: var(--border-2);
+  color: var(--text);
+}
+.lk-choicechip:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
+}
+
+.lk-choicechip-on {
+  border-color: rgba(124, 92, 255, 0.5);
+  background: rgba(124, 92, 255, 0.12);
+  color: var(--text);
+}
+.lk-choicechip-on:hover {
+  border-color: rgba(124, 92, 255, 0.6);
+}
+
+.lk-choicechip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lk-choicechip-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.lk-choicechip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+.lk-choicechip-on .lk-choicechip-dot {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.lk-choicechip-icon {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}

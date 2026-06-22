@@ -154,3 +154,9 @@ export { CodeField } from './components/CodeField';
 export type { CodeFieldProps } from './components/CodeField';
 export { ColorPicker } from './components/ColorPicker';
 export type { ColorPickerProps } from './components/ColorPicker';
+
+// --- Studio primitives ---
+export { ChoiceChip } from './components/ChoiceChip';
+export type { ChoiceChipSize, ChoiceChipProps } from './components/ChoiceChip';
+export { Eyebrow } from './components/Eyebrow';
+export type { EyebrowProps } from './components/Eyebrow';

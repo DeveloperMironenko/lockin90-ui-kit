@@ -9,6 +9,7 @@
 @import './components/bc.css';
 @import './components/charcounter.css';
 @import './components/check.css';
+@import './components/choicechip.css';
 @import './components/codeblock.css';
 @import './components/codefield.css';
 @import './components/colorpicker.css';
@@ -18,6 +19,7 @@
 @import './components/donut.css';
 @import './components/dotsloader.css';
 @import './components/empty.css';
+@import './components/eyebrow.css';
 @import './components/field.css';
 @import './components/focal.css';
 @import './components/gauge.css';

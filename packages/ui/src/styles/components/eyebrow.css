@@ -1,0 +1,14 @@
+/* ============================================================================
+   Eyebrow — a mono, uppercase, letter-spaced overline label for section headers.
+   Key: .lk-eyebrow
+   ========================================================================== */
+.lk-eyebrow {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  line-height: 1;
+  color: var(--text-faint);
+}

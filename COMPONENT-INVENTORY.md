@@ -15,8 +15,10 @@ _Generated 2026-06-21 from live source in `packages/ui` (web) + `packages/ui-nat
 > - **+5 CMS primitives:** Sortable, RichTextEditor (dep-free), FocalPointPicker,
 >   CodeField, ColorPicker. **Icon expanded 11 → 60 glyphs.** **Table** gained
 >   row-selection (`selectable`/`selectedKeys`/`onSelectionChange`).
+> - **+2 Studio primitives:** ChoiceChip (pressable multi-select filter pill,
+>   `<button aria-pressed>`) + Eyebrow (mono uppercase overline label).
 >
-> Kit total: **~85 cross-platform primitives** (identical web ↔ native APIs).
+> Kit total: **~87 cross-platform primitives** (identical web ↔ native APIs).
 
 ## Architecture
 
