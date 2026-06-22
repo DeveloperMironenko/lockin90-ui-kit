@@ -34,8 +34,9 @@ export function Spinner({
   const uid = useId();
   const gradId = `lk-spinner-grad-${uid.replace(/[^a-zA-Z0-9]/g, '')}`;
 
-  // radius leaves a half-stroke of breathing room so the arc never clips
-  const r = (size - thickness) / 2;
+  // reserve the glow's overhang (a wider stroke than the arc) so neither the arc
+  // nor its halo clips against the square SVG viewBox
+  const r = (size - thickness) / 2 - 3;
   const c = 2 * Math.PI * r;
   // sweep ≈ 62% of the circumference (the rest is the gap) — matches the
   // showcase's ~0.6 dashoffset ratio for a confident partial arc.

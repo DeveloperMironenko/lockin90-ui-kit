@@ -78,7 +78,9 @@ export function CharCounter({
         </View>
       )}
       {showCount && (
-        <Text style={[styles.ct, { color: COUNT_COLOR[status] }]}>{format(value, max)}</Text>
+        <Text style={[styles.ct, { color: COUNT_COLOR[status] }]} numberOfLines={1}>
+          {format(value, max)}
+        </Text>
       )}
     </View>
   );
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   ct: {
-    flex: 0,
+    flexShrink: 0,
     fontFamily: fonts.mono,
     fontSize: 9.5,
     color: colors.textFaint,

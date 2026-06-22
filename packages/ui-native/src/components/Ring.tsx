@@ -46,8 +46,10 @@ export function Ring({
   const gradId = `lk-ring-grad-${uid.replace(/[^a-zA-Z0-9]/g, '')}`;
 
   const v = Math.max(0, Math.min(100, value));
-  // radius leaves a half-stroke of breathing room so the arc never clips
-  const r = (size - thickness) / 2;
+  // reserve the glow's overhang (a wider stroke than the arc) so neither the arc
+  // nor its halo clips against the square SVG viewBox
+  const glowPad = glow ? 5 : 0;
+  const r = (size - thickness) / 2 - glowPad;
   const c = 2 * Math.PI * r;
   const dashOffset = c * (1 - v / 100);
 
