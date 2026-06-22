@@ -1,13 +1,17 @@
 import {
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type ButtonHTMLAttributes,
+  type CSSProperties,
   type HTMLAttributes,
   type ReactNode,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { cn } from '../cn';
 import { Icon } from './Icon';
+import { computeMenuPosition, type MenuAlign, type MenuPosition } from './tooltipPosition';
 
 export interface PopoverProps extends HTMLAttributes<HTMLDivElement> {
   /** The clickable trigger. Defaults to a small "?" info button. */
@@ -15,26 +19,57 @@ export interface PopoverProps extends HTMLAttributes<HTMLDivElement> {
   /** Panel content. Defaults to a short sample explainer. */
   children?: ReactNode;
   /** Which edge of the trigger the panel aligns to. */
-  align?: 'left' | 'right' | 'center';
+  align?: MenuAlign;
 }
 
-/** Click-triggered floating panel of arbitrary content (richer than a
- *  Tooltip) — toggles on click, dismisses on click-outside or ESC. The panel
- *  is a glass card anchored below the trigger with a small pointing arrow. */
-export function Popover({
-  trigger,
-  children,
-  align = 'center',
-  className,
-  ...rest
-}: PopoverProps) {
+const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+/** Click-triggered floating panel of arbitrary content (richer than a Tooltip).
+ *  The panel is portaled to <body> (no overflow ancestor can clip it) and flips
+ *  above the trigger / shifts sideways to stay on-screen; the arrow tracks the
+ *  trigger. Toggles on click, dismisses on click-outside or ESC. */
+export function Popover({ trigger, children, align = 'center', className, ...rest }: PopoverProps) {
   const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState<MenuPosition | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useIsoLayoutEffect(() => {
+    if (!open) {
+      setPos(null);
+      return;
+    }
+    const reposition = () => {
+      const t = rootRef.current;
+      const p = panelRef.current;
+      if (!t || !p) return;
+      const r = t.getBoundingClientRect();
+      setPos(
+        computeMenuPosition(
+          { top: r.top, left: r.left, width: r.width, height: r.height },
+          p.offsetWidth,
+          p.offsetHeight,
+          align,
+          window.innerWidth,
+          window.innerHeight,
+        ),
+      );
+    };
+    reposition();
+    window.addEventListener('scroll', reposition, true);
+    window.addEventListener('resize', reposition);
+    return () => {
+      window.removeEventListener('scroll', reposition, true);
+      window.removeEventListener('resize', reposition);
+    };
+  }, [open, align, children]);
 
   useEffect(() => {
     if (!open) return;
     const onPointer = (e: MouseEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+      const target = e.target as Node;
+      if (rootRef.current?.contains(target) || panelRef.current?.contains(target)) return;
+      setOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false);
@@ -47,12 +82,9 @@ export function Popover({
     };
   }, [open]);
 
-  const alignClass =
-    align === 'left'
-      ? 'lk-pop-left'
-      : align === 'right'
-        ? 'lk-pop-right'
-        : 'lk-pop-center';
+  const panelStyle: CSSProperties = pos
+    ? ({ top: pos.top, left: pos.left, ['--pop-arrow' as string]: `${pos.arrow}px` } as CSSProperties)
+    : { top: 0, left: 0, opacity: 0, pointerEvents: 'none' };
 
   return (
     <div ref={rootRef} className={cn('lk-pop', className)} {...rest}>
@@ -66,19 +98,26 @@ export function Popover({
         {trigger ?? <Icon name="info" size={16} />}
       </button>
 
-      {open && (
-        <div className={cn('lk-pop-panel', alignClass)} role="dialog">
-          <span className="lk-pop-arrow" aria-hidden="true" />
-          <div className="lk-pop-body">
-            {children ?? (
-              <p className="lk-pop-text">
-                This score blends your recent training, sleep, and recovery
-                signals into a single readiness number.
-              </p>
-            )}
-          </div>
-        </div>
-      )}
+      {open && typeof document !== 'undefined'
+        ? createPortal(
+            <div
+              ref={panelRef}
+              className={cn('lk-pop-panel', pos && `lk-pop-${pos.side}`, pos && 'is-open')}
+              role="dialog"
+              style={panelStyle}
+            >
+              <span className="lk-pop-arrow" aria-hidden="true" />
+              <div className="lk-pop-body">
+                {children ?? (
+                  <p className="lk-pop-text">
+                    This score blends your recent training, sleep, and recovery signals into a single readiness number.
+                  </p>
+                )}
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }

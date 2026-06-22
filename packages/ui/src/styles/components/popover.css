@@ -38,11 +38,10 @@
   border-color: var(--accent);
 }
 
-/* ---- floating panel ---- */
+/* ---- floating panel (portaled to <body>, positioned by the component) ---- */
 .lk-pop-panel {
-  position: absolute;
-  top: calc(100% + 10px);
-  z-index: 90;
+  position: fixed;
+  z-index: 9999;
   max-width: 260px;
   width: max-content;
   padding: 12px;
@@ -52,36 +51,36 @@
   box-shadow: 0 16px 44px rgba(0, 0, 0, 0.52);
   -webkit-backdrop-filter: blur(18px) saturate(130%);
   backdrop-filter: blur(18px) saturate(130%);
-  animation: lk-pop-in 0.16s ease;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.16s ease, transform 0.16s ease;
 }
-.lk-pop-left { left: 0; }
-.lk-pop-right { right: 0; }
-.lk-pop-center { left: 50%; transform: translateX(-50%); }
-
-@keyframes lk-pop-in {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.lk-pop-center { animation: lk-pop-in-center 0.16s ease; }
-@keyframes lk-pop-in-center {
-  from { opacity: 0; transform: translate(-50%, -4px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
+.lk-pop-panel.is-open {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* ---- arrow — a rotated square sharing the panel's surface + border ---- */
+/* ---- arrow — a rotated square sharing the panel's surface + border, tracking
+   the trigger via --pop-arrow and flipping to the correct edge per side ---- */
 .lk-pop-arrow {
   position: absolute;
-  top: -4px;
+  left: var(--pop-arrow, 50%);
+  margin-left: -4px;
   width: 8px;
   height: 8px;
   background: var(--bg-1, var(--glass-2));
-  border-top: 1px solid var(--border);
-  border-left: 1px solid var(--border);
   transform: rotate(45deg);
 }
-.lk-pop-left .lk-pop-arrow { left: 14px; }
-.lk-pop-right .lk-pop-arrow { right: 14px; }
-.lk-pop-center .lk-pop-arrow { left: 50%; margin-left: -4px; }
+.lk-pop-bottom .lk-pop-arrow {
+  top: -4px;
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+.lk-pop-top .lk-pop-arrow {
+  bottom: -4px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
 
 /* ---- body content ---- */
 .lk-pop-body {
