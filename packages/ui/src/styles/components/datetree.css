@@ -1,0 +1,188 @@
+/* ============================================================================
+   DateField + TreeItem — CMS primitives over Aurora Flux.
+   DateField mirrors the kit Input shell (glass fill, accent focus glow) and
+   forces a dark native picker. TreeItem is the nav/page-tree row: rotating
+   chevron, optional icon + drag handle, accent-tinted active state, indented
+   children. NO Tailwind — tokens only.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- DateField */
+.lk-date-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.lk-date-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+}
+
+.lk-date-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-2);
+  background: var(--glass-2);
+  color: var(--text);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.lk-date-field:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
+}
+
+.lk-date-lead {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  color: var(--text-faint);
+}
+.lk-date-lead svg {
+  width: 16px;
+  height: 16px;
+}
+
+.lk-date-input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.4;
+  /* dark native date/time picker + calendar indicator */
+  color-scheme: dark;
+}
+.lk-date-input::placeholder {
+  color: var(--text-faint);
+}
+/* the webkit calendar/clock affordance — tint toward accent on hover */
+.lk-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.7) brightness(1.1);
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.lk-date-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+.lk-date-input::-webkit-datetime-edit-fields-wrapper {
+  color: var(--text);
+}
+
+/* ----------------------------------------------------------------- TreeItem */
+.lk-tree-item {
+  list-style: none;
+}
+
+.lk-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px 8px 8px;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  color: var(--text);
+  cursor: default;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.lk-tree-row:hover {
+  background: var(--glass);
+}
+.lk-tree-active {
+  background: rgba(124, 92, 255, 0.12);
+  border-color: rgba(124, 92, 255, 0.4);
+  box-shadow: inset 0 0 0 1px rgba(124, 92, 255, 0.12);
+}
+
+.lk-tree-grip {
+  flex: none;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--text-faint);
+  cursor: grab;
+  user-select: none;
+}
+.lk-tree-grip:active {
+  cursor: grabbing;
+}
+
+.lk-tree-chevron {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  transition: transform 0.22s var(--ease, ease), color 0.2s ease, background 0.2s ease;
+}
+.lk-tree-chevron:hover {
+  color: var(--text);
+  background: var(--glass-2);
+}
+.lk-tree-chevron svg {
+  width: 13px;
+  height: 13px;
+}
+.lk-tree-chevron.lk-tree-open {
+  transform: rotate(90deg);
+}
+
+/* keeps non-expandable rows aligned with their expandable siblings */
+.lk-tree-spacer {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+.lk-tree-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--text-dim);
+}
+.lk-tree-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.lk-tree-label {
+  min-width: 0;
+  flex: 1;
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lk-tree-active .lk-tree-label {
+  color: var(--text);
+}
+
+/* nested children — dashed guide rail down the left, matching the CMS tree */
+.lk-tree-children {
+  margin: 2px 0 2px 17px;
+  padding-left: 12px;
+  border-left: 1px dashed var(--border-2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}

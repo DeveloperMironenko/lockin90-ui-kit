@@ -1,0 +1,121 @@
+/* ============================================================================
+   Toolbar — rich-text formatting bar: a horizontal row of ~30px icon buttons
+   in a glass strip, hover-highlight, accent tint when active, thin vertical
+   1px dividers between groups. Mirrors `.toolbar`/`.tb-btn` from the CMS
+   post-editor design.
+   ========================================================================== */
+.lk-toolbar {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 4px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-2);
+  background: var(--glass-2);
+}
+
+.lk-toolbar-btn {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.lk-toolbar-btn:hover {
+  background: var(--glass-2);
+  color: var(--text);
+}
+.lk-toolbar-btn svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+}
+
+.lk-toolbar-on {
+  background: rgba(124, 92, 255, 0.16);
+  border-color: rgba(124, 92, 255, 0.4);
+  color: #cbbcff;
+}
+.lk-toolbar-on:hover {
+  background: rgba(124, 92, 255, 0.22);
+  color: #cbbcff;
+}
+
+.lk-toolbar-divider {
+  width: 1px;
+  align-self: stretch;
+  margin: 2px 4px;
+  background: var(--border-2);
+}
+
+/* ============================================================================
+   Dropzone — file-upload drop area: a large dashed-border box, centered round
+   icon badge + label + hint. Hover/dragover lifts with an accent dashed border
+   + subtle accent tint. Mirrors `.dropzone` from the CMS media library design.
+   ========================================================================== */
+.lk-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 168px;
+  padding: 28px;
+  text-align: center;
+  border-radius: var(--r);
+  border: 1.5px dashed var(--border-2);
+  background: rgba(124, 92, 255, 0.04);
+  cursor: pointer;
+  transition: border-color 0.25s var(--ease), background 0.25s var(--ease),
+    transform 0.25s var(--ease);
+}
+.lk-dropzone:hover,
+.lk-dropzone:focus-visible,
+.lk-dropzone-over {
+  outline: none;
+  border-color: var(--accent-2);
+  background: rgba(34, 211, 238, 0.06);
+  transform: translateY(-2px);
+}
+
+.lk-dropzone-ico {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--border-2);
+  background: var(--glass);
+  color: var(--accent-2);
+}
+.lk-dropzone-ico svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+}
+
+.lk-dropzone-label {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.lk-dropzone-hint {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.lk-dropzone-input {
+  display: none;
+}
