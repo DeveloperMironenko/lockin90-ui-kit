@@ -1,0 +1,41 @@
+/* ============================================================================
+   AvatarStack — a row of overlapping circular avatars with a trailing "+N"
+   overflow chip (social proof / multi-author / roster). Composes .lk-avatar;
+   each tile overlaps the previous via a negative margin (applied inline, scaled
+   to `size`) and carries a ring (box-shadow in --lk-avstack-ring) so it reads as
+   separate. The "+N" chip is a same-size circle. Mirrors marketing .wl-avatars
+   and CMS .authors. Size, overlap and ring thickness are applied inline.
+   ========================================================================== */
+.lk-avstack {
+  display: inline-flex;
+  align-items: center;
+}
+
+.lk-avstack-item {
+  display: inline-flex;
+  flex: none;
+}
+
+/* Carries the ring (box-shadow) drawn in the surrounding bg color; the radius
+   keeps that ring circular around the composed .lk-avatar. */
+.lk-avstack-ringed {
+  border-radius: 50%;
+}
+
+/* Lift the hovered tile clear of its neighbours. */
+.lk-avstack-item:hover {
+  z-index: 10 !important;
+}
+
+.lk-avstack-more {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--glass-2);
+  border: 1px solid var(--border-2);
+  color: var(--text-dim);
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}

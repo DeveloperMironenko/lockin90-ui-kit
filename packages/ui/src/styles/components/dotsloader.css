@@ -1,0 +1,45 @@
+/* ============================================================================
+   DotsLoader — three (or N) small dots that bounce/pulse in a staggered wave.
+   Typing indicator (the AI coach composing) + generic inline loading state.
+   Ports the Aurora Flux `.dots` / `dotBounce` look from the design source.
+   Sizing & color are prop-driven via `--lk-dot-*` custom properties; each dot
+   sets its own `animation-delay` inline (0 / .16 / .32s …) for the stagger.
+   Honors prefers-reduced-motion by holding the dots static & fully lit.
+   Key: .lk-dots
+   ========================================================================== */
+.lk-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lk-dot-gap, 6px);
+}
+
+.lk-dots > i {
+  width: var(--lk-dot-size, 7px);
+  height: var(--lk-dot-size, 7px);
+  border-radius: 50%;
+  background: var(--lk-dot-color, var(--accent));
+  box-shadow: 0 0 10px var(--lk-dot-color, rgba(124, 92, 255, 0.5));
+  animation: lk-dot-bounce 1.2s var(--ease-soft) infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes lk-dot-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0) scale(0.7);
+    opacity: 0.5;
+  }
+  40% {
+    transform: translateY(-4px) scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lk-dots > i {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}

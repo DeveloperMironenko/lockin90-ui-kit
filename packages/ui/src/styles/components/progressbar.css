@@ -1,0 +1,54 @@
+/* ============================================================================
+   ProgressBar — Aurora-Flux linear progress. A richer sibling of BarFill that
+   adds (a) an indeterminate sweeping gradient band, (b) an optional label /
+   percentage row, (c) configurable height / paint / track.
+   Ported from loaders.html `.det` (determinate) + `.indet` (indeterminate).
+   Per-instance vars: --lk-pb-h (height) · --lk-pb-fill (gradient) ·
+   --lk-pb-track (rail) · --lk-pb-radius · --lk-pb-v (value %)
+   ========================================================================== */
+.lk-progressbar { display: block; width: 100%; }
+
+/* label + value row (mono, like .det-top in the design) */
+.lk-progressbar-meta {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  margin-bottom: 7px;
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.02em;
+}
+.lk-progressbar-label { color: var(--text-dim); }
+.lk-progressbar-value { color: var(--accent-2); font-variant-numeric: tabular-nums; }
+
+/* the track */
+.lk-progressbar-track {
+  position: relative; height: var(--lk-pb-h, 8px); width: 100%;
+  border-radius: var(--lk-pb-radius, var(--r-pill));
+  background: var(--lk-pb-track, rgba(255, 255, 255, 0.07));
+  overflow: hidden;
+}
+
+/* ---- determinate fill (inline width %) ---- */
+.lk-progressbar-fill {
+  display: block; height: 100%; width: var(--lk-pb-v, 0%);
+  border-radius: inherit;
+  background: var(--lk-pb-fill, var(--grad-flux));
+  background-size: 240% 100%;
+  box-shadow: var(--glow-accent);
+  transition: width 1.2s var(--ease);
+}
+
+/* ---- indeterminate: a sweeping band, no fixed value ---- */
+.lk-progressbar.is-indeterminate .lk-progressbar-fill {
+  position: absolute; top: 0; left: 0; width: 38%;
+  box-shadow: 0 0 12px rgba(124, 92, 255, 0.55);
+  transition: none;
+  animation: lkPbSlide 1.5s var(--ease) infinite, lkPbFlow 4s linear infinite;
+}
+@keyframes lkPbSlide { 0% { left: -40%; } 100% { left: 100%; } }
+@keyframes lkPbFlow { to { background-position: 240% 0; } }
+
+/* ---- reduced motion: stop the sweep, show a calm centered band ---- */
+@media (prefers-reduced-motion: reduce) {
+  .lk-progressbar.is-indeterminate .lk-progressbar-fill {
+    animation: none; left: 24%;
+  }
+  .lk-progressbar-fill { transition: none; }
+}

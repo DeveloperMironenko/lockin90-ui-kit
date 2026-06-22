@@ -102,3 +102,17 @@ export { Tooltip } from './components/Tooltip';
 export type { TooltipPlacement, TooltipProps } from './components/Tooltip';
 export { VideoThumbnail } from './components/VideoThumbnail';
 export type { VideoThumbnailProps } from './components/VideoThumbnail';
+
+// --- Wave 1 primitives ---
+export { Spinner } from './components/Spinner';
+export type { SpinnerProps } from './components/Spinner';
+export { ProgressBar } from './components/ProgressBar';
+export type { ProgressBarProps } from './components/ProgressBar';
+export { DotsLoader } from './components/DotsLoader';
+export type { DotsLoaderProps } from './components/DotsLoader';
+export { Meter } from './components/Meter';
+export type { MeterTone, MeterProps } from './components/Meter';
+export { DeltaPill } from './components/DeltaPill';
+export type { DeltaDirection, DeltaTone, DeltaSize, DeltaPillProps } from './components/DeltaPill';
+export { AvatarStack } from './components/AvatarStack';
+export type { AvatarStackItem, AvatarStackProps } from './components/AvatarStack';

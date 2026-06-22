@@ -1,0 +1,55 @@
+/* ---- DeltaPill: compact signed-change pill (arrow + value, tinted by direction) ---- */
+.lk-deltapill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  font-feature-settings: "tnum" 1;
+  padding: 4px 11px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: var(--glass);
+  color: var(--text-dim);
+}
+.lk-deltapill svg {
+  width: 12px;
+  height: 12px;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.lk-deltapill-val {
+  line-height: 1;
+}
+
+/* tones */
+.lk-deltapill.lk-delta-up {
+  color: var(--zone-high);
+  background: rgba(52, 245, 197, 0.10);
+  border-color: rgba(52, 245, 197, 0.32);
+}
+.lk-deltapill.lk-delta-down {
+  color: var(--zone-low);
+  background: rgba(255, 77, 109, 0.10);
+  border-color: rgba(255, 77, 109, 0.32);
+}
+.lk-deltapill.lk-delta-neutral {
+  color: var(--text-dim);
+  background: var(--glass);
+  border-color: var(--border);
+}
+
+/* sm size */
+.lk-deltapill.lk-deltapill-sm {
+  font-size: 10px;
+  gap: 4px;
+  padding: 3px 8px;
+}
+.lk-deltapill.lk-deltapill-sm svg {
+  width: 10px;
+  height: 10px;
+}

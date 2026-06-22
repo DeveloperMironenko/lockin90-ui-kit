@@ -1,0 +1,51 @@
+/* ============================================================================
+   Spinner — an indeterminate circular loading spinner in the Aurora Flux
+   "energy-ring" style: a faint track + a sweeping gradient arc (partial
+   strokeDasharray arc, round linecap, soft color glow) that rotates
+   continuously. Mirrors the `.spin` ring spinner from the loaders showcase.
+   Size / color / thickness are prop-driven (inline + the `--lk-spinner-glow`
+   custom prop), so this stylesheet owns only the static geometry + the spin.
+   Key: .lk-spinner
+   ========================================================================== */
+.lk-spinner {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  line-height: 0;
+}
+
+/* the whole svg spins — round trip every second, linear so it never eases */
+.lk-spinner-svg {
+  display: block;
+  overflow: visible;
+  transform-origin: center;
+  animation: lk-spinner-rot 1s linear infinite;
+}
+
+.lk-spinner-track {
+  fill: none;
+  /* faint neutral track behind the arc */
+  stroke: var(--border-2, rgba(255, 255, 255, 0.16));
+}
+
+.lk-spinner-arc {
+  fill: none;
+  stroke-linecap: round;
+  /* soft glow tinted to the arc color (`--lk-spinner-glow` set inline) */
+  filter: drop-shadow(0 0 6px var(--lk-spinner-glow, var(--accent)));
+}
+
+@keyframes lk-spinner-rot {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* reduced motion — slow the sweep way down (8s) instead of stopping it, so it
+   still reads as "busy" without the fast, vestibular-triggering spin */
+@media (prefers-reduced-motion: reduce) {
+  .lk-spinner-svg {
+    animation-duration: 8s;
+  }
+}
