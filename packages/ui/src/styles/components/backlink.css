@@ -1,0 +1,36 @@
+/* ============================================================================
+   BackLink — "‹ Back" navigation affordance: a chevron-left glyph + label in
+   the accent color. Renders as an <a> (when `href`) or a <button>; both share
+   the `.lk-backlink` look. On hover the icon nudges left (translateX(-2px)) and
+   the whole control brightens. Key: .lk-backlink — inline-flex row, no chrome.
+   ========================================================================== */
+.lk-backlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 2px;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-family: var(--font-ui);
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s var(--ease);
+}
+.lk-backlink-icon {
+  transition: transform 0.2s var(--ease);
+}
+.lk-backlink:hover {
+  color: var(--accent-2);
+}
+.lk-backlink:hover .lk-backlink-icon {
+  transform: translateX(-2px);
+}
+.lk-backlink:focus-visible {
+  outline: none;
+  border-radius: var(--r-sm);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent);
+}
