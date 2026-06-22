@@ -42,6 +42,7 @@ export function Sheet({ open = true, onClose, side = 'bottom', title, children }
 
 const styles = StyleSheet.create({
   scrim: {
+    ...StyleSheet.absoluteFillObject,
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.55)',
   },

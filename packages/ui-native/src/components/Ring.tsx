@@ -55,8 +55,6 @@ export function Ring({
   // resolved solid arc color: explicit single-string gradient > color
   const solid = typeof gradient === 'string' ? gradient : color;
   const stroke = useGradient ? `url(#${gradId})` : solid;
-  // glow tints to the arc color (gradient → its first stop)
-  const glowColor = useGradient ? gradient[0] : solid;
 
   const half = size / 2;
 
@@ -73,6 +71,26 @@ export function Ring({
         ) : null}
         {/* track */}
         <Circle cx={half} cy={half} r={r} fill="none" stroke={trackColor} strokeWidth={thickness} />
+        {/* glow — a wider, faint copy of the progress arc behind it, so the
+            halo follows the circular ring (not a square box shadow). Avoids
+            <Filter>/<FeGaussianBlur>, which is patchy on device. */}
+        {glow ? (
+          <Circle
+            cx={half}
+            cy={half}
+            r={r}
+            fill="none"
+            stroke={stroke}
+            strokeWidth={thickness + 8}
+            strokeOpacity={0.35}
+            strokeLinecap="round"
+            strokeDasharray={c}
+            strokeDashoffset={dashOffset}
+            rotation={-90}
+            originX={half}
+            originY={half}
+          />
+        ) : null}
         {/* progress arc — rotated −90° to start at 12 o'clock */}
         <Circle
           cx={half}
@@ -89,18 +107,7 @@ export function Ring({
           originY={half}
         />
       </Svg>
-      <View
-        style={[
-          styles.center,
-          glow && {
-            shadowColor: glowColor,
-            shadowOpacity: 0.55,
-            shadowRadius: 10,
-            shadowOffset: { width: 0, height: 0 },
-          },
-        ]}
-        pointerEvents="none"
-      >
+      <View style={styles.center} pointerEvents="none">
         {children ?? <Text style={styles.num}>{Math.round(v)}</Text>}
       </View>
     </View>

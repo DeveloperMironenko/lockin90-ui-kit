@@ -1,5 +1,5 @@
-import { useEffect, useState, type ReactNode } from 'react';
-import { View, Text, Pressable, StyleSheet, Modal } from 'react-native';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { View, Text, Pressable, StyleSheet, Modal, Dimensions } from 'react-native';
 import Svg, { Rect, Path } from 'react-native-svg';
 import { colors, radii, fonts, nativeShadows } from '@lockin90/tokens';
 import { Icon } from './Icon';
@@ -27,34 +27,69 @@ export interface PopoverProps {
 const DEFAULT_TEXT =
   'This score blends your recent training, sleep, and recovery signals into a single readiness number.';
 
+interface Anchor {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+const { width: SW, height: SH } = Dimensions.get('window');
+const EST_W = 260;
+const EST_H = 80;
+
 /** Click-triggered floating panel of arbitrary content (richer than a Tooltip).
  *  The "?" trigger toggles a transparent Modal whose full-screen backdrop closes
- *  on tap; the panel is a glass card anchored near the top (best-effort native
- *  positioning). Mirrors the web `Popover` prop API. */
+ *  on tap; the panel is a glass card absolutely anchored to the measured trigger
+ *  (flips above near the bottom). Mirrors the web `Popover` prop API. */
 export function Popover({ trigger, children, align = 'center' }: PopoverProps) {
   const [open, setOpen] = useState(false);
+  const [anchor, setAnchor] = useState<Anchor | null>(null);
+  const [size, setSize] = useState({ pw: EST_W, ph: EST_H });
+  const triggerRef = useRef<View>(null);
 
-  const alignStyle = align === 'left' ? styles.left : align === 'right' ? styles.right : styles.center;
+  const openPanel = () => {
+    triggerRef.current?.measureInWindow((x, y, w, h) => setAnchor({ x, y, w, h }));
+    setOpen(true);
+  };
+
+  const { pw, ph } = size;
+  let top = 0;
+  let left = 0;
+  if (anchor) {
+    const flipAbove = anchor.y + anchor.h + ph + 8 > SH && anchor.y - 8 - ph > 0;
+    top = flipAbove ? anchor.y - 8 - ph : anchor.y + anchor.h + 6;
+
+    if (align === 'left') left = anchor.x;
+    else if (align === 'right') left = anchor.x + anchor.w - pw;
+    else left = anchor.x + anchor.w / 2 - pw / 2;
+    left = Math.max(8, Math.min(left, SW - pw - 8));
+  }
 
   return (
     <View style={styles.root}>
       <Pressable
+        ref={triggerRef}
         style={styles.trigger}
         accessibilityRole="button"
-        onPress={() => setOpen((v) => !v)}
+        onPress={() => (open ? setOpen(false) : openPanel())}
       >
         {trigger ?? <Icon name="info" size={16} color={colors.textDim} />}
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-        <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
+        <Pressable style={styles.backdrop} onPress={() => setOpen(false)} />
+        {anchor != null && (
           <View
-            style={[styles.panel, alignStyle]}
-            onStartShouldSetResponder={() => true}
+            style={[styles.panel, { top, left }]}
+            onLayout={(e) => {
+              const { width, height } = e.nativeEvent.layout;
+              if (width !== pw || height !== ph) setSize({ pw: width, ph: height });
+            }}
           >
             {children ?? <Text style={styles.text}>{DEFAULT_TEXT}</Text>}
           </View>
-        </Pressable>
+        )}
       </Modal>
     </View>
   );
@@ -73,10 +108,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  backdrop: { flex: 1 },
+  backdrop: { ...StyleSheet.absoluteFillObject },
   panel: {
     position: 'absolute',
-    top: 80,
     maxWidth: 260,
     padding: 12,
     borderWidth: 1,
@@ -85,9 +119,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg1,
     ...nativeShadows.elev2,
   },
-  left: { left: 16 },
-  right: { right: 16 },
-  center: { alignSelf: 'center' },
   text: { fontFamily: fonts.ui, fontSize: 12.5, lineHeight: 18, color: colors.textDim },
 });
 

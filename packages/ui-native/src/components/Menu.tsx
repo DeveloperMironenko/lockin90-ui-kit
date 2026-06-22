@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from 'react';
-import { View, Text, Pressable, StyleSheet, Modal } from 'react-native';
+import { useRef, useState, type ReactNode } from 'react';
+import { View, Text, Pressable, StyleSheet, Modal, Dimensions } from 'react-native';
 import { colors, radii, fonts, nativeShadows } from '@lockin90/tokens';
 import { Icon } from './Icon';
 
@@ -34,28 +34,63 @@ const DEFAULT_ITEMS: MenuItemData[] = [
   { label: 'Delete', danger: true },
 ];
 
+interface Anchor {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+const { width: SW, height: SH } = Dimensions.get('window');
+const EST_W = 160;
+const EST_H = 160;
+
 /** Popover menu of actions — a glass panel of item rows. The ⋯ trigger toggles
  *  a transparent Modal whose full-screen backdrop closes on tap; the panel is
- *  absolutely anchored near the top (best-effort positioning on native). */
+ *  absolutely anchored to the measured trigger (flips above near the bottom). */
 export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right' }: MenuProps) {
   const [open, setOpen] = useState(false);
+  const [anchor, setAnchor] = useState<Anchor | null>(null);
+  const [size, setSize] = useState({ pw: EST_W, ph: EST_H });
+  const triggerRef = useRef<View>(null);
+
+  const openMenu = () => {
+    triggerRef.current?.measureInWindow((x, y, w, h) => setAnchor({ x, y, w, h }));
+    setOpen(true);
+  };
+
+  const { pw, ph } = size;
+  let top = 0;
+  let left = 0;
+  if (anchor) {
+    const flipAbove = anchor.y + anchor.h + ph + 8 > SH && anchor.y - 8 - ph > 0;
+    top = flipAbove ? anchor.y - 8 - ph : anchor.y + anchor.h + 6;
+
+    if (align === 'left') left = anchor.x;
+    else left = anchor.x + anchor.w - pw;
+    left = Math.max(8, Math.min(left, SW - pw - 8));
+  }
 
   return (
     <View style={styles.root}>
       <Pressable
+        ref={triggerRef}
         style={styles.trigger}
         accessibilityRole="button"
-        onPress={() => setOpen((v) => !v)}
+        onPress={() => (open ? setOpen(false) : openMenu())}
       >
         {trigger ?? <Icon name="more" size={18} color={colors.textDim} />}
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-        <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
+        <Pressable style={styles.backdrop} onPress={() => setOpen(false)} />
+        {anchor != null && (
           <View
-            style={[styles.panel, align === 'left' ? styles.left : styles.right]}
-            // stop backdrop press from firing when tapping inside the panel
-            onStartShouldSetResponder={() => true}
+            style={[styles.panel, { top, left }]}
+            onLayout={(e) => {
+              const { width, height } = e.nativeEvent.layout;
+              if (width !== pw || height !== ph) setSize({ pw: width, ph: height });
+            }}
           >
             {items.map((item, i) =>
               item.divider ? (
@@ -78,7 +113,7 @@ export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right' }: MenuPr
               ),
             )}
           </View>
-        </Pressable>
+        )}
       </Modal>
     </View>
   );
@@ -94,10 +129,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  backdrop: { flex: 1 },
+  backdrop: { ...StyleSheet.absoluteFillObject },
   panel: {
     position: 'absolute',
-    top: 60,
     minWidth: 160,
     padding: 5,
     borderWidth: 1,
@@ -106,8 +140,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg1,
     ...nativeShadows.elev2,
   },
-  right: { right: 16 },
-  left: { left: 16 },
   item: {
     flexDirection: 'row',
     alignItems: 'center',

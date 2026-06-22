@@ -52,6 +52,7 @@
 }
 
 .lk-date-input {
+  position: relative;
   width: 100%;
   min-width: 0;
   border: 0;
@@ -61,21 +62,23 @@
   font-family: var(--font-ui);
   font-size: 14px;
   line-height: 1.4;
-  /* dark native date/time picker + calendar indicator */
+  /* dark native date/time picker */
   color-scheme: dark;
 }
 .lk-date-input::placeholder {
   color: var(--text-faint);
 }
-/* the webkit calendar/clock affordance — tint toward accent on hover */
+/* hide the browser's own calendar glyph (we render our own leading icon) but keep
+   it clickable across the whole field so a tap still opens the native picker */
 .lk-date-input::-webkit-calendar-picker-indicator {
-  filter: invert(0.7) brightness(1.1);
-  opacity: 0.7;
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
   cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-.lk-date-input::-webkit-calendar-picker-indicator:hover {
-  opacity: 1;
 }
 .lk-date-input::-webkit-datetime-edit-fields-wrapper {
   color: var(--text);

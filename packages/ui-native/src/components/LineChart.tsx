@@ -41,6 +41,10 @@ export interface LineChartProps {
 const VB_W = 560;
 /** vertical inset (viewBox units) so the line never touches the top/bottom edge */
 const PAD_Y = 14;
+/** horizontal inset (viewBox units) so the first/last points, the round line caps
+ *  and the overlay marker dots stay fully inside the plot instead of clipping at
+ *  the left/right edges. */
+const PAD_X = 14;
 /** number of interior horizontal gridlines */
 const GRID_LINES = 3;
 
@@ -48,7 +52,8 @@ const DEFAULT_DATA = [52, 40, 30, 28, 38, 56, 80, 104, 116, 118, 108, 90, 76, 66
 const DEFAULT_AXIS = ['9am', '12pm', '3pm', '6pm', '9pm'];
 
 /** Map data values to viewBox points. Auto-scales y into [PAD_Y, height−PAD_Y]
- *  (inverted, since SVG y grows downward) and spreads x evenly across VB_W. */
+ *  (inverted, since SVG y grows downward) and spreads x evenly across the padded
+ *  inner width [PAD_X, VB_W−PAD_X] so endpoints/markers don't clip at the edges. */
 function toPoints(data: number[], height: number): Array<[number, number]> {
   const n = data.length;
   if (n === 0) return [];
@@ -57,8 +62,9 @@ function toPoints(data: number[], height: number): Array<[number, number]> {
   const span = max - min || 1; // avoid /0 when flat
   const top = PAD_Y;
   const bottom = height - PAD_Y;
+  const innerW = VB_W - PAD_X * 2;
   return data.map((v, i) => {
-    const x = n === 1 ? VB_W / 2 : (i / (n - 1)) * VB_W;
+    const x = n === 1 ? VB_W / 2 : PAD_X + (i / (n - 1)) * innerW;
     const t = (v - min) / span; // 0 at min, 1 at max
     const y = bottom - t * (bottom - top); // max → top, min → bottom
     return [x, y];
@@ -118,8 +124,11 @@ export function LineChart({
 
   const pts = toPoints(data, height);
   const line = smooth ? smoothPath(pts) : linePath(pts);
-  // close the line down to the floor for the area fill
-  const areaPath = line ? `${line} L${VB_W},${height} L0,${height} Z` : '';
+  // close the line down to the floor for the area fill — drop straight down from
+  // the last/first points (which are inset by PAD_X) so the fill stays aligned.
+  const firstX = pts.length ? r(pts[0][0]) : 0;
+  const lastX = pts.length ? r(pts[pts.length - 1][0]) : 0;
+  const areaPath = line ? `${line} L${lastX},${height} L${firstX},${height} Z` : '';
 
   const useGradient = Array.isArray(gradient) && gradient.length >= 2;
   const stroke = useGradient ? 'url(#lk-lc-stroke)' : color;

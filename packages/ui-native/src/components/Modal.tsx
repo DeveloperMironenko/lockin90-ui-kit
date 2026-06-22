@@ -61,6 +61,7 @@ export function Modal({ open = true, onClose, title, children, footer, size = 'm
 
 const styles = StyleSheet.create({
   scrim: {
+    ...StyleSheet.absoluteFillObject,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

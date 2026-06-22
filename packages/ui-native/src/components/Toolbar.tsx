@@ -58,18 +58,18 @@ const DEFAULT_ITEMS: ToolbarItem[] = [
   {
     label: 'Bulleted list',
     icon: (
-      <Svg width={15} height={15} viewBox="0 0 24 24" stroke="currentColor" {...stroke}>
+      <Svg width={15} height={15} viewBox="0 0 24 24" stroke={colors.textDim} {...stroke}>
         <Path d="M8 6h12M8 12h12M8 18h12" />
-        <Circle cx={4} cy={6} r={1.4} fill="currentColor" stroke="none" />
-        <Circle cx={4} cy={12} r={1.4} fill="currentColor" stroke="none" />
-        <Circle cx={4} cy={18} r={1.4} fill="currentColor" stroke="none" />
+        <Circle cx={4} cy={6} r={1.4} fill={colors.textDim} stroke="none" />
+        <Circle cx={4} cy={12} r={1.4} fill={colors.textDim} stroke="none" />
+        <Circle cx={4} cy={18} r={1.4} fill={colors.textDim} stroke="none" />
       </Svg>
     ),
   },
   {
     label: 'Link',
     icon: (
-      <Svg width={15} height={15} viewBox="0 0 24 24" stroke="currentColor" {...stroke}>
+      <Svg width={15} height={15} viewBox="0 0 24 24" stroke={colors.textDim} {...stroke}>
         <Path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1" />
         <Path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1" />
       </Svg>
@@ -78,7 +78,7 @@ const DEFAULT_ITEMS: ToolbarItem[] = [
   {
     label: 'Image',
     icon: (
-      <Svg width={15} height={15} viewBox="0 0 24 24" stroke="currentColor" {...stroke}>
+      <Svg width={15} height={15} viewBox="0 0 24 24" stroke={colors.textDim} {...stroke}>
         <Rect x={3} y={4} width={18} height={16} rx={2} />
         <Circle cx={8.5} cy={9.5} r={1.6} />
         <Path d="m4 18 5-5 4 4 3-3 4 4" />
@@ -90,10 +90,11 @@ const DEFAULT_ITEMS: ToolbarItem[] = [
 /**
  * Horizontal icon-button group for rich-text formatting.
  *
- * Native has no `currentColor` inheritance, so each item glyph should set its
- * own color; the default-set svgs use `stroke="currentColor"` purely as a
- * neutral placeholder (react-native-svg resolves it to black) — pass an
- * already-colored glyph (or the shared `Icon`) for production use.
+ * Native has no `currentColor` inheritance, so each item glyph must set its own
+ * color: the default-set svgs use an explicit token color (`colors.textDim`) so
+ * they stay visible on the dark glass bar. Pass an already-colored glyph (or the
+ * shared `Icon`) for production use — for an active item, color it `colors.text`
+ * or `colors.accent` to match the accent tint.
  */
 export function Toolbar({ items = DEFAULT_ITEMS, style }: ToolbarProps) {
   return (

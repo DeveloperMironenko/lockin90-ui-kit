@@ -67,8 +67,13 @@ export function Timeline({ items = DEFAULT_ITEMS, style, ...rest }: TimelineProp
         return (
           <View key={i} style={[styles.item, last && styles.itemLast]}>
             <View style={styles.gutter}>
+              {/* connecting line: absolutely positioned in the gutter so it
+                  always spans from just below this dot down to the next dot,
+                  independent of the dot's intrinsic height (web .lk-tl-item::before) */}
+              {!last ? (
+                <View style={[styles.line, status === 'done' && styles.lineDone]} />
+              ) : null}
               <Dot status={status} />
-              {!last ? <View style={[styles.line, status === 'done' && styles.lineDone]} /> : null}
             </View>
             <View style={[styles.body, status === 'next' && styles.bodyNext]}>
               <View style={styles.top}>
@@ -85,8 +90,13 @@ export function Timeline({ items = DEFAULT_ITEMS, style, ...rest }: TimelineProp
   );
 }
 
+/** Dot diameter and the vertical gap between consecutive items — the connecting
+ *  line spans from just below one dot (top: DOT_SIZE) to the next (bottom: -GAP). */
+const DOT_SIZE = 28;
+const GAP = 22;
+
 const styles = StyleSheet.create({
-  item: { flexDirection: 'row', paddingBottom: 22 },
+  item: { flexDirection: 'row', paddingBottom: GAP },
   itemLast: { paddingBottom: 0 },
   gutter: { width: 28, alignItems: 'center' },
   dot: {
@@ -102,7 +112,16 @@ const styles = StyleSheet.create({
   dotDone: { borderColor: 'transparent', ...nativeShadows.glowMint },
   dotNow: { backgroundColor: 'rgba(124,92,255,0.14)', borderColor: 'rgba(124,92,255,0.5)' },
   dotNext: { backgroundColor: 'rgba(255,176,32,0.12)', borderColor: 'rgba(255,176,32,0.4)' },
-  line: { width: 2, flex: 1, marginTop: 2, backgroundColor: colors.border2 },
+  // Runs from just below this dot (top: DOT_SIZE) down through the row gap to
+  // the next dot (bottom: -GAP), centered under the 28px dot (left = 13).
+  line: {
+    position: 'absolute',
+    top: DOT_SIZE,
+    bottom: -GAP,
+    left: 13,
+    width: 2,
+    backgroundColor: colors.border2,
+  },
   lineDone: { backgroundColor: colors.mint },
   body: { flex: 1, paddingLeft: 16, paddingTop: 1 },
   bodyNext: { opacity: 0.82 },

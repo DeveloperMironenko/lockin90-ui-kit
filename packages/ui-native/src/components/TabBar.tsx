@@ -146,11 +146,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg1,
     borderTopWidth: 1,
     borderTopColor: colors.border,
-    shadowColor: '#000',
-    shadowOpacity: 0.6,
-    shadowRadius: 30,
-    shadowOffset: { width: 0, height: -8 },
-    elevation: 12,
   },
   item: {
     flex: 1,

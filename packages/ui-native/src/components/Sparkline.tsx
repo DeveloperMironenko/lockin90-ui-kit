@@ -48,14 +48,21 @@ export function Sparkline({
   const gradId = useId();
   const n = data.length;
 
-  // Normalize each value into the box: x spreads evenly, y maps min→bottom / max→top.
+  // Horizontal padding so the first/last points and the trailing dot stay fully
+  // inside the box (stroke half-width + dot radius). Dot radius is strokeWidth+1.
+  const dotR = strokeWidth + 1;
+  const padX = strokeWidth + dotR;
+  const innerW = Math.max(0, width - padX * 2);
+
+  // Normalize each value into the box: x spreads evenly across the padded inner
+  // width (padX..width-padX), y maps min→bottom / max→top.
   const min = n ? Math.min(...data) : 0;
   const max = n ? Math.max(...data) : 0;
   const span = max - min || 1;
   const innerH = height - PAD * 2;
 
   const pts = data.map((v, i) => {
-    const x = n <= 1 ? 0 : (i / (n - 1)) * width;
+    const x = n <= 1 ? padX + innerW / 2 : padX + (i / (n - 1)) * innerW;
     const frac = (v - min) / span;
     const y = PAD + (1 - frac) * innerH;
     return [+x.toFixed(2), +y.toFixed(2)] as const;
@@ -94,7 +101,7 @@ export function Sparkline({
           />
         )}
 
-        {dot && last && <Circle cx={last[0]} cy={last[1]} r={strokeWidth + 1} fill={color} />}
+        {dot && last && <Circle cx={last[0]} cy={last[1]} r={dotR} fill={color} />}
       </Svg>
     </View>
   );

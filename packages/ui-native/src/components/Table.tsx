@@ -56,10 +56,12 @@ export function Table({
 }: TableProps) {
   const clickable = typeof onRowClick === 'function';
 
-  const cellBox = (col: TableColumn) =>
+  const cellBox = (col: TableColumn) => [
+    dense ? styles.cellDense : styles.cell,
     col.width != null
       ? { width: col.width, alignItems: alignSelf(col.align) as 'flex-start' }
-      : { flex: 1, alignItems: alignSelf(col.align) as 'flex-start' };
+      : { flex: 1, alignItems: alignSelf(col.align) as 'flex-start' },
+  ];
 
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -122,10 +124,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.glass2,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
-    paddingHorizontal: 12,
-    paddingVertical: 9,
   },
-  headDense: { paddingHorizontal: 10, paddingVertical: 6 },
+  headDense: {},
+  // Per-cell padding so text isn't cramped against the cell edge; header and
+  // data cells share the same horizontal padding so columns line up (web: th 9/12, td 10/12).
+  cell: { paddingVertical: 10, paddingHorizontal: 12 },
+  cellDense: { paddingVertical: 8, paddingHorizontal: 10 },
   th: {
     fontFamily: fonts.mono,
     fontSize: 10,
@@ -138,10 +142,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
   },
-  rowDense: { paddingVertical: 6, paddingHorizontal: 10 },
+  rowDense: {},
   rowLast: { borderBottomWidth: 0 },
   pressed: { backgroundColor: colors.glass },
   td: {
