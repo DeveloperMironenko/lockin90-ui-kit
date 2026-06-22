@@ -2,6 +2,7 @@ import { type ReactNode } from 'react';
 import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { Checkbox } from './Checkbox';
 
 export interface TableColumn {
   /** Key looked up on each row to read the cell value. */
@@ -33,6 +34,14 @@ export interface TableProps {
   sortDir?: 'asc' | 'desc';
   /** Fired with a sortable column's `key` when its header is pressed. */
   onSort?: (key: string) => void;
+  /** Show a leading checkbox column with a select-all header checkbox. */
+  selectable?: boolean;
+  /** Stable key per row used for selection. Defaults to the row index as a string. */
+  rowKey?: (row: Record<string, ReactNode>, index: number) => string;
+  /** Controlled set of selected row keys. */
+  selectedKeys?: string[];
+  /** Fired with the next set of selected row keys when selection changes. */
+  onSelectionChange?: (keys: string[]) => void;
 }
 
 /** Sort indicator glyph next to a sortable header: a neutral up/down chevron pair
@@ -86,8 +95,29 @@ export function Table({
   sortKey,
   sortDir = 'asc',
   onSort,
+  selectable = false,
+  rowKey = (_row, i) => String(i),
+  selectedKeys,
+  onSelectionChange,
 }: TableProps) {
   const clickable = typeof onRowClick === 'function';
+
+  // Selection bookkeeping — only meaningful when `selectable` is on.
+  const selected = new Set(selectedKeys ?? []);
+  const allKeys = selectable ? rows.map((row, i) => rowKey(row, i)) : [];
+  const allSelected = allKeys.length > 0 && allKeys.every((k) => selected.has(k));
+  const someSelected = allKeys.some((k) => selected.has(k));
+
+  const toggleRow = (key: string) => {
+    const next = new Set(selected);
+    if (next.has(key)) next.delete(key);
+    else next.add(key);
+    onSelectionChange?.([...next]);
+  };
+
+  const toggleAll = () => {
+    onSelectionChange?.(allSelected ? [] : allKeys);
+  };
 
   const cellBox = (col: TableColumn) => [
     dense ? styles.cellDense : styles.cell,
@@ -101,6 +131,15 @@ export function Table({
       <View style={styles.table}>
         {/* header */}
         <View style={[styles.head, dense && styles.headDense]}>
+          {selectable && (
+            <View style={[dense ? styles.cellDense : styles.cell, styles.selectCell]}>
+              <Checkbox
+                checked={allSelected}
+                indeterminate={!allSelected && someSelected}
+                onChange={toggleAll}
+              />
+            </View>
+          )}
           {columns.map((col) => {
             const isActive = sortKey === col.key;
             const sortable = Boolean(col.sortable) && typeof onSort === 'function';
@@ -142,8 +181,24 @@ export function Table({
         {/* body */}
         {rows.map((row, i) => {
           const last = i === rows.length - 1;
+          const key = selectable ? rowKey(row, i) : undefined;
+          const isSelected = key != null && selected.has(key);
           const RowInner = (
-            <View style={[styles.row, dense && styles.rowDense, last && styles.rowLast]}>
+            <View
+              style={[
+                styles.row,
+                dense && styles.rowDense,
+                last && styles.rowLast,
+                isSelected && styles.rowSelected,
+              ]}
+            >
+              {selectable && (
+                // Checkbox is its own Pressable; pressing it captures the touch so the
+                // outer row Pressable's onRowClick does NOT fire.
+                <View style={[dense ? styles.cellDense : styles.cell, styles.selectCell]}>
+                  <Checkbox checked={isSelected} onChange={() => toggleRow(key!)} />
+                </View>
+              )}
               {columns.map((col) => (
                 <View key={col.key} style={cellBox(col)}>
                   <Text
@@ -212,6 +267,10 @@ const styles = StyleSheet.create({
   },
   rowDense: {},
   rowLast: { borderBottomWidth: 0 },
+  // selected row keeps a faint persistent tint (distinct from the pressed glass)
+  rowSelected: { backgroundColor: colors.glass },
+  // leading checkbox column: narrow, content hugs, box centered
+  selectCell: { width: 44, alignItems: 'center', justifyContent: 'center' },
   pressed: { backgroundColor: colors.glass },
   td: {
     fontFamily: fonts.ui,

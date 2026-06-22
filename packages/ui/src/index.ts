@@ -142,3 +142,15 @@ export { SplitButton } from './components/SplitButton';
 export type { SplitButtonVariant, SplitButtonProps } from './components/SplitButton';
 export { CharCounter } from './components/CharCounter';
 export type { CharCounterStatus, CharCounterProps } from './components/CharCounter';
+
+// --- CMS primitives ---
+export { Sortable } from './components/Sortable';
+export type { SortableItem, SortableProps } from './components/Sortable';
+export { RichTextEditor, sanitizeRichTextHtml } from './components/RichTextEditor';
+export type { RichTextAction, RichTextEditorProps } from './components/RichTextEditor';
+export { FocalPointPicker } from './components/FocalPointPicker';
+export type { FocalPoint, FocalPointPickerProps } from './components/FocalPointPicker';
+export { CodeField } from './components/CodeField';
+export type { CodeFieldProps } from './components/CodeField';
+export { ColorPicker } from './components/ColorPicker';
+export type { ColorPickerProps } from './components/ColorPicker';

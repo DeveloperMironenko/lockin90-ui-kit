@@ -1,0 +1,96 @@
+/* ============================================================================
+   CodeField — editable monospace code / embed input on the same dark inset
+   surface as CodeBlock (distinct from CodeBlock display + CodeInput OTP).
+   Optional language chip header; Tab inserts spaces; no highlight engine.
+   Tokens from @lockin90/tokens. All classes namespaced `lk-*`.
+   ========================================================================== */
+
+.lk-codefield {
+  position: relative;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-0);
+  overflow: hidden;
+  font-family: var(--font-mono);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lk-codefield:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
+}
+
+.lk-codefield-invalid {
+  border-color: var(--zone-low);
+}
+.lk-codefield-invalid:focus-within {
+  border-color: var(--zone-low);
+  box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.16);
+}
+
+/* ---- header --------------------------------------------------------- */
+.lk-codefield-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--glass);
+}
+
+.lk-codefield-dots {
+  display: flex;
+  gap: 5px;
+  flex: none;
+}
+.lk-codefield-dots i {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.lk-codefield-dots i:nth-child(1) { background: var(--zone-low); }
+.lk-codefield-dots i:nth-child(2) { background: var(--zone-mid); }
+.lk-codefield-dots i:nth-child(3) { background: var(--mint); }
+
+.lk-codefield-lang {
+  margin-left: auto;
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  color: var(--text-faint);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ---- body ----------------------------------------------------------- */
+.lk-codefield-ta {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 14px 16px;
+  border: 0;
+  outline: 0;
+  resize: vertical;
+  background: none;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.7;
+  tab-size: 2;
+}
+.lk-codefield-ta::placeholder { color: var(--text-faint); }
+
+.lk-codefield-nowrap {
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.lk-codefield-wrap {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  overflow-x: hidden;
+}

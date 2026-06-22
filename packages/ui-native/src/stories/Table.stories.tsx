@@ -67,3 +67,30 @@ export const Sortable: Story = {
     );
   },
 };
+
+/** Row selection — a leading checkbox column with a select-all header (checked when
+ *  all rows are selected, indeterminate when only some are). Selection is controlled
+ *  via `selectedKeys` + `onSelectionChange`; pressing a row checkbox never fires
+ *  `onRowClick`. */
+export const Selectable: Story = {
+  render: () => {
+    const [selectedKeys, setSelectedKeys] = useState<string[]>(['Liam Carter']);
+
+    return (
+      <View style={{ width: 340 }}>
+        <Table
+          columns={SORTABLE_COLUMNS}
+          rows={ROWS}
+          selectable
+          rowKey={(row) => String(row.name)}
+          selectedKeys={selectedKeys}
+          onSelectionChange={setSelectedKeys}
+          onRowClick={(row) => {
+            // eslint-disable-next-line no-console
+            console.log('row pressed', row.name);
+          }}
+        />
+      </View>
+    );
+  },
+};

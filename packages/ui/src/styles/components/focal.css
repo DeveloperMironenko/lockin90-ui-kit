@@ -1,0 +1,79 @@
+/* ============================================================================
+   FocalPointPicker — pick an image's focal point. Click/drag on the framed
+   image to move the marker; a rule-of-thirds overlay aids composition. The
+   marker position is driven by per-instance vars --lk-focal-x / --lk-focal-y
+   (each a percentage), and the frame shape by --lk-focal-aspect.
+   Key: .lk-focal — vars: --lk-focal-aspect, --lk-focal-x, --lk-focal-y
+   ========================================================================== */
+.lk-focal {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--lk-focal-aspect, 1.6);
+  overflow: hidden;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--bg-1);
+  box-shadow: var(--elev-1);
+  cursor: crosshair;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.lk-focal-dragging { cursor: grabbing; }
+
+.lk-focal-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+/* rule-of-thirds overlay */
+.lk-focal-grid { position: absolute; inset: 0; pointer-events: none; }
+.lk-focal-v,
+.lk-focal-h {
+  position: absolute;
+  background: var(--border-2);
+  box-shadow: 0 0 1px rgba(5, 6, 11, 0.6);
+}
+.lk-focal-v { top: 0; bottom: 0; width: 1px; transform: translateX(-0.5px); }
+.lk-focal-h { left: 0; right: 0; height: 1px; transform: translateY(-0.5px); }
+
+/* the focal marker — a glowing ring + center dot */
+.lk-focal-marker {
+  position: absolute;
+  top: var(--lk-focal-y, 50%);
+  left: var(--lk-focal-x, 50%);
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  transition: top var(--dur) var(--ease), left var(--dur) var(--ease);
+}
+.lk-focal-dragging .lk-focal-marker { transition: none; }
+
+.lk-focal-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  border-radius: var(--r-pill);
+  border: 2px solid var(--accent);
+  background: rgba(124, 92, 255, 0.12);
+  box-shadow: var(--glow-accent), 0 0 0 1px rgba(5, 6, 11, 0.5);
+}
+.lk-focal-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  transform: translate(-50%, -50%);
+  border-radius: var(--r-pill);
+  background: #fff;
+  box-shadow: 0 0 8px -1px var(--accent);
+}

@@ -1,0 +1,130 @@
+/* ============================================================================
+   ColorPicker — swatch-trigger color field. A small color chip (the current
+   value) acts as the Popover trigger; the floating panel holds the native OS
+   picker (<input type="color">), a hex Input, and a grid of preset swatches.
+   Reuses Popover + Input; all chrome is tokens-only.
+   ========================================================================== */
+.lk-colorpicker {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.lk-colorpicker-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* ---- trigger swatch chip (lives inside the Popover's .lk-pop-trigger) ---- */
+.lk-colorpicker-swatch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--r-sm);
+  /* checkerboard so alpha colors read correctly */
+  background-image:
+    linear-gradient(45deg, var(--glass-2) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--glass-2) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--glass-2) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--glass-2) 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+}
+.lk-colorpicker-swatch-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--border-2);
+}
+
+/* the Popover trigger shell hugs the chip rather than the default "?" button */
+.lk-colorpicker-pop .lk-pop-trigger {
+  min-width: 0;
+  height: auto;
+  padding: 4px;
+}
+
+/* ---- popover panel content ---- */
+.lk-colorpicker-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 232px;
+  max-width: 100%;
+}
+
+.lk-colorpicker-native {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+/* native OS picker — square swatch button styled to match the kit */
+.lk-colorpicker-native-input {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-sm);
+  background: var(--glass-2);
+  cursor: pointer;
+  transition: border-color 0.18s ease;
+}
+.lk-colorpicker-native-input:hover {
+  border-color: var(--accent);
+}
+.lk-colorpicker-native-input::-webkit-color-swatch-wrapper {
+  padding: 3px;
+}
+.lk-colorpicker-native-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 7px;
+}
+.lk-colorpicker-native-input::-moz-color-swatch {
+  border: none;
+  border-radius: 7px;
+}
+
+.lk-colorpicker-hex {
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+/* ---- preset swatch grid ---- */
+.lk-colorpicker-swatches {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 7px;
+}
+.lk-colorpicker-preset {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  transition: transform 0.14s var(--ease), border-color 0.14s ease;
+}
+.lk-colorpicker-preset:hover,
+.lk-colorpicker-preset:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--border-2);
+  outline: none;
+}
+.lk-colorpicker-preset.is-selected {
+  border-color: var(--text);
+  box-shadow:
+    inset 0 0 0 1px var(--text),
+    var(--glow-accent);
+}

@@ -1,0 +1,111 @@
+/* ============================================================================
+   Sortable — drag-to-reorder list. A grip handle starts a pointer drag; a drop
+   indicator marks where the row will land; the dragged row dims + lifts. Keyboard
+   users move a focused handle with ↑/↓. Tokens from @lockin90/tokens. All classes
+   namespaced `lk-*`.
+   ========================================================================== */
+.lk-sortable {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  font-family: var(--font-ui);
+}
+
+.lk-sortable-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px;
+  border-radius: var(--r-sm);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  transition: background 0.18s var(--ease-soft), border-color 0.18s var(--ease-soft),
+    opacity 0.18s var(--ease-soft), box-shadow 0.18s var(--ease-soft);
+}
+
+/* ---- the row being dragged: lift + dim ---- */
+.lk-sortable-dragging {
+  opacity: 0.55;
+  border-color: var(--border-2);
+  box-shadow: var(--elev-1);
+}
+
+/* ---- grip handle ---- */
+.lk-sortable-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-faint);
+  cursor: grab;
+  touch-action: none;
+  transition: background 0.18s var(--ease-soft), color 0.18s var(--ease-soft);
+}
+.lk-sortable-handle:hover {
+  background: var(--glass-2);
+  color: var(--text-dim);
+}
+.lk-sortable-handle:focus-visible {
+  outline: none;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--text);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+.lk-sortable-handle:active {
+  cursor: grabbing;
+}
+.lk-sortable-handle:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+/* ---- row content (the consumer's node) ---- */
+.lk-sortable-content {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+}
+
+/* ---- drop indicator: a glowing accent line at the target gap ---- */
+.lk-sortable-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -4px;
+  height: 2px;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  box-shadow: var(--glow-accent);
+  pointer-events: none;
+}
+.lk-sortable-indicator-end {
+  position: relative;
+  top: 0;
+  margin-top: -2px;
+}
+
+/* ---- disabled: whole list inert ---- */
+.lk-sortable-disabled .lk-sortable-row {
+  opacity: 0.6;
+}
+
+/* ---- screen-reader-only keyboard hint ---- */
+.lk-sortable-hint {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

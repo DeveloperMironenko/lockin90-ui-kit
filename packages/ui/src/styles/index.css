@@ -10,6 +10,8 @@
 @import './components/charcounter.css';
 @import './components/check.css';
 @import './components/codeblock.css';
+@import './components/codefield.css';
+@import './components/colorpicker.css';
 @import './components/countdown.css';
 @import './components/datetree.css';
 @import './components/deltapill.css';
@@ -17,6 +19,7 @@
 @import './components/dotsloader.css';
 @import './components/empty.css';
 @import './components/field.css';
+@import './components/focal.css';
 @import './components/gauge.css';
 @import './components/heatmap.css';
 @import './components/highlight.css';
@@ -36,10 +39,12 @@
 @import './components/progressbar.css';
 @import './components/rangebar.css';
 @import './components/ring.css';
+@import './components/rte.css';
 @import './components/seg.css';
 @import './components/select.css';
 @import './components/sheet.css';
 @import './components/slider.css';
+@import './components/sortable.css';
 @import './components/spark.css';
 @import './components/spinner.css';
 @import './components/splitbutton.css';

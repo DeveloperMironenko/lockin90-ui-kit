@@ -127,6 +127,23 @@
   text-align: center;
 }
 
+/* ---- selection ------------------------------------------------------------*/
+/* Leading checkbox column (header select-all + per-row select). Narrow, centered,
+   no wrap; the box itself sits flush so the column hugs its content. */
+.lk-table-select {
+  width: 1%;
+  white-space: nowrap;
+  text-align: center;
+}
+.lk-table-select .lk-check {
+  display: inline-flex;
+  vertical-align: middle;
+}
+/* a selected row keeps a faint persistent tint (distinct from the hover glass) */
+.lk-table-row-selected {
+  background: var(--glass);
+}
+
 /* ---- dense ----------------------------------------------------------------*/
 .lk-table-dense .lk-table-th {
   padding: 6px 10px;

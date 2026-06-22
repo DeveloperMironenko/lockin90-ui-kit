@@ -11,6 +11,7 @@ export const Default: StoryObj = {
 };
 
 const ALL: IconName[] = [
+  // core
   'back',
   'chevron',
   'share',
@@ -22,6 +23,63 @@ const ALL: IconName[] = [
   'plus',
   'check',
   'star',
+  // content / block types
+  'image',
+  'text',
+  'heading',
+  'quote',
+  'embed',
+  'code',
+  'grid',
+  'table',
+  'columns',
+  'list',
+  'listOrdered',
+  // text formatting
+  'bold',
+  'italic',
+  'link',
+  'unlink',
+  'externalLink',
+  // files / media
+  'file',
+  'fileText',
+  'video',
+  'folder',
+  'folderOpen',
+  // editor actions
+  'grip',
+  'eye',
+  'eyeOff',
+  'copy',
+  'duplicate',
+  'trash',
+  'edit',
+  'save',
+  'translate',
+  'settings',
+  'search',
+  'close',
+  // data / lists
+  'calendar',
+  'filter',
+  'sort',
+  'upload',
+  'download',
+  // status / feedback
+  'sparkle',
+  'warning',
+  'checkCircle',
+  'xCircle',
+  'refresh',
+  // navigation
+  'chevronDown',
+  'chevronUp',
+  'bell',
+  'user',
+  // misc
+  'palette',
+  'crop',
 ];
 
 export const AllIcons: StoryObj = {
