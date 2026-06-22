@@ -70,9 +70,7 @@ export function TabBar({
             onPress={() => onChange?.(i)}
             style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
           >
-            <View style={[styles.iconWrap, isActive && styles.iconWrapActive]}>
-              {renderIcon(item.icon, tint)}
-            </View>
+            <View style={styles.iconWrap}>{renderIcon(item.icon, tint)}</View>
             <Text style={[styles.label, { color: tint }]}>{item.label}</Text>
           </Pressable>
         );
@@ -157,13 +155,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
   },
   itemPressed: { opacity: 0.7 },
+  // Active tab is signalled by the accent tint (matches web). Web layers a subtle
+  // icon-shaped drop-shadow glow on top; RN StyleSheet can't do an icon-shaped
+  // shadow (a raw shadow on the transparent wrap renders as a boxy square glow in
+  // RN-web), so native uses the accent color alone — clean on both platforms.
   iconWrap: { alignItems: 'center', justifyContent: 'center' },
-  iconWrapActive: {
-    shadowColor: colors.accent,
-    shadowOpacity: 0.55,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 0 },
-  },
   label: {
     fontFamily: fonts.mono,
     fontSize: 10,
