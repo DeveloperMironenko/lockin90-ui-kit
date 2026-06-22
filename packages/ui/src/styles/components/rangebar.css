@@ -1,0 +1,96 @@
+/* ============================================================================
+   RangeBar — a reference-range bar for biomarkers / labs.
+   A horizontal track split into low / optimal / high colored zones with a value
+   marker dot showing where the current reading falls. Ports the signature
+   .range / .range-track / .range-band / .range-marker visual from the design's
+   labs panel. The three zones are [min,low] low (amber-tinted), [low,high]
+   optimal (green band), [high,max] high (red-tinted); the marker auto-colors by
+   the zone it lands in.
+   Per-instance vars: --low / --high (zone boundary %), --pos (marker %),
+   --marker (marker color).
+   ========================================================================== */
+.lk-rangebar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* label row — mono caption + tabular value readout, justified apart */
+.lk-rangebar-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.lk-rangebar-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-faint);
+}
+
+.lk-rangebar-value {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+/* echo the marker zone color on the value readout for at-a-glance status */
+.lk-rangebar-warn .lk-rangebar-value { color: var(--zone-mid); }
+.lk-rangebar-bad .lk-rangebar-value { color: var(--zone-low); }
+
+.lk-rangebar-unit {
+  margin-left: 2px;
+  color: var(--text-faint);
+}
+
+/* ── the 3-zone track — low / optimal / high painted as a gradient ─────────── */
+.lk-rangebar-track {
+  position: relative;
+  height: 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 77, 109, 0.30) 0%,
+    rgba(255, 77, 109, 0.30) var(--low, 18%),
+    rgba(52, 245, 197, 0.28) var(--low, 18%),
+    rgba(52, 245, 197, 0.28) var(--high, 78%),
+    rgba(255, 77, 109, 0.30) var(--high, 78%),
+    rgba(255, 77, 109, 0.30) 100%
+  );
+  /* the [min,low] low zone reads amber, the [high,max] high zone reads red.
+     overflow stays visible so the marker dot can sit above the track. */
+}
+
+/* the in-range (green) optimal band drawn as an explicit fill for emphasis */
+.lk-rangebar-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--low, 18%);
+  right: calc(100% - var(--high, 78%));
+  border-radius: var(--r-pill);
+  background: linear-gradient(90deg, rgba(52, 245, 197, 0.45), rgba(34, 211, 238, 0.40));
+  box-shadow: inset 0 0 8px rgba(52, 245, 197, 0.3);
+}
+
+/* the value marker — a glowing dot at the value's fraction, tone-colored */
+.lk-rangebar-marker {
+  position: absolute;
+  top: 50%;
+  left: var(--pos, 50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--marker, var(--zone-high));
+  border: 2.5px solid var(--bg-0);
+  box-shadow: 0 0 0 2px var(--marker, var(--zone-high)), 0 0 12px var(--marker, var(--zone-high));
+  z-index: 3;
+}

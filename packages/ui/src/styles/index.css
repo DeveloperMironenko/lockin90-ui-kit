@@ -14,6 +14,8 @@
 @import './components/dotsloader.css';
 @import './components/empty.css';
 @import './components/field.css';
+@import './components/gauge.css';
+@import './components/heatmap.css';
 @import './components/icon.css';
 @import './components/input.css';
 @import './components/keyvalue.css';
@@ -28,6 +30,7 @@
 @import './components/popover.css';
 @import './components/pro.css';
 @import './components/progressbar.css';
+@import './components/rangebar.css';
 @import './components/ring.css';
 @import './components/seg.css';
 @import './components/select.css';
@@ -35,6 +38,7 @@
 @import './components/slider.css';
 @import './components/spark.css';
 @import './components/spinner.css';
+@import './components/stackedbar.css';
 @import './components/stepper.css';
 @import './components/tabbar.css';
 @import './components/table.css';

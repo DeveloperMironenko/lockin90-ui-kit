@@ -1,0 +1,83 @@
+/* ============================================================================
+   Heatmap — a compact grid/strip of small intensity-colored cells. One primitive
+   covers a calendar-month grid (.lk-heatmap--grid, columns=7, per-cell label +
+   today/flag) and a linear contribution/compliance strip (.lk-heatmap--strip).
+   Each cell's background is set inline (interpolated colorFrom → colorTo by the
+   cell's normalized value); CSS owns layout, hover polish, and the flag/today
+   markers. Tokens-driven, no Tailwind.
+   Key: .lk-heatmap (--hm-cols/--hm-size/--hm-gap/--hm-radius)
+        > .lk-heatmap-cell (+ --flag / --today) > .lk-heatmap-flag + .lk-heatmap-label
+   ========================================================================== */
+.lk-heatmap {
+  display: grid;
+  grid-template-columns: repeat(var(--hm-cols, 7), var(--hm-size, 16px));
+  gap: var(--hm-gap, 4px);
+}
+
+/* one cell — color comes inline; CSS owns the box + transitions */
+.lk-heatmap-cell {
+  position: relative;
+  width: var(--hm-size, 16px);
+  height: var(--hm-size, 16px);
+  border-radius: var(--hm-radius, var(--r-sm, 10px));
+  border: 1px solid transparent;
+  transition:
+    transform 0.18s var(--ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    filter 0.18s var(--ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    border-color 0.25s var(--ease, cubic-bezier(0.22, 1, 0.36, 1));
+}
+.lk-heatmap-cell:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.2);
+  z-index: 2;
+}
+
+/* grid variant — square calendar cells, label centered */
+.lk-heatmap--grid .lk-heatmap-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* strip variant — denser, shorter cells (height comes from --hm-size, width fills the column) */
+.lk-heatmap--strip {
+  grid-template-columns: repeat(var(--hm-cols, 30), 1fr);
+}
+.lk-heatmap--strip .lk-heatmap-cell {
+  width: 100%;
+  border-radius: var(--hm-radius, 4px);
+}
+.lk-heatmap--strip .lk-heatmap-cell:hover {
+  transform: translateY(-2px) scaleY(1.1);
+  filter: brightness(1.25);
+}
+
+/* today / now — accent border (matches calendar's today highlight) */
+.lk-heatmap-cell--today {
+  border-color: var(--accent, #7c5cff);
+  box-shadow: 0 0 0 1px var(--accent, #7c5cff);
+}
+
+/* flagged cell — low-zone ring */
+.lk-heatmap-cell--flag {
+  border-color: var(--zone-low, #ff4d6d);
+}
+
+/* the flag dot — top-right, glowing low-zone */
+.lk-heatmap-flag {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--zone-low, #ff4d6d);
+  box-shadow: 0 0 6px var(--zone-low, #ff4d6d);
+}
+
+/* in-cell label (grid variant) — small mono day number */
+.lk-heatmap-label {
+  font-size: 10px;
+  line-height: 1;
+  color: var(--text-dim, #aab2c6);
+}

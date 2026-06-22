@@ -1,0 +1,80 @@
+/* ============================================================================
+   Gauge — an arc/dial primitive: a partial-circle track (default 270° sweep,
+   open at the bottom-center) over a [min,max] scale, with optional colored zone
+   bands, a progress arc + round end cap to the current value, optional ticks
+   and a centered value/label readout. Color/size/thickness/sweep are all driven
+   by props (inline geometry), so this stylesheet owns the static look only.
+   Distinct from `.lk-ring` (full-circle single-color progress).
+   Key: .lk-gauge
+   ========================================================================== */
+.lk-gauge {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+}
+
+/* let the end-cap / glow spill past the box */
+.lk-gauge > svg {
+  display: block;
+  overflow: visible;
+}
+
+.lk-gauge-track {
+  fill: none;
+  stroke: var(--border);
+  stroke-linecap: round;
+}
+
+.lk-gauge-zone {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.lk-gauge-arc {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 8px var(--lk-gauge-glow, transparent));
+}
+
+.lk-gauge-tick {
+  stroke: var(--text-faint);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.lk-gauge-cap {
+  fill: var(--text);
+  stroke: var(--accent);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 6px var(--accent));
+}
+
+/* centered readout */
+.lk-gauge-center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  place-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.lk-gauge-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-size: 34px;
+  color: var(--text);
+}
+
+.lk-gauge-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}

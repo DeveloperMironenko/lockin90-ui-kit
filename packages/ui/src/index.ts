@@ -116,3 +116,13 @@ export { DeltaPill } from './components/DeltaPill';
 export type { DeltaDirection, DeltaTone, DeltaSize, DeltaPillProps } from './components/DeltaPill';
 export { AvatarStack } from './components/AvatarStack';
 export type { AvatarStackItem, AvatarStackProps } from './components/AvatarStack';
+
+// --- Wave 2 primitives (data-viz) ---
+export { RangeBar } from './components/RangeBar';
+export type { RangeBarMarkerTone, RangeBarProps } from './components/RangeBar';
+export { Gauge } from './components/Gauge';
+export type { GaugeZone, GaugeProps } from './components/Gauge';
+export { StackedBar } from './components/StackedBar';
+export type { StackedSegment, StackedBarProps } from './components/StackedBar';
+export { Heatmap, lerpColor } from './components/Heatmap';
+export type { HeatmapCell, HeatmapProps } from './components/Heatmap';
