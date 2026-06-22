@@ -1,7 +1,19 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet, Modal } from 'react-native';
+import Svg, { Rect, Path } from 'react-native-svg';
 import { colors, radii, fonts, nativeShadows } from '@lockin90/tokens';
 import { Icon } from './Icon';
+
+/* expo-clipboard is an optional dependency — not a hard dep of this kit.
+ * Resolve it lazily and guard usage; if it's absent we keep the visual
+ * feedback (the check flash) and skip the actual clipboard write. */
+let clipboard: { setStringAsync?: (v: string) => Promise<unknown> } | null = null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  clipboard = require('expo-clipboard');
+} catch {
+  clipboard = null;
+}
 
 export interface PopoverProps {
   /** The pressable trigger. Defaults to a small "?" info button. */
@@ -77,4 +89,83 @@ const styles = StyleSheet.create({
   right: { right: 16 },
   center: { alignSelf: 'center' },
   text: { fontFamily: fonts.ui, fontSize: 12.5, lineHeight: 18, color: colors.textDim },
+});
+
+export interface CopyButtonProps {
+  /** Text written to the clipboard on press. */
+  value?: string;
+  /** Optional label rendered beside the icon. */
+  label?: string;
+  /** Fires after the copy (clipboard write is best-effort on native). */
+  onPress?: () => void;
+}
+
+/** Copies `value` to the clipboard (via expo-clipboard if present) and flashes
+ *  a transient check for ~1.2s — the copy glyph (two overlapping rounded rects)
+ *  swaps to a check Icon. Mirrors the web `CopyButton`. */
+export function CopyButton({ value = 'LOCKIN-2026', label, onPress }: CopyButtonProps) {
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    const id = setTimeout(() => setCopied(false), 1200);
+    return () => clearTimeout(id);
+  }, [copied]);
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={copied ? 'Copied' : 'Copy'}
+      onPress={() => {
+        if (value != null && typeof clipboard?.setStringAsync === 'function') {
+          void clipboard.setStringAsync(value);
+        }
+        setCopied(true);
+        onPress?.();
+      }}
+      style={({ pressed }) => [copyStyles.btn, copied && copyStyles.btnDone, pressed && copyStyles.btnPressed]}
+    >
+      {copied ? (
+        <Icon name="check" size={15} color={colors.accent3} />
+      ) : (
+        <Svg
+          width={15}
+          height={15}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke={colors.textDim}
+          strokeWidth={1.9}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <Rect x={9} y={9} width={11} height={11} rx={2.5} />
+          <Path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5V4.5A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5" />
+        </Svg>
+      )}
+      {label != null && (
+        <Text style={[copyStyles.label, copied && copyStyles.labelDone]}>{label}</Text>
+      )}
+    </Pressable>
+  );
+}
+
+const copyStyles = StyleSheet.create({
+  btn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    height: 30,
+    paddingHorizontal: 8,
+    borderRadius: radii.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.glass2,
+  },
+  btnPressed: { opacity: 0.85 },
+  btnDone: {
+    borderColor: 'rgba(52, 245, 197, 0.4)',
+    backgroundColor: 'rgba(52, 245, 197, 0.12)',
+  },
+  label: { fontFamily: fonts.ui, fontSize: 12.5, fontWeight: '600', color: colors.textDim },
+  labelDone: { color: colors.accent3 },
 });
