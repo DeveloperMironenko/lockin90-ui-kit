@@ -86,6 +86,8 @@ export { Tabs } from './components/Tabs';
 export type { TabsProps } from './components/Tabs';
 export { TagInput, CodeInput } from './components/TagInput';
 export type { TagInputProps, CodeInputProps } from './components/TagInput';
+export { Timeline } from './components/Timeline';
+export type { TimelineStatus, TimelineItem, TimelineProps } from './components/Timeline';
 export { Toast } from './components/Toast';
 export type { ToastTone, ToastProps } from './components/Toast';
 export { Toggle } from './components/Toggle';

@@ -1,0 +1,94 @@
+/* Timeline — vertical milestone roadmap (done / now / next), from the design's .tl-* */
+.lk-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.lk-tl-item {
+  position: relative;
+  padding: 0 0 22px 44px;
+}
+.lk-tl-item:last-child {
+  padding-bottom: 0;
+}
+
+/* connecting line that runs through the dots */
+.lk-tl-item::before {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 28px;
+  bottom: -2px;
+  width: 2px;
+  background: var(--border-2);
+}
+.lk-tl-item:last-child::before {
+  display: none;
+}
+.lk-tl-item.is-done::before {
+  background: linear-gradient(var(--mint), var(--border-2));
+}
+
+.lk-tl-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-2);
+  background: var(--glass-2);
+}
+.lk-tl-item.is-done .lk-tl-dot {
+  background: var(--grad-mint);
+  border-color: transparent;
+  box-shadow: var(--glow-mint);
+}
+.lk-tl-item.is-now .lk-tl-dot {
+  background: rgba(124, 92, 255, 0.14);
+  border-color: rgba(124, 92, 255, 0.5);
+}
+.lk-tl-item.is-next .lk-tl-dot {
+  background: rgba(255, 176, 32, 0.12);
+  border-color: rgba(255, 176, 32, 0.4);
+}
+
+.lk-tl-body {
+  padding-top: 2px;
+}
+.lk-tl-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+}
+.lk-tl-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--text);
+}
+.lk-tl-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+.lk-tl-desc {
+  color: var(--text-dim);
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin: 4px 0 0;
+  max-width: 52ch;
+}
+.lk-tl-item.is-next .lk-tl-body {
+  opacity: 0.82;
+}
