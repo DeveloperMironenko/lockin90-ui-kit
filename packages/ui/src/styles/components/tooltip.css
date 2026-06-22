@@ -59,6 +59,7 @@
   height: 7px;
   background: var(--bg-1);
   border: 1px solid var(--border-2);
+  transform: rotate(45deg);
 }
 .lk-tip-top::after {
   bottom: -4px;
