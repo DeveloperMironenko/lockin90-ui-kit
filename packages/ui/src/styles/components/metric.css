@@ -5,7 +5,7 @@
 
    ProgressDots — a flex row of segment dots showing progress, e.g. the
    onboarding "calibration" day-dot rows: filled dots glow, the rest stay
-   faint, the current dot reads slightly larger.   (.lk-dots / .lk-dot)
+   faint, the current dot reads slightly larger.   (.lk-dots / .lk-pdot)
    ========================================================================== */
 
 /* ── MetricTile ──────────────────────────────────────────────────────────── */
@@ -106,7 +106,7 @@
   gap: 6px;
 }
 
-.lk-dot {
+.lk-pdot {
   width: 8px;
   height: 8px;
   border-radius: 999px;
@@ -117,11 +117,11 @@
     transform 0.18s ease;
 }
 
-.lk-dot-on {
+.lk-pdot-on {
   background: var(--lk-dot-color);
   box-shadow: 0 0 8px color-mix(in srgb, var(--lk-dot-color) 55%, transparent);
 }
 
-.lk-dot-now {
+.lk-pdot-now {
   transform: scale(1.35);
 }

@@ -88,9 +88,9 @@ export function ProgressDots({
         <span
           key={i}
           className={cn(
-            'lk-dot',
-            i < done && 'lk-dot-on',
-            i === currentIndex && 'lk-dot-now',
+            'lk-pdot',
+            i < done && 'lk-pdot-on',
+            i === currentIndex && 'lk-pdot-now',
           )}
         />
       ))}
