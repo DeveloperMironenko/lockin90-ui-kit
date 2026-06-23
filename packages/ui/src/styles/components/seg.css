@@ -49,3 +49,61 @@
   cursor: not-allowed;
 }
 .lk-seg-tab.lk-seg-locked:hover { color: var(--text-dim); }
+
+/* ----------------------------------------------------------------------------
+   Per-item count badge + semantic tone (catalog type switcher counts; the
+   Off / Canary / On flag). Both are opt-in: a plain-string/label tab renders
+   exactly as before. A tab that carries a count or tone lays its parts out
+   inline-flex so label + badge + dot stay grouped and centered.
+   -------------------------------------------------------------------------- */
+.lk-seg-tab:has(.lk-seg-count),
+.lk-seg-tab:has(.lk-seg-dot) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Trailing count badge — a small mono pill after the label. */
+.lk-seg-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  padding: 2px 6px;
+  border-radius: var(--r-pill);
+  background: var(--glass-2);
+  color: var(--text-dim);
+  transition: color .25s var(--ease), background .25s var(--ease);
+}
+.lk-seg-tab.is-active .lk-seg-count {
+  color: var(--text);
+  background: var(--glass);
+}
+
+/* Leading tone dot — 6px round, colored per tone. */
+.lk-seg-dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--lk-seg-tone, var(--text-dim));
+}
+
+/* Tone variables — drive the active label/badge accent + the dot. */
+.lk-seg-tab.lk-seg-ok { --lk-seg-tone: var(--ok); }
+.lk-seg-tab.lk-seg-canary { --lk-seg-tone: var(--warn); }
+.lk-seg-tab.lk-seg-danger { --lk-seg-tone: var(--bad); }
+
+/* When a tone'd segment is active, tint its label + count toward the tone. */
+.lk-seg-tab.is-active.lk-seg-ok,
+.lk-seg-tab.is-active.lk-seg-canary,
+.lk-seg-tab.is-active.lk-seg-danger {
+  color: var(--lk-seg-tone);
+}
+.lk-seg-tab.is-active.lk-seg-ok .lk-seg-count,
+.lk-seg-tab.is-active.lk-seg-canary .lk-seg-count,
+.lk-seg-tab.is-active.lk-seg-danger .lk-seg-count {
+  color: var(--lk-seg-tone);
+  background: color-mix(in srgb, var(--lk-seg-tone) 16%, transparent);
+}

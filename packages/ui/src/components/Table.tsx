@@ -1,4 +1,11 @@
-import { type ReactNode, type TableHTMLAttributes } from 'react';
+'use client';
+
+import {
+  Fragment,
+  type ReactNode,
+  type TableHTMLAttributes,
+  useState,
+} from 'react';
 import { cn } from '../cn';
 import { Checkbox } from './Checkbox';
 
@@ -40,6 +47,44 @@ export interface TableProps extends TableHTMLAttributes<HTMLTableElement> {
   selectedKeys?: string[];
   /** Fired with the next set of selected row keys when selection changes. */
   onSelectionChange?: (keys: string[]) => void;
+  /**
+   * Per-row status tint. Return `'ok' | 'warn' | 'danger'` to give a row a subtle
+   * left-border + gradient tint (mint / amber / rose), or `undefined` for none.
+   * If omitted, the row's own `_tone` field is read as a fallback. Tints are purely
+   * decorative and don't change layout.
+   */
+  rowTone?: (
+    row: Record<string, ReactNode>,
+    index: number,
+  ) => 'ok' | 'warn' | 'danger' | undefined;
+  /** Enable the expandable-detail-row affordance — adds a leading chevron column. */
+  expandable?: boolean;
+  /** Renders the full-width detail panel shown beneath an expanded row. */
+  renderDetail?: (row: Record<string, ReactNode>, index: number) => ReactNode;
+  /** Controlled set of expanded row keys (uses the same `rowKey` accessor). */
+  expandedKeys?: (string | number)[];
+  /** Fired with the next set of expanded row keys when an expand toggle changes. */
+  onExpandedChange?: (keys: (string | number)[]) => void;
+}
+
+/** Chevron toggle for an expandable row — rotates down→up when its row is open. */
+function ExpandIcon({ open }: { open: boolean }) {
+  return (
+    <svg
+      className={cn('lk-table-expand-icon', open && 'lk-table-expand-open')}
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
 }
 
 /** Sort indicator glyph next to a sortable header: a neutral up/down chevron pair
@@ -93,10 +138,31 @@ export function Table({
   rowKey = (_row, i) => String(i),
   selectedKeys,
   onSelectionChange,
+  rowTone,
+  expandable = false,
+  renderDetail,
+  expandedKeys,
+  onExpandedChange,
   className,
   ...rest
 }: TableProps) {
   const clickable = typeof onRowClick === 'function';
+
+  // Expansion bookkeeping — controlled via `expandedKeys`/`onExpandedChange`, else
+  // an internal set. Only meaningful when `expandable` is on. The chevron column is
+  // added when `expandable` is set regardless of whether a `renderDetail` is given.
+  const [internalExpanded, setInternalExpanded] = useState<(string | number)[]>([]);
+  const expandedControlled = expandedKeys !== undefined;
+  const expanded = new Set(expandedControlled ? expandedKeys : internalExpanded);
+
+  const toggleExpanded = (key: string | number) => {
+    const next = new Set(expanded);
+    if (next.has(key)) next.delete(key);
+    else next.add(key);
+    const arr = [...next];
+    if (!expandedControlled) setInternalExpanded(arr);
+    onExpandedChange?.(arr);
+  };
 
   // Selection bookkeeping — only meaningful when `selectable` is on.
   const selected = new Set(selectedKeys ?? []);
@@ -119,6 +185,14 @@ export function Table({
     <table className={cn('lk-table', dense && 'lk-table-dense', className)} {...rest}>
       <thead className="lk-table-head">
         <tr>
+          {expandable && (
+            <th
+              scope="col"
+              className="lk-table-th lk-table-expand-cell"
+              style={{ width: '1%' }}
+              aria-label="Expand row"
+            />
+          )}
           {selectable && (
             <th
               scope="col"
@@ -178,15 +252,30 @@ export function Table({
         {rows.map((row, i) => {
           const key = selectable ? rowKey(row, i) : undefined;
           const isSelected = key != null && selected.has(key);
+          // Tone: explicit `rowTone` accessor wins, else the row's own `_tone` field.
+          const tone =
+            rowTone?.(row, i) ??
+            (row._tone as 'ok' | 'warn' | 'danger' | undefined);
+          // Expansion uses the same `rowKey` accessor so keys stay consistent with
+          // selection; it's evaluated independently of `selectable`.
+          const expandKey = expandable ? rowKey(row, i) : undefined;
+          const isExpanded = expandKey != null && expanded.has(expandKey);
+          const colSpan =
+            columns.length + (selectable ? 1 : 0) + (expandable ? 1 : 0);
           return (
+          <Fragment key={i}>
           <tr
-            key={i}
             className={cn(
               'lk-table-row',
               clickable && 'lk-table-clickable',
               isSelected && 'lk-table-row-selected',
+              tone === 'ok' && 'lk-table-row-ok',
+              tone === 'warn' && 'lk-table-row-warn',
+              tone === 'danger' && 'lk-table-row-danger',
+              isExpanded && 'lk-table-row-expanded',
             )}
             aria-selected={selectable ? isSelected : undefined}
+            aria-expanded={expandable ? isExpanded : undefined}
             onClick={clickable ? () => onRowClick!(row, i) : undefined}
             tabIndex={clickable ? 0 : undefined}
             onKeyDown={
@@ -200,6 +289,24 @@ export function Table({
                 : undefined
             }
           >
+            {expandable && (
+              // Stop propagation so toggling expansion never fires onRowClick.
+              <td
+                className="lk-table-td lk-table-expand-cell"
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  className="lk-table-expand-btn"
+                  aria-label={isExpanded ? 'Collapse row' : 'Expand row'}
+                  aria-expanded={isExpanded}
+                  onClick={() => toggleExpanded(expandKey!)}
+                >
+                  <ExpandIcon open={isExpanded} />
+                </button>
+              </td>
+            )}
             {selectable && (
               // Stop propagation so toggling a row checkbox never triggers onRowClick
               // (both the click and the keyboard Space/Enter that activate the box).
@@ -229,6 +336,14 @@ export function Table({
               </td>
             ))}
           </tr>
+          {expandable && isExpanded && renderDetail && (
+            <tr className="lk-table-detail-row">
+              <td className="lk-table-detail-cell" colSpan={colSpan}>
+                <div className="lk-table-detail-inner">{renderDetail(row, i)}</div>
+              </td>
+            </tr>
+          )}
+          </Fragment>
           );
         })}
       </tbody>

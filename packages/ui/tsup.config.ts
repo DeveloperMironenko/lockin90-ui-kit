@@ -34,7 +34,7 @@ function bundleCss() {
 }
 
 export default defineConfig({
-  entry: ['src/index.ts', 'src/marketing/index.ts'],
+  entry: ['src/index.ts', 'src/marketing/index.ts', 'src/admin/index.ts'],
   format: ['esm', 'cjs'],
   outExtension: ({ format }) => ({ js: format === 'cjs' ? '.cjs' : '.mjs' }),
   dts: true,
@@ -46,7 +46,7 @@ export default defineConfig({
     // The kit is a client-component library (hooks throughout); bundling strips the per-file
     // "use client" directives, so app server components can't import the bundles directly. Prepend
     // the directive to both the base + marketing outputs so each is a client boundary.
-    for (const rel of ['index', 'marketing/index']) {
+    for (const rel of ['index', 'marketing/index', 'admin/index']) {
       for (const ext of ['mjs', 'cjs']) {
         const p = join('dist', `${rel}.${ext}`);
         if (existsSync(p)) {

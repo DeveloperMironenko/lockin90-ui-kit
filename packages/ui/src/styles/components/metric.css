@@ -96,6 +96,18 @@
   background: var(--glass-2);
 }
 
+/* empty / zero-data placeholder: faint em-dash value + a faint mono hint line */
+.lk-metric-value-empty {
+  color: var(--text-faint);
+}
+
+.lk-metric-hint {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.02em;
+  color: var(--text-faint);
+}
+
 /* ── ProgressDots ────────────────────────────────────────────────────────── */
 
 .lk-dots {

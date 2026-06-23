@@ -1,0 +1,40 @@
+/* ============================================================================
+   ScrollProgress — a fixed top reading-progress bar. Its fill scales
+   horizontally (scaleX 0→1) to track scroll progress of the page (or a custom
+   target container). Matches the admin design's #scrollbar: fixed top, full
+   width, energy-spectrum gradient, accent (#7C5CFF) glow.
+   (.lk-scrollprogress / .lk-scrollprogress--{cta,flux,mint,violet} / -fill)
+   ========================================================================== */
+
+.lk-scrollprogress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 200;
+  pointer-events: none;
+  overflow: hidden;
+  background: transparent;
+}
+
+.lk-scrollprogress-fill {
+  height: 100%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: var(--grad-cta);
+  box-shadow: 0 0 10px rgba(124, 92, 255, 0.6);
+  transition: transform 0.12s var(--ease);
+  will-change: transform;
+}
+
+/* Gradient fill variants -------------------------------------------------- */
+.lk-scrollprogress--cta .lk-scrollprogress-fill { background: var(--grad-cta); }
+.lk-scrollprogress--flux .lk-scrollprogress-fill { background: var(--grad-flux); }
+.lk-scrollprogress--mint .lk-scrollprogress-fill { background: var(--grad-mint); }
+.lk-scrollprogress--violet .lk-scrollprogress-fill { background: var(--grad-violet); }
+
+/* Still tracks scroll, but no smoothing when motion is reduced. */
+@media (prefers-reduced-motion: reduce) {
+  .lk-scrollprogress-fill { transition: none; }
+}

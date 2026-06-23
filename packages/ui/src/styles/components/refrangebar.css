@@ -1,0 +1,69 @@
+/* ============================================================================
+   ReferenceRangeBar — compact lab-test reference-range bar for the operator
+   console's catalogs / lab-tests panel. Thin wrapper over the root RangeBar
+   (.lk-rangebar) that supplies the low→normal→high gradient track + highlighted
+   normal band + optional value marker; this layer adds the min/max tick labels,
+   a mono normal-range readout, and the value readout the bare RangeBar omits.
+   When there's no value, `.lk-refrangebar-novalue` suppresses RangeBar's marker.
+   Web-only. Tokens from @lockin90/tokens. All classes namespaced `lk-*`. Matches
+   the `.refrange` block in lockin90-design/admin/catalogs.html.
+   ========================================================================== */
+
+.lk-refrangebar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-width: 140px;
+}
+
+/* ---- the composed RangeBar track ------------------------------------ */
+/* the wrapped RangeBar has no header here (we own the labels), so collapse its
+   own gap and let our track sit flush above the tick row */
+.lk-refrangebar-track .lk-rangebar {
+  gap: 0;
+}
+
+/* no value → hide RangeBar's marker dot so the bar reads as a pure range */
+.lk-refrangebar-novalue .lk-rangebar-marker {
+  display: none;
+}
+
+/* ---- tick + range label row ----------------------------------------- */
+.lk-refrangebar-ticks {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* the min / max axis ticks — faint mono */
+.lk-refrangebar-tick {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+/* the normal-range readout (e.g. "30 – 300 ng/mL") — mint-tinted, centered */
+.lk-refrangebar-range {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ok);
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* ---- value readout (only when a measured value is supplied) --------- */
+.lk-refrangebar-readout {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  text-align: center;
+}
+
+.lk-refrangebar-readout-unit {
+  margin-left: 3px;
+  color: var(--text-faint);
+}

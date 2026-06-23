@@ -28,3 +28,7 @@ export const Error: StoryObj<typeof meta> = {
 export const Search: StoryObj<typeof meta> = {
   render: () => <SearchInput />,
 };
+
+export const SearchWithKbdHint: StoryObj<typeof meta> = {
+  render: () => <SearchInput kbdHint="⌘K" placeholder="Search anything…" />,
+};

@@ -1,0 +1,100 @@
+/* PulseStrip (LiveStatBar) — operational "live ingest" strip. Matches
+   `.pulse-strip` from lockin90-design/admin/wearables.html: a glass bar with a
+   pinging LIVE dot, a row of animated equalizer bars (staggered scaleY pulse),
+   swatch-dotted mono stats, and an optional right-aligned slot. The `is-idle`
+   variant freezes + dims the equalizer. Reduced-motion freezes all motion. */
+
+.lk-pstrip {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 11px 16px;
+  border-radius: var(--r);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--accent) 8%, transparent),
+    color-mix(in srgb, var(--cyan) 5%, transparent)
+  );
+  border: 1px solid var(--border);
+}
+
+/* each stat — swatch dot + mono label + emphasised value */
+.lk-pstrip__pi {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.lk-pstrip__pi b {
+  color: var(--text);
+  font-weight: 600;
+}
+.lk-pstrip__sw {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+/* equalizer — staggered scaleY pulse, bottom-anchored */
+.lk-pstrip__eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 18px;
+  margin-left: 2px;
+}
+.lk-pstrip__eq i {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--grad-cta);
+  opacity: 0.7;
+  transform-origin: bottom;
+  animation: lk-pstrip-bar 1.4s var(--ease-soft) infinite;
+}
+
+@keyframes lk-pstrip-bar {
+  0%,
+  100% {
+    transform: scaleY(0.4);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* idle — freeze the LIVE ping + equalizer, dim both */
+.lk-pstrip.is-idle {
+  background: var(--glass-2);
+  border-color: var(--border-2);
+}
+.lk-pstrip.is-idle .lk-pulse::after {
+  animation: none;
+}
+.lk-pstrip.is-idle .lk-pulse {
+  background: var(--text-faint);
+}
+.lk-pstrip.is-idle .lk-pstrip__eq i {
+  animation: none;
+  background: var(--text-faint);
+  opacity: 0.35;
+  transform: scaleY(0.55);
+}
+
+/* right slot — pushed to the end, faint mono */
+.lk-pstrip__right {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-faint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lk-pstrip__eq i {
+    animation: none;
+    transform: scaleY(0.7);
+  }
+}

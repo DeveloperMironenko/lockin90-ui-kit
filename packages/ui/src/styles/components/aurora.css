@@ -1,0 +1,117 @@
+/* ============================================================================
+   AuroraBackground — the Aurora Flux backdrop: drifting energy-spectrum blobs
+   over a static radial wash, with an optional faint masked grid veil. Mirrors
+   the `.aurora` + `.grid-veil` backdrop from the design system (shared/tokens
+   .css): a low-z, pointer-events:none, aria-hidden layer that sits BEHIND app
+   content (the shell establishes its own z-index:1 stacking for content).
+
+   `--lk-aurora-i`  intensity multiplier (blob opacity), set per variant.
+   `--lk-aurora-g`  grid-veil opacity, set per variant.
+   Keys: .lk-aurora · .lk-aurora-blob · .lk-aurora-grid
+         .lk-aurora-subtle · .lk-aurora-vivid
+   ========================================================================== */
+.lk-aurora {
+  --lk-aurora-i: 0.5;
+  --lk-aurora-g: 0.5;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* static radial wash — the four anchored spectrum glows that never move */
+.lk-aurora::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background:
+    radial-gradient(60% 50% at 12% 8%, rgba(124, 92, 255, 0.20), transparent 60%),
+    radial-gradient(55% 45% at 88% 14%, rgba(34, 211, 238, 0.16), transparent 60%),
+    radial-gradient(60% 55% at 70% 88%, rgba(255, 61, 129, 0.12), transparent 62%),
+    radial-gradient(50% 50% at 22% 92%, rgba(52, 245, 197, 0.12), transparent 60%);
+  opacity: var(--lk-aurora-i);
+}
+
+/* drifting blurred blobs — screen-blended so they add light, never darken */
+.lk-aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: var(--lk-aurora-i);
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+
+.lk-aurora-blob:nth-child(1) {
+  width: 46vw;
+  height: 46vw;
+  left: -8vw;
+  top: -10vw;
+  background: radial-gradient(circle, var(--accent, #7c5cff), transparent 70%);
+  animation: lk-aurora-drift1 26s var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
+}
+
+.lk-aurora-blob:nth-child(2) {
+  width: 40vw;
+  height: 40vw;
+  right: -10vw;
+  top: -6vw;
+  background: radial-gradient(circle, var(--cyan, #22d3ee), transparent 70%);
+  animation: lk-aurora-drift2 30s var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
+}
+
+.lk-aurora-blob:nth-child(3) {
+  width: 44vw;
+  height: 44vw;
+  left: 30vw;
+  bottom: -16vw;
+  background: radial-gradient(circle, var(--magenta, #ff3d81), transparent 70%);
+  animation: lk-aurora-drift3 34s var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
+}
+
+@keyframes lk-aurora-drift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(14vw, 8vw) scale(1.15); }
+  66% { transform: translate(6vw, -6vw) scale(0.9); }
+}
+@keyframes lk-aurora-drift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-12vw, 10vw) scale(0.9); }
+  66% { transform: translate(-6vw, 4vw) scale(1.2); }
+}
+@keyframes lk-aurora-drift3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-10vw, -8vw) scale(1.12); }
+}
+
+/* faint grid veil — masked so it fades out toward the bottom of the viewport */
+.lk-aurora-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--lk-aurora-g);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 75%);
+}
+
+/* ---- intensity variants ---- */
+.lk-aurora-subtle {
+  --lk-aurora-i: 0.3;
+  --lk-aurora-g: 0.32;
+}
+.lk-aurora-vivid {
+  --lk-aurora-i: 0.72;
+  --lk-aurora-g: 0.62;
+}
+
+/* ---- reduced motion — pin the blobs (static aurora), keep the colors ---- */
+@media (prefers-reduced-motion: reduce) {
+  .lk-aurora-blob {
+    animation: none;
+  }
+}

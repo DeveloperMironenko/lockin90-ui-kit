@@ -86,3 +86,19 @@
 @import './components/combobox.css';
 @import './components/creditcard.css';@import './components/engagement.css';
 @import './components/followbtn.css';@import './components/leaderboard.css';
+
+/* --- admin / app-shell --- */
+@import './components/aurora.css';
+@import './components/scrollprogress.css';
+@import './components/sidenav.css';
+@import './components/methodchip.css';
+@import './components/redacted.css';
+@import './components/secretfield.css';
+@import './components/inlineedit.css';
+@import './components/pulsestrip.css';
+@import './components/funnel.css';
+@import './components/pushpreview.css';
+@import './components/permissionmatrix.css';
+@import './components/recoverycodes.css';
+@import './components/refrangebar.css';
+@import './components/qrcode.css';

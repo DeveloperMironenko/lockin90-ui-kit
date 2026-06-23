@@ -20,6 +20,14 @@ export const WithDelta: StoryObj<typeof meta> = {
   },
 };
 
+export const Empty: StoryObj<typeof meta> = {
+  args: {
+    label: 'Sync success',
+    empty: true,
+    hint: 'No data yet — connect a wearable',
+  },
+};
+
 export const Dots: StoryObj<typeof meta> = {
   render: () => <ProgressDots />,
 };

@@ -25,6 +25,43 @@
 .lk-card.lk-pad-md { padding: 22px; }
 .lk-card.lk-flat { box-shadow: none; }
 
+/* tone — tinted border + subtle bg in a status color */
+.lk-card.lk-tone-warn {
+  border-color: color-mix(in srgb, var(--warn) 42%, transparent);
+  background: color-mix(in srgb, var(--warn) 7%, var(--glass));
+}
+.lk-card.lk-tone-warn.lk-hover:hover { border-color: color-mix(in srgb, var(--warn) 60%, transparent); }
+.lk-card.lk-tone-danger {
+  border-color: color-mix(in srgb, var(--bad) 42%, transparent);
+  background: color-mix(in srgb, var(--bad) 8%, var(--glass));
+}
+.lk-card.lk-tone-danger.lk-hover:hover { border-color: color-mix(in srgb, var(--bad) 60%, transparent); }
+
+/* dashed — add/connect action card */
+.lk-card.lk-card-dashed {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  text-align: center;
+  background: transparent;
+  border: 2px dashed var(--border-2);
+  box-shadow: none;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.lk-card.lk-card-dashed:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+/* ghost — borderless transparent surface */
+.lk-card.lk-card-ghost {
+  background: transparent;
+  border-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
 /* ---- buttons ---- */
 .lk-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 9px; white-space: nowrap;
@@ -78,6 +115,9 @@
 .lk-delta { font-family: var(--font-mono); font-size: 12px; }
 .lk-delta.lk-up { color: var(--zone-high); }
 .lk-delta.lk-down { color: var(--zone-low); }
+/* empty / zero-data placeholder: faint em-dash value + a faint mono hint line */
+.lk-stat-empty .lk-stat-empty-value { color: var(--text-faint); }
+.lk-stat .lk-stat-hint { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.02em; color: var(--text-faint); }
 
 /* ---- bar fill (fills to --v on .is-visible) ---- */
 .lk-barfill { height: 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); overflow: hidden; }

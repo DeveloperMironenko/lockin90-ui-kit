@@ -78,3 +78,74 @@ export const Selectable: StoryObj<typeof meta> = {
     );
   },
 };
+
+/** Per-row tone tints — pass `rowTone` to flag rows `ok` / `warn` / `danger`. Each
+ *  flagged row gets a subtle status wash (mint / amber / rose) plus a left accent bar,
+ *  mirroring the admin "legal hold" + refund-flag treatments. Tints are decorative —
+ *  no layout shift, and the hover glass still reads on top. (A row's own `_tone`
+ *  field is read as a fallback when `rowTone` isn't given.) */
+export const RowTones: StoryObj<typeof meta> = {
+  render: () => (
+    <Table
+      columns={SORTABLE_COLUMNS}
+      rows={ROWS}
+      rowTone={(row) => {
+        if (row.status === 'Churned') return 'danger';
+        if (row.status === 'Trialing') return 'warn';
+        if (row.status === 'Active') return 'ok';
+        return undefined;
+      }}
+    />
+  ),
+};
+
+/** Expandable detail rows — set `expandable` + `renderDetail` to add a leading chevron
+ *  that toggles a full-width detail panel beneath each row. Uncontrolled here (internal
+ *  state); pass `expandedKeys` + `onExpandedChange` to drive it from the outside. The
+ *  chevron flips up→down and never fires `onRowClick`. */
+export const Expandable: StoryObj<typeof meta> = {
+  render: () => (
+    <Table
+      columns={SORTABLE_COLUMNS}
+      rows={ROWS}
+      expandable
+      rowKey={(row) => String(row.name)}
+      renderDetail={(row) => (
+        <div style={{ display: 'grid', gap: 6, fontSize: 12 }}>
+          <div>
+            <strong>{String(row.name)}</strong> — {String(row.plan)} plan
+          </div>
+          <div>Monthly recurring revenue: {String(row.mrr)}</div>
+          <div>Account status: {String(row.status)}</div>
+        </div>
+      )}
+    />
+  ),
+};
+
+/** Controlled expansion + tones together — `expandedKeys`/`onExpandedChange` drive the
+ *  open rows while `rowTone` flags them, showing the two additive capabilities compose. */
+export const ExpandableControlled: StoryObj<typeof meta> = {
+  render: () => {
+    const [expandedKeys, setExpandedKeys] = useState<(string | number)[]>([
+      'Emma Reyes',
+    ]);
+
+    return (
+      <Table
+        columns={SORTABLE_COLUMNS}
+        rows={ROWS}
+        expandable
+        rowKey={(row) => String(row.name)}
+        expandedKeys={expandedKeys}
+        onExpandedChange={setExpandedKeys}
+        rowTone={(row) => (row.status === 'Churned' ? 'danger' : undefined)}
+        renderDetail={(row) => (
+          <div style={{ fontSize: 12 }}>
+            Details for <strong>{String(row.name)}</strong> ({String(row.plan)})
+          </div>
+        )}
+      />
+    );
+  },
+};

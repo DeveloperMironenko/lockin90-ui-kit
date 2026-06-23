@@ -1,0 +1,133 @@
+/* InlineEdit (EditableCell) — in-place editable parameter cell for admin tables.
+   Mirrors `.editable` from lockin90-design/admin/pipeline.html: mono value, a
+   transparent border that lights on hover, a hover-revealed pencil, and an inline
+   edit field with confirm / cancel buttons. Web-only (admin). */
+
+.lk-iedit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.lk-iedit-right {
+  justify-content: flex-end;
+}
+
+/* ── display mode ─────────────────────────────────────────────────────── */
+.lk-iedit-display {
+  cursor: text;
+  color: var(--text);
+  background: transparent;
+  font: inherit;
+  font-family: var(--font-mono);
+  text-align: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.lk-iedit-display:hover {
+  border-color: var(--border-2);
+  background: var(--glass-2);
+}
+
+.lk-iedit-display:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--glass-2);
+}
+
+.lk-iedit-value {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+.lk-iedit-suffix {
+  color: var(--text-faint);
+  margin-left: 2px;
+}
+
+.lk-iedit-pencil {
+  color: var(--text-faint);
+  opacity: 0;
+  flex: none;
+  transition: opacity 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.lk-iedit-display:hover .lk-iedit-pencil,
+.lk-iedit-display:focus-visible .lk-iedit-pencil {
+  opacity: 1;
+}
+
+/* ── edit mode ────────────────────────────────────────────────────────── */
+.lk-iedit-editing {
+  border-color: var(--accent);
+  background: var(--glass-2);
+  padding: 2px 4px 2px 8px;
+}
+
+.lk-iedit-right.lk-iedit-editing {
+  flex-direction: row-reverse;
+}
+
+.lk-iedit-input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 6ch;
+  min-width: 4ch;
+  flex: 1 1 auto;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 0;
+}
+
+.lk-iedit-input::-webkit-outer-spin-button,
+.lk-iedit-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.lk-iedit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-2);
+  background: var(--glass-2);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: color 0.18s var(--ease), border-color 0.18s var(--ease),
+    background 0.18s var(--ease);
+}
+
+.lk-iedit-btn:hover {
+  border-color: var(--border-2);
+}
+
+.lk-iedit-confirm:hover {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.lk-iedit-cancel:hover {
+  color: var(--text);
+}
+
+.lk-iedit-btn:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  color: var(--text);
+}

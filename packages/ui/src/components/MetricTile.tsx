@@ -18,10 +18,16 @@ export interface MetricTileProps extends HTMLAttributes<HTMLDivElement> {
   deltaTone?: MetricDeltaTone;
   /** faint icon in the top-right corner */
   icon?: ReactNode;
+  /** placeholder mode: renders an em-dash `—` in place of the value, suppresses
+   *  the unit + delta pill, and shows the optional `hint` instead. */
+  empty?: boolean;
+  /** small helper line shown in empty mode (e.g. "No data yet — connect a wearable"). */
+  hint?: string;
 }
 
 /** A small KPI tile — glass card with a mono label, big display value + unit,
- *  and an optional tone-colored delta pill. */
+ *  and an optional tone-colored delta pill. In `empty` mode it shows an em-dash
+ *  placeholder + an optional `hint`. */
 export function MetricTile({
   label = 'Followers',
   value = '1.2k',
@@ -29,9 +35,25 @@ export function MetricTile({
   delta,
   deltaTone = 'flat',
   icon,
+  empty,
+  hint,
   className,
   ...rest
 }: MetricTileProps) {
+  if (empty) {
+    return (
+      <div className={cn('lk-metric lk-metric-empty', className)} {...rest}>
+        <div className="lk-metric-top">
+          <span className="lk-metric-label">{label}</span>
+          {icon != null && <span className="lk-metric-icon">{icon}</span>}
+        </div>
+        <div className="lk-metric-body">
+          <span className="lk-metric-value lk-tnum lk-metric-value-empty">—</span>
+        </div>
+        {hint != null && <span className="lk-metric-hint">{hint}</span>}
+      </div>
+    );
+  }
   return (
     <div className={cn('lk-metric', className)} {...rest}>
       <div className="lk-metric-top">

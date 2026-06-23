@@ -1,0 +1,49 @@
+/* ---- RedactedField: hatched "contents encrypted — unreadable" pill ---- */
+.lk-redacted {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  /* diagonal hatching over a faint surface — signals "you cannot see this" */
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.05) 0 6px,
+      transparent 6px 12px
+    ),
+    var(--glass-2);
+}
+.lk-redacted .lk-redacted-ico {
+  flex: none;
+  opacity: 0.85;
+}
+.lk-redacted .lk-redacted-ico svg {
+  stroke-width: 1.8;
+}
+.lk-redacted-label {
+  line-height: 1.4;
+}
+
+/* default — neutral / faint */
+.lk-redacted.lk-redacted-default {
+  color: var(--text-faint);
+  border-color: var(--border-2);
+}
+
+/* danger — bad-tinted */
+.lk-redacted.lk-redacted-danger {
+  color: var(--bad);
+  border-color: rgba(255, 77, 109, 0.35);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 77, 109, 0.1) 0 6px,
+      transparent 6px 12px
+    ),
+    rgba(255, 77, 109, 0.06);
+}

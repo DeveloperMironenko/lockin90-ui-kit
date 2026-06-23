@@ -122,3 +122,20 @@
 }
 .lk-search-clear:hover { color: var(--text); background: var(--bg-1); }
 .lk-search-clear svg { stroke: currentColor; fill: none; }
+
+/* trailing ⌘K-style keyboard-shortcut hint chip */
+.lk-search-kbd {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  padding: 1px 6px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-2);
+  background: var(--glass-2);
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}

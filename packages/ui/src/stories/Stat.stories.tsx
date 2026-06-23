@@ -8,3 +8,7 @@ const meta = {
 export default meta;
 
 export const Default: StoryObj<typeof meta> = { args: { label: 'Energy', value: '76' } };
+
+export const Empty: StoryObj<typeof meta> = {
+  args: { label: 'Energy', value: '76', empty: true, hint: 'No data yet — connect a wearable' },
+};

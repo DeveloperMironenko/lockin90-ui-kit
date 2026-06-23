@@ -111,6 +111,7 @@ const ALL: IconName[] = [
   'shield',
   'google',
   'apple',
+  'stripe',
   // mobile domain
   'mail',
   'caffeine',

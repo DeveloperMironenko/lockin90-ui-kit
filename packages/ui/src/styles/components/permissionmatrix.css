@@ -1,0 +1,163 @@
+/* PermissionMatrix — operator capability × role permission grid (web/admin).
+   Mirrors `table.matrix` + `.mtog` from lockin90-design/admin/settings.html:
+   a horizontally-scrollable table with a sticky first column of capability rows,
+   mono role headers, and per-cell toggles (on/off/locked/na). Tokens-driven. */
+
+.lk-matrix-wrap {
+  overflow-x: auto;
+}
+
+.lk-matrix {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12px;
+  min-width: 720px;
+}
+
+.lk-matrix th,
+.lk-matrix td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.lk-matrix thead th {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-dim);
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+
+.lk-matrix thead th.lk-matrix-caphead {
+  text-align: left;
+  padding-left: 12px;
+}
+
+.lk-matrix-role {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  border: 1px solid var(--border-2);
+  background: var(--glass);
+}
+
+/* ── sticky capability column ─────────────────────────────────────────── */
+.lk-matrix-cap {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text);
+  white-space: nowrap;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--glass);
+  border-right: 1px solid var(--border);
+}
+
+.lk-matrix-cap-danger .lk-matrix-cap-label {
+  color: var(--bad);
+}
+
+.lk-matrix-cap-label {
+  display: block;
+}
+
+.lk-matrix-cap-desc {
+  display: block;
+  font-size: 9.5px;
+  color: var(--text-faint);
+  margin-top: 1px;
+}
+
+.lk-matrix tbody tr:hover td {
+  background: var(--glass);
+}
+
+.lk-matrix tbody tr:hover .lk-matrix-cap {
+  background: var(--glass-2);
+}
+
+.lk-matrix-cell {
+  width: 1%;
+}
+
+/* ── toggle cell ──────────────────────────────────────────────────────── */
+.lk-mtog {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border-2);
+  background: var(--glass);
+  display: grid;
+  place-items: center;
+  margin: 0 auto;
+  cursor: pointer;
+  color: transparent;
+  transition: background 0.18s var(--ease), border-color 0.18s var(--ease),
+    color 0.18s var(--ease);
+}
+
+.lk-mtog:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.lk-mtog-check {
+  opacity: 0;
+  transition: opacity 0.15s var(--ease);
+}
+
+/* on */
+.lk-mtog[aria-checked='true'] {
+  background: var(--grad-cta);
+  border-color: transparent;
+  color: var(--bg-0);
+}
+
+.lk-mtog[aria-checked='true'] .lk-mtog-check {
+  opacity: 1;
+}
+
+/* danger capability, granted → warm gradient */
+.lk-mtog-danger[aria-checked='true'] {
+  background: var(--grad-warm);
+}
+
+/* locked */
+.lk-mtog-locked {
+  cursor: not-allowed;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.lk-mtog-locked > svg {
+  opacity: 1;
+}
+
+.lk-mtog-locked.lk-mtog-danger {
+  color: var(--warn);
+  background: color-mix(in srgb, var(--warn) 20%, transparent);
+  border-color: color-mix(in srgb, var(--warn) 40%, transparent);
+}
+
+/* na → faint dash */
+.lk-mtog-dash {
+  border-style: dashed;
+  cursor: default;
+  color: transparent;
+}
+
+.lk-mtog-dash::after {
+  content: '–';
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+}

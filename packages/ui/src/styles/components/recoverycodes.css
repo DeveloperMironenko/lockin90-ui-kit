@@ -1,0 +1,85 @@
+/* ============================================================================
+   RecoveryCodeGrid — read-only grid of masked MFA recovery (backup) codes for
+   the operator console. A multi-column grid (default 2) of mono code cells, each
+   with a faint 1-based index + the masked code; `used` codes are struck-through
+   and dimmed. An optional header carries the "N of M unused" status chip.
+   Web-only. Tokens from @lockin90/tokens. All classes namespaced `lk-*`. Matches
+   the `.rec-grid` / `.rec-code` block in lockin90-design/admin/settings.html.
+   ========================================================================== */
+
+.lk-reccodes {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* ---- header: mono caption + unused-count chip, justified apart ------- */
+.lk-reccodes-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.lk-reccodes-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.lk-reccodes-count {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 3px 10px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-pill);
+  background: var(--glass-2);
+  white-space: nowrap;
+}
+
+/* ---- the code grid -------------------------------------------------- */
+.lk-reccodes-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--lk-reccodes-cols, 2), 1fr);
+  gap: 8px;
+}
+
+.lk-reccode {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 11px;
+  border-radius: var(--r-sm);
+  background: var(--bg-0);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+/* used codes — dimmed + struck through (consumed, no longer valid) */
+.lk-reccode-used {
+  color: var(--text-faint);
+  text-decoration: line-through;
+}
+
+.lk-reccode-ix {
+  flex: none;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+
+.lk-reccode-val {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

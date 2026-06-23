@@ -12,11 +12,15 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   pad?: 'none' | 'sm' | 'md' | 'lg';
   /** drop the elevation shadow */
   flat?: boolean;
+  /** tinted border + subtle bg in a status color (`warn` amber / `danger` red) */
+  tone?: 'warn' | 'danger';
+  /** surface style — `dashed` = an add/connect action card, `ghost` = borderless transparent */
+  variant?: 'ghost' | 'dashed';
 }
 
 /** Glassmorphism panel — the base surface for everything. */
 export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
-  { hover, lit, padLg, pad, flat, className, ...rest },
+  { hover, lit, padLg, pad, flat, tone, variant, className, ...rest },
   ref,
 ) {
   return (
@@ -29,6 +33,8 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
         padLg && 'lk-pad-lg',
         pad && `lk-pad-${pad}`,
         flat && 'lk-flat',
+        tone && `lk-tone-${tone}`,
+        variant && `lk-card-${variant}`,
         className,
       )}
       {...rest}

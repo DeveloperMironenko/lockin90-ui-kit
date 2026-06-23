@@ -44,6 +44,14 @@ export { Input } from './components/Input';
 export type { InputProps } from './components/Input';
 export { PasswordInput } from './components/PasswordInput';
 export type { PasswordInputProps } from './components/PasswordInput';
+
+// --- App-shell / utility (admin rebuild) ---
+export { ScrollProgress } from './components/ScrollProgress';
+export type { ScrollProgressProps } from './components/ScrollProgress';
+export { AuroraBackground } from './components/AuroraBackground';
+export type { AuroraBackgroundProps } from './components/AuroraBackground';
+export { QRCode } from './components/QRCode';
+export type { QRCodeProps } from './components/QRCode';
 export { KeyValue, StatusDot } from './components/KeyValue';
 export type { KeyValueRow, KeyValueProps, StatusDotTone, StatusDotProps } from './components/KeyValue';
 export { LineChart } from './components/LineChart';
@@ -69,7 +77,7 @@ export type { PulseProps } from './components/Pulse';
 export { Ring } from './components/Ring';
 export type { RingProps } from './components/Ring';
 export { SegmentedTabs } from './components/SegmentedTabs';
-export type { SegmentedTabsProps } from './components/SegmentedTabs';
+export type { SegmentedTabsProps, SegmentedTab, SegmentedTone, SegmentedTabItem } from './components/SegmentedTabs';
 export { Select } from './components/Select';
 export type { SelectOption, SelectProps } from './components/Select';
 export { Sheet } from './components/Sheet';

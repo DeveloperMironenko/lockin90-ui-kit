@@ -6,10 +6,25 @@ export interface StatProps extends HTMLAttributes<HTMLDivElement> {
   value: ReactNode;
   delta?: ReactNode;
   deltaDir?: 'up' | 'down';
+  /** placeholder mode: renders an em-dash `—` in place of the value, suppresses
+   *  the delta, and shows the optional `hint` instead. */
+  empty?: boolean;
+  /** small helper line shown in empty mode (e.g. "No data yet — connect a wearable"). */
+  hint?: string;
 }
 
-/** Label + big display value + optional signed delta. */
-export function Stat({ label, value, delta, deltaDir, className, ...rest }: StatProps) {
+/** Label + big display value + optional signed delta.
+ *  In `empty` mode it shows an em-dash placeholder + an optional `hint`. */
+export function Stat({ label, value, delta, deltaDir, empty, hint, className, ...rest }: StatProps) {
+  if (empty) {
+    return (
+      <div className={cn('lk-stat lk-stat-empty', className)} {...rest}>
+        <span className="lk-label">{label}</span>
+        <span className="lk-value lk-display lk-tnum lk-stat-empty-value">—</span>
+        {hint != null && <span className="lk-stat-hint">{hint}</span>}
+      </div>
+    );
+  }
   return (
     <div className={cn('lk-stat', className)} {...rest}>
       <span className="lk-label">{label}</span>

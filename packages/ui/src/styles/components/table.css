@@ -152,3 +152,97 @@
   padding: 6px 10px;
   font-size: 12.5px;
 }
+
+/* ---- per-row tone tints ---------------------------------------------------*/
+/* A flagged row gets a subtle status wash (mirrors the design's `.hold-row`:
+   a 90deg gradient that fades to transparent) plus a left accent bar on the
+   first cell so the status reads even on hover. Decorative only — no layout
+   shift. The hover-glass still wins on top for affordance. */
+.lk-table-row-ok > .lk-table-td:first-child,
+.lk-table-row-warn > .lk-table-td:first-child,
+.lk-table-row-danger > .lk-table-td:first-child {
+  box-shadow: inset 3px 0 0 var(--lk-table-tone, transparent);
+}
+.lk-table-row-ok {
+  --lk-table-tone: var(--ok);
+  background: linear-gradient(90deg, rgba(52, 245, 197, 0.06), transparent 70%);
+}
+.lk-table-row-warn {
+  --lk-table-tone: var(--warn);
+  background: linear-gradient(90deg, rgba(255, 176, 32, 0.06), transparent 70%);
+}
+.lk-table-row-danger {
+  --lk-table-tone: var(--bad);
+  background: linear-gradient(90deg, rgba(255, 77, 109, 0.06), transparent 70%);
+}
+/* keep the hover/selection glass readable on top of a tint */
+.lk-table-row-ok:hover,
+.lk-table-row-warn:hover,
+.lk-table-row-danger:hover {
+  background-blend-mode: normal;
+}
+
+/* ---- expandable detail rows -----------------------------------------------*/
+/* Leading chevron column — narrow, centered, hugs its content like the select
+   column. The button inherits the faint text color and brightens on hover. */
+.lk-table-expand-cell {
+  width: 1%;
+  white-space: nowrap;
+  text-align: center;
+}
+.lk-table-expand-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition:
+    color 0.18s var(--ease),
+    background 0.18s var(--ease);
+}
+.lk-table-expand-btn:hover {
+  color: var(--text);
+  background: var(--glass);
+}
+.lk-table-expand-btn:focus-visible {
+  outline: none;
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.lk-table-expand-icon {
+  transition: transform 0.18s var(--ease);
+}
+/* chevron points down when collapsed, flips up when the row is open */
+.lk-table-expand-open {
+  transform: rotate(180deg);
+}
+/* the open parent row keeps a faint accent tint (matches the detail panel) */
+.lk-table-row-expanded {
+  background: rgba(124, 92, 255, 0.05);
+}
+
+/* full-width detail row beneath an expanded parent — the cell is flush (no pad)
+   and the visible panel carries the design's accent-tinted inner band. */
+.lk-table-detail-cell {
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+  white-space: normal;
+}
+.lk-table-row:last-child .lk-table-detail-cell {
+  border-bottom: 0;
+}
+.lk-table-detail-inner {
+  padding: 16px;
+  color: var(--text-dim);
+  background: rgba(124, 92, 255, 0.05);
+  border-top: 1px solid rgba(124, 92, 255, 0.18);
+}

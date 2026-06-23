@@ -57,7 +57,15 @@ _Generated 2026-06-21 from live source in `packages/ui` (web) + `packages/ui-nat
 >   send/attach/emoji/mic/comment/bookmark/target/medal/drop/utensil/barcode-scan/pill/flask/
 >   syringe/camera) — completes the consumer-screen icon set.
 >
-> Kit total: **~109 cross-platform primitives** (identical web ↔ native APIs).
+> - **Admin operator console (`lockin90-admin/.../UI_KIT_REQUIREMENTS.md`) — NEW `@lockin90/ui/admin`
+>   subpath (web-only):** `SideNav` (+NavItem/NavGroup), `MethodChip`, `SecretField`, `RedactedField`,
+>   `InlineEdit`, `PulseStrip`, `FunnelChart`, `ReferenceRangeBar` (thin `RangeBar` wrapper), `PushPreview`,
+>   `PermissionMatrix` (+`MatrixToggle`), `RecoveryCodeGrid`. Root utilities: `ScrollProgress`,
+>   `AuroraBackground` (web), `QRCode` (dependency-free encoder). **6 enhancements:** `Table`
+>   (row tone + expandable detail + sort indicator), `Card` (tone + ghost/dashed), `Stat`/`MetricTile`
+>   (`empty`+`hint`), `SegmentedTabs` (per-item count+tone), `SearchInput` (`kbdHint`), `Icon` (+`stripe`).
+>
+> Kit total: **~124 primitives** (root cross-platform + the web-only `@lockin90/ui/admin` operator set).
 
 ## Architecture
 

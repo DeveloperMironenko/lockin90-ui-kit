@@ -1,0 +1,181 @@
+/* ============================================================================
+   FunnelChart — operator conversion-funnel. A vertical stack of proportional
+   horizontal bars (width ∝ count vs the first/max step), each tier-coloured
+   from the Aurora spectrum, with the step icon + label + sublabel and the
+   count + conversion% rendered INSIDE the bar; a drop-off pill sits to the
+   right of each non-first bar. Mirrors `.funnel` from lockin90-design/admin/
+   growth.html (onboarding) + content.html (engagement). Web-only.
+   Keys: .lk-funnel (stack) · .lk-funnel-step (row) · .lk-funnel-label (left
+   id col) · .lk-funnel-track (bar lane) · .lk-funnel-fill (tier bar) ·
+   .lk-funnel-meta (count/conv/drop over the bar) · .lk-funnel-legend.
+   ========================================================================== */
+.lk-funnel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lk-funnel-step {
+  display: grid;
+  grid-template-columns: 196px 1fr;
+  gap: 14px;
+  align-items: center;
+}
+
+/* ---- left identity column: icon + label + sublabel ---- */
+.lk-funnel-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.lk-funnel-ico {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: var(--r-sm);
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-2);
+  background: var(--glass-2);
+  /* colour is set inline per-tier; the glyph inherits via currentColor */
+}
+
+.lk-funnel-id {
+  min-width: 0;
+}
+
+.lk-funnel-nm {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lk-funnel-st {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.3;
+  color: var(--text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- bar lane ---- */
+.lk-funnel-track {
+  position: relative;
+  height: 40px;
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.lk-funnel-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: var(--r-sm);
+  opacity: 0.9;
+  /* width + background are set inline (proportional + per-tier spectrum) */
+}
+
+/* ---- count / conversion / drop, laid over the bar ---- */
+.lk-funnel-meta {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.lk-funnel-cnt {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  /* dark ink reads against the bright spectrum fill */
+  color: var(--bg-0);
+}
+
+.lk-funnel-conv {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: rgba(8, 10, 18, 0.7);
+}
+
+.lk-funnel-drop {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  padding: 2px 9px;
+  border-radius: var(--r-pill);
+  white-space: nowrap;
+  color: #fff;
+  background: rgba(5, 6, 11, 0.4);
+}
+
+.lk-funnel-drop-base {
+  font-weight: 500;
+  color: rgba(8, 10, 18, 0.7);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.lk-funnel-drop-warn {
+  color: var(--bg-0);
+  background: color-mix(in srgb, var(--warn) 78%, transparent);
+}
+
+.lk-funnel-drop-bad {
+  color: #fff;
+  background: color-mix(in srgb, var(--bad) 42%, rgba(5, 6, 11, 0.5));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--bad) 55%, transparent) inset;
+}
+
+/* ---- legend ---- */
+.lk-funnel-legend {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-faint);
+}
+
+.lk-funnel-lg {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.lk-funnel-sw {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex: none;
+}
+
+/* ---- narrow: stack the id column over the bar ---- */
+@media (max-width: 560px) {
+  .lk-funnel-step {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .lk-funnel-label {
+    padding-left: 2px;
+  }
+}

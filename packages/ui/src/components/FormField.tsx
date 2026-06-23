@@ -58,6 +58,8 @@ export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElem
   placeholder?: string;
   /** invoked by the trailing × clear button (in addition to `onChange('')`) */
   onClear?: () => void;
+  /** optional trailing keyboard-shortcut hint (e.g. `⌘K`) rendered as a faint mono chip */
+  kbdHint?: string;
 }
 
 /** Search field — leading magnifier, transparent input, trailing × clear when non-empty. */
@@ -66,6 +68,7 @@ export function SearchInput({
   onChange,
   placeholder = 'Search…',
   onClear,
+  kbdHint,
   className,
   ...rest
 }: SearchInputProps) {
@@ -117,6 +120,9 @@ export function SearchInput({
             <line x1="18" y1="6" x2="6" y2="18" />
           </svg>
         </button>
+      ) : null}
+      {kbdHint ? (
+        <kbd className="lk-search-kbd" aria-hidden="true">{kbdHint}</kbd>
       ) : null}
     </div>
   );

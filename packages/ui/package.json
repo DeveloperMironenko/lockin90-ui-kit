@@ -20,6 +20,11 @@
       "import": "./dist/marketing/index.mjs",
       "require": "./dist/marketing/index.cjs"
     },
+    "./admin": {
+      "types": "./dist/admin/index.d.ts",
+      "import": "./dist/admin/index.mjs",
+      "require": "./dist/admin/index.cjs"
+    },
     "./styles.css": "./dist/styles.css"
   },
   "files": [
