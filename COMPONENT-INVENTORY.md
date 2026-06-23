@@ -18,7 +18,18 @@ _Generated 2026-06-21 from live source in `packages/ui` (web) + `packages/ui-nat
 > - **+2 Studio primitives:** ChoiceChip (pressable multi-select filter pill,
 >   `<button aria-pressed>`) + Eyebrow (mono uppercase overline label).
 >
-> Kit total: **~87 cross-platform primitives** (identical web ↔ native APIs).
+> **Recent additions (2026-06-22):**
+> - **+3 domain charts:** **Hypnogram** (sleep-stage timeline — Awake/REM/Light/Deep
+>   bands with capsule bars + stepped connectors), **PhaseWheel** (circular 24h
+>   circadian clock — phase arcs, hour ticks, "now" hand, center clock), **PkChart**
+>   (pharmacokinetics concentration curve — one-compartment Bateman absorption/
+>   elimination model, dashed threshold + danger tint, dose markers, peak callout).
+>   Full web↔native parity (identical math/defaults) + Storybook on both.
+> - **Native parity completed:** **Tooltip** gained the diamond arrow pointer
+>   (mirrors the web `::after`, resolved-placement aware); **FocalPointPicker**
+>   gained tap-**and-drag** (PanResponder) to match the web pointer twin.
+>
+> Kit total: **~90 cross-platform primitives** (identical web ↔ native APIs).
 
 ## Architecture
 
@@ -92,6 +103,9 @@ Legend — Parity: ✅ same API · 🟡 same API, platform-shaped impl · 🔵 c
 | **BarChart** | — | Vertical gradient bars, highlights | `bars·max·showValues` | 🟡 gradient string vs tuple |
 | **LineChart** | — | Smooth/straight line, area, grid, axes, markers | `data·axis·smooth·yAxis·markers` | 🟡 web stretch-SVG vs fixed viewBox |
 | **DonutChart** | — | Segmented donut, center total | `segments·thickness·gap` | 🟡 SVG dashoffset vs RN rotation |
+| **Hypnogram** | `SleepStage`·`HypnogramSegment` | Sleep-stage timeline — capsule bars on Awake/REM/Light/Deep bands + connectors | `segments·height·axis·showStageLabels` | 🟡 web stretch-SVG vs measured viewBox |
+| **PhaseWheel** | `PhaseArc`·`PhaseMarker` | Circular 24h circadian clock — phase arcs, hour ticks, now-hand | `arcs·markers·now·size·thickness·hourTicks` | 🟡 SVG dashoffset vs RN rotation |
+| **PkChart** | `PkDose`·`PkThreshold` | Pharmacokinetics curve — Bateman model, threshold + danger tint, dose markers, peak | `doses·samples·halfLifeH·tMaxH·threshold·unit` | 🟡 web stretch-SVG vs measured viewBox |
 | **Table** | — | Sticky-header data table, sortable, dense | `columns·rows·sortKey·sortDir·dense` | 🟡 `<table>` vs flex Views in ScrollView |
 
 ### 4. Navigation & Layout
@@ -114,7 +128,7 @@ Legend — Parity: ✅ same API · 🟡 same API, platform-shaped impl · 🔵 c
 | **Sheet** | — | Side drawer / bottom sheet | `side: bottom·right·left` | 🟡 |
 | **Popover** | `CopyButton` | Click floating panel + arrow; copy-to-clipboard | `align: left·right·center`; `value` | 🟡 web portaled flip+shift; native clamp in Modal |
 | **Menu** | — | Action menu w/ dividers, danger items | `align: left·right`, items `danger·divider` | 🟡 web collision-aware portal vs native Modal |
-| **Tooltip** | — | Hover/focus (web) / press (native) tip | `placement: top·bottom·left·right` | 🟡 web hover+portal flip vs native press |
+| **Tooltip** | — | Hover/focus (web) / press (native) tip, diamond arrow on both | `placement: top·bottom·left·right` | 🟡 web hover+portal flip vs native press |
 | **Toast** | `Badge`² | Floating notification card | `tone: default·success·warn·danger` | ✅ |
 | **Alert** | — | Tinted inline callout banner | `tone: info·success·warn·danger`, dismiss | ✅ |
 | **EmptyState** | — | Zero-state card: icon+title+body+action | `compact` | ✅ |

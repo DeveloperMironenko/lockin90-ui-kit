@@ -1,0 +1,51 @@
+/* ============================================================================
+   Hypnogram — a sleep-stage timeline primitive. Four horizontal bands (Awake /
+   REM / Light / Deep, top → bottom) hold rounded capsule bars whose widths are
+   proportional to each segment's minutes, with thin vertical connectors linking
+   consecutive stage transitions (a stepped descent/ascent). Drawn in an SVG with
+   preserveAspectRatio="none" so it stretches to any width. An optional left
+   gutter holds the stage labels; an x-axis time row sits below.
+   Key: .lk-hyp
+   ========================================================================== */
+.lk-hyp { display: flex; flex-direction: column; gap: 8px; }
+
+/* width (px) reserved on the left for the stage labels */
+.lk-hyp { --lk-hyp-gutter: 48px; }
+
+/* positioned wrapper: the canvas fills it; the stage gutter sits on the left */
+.lk-hyp-plot { position: relative; width: 100%; }
+
+/* the drawing area: holds the SVG. Fills the plot, but when the stage labels are
+   on it shrinks by the gutter width so the bars stay clear of the labels. */
+.lk-hyp-canvas { position: absolute; inset: 0; }
+.lk-hyp--labels .lk-hyp-canvas { left: var(--lk-hyp-gutter); }
+
+/* the stretchable chart canvas */
+.lk-hyp-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* left gutter: stage labels pinned at each band's y (via inline top %) */
+.lk-hyp-stages {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: var(--lk-hyp-gutter);
+  pointer-events: none;
+}
+.lk-hyp-stage {
+  position: absolute; left: 0;
+  transform: translateY(-50%);
+  font-family: var(--font-mono); font-size: 10px; line-height: 1;
+  letter-spacing: 0.02em; white-space: nowrap;
+  color: var(--text-faint);
+}
+
+/* thin vertical connectors between consecutive stage bands */
+.lk-hyp-links line { stroke: var(--border-2); stroke-width: 1.5; opacity: 0.8; }
+
+/* the capsule bars, with a soft glow */
+.lk-hyp-bars rect { filter: drop-shadow(0 0 6px rgba(124, 92, 255, 0.28)); }
+
+/* x-axis time labels under the chart; indented to clear the stage gutter */
+.lk-hyp-axis {
+  display: flex; justify-content: space-between; padding: 0 1px;
+  font-family: var(--font-mono); font-size: 9.5px; color: var(--text-faint);
+}
+.lk-hyp--labels .lk-hyp-axis { padding-left: var(--lk-hyp-gutter); }

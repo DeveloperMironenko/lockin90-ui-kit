@@ -160,3 +160,11 @@ export { ChoiceChip } from './components/ChoiceChip';
 export type { ChoiceChipSize, ChoiceChipProps } from './components/ChoiceChip';
 export { Eyebrow } from './components/Eyebrow';
 export type { EyebrowProps } from './components/Eyebrow';
+
+// --- Domain charts (sleep / circadian / pharmacokinetics) ---
+export { Hypnogram } from './components/Hypnogram';
+export type { SleepStage, HypnogramSegment, HypnogramProps } from './components/Hypnogram';
+export { PhaseWheel } from './components/PhaseWheel';
+export type { PhaseArc, PhaseMarker, PhaseWheelProps } from './components/PhaseWheel';
+export { PkChart } from './components/PkChart';
+export type { PkDose, PkThreshold, PkChartProps } from './components/PkChart';
