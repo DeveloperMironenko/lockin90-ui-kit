@@ -42,6 +42,8 @@ export { Icon } from './components/Icon';
 export type { IconName, IconProps } from './components/Icon';
 export { Input } from './components/Input';
 export type { InputProps } from './components/Input';
+export { PasswordInput } from './components/PasswordInput';
+export type { PasswordInputProps } from './components/PasswordInput';
 export { KeyValue, StatusDot } from './components/KeyValue';
 export type { KeyValueRow, KeyValueProps, StatusDotTone, StatusDotProps } from './components/KeyValue';
 export { LineChart } from './components/LineChart';

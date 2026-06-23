@@ -97,6 +97,20 @@ const ALL: IconName[] = [
   // bottom-nav
   'home',
   'activity',
+  // nav / domain / brand
+  'energy',
+  'sleep',
+  'insights',
+  'billing',
+  'globe',
+  'heart',
+  'flame',
+  'height',
+  'weight',
+  'arrow-right',
+  'shield',
+  'google',
+  'apple',
 ];
 
 export const AllIcons: StoryObj<typeof meta> = {

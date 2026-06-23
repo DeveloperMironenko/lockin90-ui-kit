@@ -88,7 +88,21 @@ export type IconName =
   | 'strava'
   // bottom-nav
   | 'home'
-  | 'activity';
+  | 'activity'
+  // nav / domain / brand (web rebuild)
+  | 'energy'
+  | 'sleep'
+  | 'insights'
+  | 'billing'
+  | 'globe'
+  | 'heart'
+  | 'flame'
+  | 'height'
+  | 'weight'
+  | 'arrow-right'
+  | 'shield'
+  | 'google'
+  | 'apple';
 
 export interface IconProps {
   name: IconName;
@@ -110,6 +124,50 @@ function glyphFor(name: IconName, color: string): ReactNode {
       return <Path d="M3 10.5 12 3l9 7.5M5 9v11h5v-6h4v6h5V9" />;
     case 'activity':
       return <Path d="M4 19V11M9 19V5M14 19v-6M19 19V9" />;
+    case 'energy':
+      return <Path d="M13 2 4 14h7l-1 8 9-12h-7z" />;
+    case 'sleep':
+      return <Path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />;
+    case 'insights':
+      return <Path d="M4 20V10M10 20V4M16 20v-8M22 20H2" />;
+    case 'billing':
+      return (
+        <>
+          <Rect x="2" y="5" width="20" height="14" rx="3" />
+          <Path d="M2 10h20" />
+        </>
+      );
+    case 'globe':
+      return <Path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M3 12h18M12 3c2.7 2.4 4 5.6 4 9s-1.3 6.6-4 9c-2.7-2.4-4-5.6-4-9s1.3-6.6 4-9z" />;
+    case 'heart':
+      return <Path d="M12 20.3 4.3 12.6a4.5 4.5 0 0 1 6.4-6.4l1.3 1.3 1.3-1.3a4.5 4.5 0 0 1 6.4 6.4z" />;
+    case 'flame':
+      return <Path d="M12 22a6 6 0 0 0 6-6c0-2.5-1.7-4.3-3-6-1.3 1-1.8 2-2 3-.6-2-1.7-3.6-3.5-5-.3 3-2.5 4.6-2.5 8a5 5 0 0 0 5 6z" />;
+    case 'height':
+      return <Path d="M12 3v18M8 6l4-3 4 3M8 18l4 3 4-3" />;
+    case 'weight':
+      return <Path d="M9.2 7a3 3 0 0 1 5.6 0M6.5 7h11l1.2 13H5.3z" />;
+    case 'arrow-right':
+      return <Path d="M5 12h14M13 6l6 6-6 6" />;
+    case 'shield':
+      return <Path d="M12 3 5 6v5c0 4 3 7 7 9 4-2 7-5 7-9V6z" />;
+    case 'apple':
+      return (
+        <Path
+          fill={color}
+          stroke="none"
+          d="M16.37 12.78c.02 2.5 2.19 3.33 2.21 3.34-.02.06-.35 1.2-1.15 2.37-.69 1.02-1.41 2.03-2.55 2.05-1.11.02-1.47-.66-2.74-.66-1.27 0-1.67.64-2.72.68-1.1.04-1.93-1.1-2.63-2.11-1.43-2.07-2.53-5.86-1.06-8.42a4.1 4.1 0 0 1 3.46-2.1c1.08-.02 2.1.73 2.76.73.66 0 1.9-.9 3.2-.77.54.02 2.07.22 3.05 1.65-.08.05-1.82 1.07-1.8 3.21M14.3 4.6c.58-.71.98-1.69.87-2.68-.84.04-1.86.56-2.47 1.26-.54.62-1.02 1.62-.89 2.58.94.07 1.9-.48 2.49-1.16"
+        />
+      );
+    case 'google':
+      return (
+        <G stroke="none">
+          <Path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.76h3.56c2.08-1.92 3.28-4.74 3.28-8.09z" />
+          <Path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.76c-.98.66-2.23 1.06-3.72 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z" />
+          <Path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.18a11 11 0 0 0 0 9.9l3.66-2.84z" />
+          <Path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.05l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z" />
+        </G>
+      );
     case 'chevron':
       return <Polyline points="9 6 15 12 9 18" />;
     case 'share':

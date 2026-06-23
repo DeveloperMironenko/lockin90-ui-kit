@@ -46,7 +46,12 @@ _Generated 2026-06-21 from live source in `packages/ui` (web) + `packages/ui-nat
 >   GlycemicCurve→PkChart/band-LineChart · and the page-specific layouts **SocialPost /
 >   ProfileHeader / ShareCard** (prototyped, then kept app-level as Card/Avatar/Ring compositions).
 >
-> Kit total: **~108 cross-platform primitives** (identical web ↔ native APIs).
+> - **Mobile shell + auth follow-up (`KIT_MISSING_COMPONENTS.md`):** `Icon` → **87** glyphs
+>   (+13: energy/sleep/insights/billing/globe/heart/flame/height/weight/arrow-right/shield +
+>   multicolor `google`/`apple` brand logos); **`PasswordInput`** — password field with a
+>   show/hide eye toggle (mirrors `Input`, both platforms).
+>
+> Kit total: **~109 cross-platform primitives** (identical web ↔ native APIs).
 
 ## Architecture
 
