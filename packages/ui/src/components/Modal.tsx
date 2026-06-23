@@ -1,4 +1,5 @@
-import { useEffect, type HTMLAttributes, type ReactNode } from 'react';
+import { useEffect, useState, type HTMLAttributes, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { cn } from '../cn';
 
 export interface ModalProps extends HTMLAttributes<HTMLDivElement> {
@@ -33,6 +34,11 @@ export function Modal({
   className,
   ...rest
 }: ModalProps) {
+  // Only portal after mount so document.body exists (avoids SSR access to
+  // `document` + hydration mismatch).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   useEffect(() => {
     if (!open || !onClose) return;
     const onKey = (e: KeyboardEvent) => {
@@ -42,9 +48,13 @@ export function Modal({
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
-  return (
+  // Portal to <body> so the fixed scrim escapes any ancestor that creates a
+  // containing block (transform / backdrop-filter on the glass panels) —
+  // otherwise the dialog is clipped/hidden inside the page instead of
+  // overlaying the viewport.
+  return createPortal(
     <div
       className="lk-modal-scrim"
       role="presentation"
@@ -80,6 +90,7 @@ export function Modal({
         <div className="lk-modal-body">{children}</div>
         {footer && <div className="lk-modal-foot">{footer}</div>}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
