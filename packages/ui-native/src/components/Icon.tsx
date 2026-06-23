@@ -85,7 +85,10 @@ export type IconName =
   | 'polar'
   | 'apple-health'
   | 'dexcom'
-  | 'strava';
+  | 'strava'
+  // bottom-nav
+  | 'home'
+  | 'activity';
 
 export interface IconProps {
   name: IconName;
@@ -103,6 +106,10 @@ function glyphFor(name: IconName, color: string): ReactNode {
   switch (name) {
     case 'back':
       return <Polyline points="15 6 9 12 15 18" />;
+    case 'home':
+      return <Path d="M3 10.5 12 3l9 7.5M5 9v11h5v-6h4v6h5V9" />;
+    case 'activity':
+      return <Path d="M4 19V11M9 19V5M14 19v-6M19 19V9" />;
     case 'chevron':
       return <Polyline points="9 6 15 12 9 18" />;
     case 'share':

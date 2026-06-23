@@ -1,14 +1,16 @@
 import { type ButtonHTMLAttributes, type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
-import { Icon } from './Icon';
+import { Icon, type IconName } from './Icon';
 
 /* ============================================================================
    Mobile atoms — TabBar (bottom navigation) + FAB (floating action button).
    ========================================================================== */
 
-/** One tab: a glyph (any node) over a short label. */
+/** One tab: a glyph over a short label. */
 export interface TabBarItem {
-  icon: ReactNode;
+  /** Glyph. Pass a node, or an `IconName` to draw the shared icon set tinted to
+   *  the tab's active/inactive color automatically (via `currentColor`). */
+  icon: ReactNode | IconName;
   label: string;
 }
 
@@ -19,14 +21,19 @@ export interface TabBarProps extends Omit<HTMLAttributes<HTMLElement>, 'onChange
   active?: number;
   /** Fires with the clicked tab index. */
   onChange?: (index: number) => void;
+  /** Index of the item rendered as an elevated center FAB — a gradient tile that
+   *  overhangs the bar top, label beneath. Omit for a flat bar. */
+  fabIndex?: number;
+  /** Press handler for the FAB item (falls back to `onChange(fabIndex)`). */
+  onFabPress?: () => void;
 }
 
 const DEFAULT_ITEMS: TabBarItem[] = [
-  { icon: <Icon name="star" size={22} />, label: 'Home' },
-  { icon: <Icon name="plus" size={22} />, label: 'Log' },
-  { icon: <Icon name="info" size={22} />, label: 'Coach' },
-  { icon: <Icon name="timer" size={22} />, label: 'Stats' },
-  { icon: <Icon name="more" size={22} />, label: 'More' },
+  { icon: 'star', label: 'Home' },
+  { icon: 'plus', label: 'Log' },
+  { icon: 'info', label: 'Coach' },
+  { icon: 'timer', label: 'Stats' },
+  { icon: 'more', label: 'More' },
 ];
 
 /** Bottom navigation bar — a flex row of icon-over-label tab buttons; the
@@ -36,23 +43,30 @@ export function TabBar({
   items = DEFAULT_ITEMS,
   active = 0,
   onChange,
+  fabIndex,
+  onFabPress,
   className,
   ...rest
 }: TabBarProps) {
   return (
     <nav className={cn('lk-tabbar', className)} aria-label="Primary" {...rest}>
-      {items.map((item, i) => (
-        <button
-          key={i}
-          type="button"
-          aria-current={i === active ? 'page' : undefined}
-          className={cn('lk-tabbar-item', i === active && 'is-active')}
-          onClick={() => onChange?.(i)}
-        >
-          <span className="lk-tabbar-icon">{item.icon}</span>
-          <span className="lk-tabbar-label">{item.label}</span>
-        </button>
-      ))}
+      {items.map((item, i) => {
+        const isFab = i === fabIndex;
+        const glyph =
+          typeof item.icon === 'string' ? <Icon name={item.icon as IconName} size={22} /> : item.icon;
+        return (
+          <button
+            key={i}
+            type="button"
+            aria-current={i === active ? 'page' : undefined}
+            className={cn('lk-tabbar-item', isFab && 'lk-tabbar-item--fab', i === active && 'is-active')}
+            onClick={() => (isFab && onFabPress ? onFabPress() : onChange?.(i))}
+          >
+            <span className={isFab ? 'lk-tabbar-fab' : 'lk-tabbar-icon'}>{glyph}</span>
+            <span className="lk-tabbar-label">{item.label}</span>
+          </button>
+        );
+      })}
     </nav>
   );
 }

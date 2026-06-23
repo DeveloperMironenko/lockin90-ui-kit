@@ -94,6 +94,9 @@ const ALL: IconName[] = [
   'apple-health',
   'dexcom',
   'strava',
+  // bottom-nav
+  'home',
+  'activity',
 ];
 
 export const AllIcons: StoryObj = {

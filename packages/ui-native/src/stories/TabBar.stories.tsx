@@ -22,3 +22,23 @@ export const Fab: Story = {
 export const ExtendedFab: Story = {
   render: () => <FAB label="Log set" />,
 };
+
+/** The mobile shell nav (home.html): Today · Calendar · ⊕Log · Coach · Insights —
+ *  string icon names + an elevated center FAB at index 2. */
+export const MobileNav: Story = {
+  render: () => (
+    <View style={{ width: 340 }}>
+      <TabBar
+        active={0}
+        fabIndex={2}
+        items={[
+          { icon: 'home', label: 'Today' },
+          { icon: 'calendar', label: 'Calendar' },
+          { icon: 'plus', label: 'Log' },
+          { icon: 'user', label: 'Coach' },
+          { icon: 'activity', label: 'Insights' },
+        ]}
+      />
+    </View>
+  ),
+};

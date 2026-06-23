@@ -84,7 +84,10 @@ export type IconName =
   | 'polar'
   | 'apple-health'
   | 'dexcom'
-  | 'strava';
+  | 'strava'
+  // bottom-nav
+  | 'home'
+  | 'activity';
 
 export interface IconProps extends HTMLAttributes<HTMLSpanElement> {
   name: IconName;
@@ -142,6 +145,8 @@ const GLYPHS: Record<IconName, ReactNode> = {
     </>
   ),
   check: <polyline points="5 12.5 10 17.5 19 6.5" />,
+  home: <path d="M3 10.5 12 3l9 7.5M5 9v11h5v-6h4v6h5V9" />,
+  activity: <path d="M4 19V11M9 19V5M14 19v-6M19 19V9" />,
   star: (
     <path d="M12 3.5l2.6 5.3 5.9.86-4.25 4.14 1 5.86L12 17.1l-5.25 2.76 1-5.86L3.5 9.66l5.9-.86z" />
   ),

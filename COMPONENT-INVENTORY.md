@@ -38,7 +38,9 @@ _Generated 2026-06-21 from live source in `packages/ui` (web) + `packages/ui-nat
 > - **Forms:** PasswordStrengthMeter, Combobox (search + results).
 > - **Social:** EngagementBar, FollowButton, LeaderboardRow.
 > - **Extended:** LineChart (`band` uncertainty ribbon + `dashedFromIndex` forecast tail),
->   Slider (`labels`), Icon (60 → 72: +5 mood faces, +7 provider logos).
+>   Slider (`labels`), Icon (60 → 74: +5 mood faces, +7 provider logos, + `home`/`activity`
+>   bottom-nav glyphs), TabBar (string `IconName` icons now resolve via the FULL set — not
+>   a hardcoded 11; new `fabIndex` elevated center-FAB variant matching `home.html .tab.fab`).
 > - **Composed in-app, not kit exports — see [REUSE_RECIPES.md](./REUSE_RECIPES.md):**
 >   ConfidenceMeter→Meter · ConversationRow→ListRow · E2EEBadge→Chip+lock Icon ·
 >   GlycemicCurve→PkChart/band-LineChart · and the page-specific layouts **SocialPost /

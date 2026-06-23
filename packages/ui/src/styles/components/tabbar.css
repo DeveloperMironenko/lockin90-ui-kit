@@ -95,3 +95,20 @@
   font-weight: 600;
   letter-spacing: -0.005em;
 }
+
+/* ---- TabBar elevated center-FAB variant (fabIndex) ---- */
+.lk-tabbar-item--fab { color: var(--text-dim); }
+.lk-tabbar-fab {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-top: -24px;          /* overhangs the bar top */
+  border-radius: 15px;
+  background: var(--grad-cta);
+  background-size: 160% 160%;
+  box-shadow: var(--glow-accent);
+  border: 3px solid var(--bg-0);
+  color: #08090F;             /* dark glyph on the gradient (Icon uses currentColor) */
+}
+.lk-tabbar-fab svg { width: 22px; height: 22px; stroke-width: 2.2; }

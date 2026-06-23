@@ -24,6 +24,11 @@ export interface TabBarProps {
   active?: number;
   /** Fires with the pressed tab index. */
   onChange?: (index: number) => void;
+  /** Index of the item rendered as an elevated center FAB — a gradient tile that
+   *  overhangs the bar top, label beneath. Omit for a flat bar. */
+  fabIndex?: number;
+  /** Press handler for the FAB item (falls back to `onChange(fabIndex)`). */
+  onFabPress?: () => void;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -35,12 +40,11 @@ const DEFAULT_ITEMS: TabBarItem[] = [
   { icon: 'more', label: 'More' },
 ];
 
-const ICON_NAMES = new Set<string>([
-  'back', 'chevron', 'share', 'more', 'lock', 'play', 'info', 'timer', 'plus', 'check', 'star',
-]);
-
 function renderIcon(icon: ReactNode | IconName, tint: string): ReactNode {
-  if (typeof icon === 'string' && ICON_NAMES.has(icon)) {
+  // By the prop type, a string IS an `IconName` — resolve any string against the
+  // full shared glyph set, tinted to the tab's active/inactive color. Custom
+  // nodes (the `ReactNode` slot) pass straight through.
+  if (typeof icon === 'string') {
     return <Icon name={icon as IconName} size={22} color={tint} />;
   }
   return icon as ReactNode;
@@ -55,23 +59,37 @@ export function TabBar({
   items = DEFAULT_ITEMS,
   active = 0,
   onChange,
+  fabIndex,
+  onFabPress,
   style,
 }: TabBarProps) {
   return (
     <View style={[styles.bar, style]} accessibilityRole="tablist">
       {items.map((item, i) => {
         const isActive = i === active;
+        const isFab = i === fabIndex;
         const tint = isActive ? colors.accent : colors.textFaint;
         return (
           <Pressable
             key={i}
             accessibilityRole="tab"
             accessibilityState={{ selected: isActive }}
-            onPress={() => onChange?.(i)}
+            onPress={() => (isFab && onFabPress ? onFabPress() : onChange?.(i))}
             style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
           >
-            <View style={styles.iconWrap}>{renderIcon(item.icon, tint)}</View>
-            <Text style={[styles.label, { color: tint }]}>{item.label}</Text>
+            {isFab ? (
+              <LinearGradient
+                colors={gradients.cta.stops as unknown as [string, string]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.fabTile}
+              >
+                {renderIcon(item.icon, '#08090F')}
+              </LinearGradient>
+            ) : (
+              <View style={styles.iconWrap}>{renderIcon(item.icon, tint)}</View>
+            )}
+            <Text style={[styles.label, { color: isFab ? colors.textDim : tint }]}>{item.label}</Text>
           </Pressable>
         );
       })}
@@ -160,6 +178,19 @@ const styles = StyleSheet.create({
   // shadow (a raw shadow on the transparent wrap renders as a boxy square glow in
   // RN-web), so native uses the accent color alone — clean on both platforms.
   iconWrap: { alignItems: 'center', justifyContent: 'center' },
+  // elevated center-FAB tile (fabIndex): a rounded-square grad-cta tile that
+  // overhangs the bar top, matching home.html `.tab.fab .fab-ic`.
+  fabTile: {
+    width: 44,
+    height: 44,
+    marginTop: -24,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: colors.bg0,
+    ...nativeShadows.glowAccent,
+  },
   label: {
     fontFamily: fonts.mono,
     fontSize: 10,
