@@ -111,7 +111,23 @@ export type IconName =
   | 'scale'
   | 'ruler'
   | 'card'
-  | 'data-source';
+  | 'data-source'
+  // consumer screens (chat / feed / nutrition / labs / vision / goals)
+  | 'send'
+  | 'attach'
+  | 'emoji'
+  | 'mic'
+  | 'comment'
+  | 'bookmark'
+  | 'target'
+  | 'medal'
+  | 'drop'
+  | 'utensil'
+  | 'barcode-scan'
+  | 'pill'
+  | 'flask'
+  | 'syringe'
+  | 'camera';
 
 export interface IconProps {
   name: IconName;
@@ -192,6 +208,58 @@ function glyphFor(name: IconName, color: string): ReactNode {
         <>
           <Rect x="2" y="4" width="20" height="14" rx="2" />
           <Path d="M2 9h20M7 18v2M17 18v2" />
+        </>
+      );
+    case 'send':
+      return <Path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" />;
+    case 'attach':
+      return <Path d="M21.4 11.05 12.25 20.2a5 5 0 0 1-7.07-7.07l9.19-9.19a3 3 0 0 1 4.24 4.24l-9.2 9.19a1 1 0 0 1-1.41-1.41l8.49-8.49" />;
+    case 'emoji':
+      return (
+        <>
+          <Circle cx="12" cy="12" r="9" />
+          <Path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01" />
+        </>
+      );
+    case 'mic':
+      return <Path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zM5 10v1a7 7 0 0 0 14 0v-1M12 18v4M8 22h8" />;
+    case 'comment':
+      return <Path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />;
+    case 'bookmark':
+      return <Path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />;
+    case 'target':
+      return (
+        <>
+          <Circle cx="12" cy="12" r="9" />
+          <Circle cx="12" cy="12" r="5" />
+          <Circle cx="12" cy="12" r="1.5" />
+        </>
+      );
+    case 'medal':
+      return (
+        <>
+          <Path d="M8.5 3.5 11 9M15.5 3.5 13 9" />
+          <Circle cx="12" cy="15" r="6" />
+          <Circle cx="12" cy="15" r="2.5" />
+        </>
+      );
+    case 'drop':
+      return <Path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z" />;
+    case 'utensil':
+      return <Path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M17 3c-1.5 1-2 3-2 6s.5 4 2 4v8" />;
+    case 'barcode-scan':
+      return <Path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 8v8M10 8v8M13 8v8M16 8v8" />;
+    case 'pill':
+      return <Path d="M4.5 12.5l8-8a4.95 4.95 0 1 1 7 7l-8 8a4.95 4.95 0 1 1-7-7zM8.5 8.5l7 7" />;
+    case 'flask':
+      return <Path d="M9 3h6M10 3v6L4.8 18.6A1 1 0 0 0 5.7 20h12.6a1 1 0 0 0 .9-1.4L14 9V3M8 14h8" />;
+    case 'syringe':
+      return <Path d="M19 3l2 2M18 4l2 2M14 8l-9 9-3 1 1-3 9-9zM10 12l3 3" />;
+    case 'camera':
+      return (
+        <>
+          <Path d="M3 8.5A2 2 0 0 1 5 6.5h2L8.5 4.5h7L17 6.5h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <Circle cx="12" cy="13" r="3.5" />
         </>
       );
     case 'shield':

@@ -53,6 +53,9 @@ _Generated 2026-06-21 from live source in `packages/ui` (web) + `packages/ui-nat
 > - **Mobile round 3 (`MOBILE_KIT_NEEDS_OUTSTANDING.md`):** `Icon` → **95** glyphs (+8 domain:
 >   mail/caffeine/meal/mood/scale/ruler/card/data-source); **`Button` `leading`** icon slot
 >   (both platforms — e.g. SSO brand buttons). `sleep`/`heart` already existed (kept).
+> - **Consumer glyph audit (`KIT_GLYPHS_REMAINING.md`):** `Icon` → **110** glyphs (+15:
+>   send/attach/emoji/mic/comment/bookmark/target/medal/drop/utensil/barcode-scan/pill/flask/
+>   syringe/camera) — completes the consumer-screen icon set.
 >
 > Kit total: **~109 cross-platform primitives** (identical web ↔ native APIs).
 

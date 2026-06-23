@@ -120,6 +120,22 @@ const ALL: IconName[] = [
   'ruler',
   'card',
   'data-source',
+  // consumer screens
+  'send',
+  'attach',
+  'emoji',
+  'mic',
+  'comment',
+  'bookmark',
+  'target',
+  'medal',
+  'drop',
+  'utensil',
+  'barcode-scan',
+  'pill',
+  'flask',
+  'syringe',
+  'camera',
 ];
 
 export const AllIcons: StoryObj = {
