@@ -1,0 +1,141 @@
+/* ============================================================================
+   PricingTierCard — a glass plan card. A column layout: a head row (tier name +
+   optional Badge), a description, a big display-font price + period, a feature
+   list each with a leading mint check Icon, and a CTA slot pinned to the bottom
+   (margin-top:auto). When `.lk-tier-featured`, the card drops its own border for
+   an animated cta-gradient hairline (::before) + accent glow, and shows a ribbon
+   pinned top-right. Composed from Card + Icon + Badge (those carry their own
+   styles); this stylesheet only handles the tier layout + typography. Mirrors
+   the `.tier` cards in the billing mockup. Native twin: `@lockin90/ui-native`.
+   ========================================================================== */
+.lk-tier {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ── featured: cta-gradient hairline border + accent glow ──────────────────── */
+.lk-tier-featured {
+  border-color: transparent;
+  background: var(--bg-1);
+  box-shadow: 0 0 50px -10px rgba(124, 92, 255, 0.45);
+}
+
+.lk-tier-featured::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: var(--r);
+  padding: 1.5px;
+  background: var(--grad-cta);
+  background-size: 180% 180%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: lk-btn-flow 6s var(--ease-soft) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lk-tier-featured::before {
+    animation: none;
+  }
+}
+
+/* ── ribbon ────────────────────────────────────────────────────────────────── */
+.lk-tier-ribbon {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #0a0a12;
+  background: var(--grad-cta);
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  box-shadow: var(--glow-accent);
+}
+
+/* ── head: name + badge ────────────────────────────────────────────────────── */
+.lk-tier-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.lk-tier-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--text);
+}
+
+.lk-tier-desc {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-dim);
+  min-height: 34px;
+}
+
+/* ── price ─────────────────────────────────────────────────────────────────── */
+.lk-tier-price {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 8px 0 2px;
+}
+
+.lk-tier-amt {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 42px;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.lk-tier-per {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+
+/* ── feature list ──────────────────────────────────────────────────────────── */
+.lk-tier-feat {
+  list-style: none;
+  margin: 16px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  flex: 1;
+}
+
+.lk-tier-feat li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+/* leading check — mint/ok */
+.lk-tier-check {
+  display: inline-flex;
+  flex: 0 0 16px;
+  margin-top: 1px;
+  color: var(--zone-high);
+}
+
+/* ── cta slot pinned to bottom ─────────────────────────────────────────────── */
+.lk-tier-cta {
+  margin-top: auto;
+  padding-top: 4px;
+}

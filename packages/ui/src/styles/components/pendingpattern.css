@@ -1,0 +1,108 @@
+/* ============================================================================
+   PendingPatternCard — a detected-but-unconfirmed pattern surfaced for review.
+   Glass card with a "Pending pattern" eyebrow + icon header, the interpretation
+   prose, an emphasized effect line (signed value tinted mint/red), optional
+   confidence chips, and an Accept / Dismiss action footer.   (.lk-pcard-*)
+   ========================================================================== */
+
+.lk-pcard.lk-card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+/* ── header: icon + eyebrow ──────────────────────────────────────────────── */
+.lk-pcard-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lk-pcard-ic {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: var(--r-sm);
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  background: var(--glass);
+  color: var(--accent);
+}
+.lk-pcard-ic svg {
+  stroke: currentColor;
+}
+
+.lk-pcard-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-faint);
+}
+
+/* ── interpretation prose ────────────────────────────────────────────────── */
+.lk-pcard-prose {
+  margin: 14px 0 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+.lk-pcard-prose b {
+  color: var(--text);
+}
+
+/* ── emphasized effect line ──────────────────────────────────────────────── */
+.lk-pcard-effect {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 11px 14px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-1);
+}
+.lk-pcard-effect-val {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text);
+  font-feature-settings: "tnum" 1;
+}
+.lk-pcard-effect-val.lk-pos {
+  color: var(--zone-high);
+}
+.lk-pcard-effect-val.lk-neg {
+  color: var(--zone-low);
+}
+.lk-pcard-effect-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+}
+
+/* ── confidence chips ────────────────────────────────────────────────────── */
+.lk-pcard-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+/* ── action footer ───────────────────────────────────────────────────────── */
+.lk-pcard-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.lk-pcard-actions .lk-btn {
+  flex: 1;
+}

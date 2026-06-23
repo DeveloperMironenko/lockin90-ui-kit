@@ -1,0 +1,151 @@
+/* ============================================================================
+   AchievementBadge — a centered medal: a circular tier-colored medallion
+   holding the icon, optionally wrapped by a progress Ring (in-progress badges),
+   with the title, description and an optional unlock date below. Unlocked
+   badges get an animated gradient hairline + glow on hover; locked badges are
+   desaturated, dimmed and carry a small lock overlay in the corner. Tier color
+   is driven inline by `--lk-badge-tier`. Mirrors the Aurora Flux badge gallery.
+   Key: .lk-badge
+   ========================================================================== */
+.lk-badge {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 18px 18px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--glass);
+  transition:
+    transform 0.25s var(--ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    border-color 0.3s var(--ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    box-shadow 0.3s var(--ease, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+/* ── unlocked: animated gradient hairline + lift/glow on hover ───────────── */
+.lk-badge--unlocked {
+  border-color: transparent;
+  background: var(--bg-1);
+}
+.lk-badge--unlocked::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--grad-flux);
+  background-size: 220% 100%;
+  animation: lk-badge-flow 9s linear infinite;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.lk-badge--unlocked:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--glow-accent);
+}
+
+@keyframes lk-badge-flow {
+  to {
+    background-position: 220% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-badge--unlocked::before {
+    animation: none;
+  }
+}
+
+/* ── locked: desaturated + dimmed ────────────────────────────────────────── */
+.lk-badge--locked {
+  opacity: 0.62;
+  filter: saturate(0.55);
+}
+.lk-badge--locked:hover {
+  opacity: 0.85;
+  transform: translateY(-3px);
+  border-color: var(--border-2);
+}
+
+.lk-badge:focus-within {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+/* ── lock overlay (corner) ───────────────────────────────────────────────── */
+.lk-badge-lock {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  color: var(--text-faint);
+}
+
+/* ── crest: holds the medal (and the optional progress ring around it) ────── */
+.lk-badge-crest {
+  display: grid;
+  place-items: center;
+  margin-bottom: 13px;
+}
+
+/* the medallion — a tier-tinted circular disc holding the icon */
+.lk-badge-medal {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.08), transparent 70%);
+  color: var(--lk-badge-tier, var(--accent));
+}
+.lk-badge--unlocked .lk-badge-medal {
+  border-color: color-mix(in srgb, var(--lk-badge-tier, var(--accent)) 38%, transparent);
+  box-shadow: inset 0 0 22px color-mix(in srgb, var(--lk-badge-tier, var(--accent)) 22%, transparent);
+}
+
+/* when wrapped by a Ring, the medal sits inside the ring's centered slot —
+   shrink it so the ring arc reads clearly around it */
+.lk-badge-crest .lk-ring .lk-badge-medal {
+  width: 56px;
+  height: 56px;
+}
+
+/* ── text block ──────────────────────────────────────────────────────────── */
+.lk-badge-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14.5px;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.lk-badge-desc {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+.lk-badge-date {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--zone-high);
+  margin-top: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.lk-badge-date .lk-icon {
+  color: var(--zone-high);
+}
+.lk-badge-prog {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 11px;
+  letter-spacing: 0.04em;
+}

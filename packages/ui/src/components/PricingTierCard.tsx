@@ -1,0 +1,82 @@
+import { type ReactNode } from 'react';
+import { cn } from '../cn';
+import { Card } from './Card';
+import { Icon } from './Icon';
+import { Badge } from './Toast';
+
+export interface PricingTierCardProps {
+  /** tier name, e.g. 'Free' | 'Pro' | 'Elite' */
+  name: string;
+  /** preformatted price, e.g. '$9' or 'Free' */
+  price: string;
+  /** billing period, e.g. '/mo' */
+  period?: string;
+  description?: string;
+  /** feature list — each rendered with a leading check Icon */
+  features: string[];
+  /** accent/cta-gradient border + glow + a ribbon */
+  featured?: boolean;
+  /** ribbon copy (only when `featured`) @default 'Most popular' */
+  ribbonLabel?: string;
+  /** small tier badge label */
+  badge?: string;
+  /** CTA slot — consumer passes a `<Button>` (renders at the bottom) */
+  cta?: ReactNode;
+  className?: string;
+}
+
+/**
+ * PricingTierCard — a glass plan card: tier name + optional badge, a big price
+ * (display font) + period, a description, a feature list each with a leading
+ * mint check Icon, and a CTA slot pinned to the bottom. When `featured`, it
+ * gains an animated cta-gradient border + accent glow and a ribbon
+ * (`ribbonLabel`). Composed from Card + Icon + Badge; mirrors the `.tier` cards
+ * in the billing mockup. Native twin: `@lockin90/ui-native`.
+ */
+export function PricingTierCard({
+  name,
+  price,
+  period,
+  description,
+  features,
+  featured,
+  ribbonLabel = 'Most popular',
+  badge,
+  cta,
+  className,
+}: PricingTierCardProps) {
+  return (
+    <Card
+      hover={!featured}
+      flat={featured}
+      className={cn('lk-tier', featured && 'lk-tier-featured', className)}
+    >
+      {featured && <span className="lk-tier-ribbon">{ribbonLabel}</span>}
+
+      <div className="lk-tier-head">
+        <span className="lk-tier-name">{name}</span>
+        {badge && <Badge tone="accent">{badge}</Badge>}
+      </div>
+
+      {description && <p className="lk-tier-desc">{description}</p>}
+
+      <div className="lk-tier-price">
+        <span className="lk-tier-amt">{price}</span>
+        {period && <span className="lk-tier-per">{period}</span>}
+      </div>
+
+      <ul className="lk-tier-feat">
+        {features.map((f, i) => (
+          <li key={`${f}-${i}`}>
+            <span className="lk-tier-check">
+              <Icon name="check" size={16} />
+            </span>
+            <span>{f}</span>
+          </li>
+        ))}
+      </ul>
+
+      {cta && <div className="lk-tier-cta">{cta}</div>}
+    </Card>
+  );
+}

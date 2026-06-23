@@ -176,3 +176,23 @@ export { MessageComposer } from './components/MessageComposer';
 export type { MessageComposerProps } from './components/MessageComposer';
 export { TypingIndicator } from './components/TypingIndicator';
 export type { TypingIndicatorProps } from './components/TypingIndicator';
+
+// --- AI / insights ---
+export { InsightCard } from './components/InsightCard';
+export type { InsightCardProps, InsightTone } from './components/InsightCard';
+export { PendingPatternCard } from './components/PendingPatternCard';
+export type { PendingPatternCardProps, PendingPatternConfidence } from './components/PendingPatternCard';
+export { EffectAttributionLine } from './components/EffectAttributionLine';
+export type { EffectAttributionLineProps, EffectTone } from './components/EffectAttributionLine';
+export { ForecastCallout } from './components/ForecastCallout';
+export type { ForecastCalloutProps, ForecastCalloutTone } from './components/ForecastCallout';
+
+// --- Sensitive actions ---
+export { ReauthDialog } from './components/ReauthDialog';
+export type { ReauthDialogProps } from './components/ReauthDialog';
+
+// --- Achievements & billing ---
+export { AchievementBadge } from './components/AchievementBadge';
+export type { AchievementBadgeProps, AchievementTier } from './components/AchievementBadge';
+export { PricingTierCard } from './components/PricingTierCard';
+export type { PricingTierCardProps } from './components/PricingTierCard';

@@ -1,0 +1,77 @@
+/* ============================================================================
+   InsightCard — a glass panel surfacing a detected pattern. A 2-column grid:
+   the main column holds a leading icon + title row, the insight prose, and a
+   row of small stat Chips (p-value / n / confidence); the right column holds an
+   optional tone-tinted Sparkline. Composed from Card + Icon + Sparkline + Chip
+   (those carry their own styles); this stylesheet only handles the layout and
+   typography of the InsightCard wrapper. Mirrors the `.insight` cards in the
+   design mockup. Native twin lives in `@lockin90/ui-native`.
+   ========================================================================== */
+.lk-insight {
+  display: grid;
+  grid-template-columns: 1fr 150px;
+  gap: 18px;
+  align-items: center;
+}
+
+.lk-insight-main {
+  min-width: 0;
+}
+
+.lk-insight-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 7px;
+}
+
+/* leading glyph — color is set inline from `tone` */
+.lk-insight-ic {
+  display: inline-flex;
+  flex: 0 0 18px;
+}
+
+.lk-insight-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.lk-insight-body {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.lk-insight-body b {
+  color: var(--text);
+}
+
+.lk-insight-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.lk-insight-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* on narrow widths the sparkline drops below the prose and spans full width */
+@media (max-width: 560px) {
+  .lk-insight {
+    grid-template-columns: 1fr;
+  }
+  .lk-insight-right {
+    align-items: stretch;
+  }
+}

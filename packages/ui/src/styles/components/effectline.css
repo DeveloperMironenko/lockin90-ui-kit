@@ -1,0 +1,49 @@
+/* ---- EffectAttributionLine: one "why this score" signed contribution row ---- */
+.lk-effectline {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.lk-effectline-icon {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  color: inherit;
+}
+.lk-effectline-value {
+  display: inline-flex;
+  align-items: baseline;
+  font-size: 26px;
+  line-height: 1;
+}
+.lk-effectline-sign {
+  margin-right: 0.04em;
+}
+.lk-effectline-unit {
+  margin-left: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text-faint);
+}
+.lk-effectline-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+}
+
+/* tones — colors the value + leading icon (label stays dim) */
+.lk-effectline.lk-effectline-pos .lk-effectline-value,
+.lk-effectline.lk-effectline-pos .lk-effectline-icon {
+  color: var(--zone-high);
+}
+.lk-effectline.lk-effectline-neg .lk-effectline-value,
+.lk-effectline.lk-effectline-neg .lk-effectline-icon {
+  color: var(--zone-low);
+}
+.lk-effectline.lk-effectline-neutral .lk-effectline-value,
+.lk-effectline.lk-effectline-neutral .lk-effectline-icon {
+  color: var(--text-dim);
+}

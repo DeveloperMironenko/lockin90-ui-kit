@@ -1,0 +1,80 @@
+/* ============================================================================
+   ForecastCallout — tinted glass forecast panel (projected peak / dip prose).
+   A tone-tinted glass background + 1px tone border + a 3px left accent bar
+   (::before), a top row of an optional leading icon + a tone-colored Chip, then
+   the forecast prose (font-ui dim, with emphasized <b>/<strong> spans). Mirrors
+   the design `.callout` vocab (cl-top chip + prose with bold highlights).
+   Key: .lk-fc — the panel; .lk-fc-{accent,positive,negative,warn} — tone tints.
+   ========================================================================== */
+.lk-fc {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 12px 13px 12px 16px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--glass-2);
+  overflow: hidden;
+}
+
+/* 3px left accent bar in the tone color */
+.lk-fc::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--lk-fc-c, var(--accent));
+}
+
+.lk-fc-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.lk-fc-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--lk-fc-c, var(--accent));
+}
+.lk-fc-icon svg {
+  display: block;
+}
+
+.lk-fc-text {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+.lk-fc-text b,
+.lk-fc-text strong {
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ---- tone tints: set --lk-fc-c, tinted bg + border ---- */
+.lk-fc-accent {
+  --lk-fc-c: var(--accent);
+  background: rgba(124, 92, 255, 0.08);
+  border-color: rgba(124, 92, 255, 0.3);
+}
+.lk-fc-positive {
+  --lk-fc-c: var(--mint);
+  background: rgba(52, 245, 197, 0.08);
+  border-color: rgba(52, 245, 197, 0.3);
+}
+.lk-fc-negative {
+  --lk-fc-c: var(--zone-low);
+  background: rgba(255, 77, 109, 0.08);
+  border-color: rgba(255, 77, 109, 0.3);
+}
+.lk-fc-warn {
+  --lk-fc-c: var(--zone-mid);
+  background: rgba(255, 176, 32, 0.08);
+  border-color: rgba(255, 176, 32, 0.3);
+}

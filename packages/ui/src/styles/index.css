@@ -70,3 +70,12 @@
 @import './components/typing.css';
 @import './components/versionbadge.css';
 @import './components/videothumb.css';
+
+/* --- rebuild-gap primitives (web+mobile rebuild) --- */
+@import './components/insightcard.css';
+@import './components/pendingpattern.css';
+@import './components/effectline.css';
+@import './components/forecastcallout.css';
+@import './components/reauth.css';
+@import './components/achievement.css';
+@import './components/pricingtier.css';

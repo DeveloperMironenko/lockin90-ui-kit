@@ -1,0 +1,88 @@
+/* ============================================================================
+   ReauthDialog — step-up "confirm it's you" body, rendered inside the kit
+   Modal (sm). Reassurance line, optional danger Alert, password form with a
+   full-width Confirm CTA, an "or" hairline divider, and a Google SSO button.
+   Built ON TOP of Modal / Input / Button / Alert — only the layout lives here.
+   ========================================================================== */
+.lk-reauth {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lk-reauth-desc {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.lk-reauth-error {
+  margin: 0;
+}
+
+.lk-reauth-pw {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* full-width primary CTA so it spans the dialog */
+.lk-reauth-submit {
+  width: 100%;
+  justify-content: center;
+}
+
+/* "or" hairline divider between the password + Google paths */
+.lk-reauth-or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.lk-reauth-or .lk-reauth-ln {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Google SSO button — default Button chrome, full width, centered glyph */
+.lk-reauth-google {
+  width: 100%;
+  justify-content: center;
+}
+.lk-reauth-google-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.lk-reauth-google-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Quiet text Cancel affordance under the actions */
+.lk-reauth-cancel {
+  align-self: center;
+  margin-top: -2px;
+  padding: 4px 8px;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text-faint);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.lk-reauth-cancel:hover:not(:disabled) {
+  color: var(--text);
+}
+.lk-reauth-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
