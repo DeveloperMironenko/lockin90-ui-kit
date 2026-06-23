@@ -43,5 +43,17 @@ export default defineConfig({
   external: ['react', 'react-dom', 'react/jsx-runtime', '@lockin90/tokens'],
   onSuccess: async () => {
     bundleCss();
+    // The kit is a client-component library (hooks throughout); bundling strips the per-file
+    // "use client" directives, so app server components can't import the bundles directly. Prepend
+    // the directive to both the base + marketing outputs so each is a client boundary.
+    for (const rel of ['index', 'marketing/index']) {
+      for (const ext of ['mjs', 'cjs']) {
+        const p = join('dist', `${rel}.${ext}`);
+        if (existsSync(p)) {
+          const src = readFileSync(p, 'utf8');
+          if (!src.startsWith("'use client'")) writeFileSync(p, `'use client';\n` + src);
+        }
+      }
+    }
   },
 });
