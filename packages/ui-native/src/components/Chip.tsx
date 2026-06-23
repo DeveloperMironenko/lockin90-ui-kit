@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, type ViewProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
 
-export type ChipTone = 'default' | 'high' | 'mid' | 'low' | 'accent';
+export type ChipTone = 'default' | 'neutral' | 'high' | 'mid' | 'low' | 'accent';
 
 export interface ChipProps extends ViewProps {
   tone?: ChipTone;
@@ -11,6 +11,7 @@ export interface ChipProps extends ViewProps {
 
 const TONE: Record<ChipTone, { color: string; border: string; bg: string }> = {
   default: { color: colors.textDim, border: colors.border, bg: colors.glass },
+  neutral: { color: colors.textFaint, border: colors.border2, bg: colors.glass2 },
   high: { color: colors.zoneHigh, border: 'rgba(52,245,197,0.35)', bg: 'rgba(52,245,197,0.08)' },
   mid: { color: colors.zoneMid, border: 'rgba(255,176,32,0.35)', bg: 'rgba(255,176,32,0.08)' },
   low: { color: colors.zoneLow, border: 'rgba(255,77,109,0.35)', bg: 'rgba(255,77,109,0.08)' },

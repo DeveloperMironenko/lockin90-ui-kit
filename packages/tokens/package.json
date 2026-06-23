@@ -16,7 +16,13 @@
       "require": "./dist/index.cjs"
     },
     "./tokens.css": "./dist/tokens.css",
-    "./css": "./dist/tokens.css"
+    "./css": "./dist/tokens.css",
+    "./tailwind-preset": {
+      "types": "./dist/tailwind-preset.d.ts",
+      "import": "./dist/tailwind-preset.mjs",
+      "require": "./dist/tailwind-preset.cjs",
+      "default": "./dist/tailwind-preset.cjs"
+    }
   },
   "files": [
     "dist"

@@ -5,8 +5,10 @@ import { OptionalBlurView } from '../internal/optionalBlur';
 export interface CardProps extends ViewProps {
   /** gradient hairline on the top edge */
   lit?: boolean;
-  /** larger padding */
+  /** larger padding (shorthand for `pad="lg"`) */
   padLg?: boolean;
+  /** padding size — overrides the default 22px */
+  pad?: 'none' | 'sm' | 'md' | 'lg';
   /** drop the elevation shadow */
   flat?: boolean;
   /** real backdrop blur (the web `backdrop-filter` glass) — needs the optional
@@ -17,8 +19,16 @@ export interface CardProps extends ViewProps {
 /** Glass panel. Native has no backdrop-filter, so glass is approximated with a
  *  translucent fill + hairline border. Set `blur` for a real frosted surface
  *  (via the optional `expo-blur` peer) that matches the web glass more closely. */
-export function Card({ lit, padLg, flat, blur, style, children, ...rest }: CardProps) {
-  const composed = [styles.card, padLg && styles.padLg, flat && styles.flat];
+export function Card({ lit, padLg, pad, flat, blur, style, children, ...rest }: CardProps) {
+  const composed = [
+    styles.card,
+    padLg && styles.padLg,
+    pad === 'none' && styles.padNone,
+    pad === 'sm' && styles.padSm,
+    pad === 'md' && styles.padMd,
+    pad === 'lg' && styles.padLg,
+    flat && styles.flat,
+  ];
 
   if (blur && OptionalBlurView) {
     return (
@@ -52,6 +62,9 @@ const styles = StyleSheet.create({
     ...nativeShadows.elev1,
   },
   padLg: { padding: 30 },
+  padNone: { padding: 0 },
+  padSm: { padding: 16 },
+  padMd: { padding: 22 },
   flat: { shadowOpacity: 0, elevation: 0 },
   // when blurred, drop most of the opaque fill so the frost shows through, and
   // clip the blur to the card radius (iOS needs overflow:hidden for this)

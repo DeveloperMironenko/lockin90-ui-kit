@@ -20,6 +20,9 @@
   background: linear-gradient(90deg, transparent, rgba(124, 92, 255, 0.7), rgba(34, 211, 238, 0.7), transparent);
 }
 .lk-card.lk-pad-lg { padding: 30px; }
+.lk-card.lk-pad-none { padding: 0; }
+.lk-card.lk-pad-sm { padding: 16px; }
+.lk-card.lk-pad-md { padding: 22px; }
 .lk-card.lk-flat { box-shadow: none; }
 
 /* ---- buttons ---- */
@@ -58,6 +61,7 @@
 .lk-chip.lk-mid { color: var(--zone-mid); border-color: rgba(255, 176, 32, 0.35); background: rgba(255, 176, 32, 0.08); }
 .lk-chip.lk-low { color: var(--zone-low); border-color: rgba(255, 77, 109, 0.35); background: rgba(255, 77, 109, 0.08); }
 .lk-chip.lk-accent { color: #cbbcff; border-color: rgba(124, 92, 255, 0.4); background: rgba(124, 92, 255, 0.10); }
+.lk-chip.lk-neutral { color: var(--text-faint); border-color: var(--border-2); background: var(--glass-2); }
 .lk-chip.lk-dot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
 
 /* ---- live pulse dot ---- */

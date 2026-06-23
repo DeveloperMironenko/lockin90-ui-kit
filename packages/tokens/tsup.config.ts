@@ -2,7 +2,7 @@ import { defineConfig } from 'tsup';
 import { copyFileSync } from 'node:fs';
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts', 'src/tailwind-preset.ts'],
   format: ['esm', 'cjs'],
   outExtension: ({ format }) => ({ js: format === 'cjs' ? '.cjs' : '.mjs' }),
   dts: true,

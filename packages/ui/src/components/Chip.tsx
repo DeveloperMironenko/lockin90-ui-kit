@@ -1,7 +1,7 @@
 import { forwardRef, type HTMLAttributes } from 'react';
 import { cn } from '../cn';
 
-export type ChipTone = 'default' | 'high' | 'mid' | 'low' | 'accent';
+export type ChipTone = 'default' | 'neutral' | 'high' | 'mid' | 'low' | 'accent';
 
 export interface ChipProps extends HTMLAttributes<HTMLSpanElement> {
   tone?: ChipTone;
@@ -11,6 +11,7 @@ export interface ChipProps extends HTMLAttributes<HTMLSpanElement> {
 
 const TONE: Record<ChipTone, string> = {
   default: '',
+  neutral: 'lk-neutral',
   high: 'lk-high',
   mid: 'lk-mid',
   low: 'lk-low',
