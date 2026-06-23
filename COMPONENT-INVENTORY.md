@@ -50,6 +50,9 @@ _Generated 2026-06-21 from live source in `packages/ui` (web) + `packages/ui-nat
 >   (+13: energy/sleep/insights/billing/globe/heart/flame/height/weight/arrow-right/shield +
 >   multicolor `google`/`apple` brand logos); **`PasswordInput`** — password field with a
 >   show/hide eye toggle (mirrors `Input`, both platforms).
+> - **Mobile round 3 (`MOBILE_KIT_NEEDS_OUTSTANDING.md`):** `Icon` → **95** glyphs (+8 domain:
+>   mail/caffeine/meal/mood/scale/ruler/card/data-source); **`Button` `leading`** icon slot
+>   (both platforms — e.g. SSO brand buttons). `sleep`/`heart` already existed (kept).
 >
 > Kit total: **~109 cross-platform primitives** (identical web ↔ native APIs).
 

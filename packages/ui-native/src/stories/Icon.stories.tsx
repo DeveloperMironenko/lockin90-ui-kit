@@ -111,6 +111,15 @@ const ALL: IconName[] = [
   'shield',
   'google',
   'apple',
+  // mobile domain
+  'mail',
+  'caffeine',
+  'meal',
+  'mood',
+  'scale',
+  'ruler',
+  'card',
+  'data-source',
 ];
 
 export const AllIcons: StoryObj = {

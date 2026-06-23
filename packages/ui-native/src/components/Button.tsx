@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { Pressable, Text, StyleSheet, View, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, gradients, fonts, nativeShadows } from '@lockin90/tokens';
@@ -8,11 +9,14 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
   variant?: ButtonVariant;
   size?: 'sm' | 'md';
   title: string;
+  /** optional icon/node rendered before the label (e.g. an SSO brand logo) */
+  leading?: ReactNode;
   style?: StyleProp<ViewStyle>;
 }
 
-/** Pill button. `primary` paints the energy-gradient CTA. */
-export function Button({ variant = 'default', size = 'md', title, style, ...rest }: ButtonProps) {
+/** Pill button. `primary` paints the energy-gradient CTA. `leading` renders an
+ *  icon before the label (the row is `gap: 9`-spaced). */
+export function Button({ variant = 'default', size = 'md', title, leading, style, ...rest }: ButtonProps) {
   const pad = size === 'sm' ? styles.padSm : styles.padMd;
   const labelSize = size === 'sm' ? 13 : 14;
 
@@ -26,6 +30,7 @@ export function Button({ variant = 'default', size = 'md', title, style, ...rest
             end={{ x: 1, y: 1 }}
             style={[styles.base, pad, styles.primary, pressed && styles.pressed, style]}
           >
+            {leading}
             <Text style={[styles.label, { fontSize: labelSize, color: '#0A0A12' }]}>{title}</Text>
           </LinearGradient>
         )}
@@ -46,6 +51,7 @@ export function Button({ variant = 'default', size = 'md', title, style, ...rest
             style,
           ]}
         >
+          {leading}
           <Text style={[styles.label, { fontSize: labelSize, color: ghost ? colors.textDim : colors.text }]}>{title}</Text>
         </View>
       )}

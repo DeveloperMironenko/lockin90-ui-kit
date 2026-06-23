@@ -1,4 +1,4 @@
-import { forwardRef, type ButtonHTMLAttributes } from 'react';
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
 
 export type ButtonVariant = 'default' | 'primary' | 'ghost';
@@ -6,11 +6,14 @@ export type ButtonVariant = 'default' | 'primary' | 'ghost';
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: 'sm' | 'md';
+  /** optional icon/node rendered before the label (e.g. an SSO brand logo) */
+  leading?: ReactNode;
 }
 
-/** Pill button. `primary` = animated energy-gradient CTA. */
+/** Pill button. `primary` = animated energy-gradient CTA. `leading` renders an
+ *  icon before the label (auto-spaced + sized by the `.lk-btn` flex gap). */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'default', size = 'md', className, type = 'button', ...rest },
+  { variant = 'default', size = 'md', leading, className, type = 'button', children, ...rest },
   ref,
 ) {
   return (
@@ -25,6 +28,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         className,
       )}
       {...rest}
-    />
+    >
+      {leading}
+      {children}
+    </button>
   );
 });

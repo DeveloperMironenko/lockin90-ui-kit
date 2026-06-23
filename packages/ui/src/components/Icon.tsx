@@ -101,7 +101,16 @@ export type IconName =
   | 'arrow-right'
   | 'shield'
   | 'google'
-  | 'apple';
+  | 'apple'
+  // mobile domain
+  | 'mail'
+  | 'caffeine'
+  | 'meal'
+  | 'mood'
+  | 'scale'
+  | 'ruler'
+  | 'card'
+  | 'data-source';
 
 export interface IconProps extends HTMLAttributes<HTMLSpanElement> {
   name: IconName;
@@ -176,6 +185,34 @@ const GLYPHS: Record<IconName, ReactNode> = {
   height: <path d="M12 3v18M8 6l4-3 4 3M8 18l4 3 4-3" />,
   weight: <path d="M9.2 7a3 3 0 0 1 5.6 0M6.5 7h11l1.2 13H5.3z" />,
   'arrow-right': <path d="M5 12h14M13 6l6 6-6 6" />,
+  mail: (
+    <>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M3 7l9 6 9-6" />
+    </>
+  ),
+  caffeine: <path d="M18 8h1a3 3 0 0 1 0 6h-1M4 8h14v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8ZM7 2v2M11 2v2M15 2v2" />,
+  meal: <path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M17 3c-1.5 1-2 3-2 6s.5 4 2 4v8" />,
+  mood: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01" />
+    </>
+  ),
+  scale: <path d="M6 9h12l1.5 11H4.5zM9 9a3 3 0 0 1 6 0" />,
+  ruler: <path d="M12 3v18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M5 12h14" />,
+  card: (
+    <>
+      <rect x="2" y="5" width="20" height="14" rx="3" />
+      <path d="M2 10h20" />
+    </>
+  ),
+  'data-source': (
+    <>
+      <rect x="2" y="4" width="20" height="14" rx="2" />
+      <path d="M2 9h20M7 18v2M17 18v2" />
+    </>
+  ),
   shield: <path d="M12 3 5 6v5c0 4 3 7 7 9 4-2 7-5 7-9V6z" />,
   apple: (
     <path

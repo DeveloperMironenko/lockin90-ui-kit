@@ -1,11 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { View } from 'react-native';
 import { Button } from '../components/Button';
+import { Icon } from '../components/Icon';
 
 const meta = { title: 'Native/Button' } satisfies Meta;
 export default meta;
 
 type Story = StoryObj;
+
+export const Sso: Story = {
+  render: () => (
+    <View style={{ gap: 12 }}>
+      <Button variant="ghost" leading={<Icon name="google" size={18} />} title="Continue with Google" />
+      <Button variant="ghost" leading={<Icon name="apple" size={18} />} title="Continue with Apple" />
+    </View>
+  ),
+};
 
 export const Primary: Story = {
   render: () => <Button variant="primary" title="Log check-in" />,
