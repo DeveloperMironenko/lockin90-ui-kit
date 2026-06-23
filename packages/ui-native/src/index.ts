@@ -207,16 +207,8 @@ export type { PasswordStrengthMeterProps, PasswordStrengthScore } from './compon
 export { Combobox } from './components/Combobox';
 export type { ComboboxProps, ComboboxOption } from './components/Combobox';
 export { CreditCardVisual } from './components/CreditCardVisual';
-export type { CreditCardVisualProps, CardGradient } from './components/CreditCardVisual';
-export { SocialPost } from './components/SocialPost';
-export type { SocialPostProps, SocialPostAuthor } from './components/SocialPost';
-export { EngagementBar } from './components/EngagementBar';
+export type { CreditCardVisualProps, CardGradient } from './components/CreditCardVisual';export { EngagementBar } from './components/EngagementBar';
 export type { EngagementBarProps } from './components/EngagementBar';
 export { FollowButton } from './components/FollowButton';
-export type { FollowButtonProps } from './components/FollowButton';
-export { ProfileHeader } from './components/ProfileHeader';
-export type { ProfileHeaderProps, ProfileStat } from './components/ProfileHeader';
-export { LeaderboardRow } from './components/LeaderboardRow';
+export type { FollowButtonProps } from './components/FollowButton';export { LeaderboardRow } from './components/LeaderboardRow';
 export type { LeaderboardRowProps } from './components/LeaderboardRow';
-export { ShareCard } from './components/ShareCard';
-export type { ShareCardProps, ShareCardGradient, ShareCardAspect } from './components/ShareCard';

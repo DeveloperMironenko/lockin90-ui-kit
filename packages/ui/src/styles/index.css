@@ -83,10 +83,5 @@
 @import './components/daytimeline.css';
 @import './components/pwstrength.css';
 @import './components/combobox.css';
-@import './components/creditcard.css';
-@import './components/socialpost.css';
-@import './components/engagement.css';
-@import './components/followbtn.css';
-@import './components/profileheader.css';
-@import './components/leaderboard.css';
-@import './components/sharecard.css';
+@import './components/creditcard.css';@import './components/engagement.css';
+@import './components/followbtn.css';@import './components/leaderboard.css';

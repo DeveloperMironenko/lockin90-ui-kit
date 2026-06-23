@@ -17,7 +17,7 @@ New primitives:
   `PricingTierCard` (featured ribbon), `CreditCardVisual` (gradient card art).
 - **Domain** — `MuscleDiagram` (SVG body map), `DayTimelineBlocks` (24h rail + now marker).
 - **Forms** — `PasswordStrengthMeter`, `Combobox` (search + results).
-- **Social** — `SocialPost`, `EngagementBar`, `FollowButton`, `ProfileHeader`, `LeaderboardRow`, `ShareCard`.
+- **Social** — `EngagementBar`, `FollowButton`, `LeaderboardRow`.
 
 Extended (additive, backward-compatible):
 - `LineChart` — `band` (uncertainty ribbon on a shared expanded y-scale) + `dashedFromIndex`
@@ -26,6 +26,7 @@ Extended (additive, backward-compatible):
 - `Icon` — 60 → 72 glyphs (+5 mood faces, +7 provider logos: oura/whoop/garmin/polar/
   apple-health/dexcom/strava); `IconName` identical on both platforms.
 
-Four requested items are covered by existing primitives (no new export) — see
-`REUSE_RECIPES.md`: ConfidenceMeter→Meter, ConversationRow→ListRow,
-E2EEBadge→Chip, GlycemicCurve→PkChart/band-LineChart.
+Some requested items are NOT kit exports — composed in-app instead (see
+`REUSE_RECIPES.md`): ConfidenceMeter→Meter, ConversationRow→ListRow, E2EEBadge→Chip,
+GlycemicCurve→PkChart/band-LineChart, plus the page-specific layouts SocialPost /
+ProfileHeader / ShareCard (Card/Avatar/Ring compositions).
