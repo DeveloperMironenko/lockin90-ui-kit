@@ -196,3 +196,27 @@ export { AchievementBadge } from './components/AchievementBadge';
 export type { AchievementBadgeProps, AchievementTier } from './components/AchievementBadge';
 export { PricingTierCard } from './components/PricingTierCard';
 export type { PricingTierCardProps } from './components/PricingTierCard';
+
+// --- Domain / forms / billing / social (rebuild gap) ---
+export { MuscleDiagram } from './components/MuscleDiagram';
+export type { MuscleDiagramProps, MuscleTarget, MuscleRole, MuscleGroup } from './components/MuscleDiagram';
+export { DayTimelineBlocks } from './components/DayTimelineBlocks';
+export type { DayTimelineBlocksProps, DayBlock } from './components/DayTimelineBlocks';
+export { PasswordStrengthMeter } from './components/PasswordStrengthMeter';
+export type { PasswordStrengthMeterProps, PasswordStrengthScore } from './components/PasswordStrengthMeter';
+export { Combobox } from './components/Combobox';
+export type { ComboboxProps, ComboboxOption } from './components/Combobox';
+export { CreditCardVisual } from './components/CreditCardVisual';
+export type { CreditCardVisualProps, CardGradient } from './components/CreditCardVisual';
+export { SocialPost } from './components/SocialPost';
+export type { SocialPostProps, SocialPostAuthor } from './components/SocialPost';
+export { EngagementBar } from './components/EngagementBar';
+export type { EngagementBarProps } from './components/EngagementBar';
+export { FollowButton } from './components/FollowButton';
+export type { FollowButtonProps } from './components/FollowButton';
+export { ProfileHeader } from './components/ProfileHeader';
+export type { ProfileHeaderProps, ProfileStat } from './components/ProfileHeader';
+export { LeaderboardRow } from './components/LeaderboardRow';
+export type { LeaderboardRowProps } from './components/LeaderboardRow';
+export { ShareCard } from './components/ShareCard';
+export type { ShareCardProps, ShareCardGradient, ShareCardAspect } from './components/ShareCard';

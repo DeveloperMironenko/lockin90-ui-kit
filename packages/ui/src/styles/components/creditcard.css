@@ -1,0 +1,117 @@
+/* ============================================================================
+   CreditCardVisual — a credit-card-aspect (≈1.586:1) gradient panel that mirrors
+   the `.creditcard` art in the billing mockup. The card-art gradient fills the
+   panel (one of cta/flux/violet/mint/warm via `.lk-cc-{gradient}`), with a subtle
+   radial sheen on top. Holds: a metallic chip glyph + brand label (top row), the
+   masked card-number row (mono, letter-spaced), and a bottom row with the
+   cardholder (mono uppercase, faint) + expiry. Native twin: `@lockin90/ui-native`.
+   ========================================================================== */
+.lk-cc {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  aspect-ratio: 1.586 / 1;
+  width: 100%;
+  max-width: 360px;
+  padding: 22px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border-2);
+  box-shadow: var(--elev-2);
+  overflow: hidden;
+  color: var(--text);
+  background: var(--grad-cta);
+}
+
+/* ── card-art gradient variants ────────────────────────────────────────────── */
+.lk-cc-cta {
+  background: var(--grad-cta);
+}
+.lk-cc-flux {
+  background: var(--grad-flux);
+}
+.lk-cc-violet {
+  background: var(--grad-violet);
+}
+.lk-cc-mint {
+  background: var(--grad-mint);
+}
+.lk-cc-warm {
+  background: var(--grad-warm);
+}
+
+/* ── sheen: a soft top-right glossy highlight over the gradient ────────────── */
+.lk-cc-sheen {
+  content: '';
+  position: absolute;
+  right: -40px;
+  top: -60px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.28), transparent 70%);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+/* ── top row: chip + brand ─────────────────────────────────────────────────── */
+.lk-cc-top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lk-cc-chip {
+  width: 38px;
+  height: 28px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #d8c47a, #a4863b);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.lk-cc-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+/* ── masked number row ─────────────────────────────────────────────────────── */
+.lk-cc-num {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 19px;
+  letter-spacing: 0.12em;
+  color: var(--text);
+}
+
+/* ── bottom row: holder + expiry ───────────────────────────────────────────── */
+.lk-cc-bottom {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lk-cc-field-end {
+  text-align: right;
+}
+
+.lk-cc-lbl {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.lk-cc-val {
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+}

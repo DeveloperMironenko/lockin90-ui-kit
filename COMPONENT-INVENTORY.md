@@ -29,7 +29,20 @@ _Generated 2026-06-21 from live source in `packages/ui` (web) + `packages/ui-nat
 >   (mirrors the web `::after`, resolved-placement aware); **FocalPointPicker**
 >   gained tap-**and-drag** (PanResponder) to match the web pointer twin.
 >
-> Kit total: **~90 cross-platform primitives** (identical web ↔ native APIs).
+> **Recent additions (2026-06-23) — web+mobile rebuild gap closure (+21 primitives):**
+> - **Messaging:** MessageBubble, MessageComposer, TypingIndicator.
+> - **AI / insights:** InsightCard, PendingPatternCard, EffectAttributionLine, ForecastCallout.
+> - **Sensitive actions:** ReauthDialog (Modal step-up: password + Google SSO).
+> - **Achievements / billing:** AchievementBadge (tiered + progress ring), PricingTierCard, CreditCardVisual.
+> - **Domain:** MuscleDiagram (SVG body map, paths byte-identical both platforms), DayTimelineBlocks (24h rail + now).
+> - **Forms:** PasswordStrengthMeter, Combobox (search + results).
+> - **Social:** SocialPost, EngagementBar, FollowButton, ProfileHeader, LeaderboardRow, ShareCard.
+> - **Extended:** LineChart (`band` uncertainty ribbon + `dashedFromIndex` forecast tail),
+>   Slider (`labels`), Icon (60 → 72: +5 mood faces, +7 provider logos).
+> - **Reuse (no new export) — see [REUSE_RECIPES.md](./REUSE_RECIPES.md):** ConfidenceMeter→Meter,
+>   ConversationRow→ListRow, E2EEBadge→Chip+lock Icon, GlycemicCurve→PkChart/band-LineChart.
+>
+> Kit total: **~111 cross-platform primitives** (identical web ↔ native APIs).
 
 ## Architecture
 

@@ -1,0 +1,69 @@
+/* ============================================================================
+   EngagementBar — post/feed footer "react" row: icon+count pressables for
+   like · comment · share · save, sitting above the card edge. Mirrors
+   `.post-foot`/`.react` from the social feed design (feed.html / social.html).
+   Keys: .lk-engagement (the row) · .lk-react (an action) · .lk-react-cnt (its
+   count) · .lk-react-on (active state) · .lk-react-save (right-aligned).
+   ========================================================================== */
+.lk-engagement {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lk-react {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: var(--r-pill);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    color 0.2s var(--ease),
+    background 0.2s var(--ease);
+}
+.lk-react svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s var(--ease);
+}
+.lk-react:hover {
+  color: var(--text);
+  background: var(--glass);
+}
+.lk-react-cnt {
+  font-variant-numeric: tabular-nums;
+}
+
+/* like — active fills the heart rose/bad and tints the count */
+.lk-react-like.lk-react-on {
+  color: var(--bad);
+}
+.lk-react-like.lk-react-on svg {
+  fill: var(--bad);
+  stroke: var(--bad);
+  transform: scale(1.12);
+}
+
+/* share — cyan accent on hover */
+.lk-react-share:hover {
+  color: var(--accent-2);
+}
+
+/* save — sits at the far right; active fills the bookmark accent (violet) */
+.lk-react-save {
+  margin-left: auto;
+}
+.lk-react-save.lk-react-on {
+  color: var(--accent);
+}
+.lk-react-save.lk-react-on svg {
+  fill: var(--accent);
+  stroke: var(--accent);
+}

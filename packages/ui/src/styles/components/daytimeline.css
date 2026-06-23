@@ -1,0 +1,114 @@
+/* ============================================================================
+   DayTimelineBlocks — a horizontal 24-hour activity rail.
+   A glass track spanning startHour..endHour carrying absolutely-positioned
+   rounded color blocks (placed by start/end hour as left% + width% of the rail
+   span), faint hour gridlines with mono clock labels (every 6h), and an optional
+   bright "now" marker line + dot. Ports the design's .tl-track / .tl-block /
+   .tl-now / .tl-axis day-timeline visual.
+   Per-instance var: --tl-h (rail height).
+   ========================================================================== */
+.lk-daytl {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* the rail track — faint glass, hairline border, clips the blocks */
+.lk-daytl-track {
+  position: relative;
+  height: var(--tl-h, 44px);
+  border-radius: var(--r-sm);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* faint vertical hour gridlines */
+.lk-daytl-grid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
+/* a colored time block — absolutely positioned by left% / width% */
+.lk-daytl-block {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 7px;
+  background: var(--accent);
+  transition: filter 0.25s var(--ease);
+}
+
+.lk-daytl-block:hover {
+  filter: brightness(1.2);
+  z-index: 5;
+}
+
+/* in-block label — small, dark-on-color, truncates when it doesn't fit */
+.lk-daytl-block-label {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: rgba(8, 10, 18, 0.92);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* the bright "now" marker — full-height accent line + a glowing dot on top */
+.lk-daytl-now {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(124, 92, 255, 0.9);
+  z-index: 8;
+  pointer-events: none;
+}
+
+.lk-daytl-now::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(124, 92, 255, 0.9);
+}
+
+/* hour axis labels under the rail — mono, positioned by left% */
+.lk-daytl-axis {
+  position: relative;
+  height: 12px;
+}
+
+.lk-daytl-tick {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: 9.5px;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+/* clamp the edge labels so they don't overflow the rail */
+.lk-daytl-tick:first-child {
+  transform: none;
+  left: 0 !important;
+}
+.lk-daytl-tick:last-child {
+  transform: translateX(-100%);
+}

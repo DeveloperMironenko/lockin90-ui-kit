@@ -1,0 +1,106 @@
+/* ============================================================================
+   LeaderboardRow — one ranked standings entry: rank + avatar + name/sublabel
+   on the left, the ranked value on the right. Ranks 1–3 swap the number for a
+   gold/silver/bronze crown glyph. `highlight` accent-tints the current user's
+   row. Adjacent rows share a hairline. Composed from Avatar + Icon.
+   Tokens from @lockin90/tokens. All classes namespaced `lk-*`.
+   ========================================================================== */
+.lk-lbrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--r);
+  background: transparent;
+  font-family: var(--font-ui);
+  color: var(--text);
+}
+
+/* hairline between adjacent rows (not highlighted ones, which own a border) */
+.lk-lbrow + .lk-lbrow {
+  border-top-color: var(--border);
+}
+
+/* ---- rank / medal ---- */
+.lk-lbrow-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+}
+
+.lk-lbrow-rank-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  color: var(--text-dim);
+}
+
+.lk-lbrow-medal {
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
+/* ---- avatar ---- */
+.lk-lbrow-avatar {
+  flex-shrink: 0;
+}
+
+/* ---- name / sublabel ---- */
+.lk-lbrow-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.lk-lbrow-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lk-lbrow-sub {
+  margin-top: 1px;
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- value ---- */
+.lk-lbrow-value {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+/* ---- highlight (the "you" row) ---- */
+.lk-lbrow-highlight {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.lk-lbrow-highlight + .lk-lbrow,
+.lk-lbrow + .lk-lbrow-highlight {
+  border-top-color: transparent;
+}
+.lk-lbrow-highlight .lk-lbrow-value {
+  color: var(--accent);
+}
+.lk-lbrow-highlight .lk-lbrow-rank-num {
+  color: var(--accent);
+}

@@ -1,0 +1,62 @@
+/* ============================================================================
+   MuscleDiagram — an anatomical body map. A stylized front/back silhouette
+   (head + torso + arms + legs) drawn in a fixed 110×220 SVG viewBox, with the
+   targeted muscle groups tinted by role: primary = mint (strongest), secondary
+   = cyan (medium), stabilizer = faint gray (subtle). Untargeted regions stay
+   faint bg2. An optional legend beside the figure lists each worked group + a
+   role Chip. Tokens-driven, no Tailwind.
+   Key: .lk-muscle
+   ========================================================================== */
+.lk-muscle {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* the figure */
+.lk-muscle-svg { display: block; flex: 0 0 auto; overflow: visible; }
+
+/* base body silhouette — faint glass fill + hairline outline */
+.lk-muscle-body path {
+  fill: var(--bg-2);
+  stroke: var(--border-2);
+  stroke-width: 1;
+}
+
+/* highlighted regions: soft glow keyed off the role stroke color */
+.lk-muscle-hl { filter: drop-shadow(0 0 5px currentColor); }
+.lk-muscle-hl--primary { color: var(--mint); }
+.lk-muscle-hl--secondary { color: var(--cyan); }
+.lk-muscle-hl--stabilizer { color: var(--text-faint); }
+
+/* worked-group legend rows beside the figure */
+.lk-muscle-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.lk-muscle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lk-muscle-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: 0 0 10px;
+  box-shadow: 0 0 8px currentColor;
+}
+.lk-muscle-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.lk-muscle-row .lk-chip { margin-left: auto; flex: 0 0 auto; }

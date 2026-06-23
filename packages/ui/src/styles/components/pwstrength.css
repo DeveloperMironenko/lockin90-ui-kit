@@ -1,0 +1,41 @@
+/* PasswordStrengthMeter — 4-segment strength bar + label/hint (mirrors design auth .pw-*) */
+.lk-pwstrength {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* 4 equal segments that fill left→right up to the score */
+.lk-pwstrength-bars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.lk-pwstrength-seg {
+  height: 5px;
+  border-radius: var(--r-pill);
+  background: var(--border);
+  transition: background 0.35s var(--ease), box-shadow 0.35s var(--ease);
+}
+.lk-pwstrength-seg.is-on {
+  background: var(--pw-color);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--pw-color) 55%, transparent);
+}
+
+/* label (score color) + optional hint */
+.lk-pwstrength-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.lk-pwstrength-label {
+  font-weight: 600;
+  color: var(--pw-color);
+}
+.lk-pwstrength-hint {
+  color: var(--text-faint);
+}
