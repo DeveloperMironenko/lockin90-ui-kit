@@ -70,7 +70,21 @@ export type IconName =
   | 'user'
   // misc
   | 'palette'
-  | 'crop';
+  | 'crop'
+  // mood faces (escalating)
+  | 'mood-rough'
+  | 'mood-low'
+  | 'mood-ok'
+  | 'mood-good'
+  | 'mood-great'
+  // provider / brand marks (monochrome silhouettes)
+  | 'oura'
+  | 'whoop'
+  | 'garmin'
+  | 'polar'
+  | 'apple-health'
+  | 'dexcom'
+  | 'strava';
 
 export interface IconProps extends HTMLAttributes<HTMLSpanElement> {
   name: IconName;
@@ -470,6 +484,78 @@ const GLYPHS: Record<IconName, ReactNode> = {
     <>
       <path d="M7 2.5v14.5h14.5" />
       <path d="M2.5 7H17v14.5" />
+    </>
+  ),
+
+  // ── mood faces (escalating) ──────────────────────────────────────────────
+  'mood-rough': (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="8.5" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="15.5" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <path d="M8 16.5a4.5 4.5 0 0 1 8 0" />
+    </>
+  ),
+  'mood-low': (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="8.5" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="15.5" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <path d="M8.5 16a4 4 0 0 1 7 0" />
+    </>
+  ),
+  'mood-ok': (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="8.5" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="15.5" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <line x1="8.5" y1="15.5" x2="15.5" y2="15.5" />
+    </>
+  ),
+  'mood-good': (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="8.5" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="15.5" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <path d="M8.5 14.5a4 4 0 0 0 7 0" />
+    </>
+  ),
+  'mood-great': (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="8.5" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="15.5" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <path d="M7.5 14a4.5 4.5 0 0 0 9 0" />
+    </>
+  ),
+
+  // ── provider / brand marks (monochrome silhouettes) ──────────────────────
+  oura: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="4.5" />
+    </>
+  ),
+  whoop: <path d="M3 12h4l2.5-7 5 14 2.5-7H21" />,
+  garmin: (
+    <path d="M12 3.5l8 15H4z" />
+  ),
+  polar: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="2.5" />
+    </>
+  ),
+  'apple-health': (
+    <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z" />
+  ),
+  dexcom: (
+    <path d="M12 3.5C12 3.5 5 11 5 15a7 7 0 0 0 14 0c0-4-7-11.5-7-11.5z" />
+  ),
+  strava: (
+    <>
+      <path d="M12 3l-5.5 10h4L12 9l1.5 4h4z" />
+      <path d="M14 13l-2 4-2-4" />
     </>
   ),
 };

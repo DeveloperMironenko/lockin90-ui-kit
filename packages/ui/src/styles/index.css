@@ -13,6 +13,7 @@
 @import './components/codeblock.css';
 @import './components/codefield.css';
 @import './components/colorpicker.css';
+@import './components/composer.css';
 @import './components/countdown.css';
 @import './components/datetree.css';
 @import './components/deltapill.css';
@@ -32,6 +33,7 @@
 @import './components/lc.css';
 @import './components/listrow.css';
 @import './components/menu.css';
+@import './components/message.css';
 @import './components/meter.css';
 @import './components/metric.css';
 @import './components/modal.css';
@@ -65,5 +67,6 @@
 @import './components/toggle.css';
 @import './components/toolbar.css';
 @import './components/tooltip.css';
+@import './components/typing.css';
 @import './components/versionbadge.css';
 @import './components/videothumb.css';

@@ -1,0 +1,110 @@
+/* ============================================================================
+   MessageComposer — DM/chat input bar. A glassy pill row: optional E2EE lock,
+   attach button, growing multiline field, emoji button, accent send circle.
+   Mirrors `.composer` / `.dm-composer` from the coach + chat design.
+   ========================================================================== */
+
+.lk-composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--r-lg);
+  background: var(--glass-2);
+  border: 1px solid var(--border-2);
+}
+
+.lk-composer-lock {
+  display: grid;
+  place-items: center;
+  flex: 0 0 16px;
+  align-self: center;
+  width: 16px;
+  height: 16px;
+  color: var(--zone-high);
+}
+.lk-composer-lock .lk-icon,
+.lk-composer-lock svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* round icon-buttons (attach / emoji) */
+.lk-composer-btn {
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--glass);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.lk-composer-btn:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--border-2);
+}
+.lk-composer-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* growing multiline field */
+.lk-composer-input {
+  flex: 1;
+  min-width: 0;
+  align-self: center;
+  resize: none;
+  overflow-y: auto;
+  max-height: 120px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 10px 16px;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  line-height: 20px;
+}
+.lk-composer-input::placeholder {
+  color: var(--text-faint);
+}
+.lk-composer-input:focus-visible {
+  outline: none;
+  border-color: var(--border-2);
+}
+.lk-composer-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* accent-filled send circle */
+.lk-composer-send {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  color: #0a0a12;
+  background: var(--grad-cta);
+  box-shadow: var(--glow-accent);
+  transition: transform 0.2s var(--ease), opacity 0.2s var(--ease);
+}
+.lk-composer-send:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+.lk-composer-send:disabled {
+  opacity: 0.4;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.lk-composer-disabled {
+  opacity: 0.8;
+}

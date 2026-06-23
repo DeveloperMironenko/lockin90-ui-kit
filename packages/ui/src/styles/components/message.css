@@ -1,0 +1,86 @@
+/* ============================================================================
+   MessageBubble — chat message bubble. `in` = glass-2 fill + hairline, left-
+   aligned; `out` = accent-tinted fill + light text, right-aligned. The tail
+   corner is tightened (in: bottom-left, out: bottom-right). Optional `meta`
+   line sits under the bubble on the bubble's side; outgoing-only `status`
+   renders a tiny trailing check glyph (single=sent, double=delivered/read,
+   read tinted cyan). Tokens from @lockin90/tokens. Classes namespaced `lk-*`.
+   ========================================================================== */
+.lk-msg {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 82%;
+  font-family: var(--font-ui);
+}
+
+.lk-msg-bubble {
+  padding: 11px 14px;
+  border-radius: var(--r-lg);
+  border: 1px solid transparent;
+  font-size: 13.5px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* ---- incoming (left, glass) ---- */
+.lk-msg-in {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+.lk-msg-in .lk-msg-bubble {
+  background: var(--glass-2);
+  border-color: var(--border-2);
+  border-bottom-left-radius: var(--r-sm);
+  color: var(--text);
+}
+
+/* ---- outgoing (right, accent) ---- */
+.lk-msg-out {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+.lk-msg-out .lk-msg-bubble {
+  background: rgba(124, 92, 255, 0.16);
+  border-color: rgba(124, 92, 255, 0.34);
+  border-bottom-right-radius: var(--r-sm);
+  color: #ece8ff;
+}
+
+/* ---- meta line ---- */
+.lk-msg-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  line-height: 1.2;
+  color: var(--text-dim);
+}
+
+.lk-msg-meta-text {
+  color: var(--text-dim);
+}
+
+/* ---- status glyph (outgoing only) ---- */
+.lk-msg-status {
+  display: inline-flex;
+  align-items: center;
+}
+.lk-msg-check {
+  width: 12px;
+  height: 12px;
+  stroke-width: 2;
+  fill: none;
+  stroke: currentColor;
+  display: block;
+}
+.lk-msg-status-sent {
+  color: var(--text-faint);
+}
+.lk-msg-status-delivered {
+  color: var(--text-dim);
+}
+.lk-msg-status-read {
+  color: var(--accent-2);
+}

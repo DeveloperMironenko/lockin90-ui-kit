@@ -49,6 +49,14 @@
 /* the line, with a soft glow */
 .lk-lc-line { filter: drop-shadow(0 0 8px rgba(52, 245, 197, 0.35)); }
 
+/* forecast continuation: the dashed tail of the line beyond dashedFromIndex.
+   Dash pattern is set inline (stroke-dasharray "6 6", viewBox units). */
+.lk-lc-line--dashed { opacity: 0.85; }
+
+/* uncertainty ribbon: a filled area between the upper/lower band series, drawn
+   behind the line/area/markers. Fill color + opacity are set inline. */
+.lk-lc-band { stroke: none; }
+
 /* round marker overlay: centered on its data point via inline left/top % */
 .lk-lc-marker {
   position: absolute;

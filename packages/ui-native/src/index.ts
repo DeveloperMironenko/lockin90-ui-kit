@@ -168,3 +168,11 @@ export { PhaseWheel } from './components/PhaseWheel';
 export type { PhaseArc, PhaseMarker, PhaseWheelProps } from './components/PhaseWheel';
 export { PkChart } from './components/PkChart';
 export type { PkDose, PkThreshold, PkChartProps } from './components/PkChart';
+
+// --- Messaging ---
+export { MessageBubble } from './components/MessageBubble';
+export type { MessageBubbleProps, MessageBubbleVariant, MessageBubbleStatus } from './components/MessageBubble';
+export { MessageComposer } from './components/MessageComposer';
+export type { MessageComposerProps } from './components/MessageComposer';
+export { TypingIndicator } from './components/TypingIndicator';
+export type { TypingIndicatorProps } from './components/TypingIndicator';

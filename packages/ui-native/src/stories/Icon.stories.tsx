@@ -80,6 +80,20 @@ const ALL: IconName[] = [
   // misc
   'palette',
   'crop',
+  // mood faces (escalating)
+  'mood-rough',
+  'mood-low',
+  'mood-ok',
+  'mood-good',
+  'mood-great',
+  // provider / brand marks
+  'oura',
+  'whoop',
+  'garmin',
+  'polar',
+  'apple-health',
+  'dexcom',
+  'strava',
 ];
 
 export const AllIcons: StoryObj = {

@@ -16,3 +16,12 @@ export const Mint: StoryObj<typeof meta> = {
 export const Warm: StoryObj<typeof meta> = {
   args: { value: 40, fill: 'linear-gradient(90deg, var(--zone-low), var(--accent))' },
 };
+
+export const WithLabels: StoryObj<typeof meta> = {
+  args: {
+    value: 2,
+    min: 0,
+    max: 4,
+    labels: ['Rough', 'Low', 'OK', 'Good', 'Great'],
+  },
+};

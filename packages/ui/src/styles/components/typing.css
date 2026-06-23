@@ -1,0 +1,63 @@
+/* ============================================================================
+   TypingIndicator — a small left-aligned glass-2 bubble (an incoming-message
+   look) holding three dots that bounce/pulse in a staggered loop to signal
+   someone composing. Matches the `DotsLoader` animation (1.2s cycle, 0.16s
+   stagger, -4px bounce + 0.7→1 scale + 0.5→1 opacity). Optional `label` renders
+   as small dim text before the dots. Tokens from @lockin90/tokens.
+   Honors prefers-reduced-motion by holding the dots static & fully lit.
+   Key: .lk-typing
+   ========================================================================== */
+.lk-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  max-width: 82%;
+  padding: 9px 14px;
+  border-radius: var(--r-pill);
+  background: var(--glass-2);
+  border: 1px solid var(--border-2);
+  font-family: var(--font-ui);
+}
+
+.lk-typing-label {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-dim);
+}
+
+.lk-typing-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lk-typing-dots > i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  animation: lk-typing-bounce 1.2s var(--ease-soft) infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes lk-typing-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0) scale(0.7);
+    opacity: 0.5;
+  }
+  40% {
+    transform: translateY(-4px) scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lk-typing-dots > i {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}

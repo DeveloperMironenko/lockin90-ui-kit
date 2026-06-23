@@ -30,3 +30,11 @@ export const Warm: Story = {
     </View>
   ),
 };
+
+export const WithLabels: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <Slider value={2} min={0} max={4} labels={['Rough', 'Low', 'OK', 'Good', 'Great']} />
+    </View>
+  ),
+};

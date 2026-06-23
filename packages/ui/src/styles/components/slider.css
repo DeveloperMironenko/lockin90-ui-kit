@@ -53,3 +53,12 @@
   width: 18px; height: 18px; border-radius: 50%; background: transparent; border: none;
 }
 .lk-slider-input::-moz-range-track { background: transparent; }
+
+/* optional scale labels — an evenly-spaced (space-between) row of small mono
+   labels under the rail. Only rendered when the `labels` prop is provided;
+   wrapped in .lk-slider-field alongside the rail. */
+.lk-slider-field { display: block; }
+.lk-slider-labels {
+  display: flex; justify-content: space-between; margin-top: 7px;
+  font-family: var(--font-mono); font-size: 8.5px; color: var(--text-faint);
+}

@@ -39,6 +39,10 @@ export interface LineChartProps {
   /** explicit y-axis tick values; if omitted (and `yAxis`), ~4 evenly-spaced
    *  ticks are derived from the data min..max */
   yTicks?: number[];
+  /** filled uncertainty ribbon drawn behind the line, on the SAME y-scale as data */
+  band?: { upper: number[]; lower: number[]; color?: string };
+  /** from this data index onward the main line renders dashed (forecast continuation) */
+  dashedFromIndex?: number;
   /** optional container style */
   style?: StyleProp<ViewStyle>;
 }
@@ -82,19 +86,22 @@ const tickLabel = (v: number) => (Number.isInteger(v) ? String(v) : v.toFixed(1)
 const DEFAULT_DATA = [52, 40, 30, 28, 38, 56, 80, 104, 116, 118, 108, 90, 76, 66, 60, 58];
 const DEFAULT_AXIS = ['9am', '12pm', '3pm', '6pm', '9pm'];
 
-/** Map data values to viewBox points. Auto-scales y into [PAD_Y, height−PAD_Y]
- *  (inverted, since SVG y grows downward) and spreads x evenly across the padded
- *  inner width [PAD_X, VB_W−PAD_X] so endpoints/markers don't clip at the edges. */
-function toPoints(data: number[], height: number): Array<[number, number]> {
-  const n = data.length;
-  if (n === 0) return [];
-  const min = Math.min(...data);
-  const max = Math.max(...data);
-  const span = max - min || 1; // avoid /0 when flat
+/** Map a series to viewBox points on an EXPLICIT y-scale (min/span), spreading x
+ *  evenly across the padded inner width [PAD_X, VB_W−PAD_X]. `n` is the index span
+ *  used for x positioning — pass the primary data length so a band's points align
+ *  column-for-column with the data. Inverted (max → top, min → bottom). */
+function mapPoints(
+  values: number[],
+  n: number,
+  height: number,
+  min: number,
+  span: number,
+): Array<[number, number]> {
+  if (values.length === 0) return [];
   const top = PAD_Y;
   const bottom = height - PAD_Y;
   const innerW = VB_W - PAD_X * 2;
-  return data.map((v, i) => {
+  return values.map((v, i) => {
     const x = n === 1 ? VB_W / 2 : PAD_X + (i / (n - 1)) * innerW;
     const t = (v - min) / span; // 0 at min, 1 at max
     const y = bottom - t * (bottom - top); // max → top, min → bottom
@@ -150,12 +157,23 @@ export function LineChart({
   grid = true,
   yAxis = false,
   yTicks,
+  band,
+  dashedFromIndex,
   style,
 }: LineChartProps) {
   const [width, setWidth] = useState(0);
   const onLayout = (e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width);
 
-  const pts = toPoints(data, height);
+  // y-scale: by default spans the data's own min..max (byte-for-byte unchanged).
+  // When a band is present, expand the scale to span data ∪ band.upper ∪ band.lower
+  // so the ribbon never clips — and share that one scale across line/band/ticks.
+  const hasBand = !!band && band.upper.length > 0 && band.lower.length > 0;
+  const scaleVals = hasBand ? [...data, ...band!.upper, ...band!.lower] : data;
+  const dMin = scaleVals.length ? Math.min(...scaleVals) : 0;
+  const dMax = scaleVals.length ? Math.max(...scaleVals) : 0;
+  const dSpan = dMax - dMin || 1;
+
+  const pts = mapPoints(data, data.length, height, dMin, dSpan);
   const line = smooth ? smoothPath(pts) : linePath(pts);
   // close the line down to the floor for the area fill — drop straight down from
   // the last/first points (which are inset by PAD_X) so the fill stays aligned.
@@ -163,13 +181,33 @@ export function LineChart({
   const lastX = pts.length ? r(pts[pts.length - 1][0]) : 0;
   const areaPath = line ? `${line} L${lastX},${height} L${firstX},${height} Z` : '';
 
+  // split the line into a solid head + dashed forecast tail at dashedFromIndex
+  // (the boundary point is included in BOTH segments so they join seamlessly).
+  const splitAt =
+    dashedFromIndex != null && dashedFromIndex > 0 && dashedFromIndex < pts.length - 1
+      ? dashedFromIndex
+      : null;
+  const solidPts = splitAt != null ? pts.slice(0, splitAt + 1) : pts;
+  const dashPts = splitAt != null ? pts.slice(splitAt) : [];
+  const solidLine = splitAt != null ? (smooth ? smoothPath(solidPts) : linePath(solidPts)) : line;
+  const dashLine = splitAt != null ? (smooth ? smoothPath(dashPts) : linePath(dashPts)) : '';
+
+  // uncertainty ribbon: upper series left→right then lower series right→left,
+  // closed into a filled area — mapped through the SAME shared scale as the line.
+  const bandUpperPts = hasBand ? mapPoints(band!.upper, data.length, height, dMin, dSpan) : [];
+  const bandLowerPts = hasBand ? mapPoints(band!.lower, data.length, height, dMin, dSpan) : [];
+  const bandPath =
+    hasBand && bandUpperPts.length > 0 && bandLowerPts.length > 0
+      ? `${linePath(bandUpperPts)} ${bandLowerPts
+          .slice()
+          .reverse()
+          .map(([x, y]) => `L${r(x)},${r(y)}`)
+          .join(' ')} Z`
+      : '';
+  const bandFill = band?.color ?? color;
+
   const useGradient = Array.isArray(gradient) && gradient.length >= 2;
   const stroke = useGradient ? 'url(#lk-lc-stroke)' : color;
-
-  // y-axis tick values + their y positions (same scale as the plotted line)
-  const dMin = data.length ? Math.min(...data) : 0;
-  const dMax = data.length ? Math.max(...data) : 0;
-  const dSpan = dMax - dMin || 1;
   const ticks = yAxis ? (yTicks && yTicks.length > 0 ? yTicks : deriveTicks(dMin, dMax)) : [];
   const tickRows = ticks.map((v) => ({ v, y: valueToY(v, dMin, dSpan, height) }));
 
@@ -221,18 +259,36 @@ export function LineChart({
               <Line key={gy} x1={0} y1={r(gy)} x2={VB_W} y2={r(gy)} stroke={colors.border} strokeWidth={1} opacity={0.6} />
             ))}
 
+            {/* uncertainty ribbon — drawn BEHIND the area fill, line and markers */}
+            {bandPath ? (
+              <Path d={bandPath} fill={bandFill} fillOpacity={0.14} stroke="none" />
+            ) : null}
+
             {/* area fill under the line */}
             {area && areaPath ? <Path d={areaPath} fill="url(#lk-lc-fill)" /> : null}
 
-            {/* the line itself */}
-            {line ? (
+            {/* the line itself — split into a solid head + dashed forecast tail
+                when dashedFromIndex is set; one continuous path otherwise */}
+            {solidLine ? (
               <Path
-                d={line}
+                d={solidLine}
                 fill="none"
                 stroke={stroke}
                 strokeWidth={3}
                 strokeLinecap="round"
                 strokeLinejoin="round"
+              />
+            ) : null}
+            {dashLine ? (
+              <Path
+                d={dashLine}
+                fill="none"
+                stroke={stroke}
+                strokeWidth={3}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeDasharray="6 6"
+                opacity={0.85}
               />
             ) : null}
           </Svg>

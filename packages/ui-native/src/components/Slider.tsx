@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import {
   View,
+  Text,
   StyleSheet,
   PanResponder,
   type LayoutChangeEvent,
@@ -9,7 +10,7 @@ import {
   type DimensionValue,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, radii } from '@lockin90/tokens';
+import { colors, radii, fonts } from '@lockin90/tokens';
 
 export interface SliderProps {
   /** current value (default 72) */
@@ -26,6 +27,9 @@ export interface SliderProps {
   glow?: string;
   /** the unfilled remainder rail color */
   trackColor?: string;
+  /** optional scale labels rendered evenly-spaced under the rail (e.g. a
+   *  mood/focus/energy scale). When omitted, nothing extra renders. */
+  labels?: string[];
   style?: StyleProp<ViewStyle>;
 }
 
@@ -41,6 +45,7 @@ export function Slider({
   fill = [colors.accent, colors.cyan],
   glow = colors.accent,
   trackColor = 'rgba(255,255,255,0.10)',
+  labels,
   style,
 }: SliderProps) {
   const span = max - min || 1;
@@ -76,8 +81,14 @@ export function Slider({
 
   const useGradient = Array.isArray(fill);
 
-  return (
-    <View style={[styles.root, style]} onLayout={onLayout} {...pan.panHandlers}>
+  // the interactive rail (PanResponder + onLayout live here so dragging maps
+  // to the rail's measured width). Identical to before when no labels.
+  const rail = (
+    <View
+      style={[styles.root, labels ? undefined : style]}
+      onLayout={onLayout}
+      {...pan.panHandlers}
+    >
       {/* unfilled remainder rail */}
       <View style={[styles.track, { backgroundColor: trackColor }]} pointerEvents="none" />
 
@@ -103,6 +114,25 @@ export function Slider({
         style={[styles.thumb, { left: pctStr, borderColor: glow, shadowColor: glow }]}
         pointerEvents="none"
       />
+    </View>
+  );
+
+  // No labels → identical to before (rail carries `style`).
+  if (!labels || labels.length === 0) {
+    return rail;
+  }
+
+  // With labels → wrap the rail + an evenly-spaced labels row.
+  return (
+    <View style={style}>
+      {rail}
+      <View style={styles.labels} pointerEvents="none">
+        {labels.map((label, i) => (
+          <Text key={`${i}-${label}`} style={styles.label}>
+            {label}
+          </Text>
+        ))}
+      </View>
     </View>
   );
 }
@@ -142,5 +172,16 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 0 },
     elevation: 8,
+  },
+  // optional scale labels — evenly-spaced row under the rail
+  labels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 7,
+  },
+  label: {
+    fontFamily: fonts.mono,
+    fontSize: 8.5,
+    color: colors.textFaint,
   },
 });
