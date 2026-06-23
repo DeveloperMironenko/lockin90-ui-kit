@@ -15,6 +15,11 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
+    "./marketing": {
+      "types": "./dist/marketing/index.d.ts",
+      "import": "./dist/marketing/index.mjs",
+      "require": "./dist/marketing/index.cjs"
+    },
     "./styles.css": "./dist/styles.css"
   },
   "files": [

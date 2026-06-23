@@ -17,6 +17,15 @@ function bundleCss() {
       parts.push(`/* components/${f} */\n` + readFileSync(join(compDir, f), 'utf8'));
     }
   }
+  // marketing subpath styles (src/marketing/<Component>/styles.css) — folded into
+  // the single global dist/styles.css so the app needs no extra CSS import.
+  const mktDir = join('src', 'marketing');
+  if (existsSync(mktDir)) {
+    for (const d of readdirSync(mktDir).sort()) {
+      const p = join(mktDir, d, 'styles.css');
+      if (existsSync(p)) parts.push(`/* marketing/${d}/styles.css */\n` + readFileSync(p, 'utf8'));
+    }
+  }
   const header =
     '/* @lockin90/ui — Aurora Flux component styles. Pair with @lockin90/tokens/tokens.css.\n' +
     '   import "@lockin90/tokens/tokens.css";\n' +
@@ -25,7 +34,7 @@ function bundleCss() {
 }
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts', 'src/marketing/index.ts'],
   format: ['esm', 'cjs'],
   outExtension: ({ format }) => ({ js: format === 'cjs' ? '.cjs' : '.mjs' }),
   dts: true,

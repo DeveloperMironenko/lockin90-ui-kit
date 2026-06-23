@@ -1,0 +1,18 @@
+/* IconBadge — a glass square framing a single marketing Icon. Neutral by
+   default; the .lk-accent modifier switches to the violet accent treatment. */
+.lk-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--glass-2);
+  color: var(--text);
+}
+.lk-icon-badge.lk-accent {
+  border-color: rgba(124, 92, 255, 0.4);
+  background: rgba(124, 92, 255, 0.1);
+  color: var(--accent);
+}

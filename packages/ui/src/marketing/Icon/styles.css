@@ -1,0 +1,8 @@
+/* Icon — inline stroked SVG glyph. Inherits color from its container so callers
+   can tint it via text color (e.g. var(--accent), var(--text-dim)). */
+.lk-icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  color: inherit;
+  vertical-align: middle;
+}
