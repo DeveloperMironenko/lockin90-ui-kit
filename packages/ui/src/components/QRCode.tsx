@@ -39,23 +39,27 @@ function gfMul(a: number, b: number): number {
 
 // Reed–Solomon: compute `ecCount` error-correction codewords for `data`.
 function rsEncode(data: number[], ecCount: number): number[] {
-  // Build generator polynomial.
+  // Build the generator polynomial g(x) = ∏ (x + α^i), i = 0..ecCount-1,
+  // stored leading-coefficient-first: gen[0] = 1 (x^ecCount), gen[ecCount] = const.
   let gen = [1];
   for (let i = 0; i < ecCount; i++) {
+    // Multiply gen by (x + α^i): shift (×x) then add α^i × gen.
     const next = new Array<number>(gen.length + 1).fill(0);
     for (let j = 0; j < gen.length; j++) {
-      next[j] ^= gfMul(gen[j], GF_EXP[i]);
-      next[j + 1] ^= gen[j];
+      next[j] ^= gen[j]; // × x  (degree up)
+      next[j + 1] ^= gfMul(gen[j], GF_EXP[i]); // + α^i × gen
     }
     gen = next;
   }
+  // Polynomial long division of (data · x^ecCount) by gen; the remainder is the EC.
   const res = new Array<number>(ecCount).fill(0);
   for (let i = 0; i < data.length; i++) {
     const factor = data[i] ^ res[0];
     res.shift();
     res.push(0);
     if (factor !== 0) {
-      for (let j = 0; j < ecCount; j++) res[j] ^= gfMul(gen[j], factor);
+      // gen[0] is the leading 1 (already eliminated by the shift); apply gen[1..].
+      for (let j = 0; j < ecCount; j++) res[j] ^= gfMul(gen[j + 1], factor);
     }
   }
   return res;
@@ -278,6 +282,14 @@ function formatInfoBits(level: ECLevel, mask: number): number {
   return ((data << 10) | rem) ^ 0b101010000010010; // XOR mask
 }
 
+const BCH_VERSION = 0x1f25; // version-info BCH(18,6) generator
+// 18-bit version information (only used for versions 7..40).
+function versionInfoBits(version: number): number {
+  let rem = version << 12;
+  for (let i = 17; i >= 12; i--) if ((rem >> i) & 1) rem ^= BCH_VERSION << (i - 12);
+  return (version << 12) | rem;
+}
+
 function maskFn(mask: number, r: number, c: number): boolean {
   switch (mask) {
     case 0: return (r + c) % 2 === 0;
@@ -340,7 +352,7 @@ interface QRMatrix {
   modules: boolean[][]; // true = dark
 }
 
-export function encodeQR(value: string): QRMatrix {
+function encodeQR(value: string): QRMatrix {
   const data = utf8Bytes(value);
   // Choose the smallest level that fits at the smallest version; prefer M (then L).
   let level: ECLevel = 'M';
@@ -366,33 +378,59 @@ export function encodeQR(value: string): QRMatrix {
   placeFinder(m, reserved, 0, size - 7);
   placeFinder(m, reserved, size - 7, 0);
 
-  // Reserve format-info areas.
+  // Timing patterns (the continuous alternating lines on row 6 and col 6,
+  // spanning between the finders). Placed first so the format reservation
+  // below can't clobber the cells where the timing line meets row/col 8.
+  for (let i = 8; i < size - 8; i++) {
+    m[6][i] = i % 2 === 0 ? 1 : 0;
+    reserved[6][i] = true;
+    m[i][6] = i % 2 === 0 ? 1 : 0;
+    reserved[i][6] = true;
+  }
+
+  // Reserve format-info areas (around the top-left finder + mirrored copies),
+  // skipping index 6 which belongs to the timing pattern, not format.
   for (let i = 0; i < 9; i++) {
-    if (m[8][i] === -1) reserved[8][i] = true;
-    if (m[i][8] === -1) reserved[i][8] = true;
+    if (i !== 6) {
+      reserved[8][i] = true;
+      reserved[i][8] = true;
+    }
   }
   for (let i = 0; i < 8; i++) {
     reserved[8][size - 1 - i] = true;
     reserved[size - 1 - i][8] = true;
   }
 
-  // Timing patterns.
-  for (let i = 8; i < size - 8; i++) {
-    if (!reserved[6][i]) { m[6][i] = i % 2 === 0 ? 1 : 0; reserved[6][i] = true; }
-    if (!reserved[i][6]) { m[i][6] = i % 2 === 0 ? 1 : 0; reserved[i][6] = true; }
+  // Alignment patterns — at every center-coordinate pair EXCEPT the three that
+  // collide with the finder patterns (top-left, top-right, bottom-left corners).
+  // Centers on the timing row/col (index 6) are still valid and must be drawn.
+  const centers = ALIGN_POS[version - 1];
+  const last = centers.length - 1;
+  for (let yi = 0; yi < centers.length; yi++) {
+    for (let xi = 0; xi < centers.length; xi++) {
+      const isFinderCorner =
+        (yi === 0 && xi === 0) || // top-left
+        (yi === 0 && xi === last) || // top-right
+        (yi === last && xi === 0); // bottom-left
+      if (isFinderCorner) continue;
+      placeAlignment(m, reserved, centers[xi], centers[yi]);
+    }
   }
 
-  // Alignment patterns (skip overlaps with finders).
-  const centers = ALIGN_POS[version - 1];
-  for (const cy of centers) {
-    for (const cx of centers) {
-      if (reserved[cy][cx]) continue;
-      const nearFinder =
-        (cy <= 8 && cx <= 8) ||
-        (cy <= 8 && cx >= size - 9) ||
-        (cy >= size - 9 && cx <= 8);
-      if (nearFinder) continue;
-      placeAlignment(m, reserved, cx, cy);
+  // Version information (versions 7+): two 6×3 BCH blocks near the top-right
+  // and bottom-left finders.
+  if (version >= 7) {
+    const vbits = versionInfoBits(version);
+    for (let i = 0; i < 18; i++) {
+      const bit = ((vbits >> i) & 1) as Cell;
+      const r = Math.floor(i / 3);
+      const c = i % 3;
+      // Bottom-left block.
+      m[size - 11 + c][r] = bit;
+      reserved[size - 11 + c][r] = true;
+      // Top-right block (mirrored).
+      m[r][size - 11 + c] = bit;
+      reserved[r][size - 11 + c] = true;
     }
   }
 
@@ -421,8 +459,7 @@ export function encodeQR(value: string): QRMatrix {
     upward = !upward;
   }
 
-  // Apply each mask to a copy, score, pick the lowest penalty.
-  let bestMask = 0;
+  // Apply each of the 8 masks to a copy, score it, keep the lowest-penalty one.
   let bestScore = Infinity;
   let bestMatrix: Cell[][] = m;
   for (let mask = 0; mask < 8; mask++) {
@@ -430,12 +467,11 @@ export function encodeQR(value: string): QRMatrix {
     for (let r = 0; r < size; r++)
       for (let c = 0; c < size; c++)
         if (!reserved[r][c] && maskFn(mask, r, c)) test[r][c] = (test[r][c] ^ 1) as Cell;
-    // Write this mask's format info before scoring.
+    // Write this mask's format info before scoring (format encodes the mask id).
     writeFormatInfo(test, level, mask, size);
     const sc = penalty(test);
-    if (sc < bestScore) { bestScore = sc; bestMask = mask; bestMatrix = test; }
+    if (sc < bestScore) { bestScore = sc; bestMatrix = test; }
   }
-  void bestMask;
 
   const modules: boolean[][] = bestMatrix.map((row) => row.map((cell) => cell === 1));
   return { size, modules };
