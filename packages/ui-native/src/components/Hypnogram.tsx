@@ -152,17 +152,12 @@ export function Hypnogram({
             >
               <Defs>
                 {STAGES.map((stage) => (
-                  <LinearGradient
-                    key={stage}
-                    id={`lk-hyp-${stage}`}
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2={height}
-                    gradientUnits="userSpaceOnUse"
-                  >
+                  // per-BAR gradient (objectBoundingBox), so every band reads
+                  // bright like web — NOT a full-height userSpaceOnUse ramp that
+                  // made the lower bands sample the dark/transparent end.
+                  <LinearGradient key={stage} id={`lk-hyp-${stage}`} x1="0" y1="0" x2="0" y2="1">
                     <Stop offset="0" stopColor={STAGE_COLORS[stage]} stopOpacity={0.95} />
-                    <Stop offset="1" stopColor={STAGE_COLORS[stage]} stopOpacity={0.6} />
+                    <Stop offset="1" stopColor={STAGE_COLORS[stage]} stopOpacity={0.85} />
                   </LinearGradient>
                 ))}
               </Defs>
