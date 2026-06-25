@@ -18,9 +18,9 @@ export interface ToggleProps {
   style?: StyleProp<ViewStyle>;
 }
 
-/** On/off switch — a glass pill track (glass-2 + border-2) holding a white knob
- *  that slides L→R when on; the track lights up with the CTA gradient + glow.
- *  An optional `label` is laid out in a row beside the switch. */
+/** On/off switch — a glass pill track (glass-2 + border-2) holding a CTA-gradient
+ *  knob that slides L→R when on; the TRACK only tints accent when on (mirrors the
+ *  web `.lk-toggle`). An optional `label` is laid out in a row beside the switch. */
 export function Toggle({
   checked = false,
   onChange,
@@ -32,8 +32,12 @@ export function Toggle({
   const dims = size === 'sm' ? SIZE.sm : SIZE.md;
   const knobOffset = dims.track - dims.knob - dims.pad * 2;
 
+  // the knob is ALWAYS the cta gradient (matches web `.lk-toggle-knob`)
   const knob = (
-    <View
+    <LinearGradient
+      colors={gradients.cta.stops as unknown as [string, string]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
       style={[
         styles.knob,
         {
@@ -57,18 +61,10 @@ export function Toggle({
       style={[
         styles.track,
         { width: dims.track, height: dims.height },
-        !checked && styles.trackOff,
+        checked ? styles.trackOn : styles.trackOff,
         disabled && styles.disabled,
       ]}
     >
-      {checked ? (
-        <LinearGradient
-          colors={gradients.cta.stops as unknown as [string, string]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={[StyleSheet.absoluteFill, { borderRadius: radii.pill }, styles.trackOn]}
-        />
-      ) : null}
       {knob}
     </Pressable>
   );
@@ -107,13 +103,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border2,
   },
+  // on — track only TINTS accent (web `.lk-toggle.is-on`), it is NOT gradient-filled
   trackOn: {
+    backgroundColor: 'rgba(124,92,255,0.18)',
     borderWidth: 1,
     borderColor: 'rgba(124,92,255,0.40)',
   },
   knob: {
     position: 'absolute',
-    backgroundColor: '#fff',
     zIndex: 1,
     ...nativeShadows.glowAccent,
   },

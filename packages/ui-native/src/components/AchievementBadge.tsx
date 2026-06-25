@@ -1,7 +1,12 @@
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, fonts, radii } from '@lockin90/tokens';
 import { Icon, type IconName } from './Icon';
 import { Ring } from './Ring';
+
+/** Energy-spectrum flux gradient — mirrors web `--grad-flux` (the unlocked
+ *  AchievementBadge's animated hairline border). Static on native. */
+const FLUX = ['#A8FF35', '#34F5C5', '#22D3EE', '#7C5CFF', '#FF3D81'] as const;
 
 export type AchievementTier = 'bronze' | 'silver' | 'gold' | 'platinum';
 
@@ -72,15 +77,8 @@ export function AchievementBadge({
     </View>
   );
 
-  return (
-    <View
-      style={[
-        styles.badge,
-        locked ? styles.badgeLocked : styles.badgeUnlocked,
-        !locked && { borderColor: tint(accent, 0.4) },
-        style,
-      ]}
-    >
+  const content = (
+    <>
       {locked ? (
         <View style={styles.lock}>
           <Icon name="lock" size={14} color={colors.textFaint} />
@@ -108,7 +106,23 @@ export function AchievementBadge({
           <Text style={styles.date}>{unlockedAt}</Text>
         </View>
       ) : null}
-    </View>
+    </>
+  );
+
+  // locked → plain solid border; unlocked → flux-gradient hairline border
+  // (a LinearGradient padding layer around the card, mirroring web ::before).
+  if (locked) {
+    return <View style={[styles.badge, styles.badgeLocked, style]}>{content}</View>;
+  }
+  return (
+    <LinearGradient
+      colors={FLUX as unknown as [string, string]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={[styles.gradBorder, style]}
+    >
+      <View style={[styles.badge, styles.badgeUnlocked]}>{content}</View>
+    </LinearGradient>
   );
 }
 
@@ -125,18 +139,25 @@ function tint(hex: string, alpha: number): string {
 const styles = StyleSheet.create({
   badge: {
     padding: 22,
-    width: 160,
     minHeight: 200,
     borderRadius: radii.lg,
-    borderWidth: 1,
     alignItems: 'center',
     overflow: 'hidden',
   },
+  // flux-gradient hairline border layer (unlocked) — 1.5px pad reveals the ramp
+  gradBorder: {
+    width: 160,
+    borderRadius: radii.lg,
+    padding: 1.5,
+  },
   badgeUnlocked: {
-    borderColor: colors.border2,
+    width: '100%',
+    borderRadius: radii.lg - 1.5,
     backgroundColor: colors.bg1,
   },
   badgeLocked: {
+    width: 160,
+    borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.glass,
     opacity: 0.62,
