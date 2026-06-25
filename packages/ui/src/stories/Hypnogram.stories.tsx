@@ -4,6 +4,7 @@ import { Hypnogram } from '../components/Hypnogram';
 const meta = {
   title: 'Primitives/Hypnogram',
   component: Hypnogram,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof Hypnogram>;
 export default meta;
 

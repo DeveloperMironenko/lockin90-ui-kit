@@ -5,6 +5,7 @@ import { Dropzone } from '../components/Toolbar';
 const meta = {
   title: 'Primitives/Toolbar',
   component: Toolbar,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof Toolbar>;
 export default meta;
 

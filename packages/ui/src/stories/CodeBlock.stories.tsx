@@ -4,6 +4,7 @@ import { CodeBlock } from '../components/CodeBlock';
 const meta = {
   title: 'Primitives/CodeBlock',
   component: CodeBlock,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof CodeBlock>;
 export default meta;
 

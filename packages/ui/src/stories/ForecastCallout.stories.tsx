@@ -4,6 +4,7 @@ import { ForecastCallout } from '../components/ForecastCallout';
 const meta = {
   title: 'Primitives/ForecastCallout',
   component: ForecastCallout,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof ForecastCallout>;
 export default meta;
 

@@ -4,6 +4,7 @@ import { StackedBar, type StackedSegment } from '../components/StackedBar';
 const meta = {
   title: 'Primitives/StackedBar',
   component: StackedBar,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof StackedBar>;
 export default meta;
 

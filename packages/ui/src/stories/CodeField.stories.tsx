@@ -6,6 +6,7 @@ const meta = {
   title: 'Primitives/CodeField',
   component: CodeField,
   args: { value: '', onChange: () => {} },
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof CodeField>;
 export default meta;
 

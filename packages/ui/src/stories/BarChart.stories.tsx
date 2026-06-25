@@ -4,6 +4,7 @@ import { BarChart } from '../components/BarChart';
 const meta = {
   title: 'Primitives/BarChart',
   component: BarChart,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof BarChart>;
 export default meta;
 

@@ -5,6 +5,7 @@ const meta = {
   title: 'Primitives/Input',
   component: Input,
   args: { placeholder: '100', label: 'Weight', unit: 'kg' },
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Input>;
 export default meta;
 

@@ -4,6 +4,7 @@ import { Stat } from '../components/Stat';
 const meta = {
   title: 'Primitives/Stat',
   component: Stat,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Stat>;
 export default meta;
 

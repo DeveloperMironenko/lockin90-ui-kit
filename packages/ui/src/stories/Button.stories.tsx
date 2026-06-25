@@ -5,6 +5,7 @@ import { Icon } from '../components/Icon';
 const meta = {
   title: 'Primitives/Button',
   component: Button,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Button>;
 export default meta;
 

@@ -5,6 +5,7 @@ import { MessageComposer } from '../components/MessageComposer';
 const meta = {
   title: 'Primitives/MessageComposer',
   component: MessageComposer,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof MessageComposer>;
 export default meta;
 

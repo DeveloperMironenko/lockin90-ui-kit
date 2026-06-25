@@ -4,6 +4,7 @@ import { PasswordStrengthMeter } from '../components/PasswordStrengthMeter';
 const meta = {
   title: 'Primitives/PasswordStrengthMeter',
   component: PasswordStrengthMeter,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof PasswordStrengthMeter>;
 export default meta;
 

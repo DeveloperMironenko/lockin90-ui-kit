@@ -4,6 +4,7 @@ import { SegmentedTabs } from '../components/SegmentedTabs';
 const meta = {
   title: 'Primitives/SegmentedTabs',
   component: SegmentedTabs,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof SegmentedTabs>;
 export default meta;
 

@@ -4,6 +4,7 @@ import { Slider } from '../components/Slider';
 const meta = {
   title: 'Primitives/Slider',
   component: Slider,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof Slider>;
 export default meta;
 

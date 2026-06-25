@@ -4,6 +4,7 @@ import { PasswordInput } from '../components/PasswordInput';
 const meta = {
   title: 'Primitives/PasswordInput',
   component: PasswordInput,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof PasswordInput>;
 export default meta;
 

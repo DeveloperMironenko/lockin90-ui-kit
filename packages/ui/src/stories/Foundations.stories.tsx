@@ -5,6 +5,7 @@ const meta = {
   title: 'Foundations/BrandMark',
   component: BrandMark,
   args: { variant: 'lockup', size: 40 },
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof BrandMark>;
 export default meta;
 

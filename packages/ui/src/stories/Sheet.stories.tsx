@@ -5,6 +5,7 @@ import { Sheet } from '../components/Sheet';
 const meta = {
   title: 'Primitives/Sheet',
   component: Sheet,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof Sheet>;
 export default meta;
 

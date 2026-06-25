@@ -4,6 +4,7 @@ import { QRCode } from '../components/QRCode';
 const meta = {
   title: 'Primitives/QRCode',
   component: QRCode,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof QRCode>;
 export default meta;
 

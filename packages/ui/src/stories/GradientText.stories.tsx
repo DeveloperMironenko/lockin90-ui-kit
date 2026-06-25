@@ -4,6 +4,7 @@ import { GradientText } from '../components/GradientText';
 const meta = {
   title: 'Primitives/GradientText',
   component: GradientText,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof GradientText>;
 export default meta;
 

@@ -4,6 +4,7 @@ import { Card } from '../components/Card';
 const meta = {
   title: 'Primitives/Card',
   component: Card,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof Card>;
 export default meta;
 

@@ -5,6 +5,7 @@ import { ChoiceChip } from '../components/ChoiceChip';
 const meta = {
   title: 'Primitives/ChoiceChip',
   component: ChoiceChip,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof ChoiceChip>;
 export default meta;
 

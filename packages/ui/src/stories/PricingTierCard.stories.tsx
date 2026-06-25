@@ -5,6 +5,7 @@ import { Button } from '../components/Button';
 const meta = {
   title: 'Primitives/PricingTierCard',
   component: PricingTierCard,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof PricingTierCard>;
 export default meta;
 

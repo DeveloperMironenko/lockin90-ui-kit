@@ -4,6 +4,7 @@ import { TagCloud, type TagCloudItem } from '../components/TagCloud';
 const meta = {
   title: 'Primitives/TagCloud',
   component: TagCloud,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof TagCloud>;
 export default meta;
 

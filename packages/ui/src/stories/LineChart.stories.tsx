@@ -4,6 +4,7 @@ import { LineChart } from '../components/LineChart';
 const meta = {
   title: 'Primitives/LineChart',
   component: LineChart,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof LineChart>;
 export default meta;
 

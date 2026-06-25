@@ -4,6 +4,7 @@ import { VersionBadge } from '../components/VersionBadge';
 const meta = {
   title: 'Primitives/VersionBadge',
   component: VersionBadge,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof VersionBadge>;
 export default meta;
 

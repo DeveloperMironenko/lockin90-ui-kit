@@ -6,6 +6,7 @@ const meta = {
   title: 'Primitives/LeaderboardRow',
   component: LeaderboardRow,
   args: { rank: 1, name: 'Maya Kane', value: '1,240 pts' },
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof LeaderboardRow>;
 export default meta;
 

@@ -4,6 +4,7 @@ import { Chip } from '../components/Chip';
 const meta = {
   title: 'Primitives/Chip',
   component: Chip,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Chip>;
 export default meta;
 

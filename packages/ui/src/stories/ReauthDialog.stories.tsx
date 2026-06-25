@@ -7,6 +7,7 @@ const meta = {
   title: 'Primitives/ReauthDialog',
   component: ReauthDialog,
   args: { open: false, onClose: () => {} },
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof ReauthDialog>;
 export default meta;
 

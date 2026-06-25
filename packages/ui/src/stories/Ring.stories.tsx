@@ -4,6 +4,7 @@ import { Ring } from '../components/Ring';
 const meta = {
   title: 'Primitives/Ring',
   component: Ring,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Ring>;
 export default meta;
 

@@ -4,6 +4,7 @@ import { Sparkline } from '../components/Sparkline';
 const meta = {
   title: 'Primitives/Sparkline',
   component: Sparkline,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Sparkline>;
 export default meta;
 

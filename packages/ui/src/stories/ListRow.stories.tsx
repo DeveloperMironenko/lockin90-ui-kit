@@ -7,6 +7,7 @@ const meta = {
   title: 'Primitives/ListRow',
   component: ListRow,
   args: { title: 'List item' },
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof ListRow>;
 export default meta;
 

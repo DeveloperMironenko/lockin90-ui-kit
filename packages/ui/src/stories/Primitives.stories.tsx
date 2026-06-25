@@ -17,7 +17,10 @@ import { Avatar } from '../components/Avatar';
 import { SegmentedTabs } from '../components/SegmentedTabs';
 import { LockedRow } from '../components/ProGate';
 
-const meta = { title: 'Docs/Primitives' } satisfies Meta;
+const meta = {
+  title: 'Docs/Primitives',
+  parameters: { layout: 'padded' },
+} satisfies Meta;
 export default meta;
 
 function Cell({ name, desc, children }: { name: string; desc: string; children: ReactNode }) {

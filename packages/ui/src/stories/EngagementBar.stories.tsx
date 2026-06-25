@@ -4,6 +4,7 @@ import { EngagementBar } from '../components/EngagementBar';
 const meta = {
   title: 'Primitives/EngagementBar',
   component: EngagementBar,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof EngagementBar>;
 export default meta;
 

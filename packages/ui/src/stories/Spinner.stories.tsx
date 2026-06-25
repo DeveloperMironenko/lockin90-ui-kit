@@ -4,6 +4,7 @@ import { Spinner } from '../components/Spinner';
 const meta = {
   title: 'Primitives/Spinner',
   component: Spinner,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Spinner>;
 export default meta;
 

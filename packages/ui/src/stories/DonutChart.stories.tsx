@@ -4,6 +4,7 @@ import { DonutChart } from '../components/DonutChart';
 const meta = {
   title: 'Primitives/DonutChart',
   component: DonutChart,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof DonutChart>;
 export default meta;
 

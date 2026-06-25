@@ -5,6 +5,7 @@ import { Badge } from '../components/Toast';
 const meta = {
   title: 'Primitives/Toast',
   component: Toast,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof Toast>;
 export default meta;
 

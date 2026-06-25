@@ -8,6 +8,7 @@ const meta = {
   // Defaults satisfy the required props; each story's `render` supplies its own
   // stateful instance via <Live>.
   args: { value: '', onCommit: () => {} },
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof InlineEdit>;
 export default meta;
 

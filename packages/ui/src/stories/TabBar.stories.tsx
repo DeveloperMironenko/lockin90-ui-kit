@@ -4,6 +4,7 @@ import { TabBar, FAB } from '../components/TabBar';
 const meta = {
   title: 'Primitives/TabBar',
   component: TabBar,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof TabBar>;
 export default meta;
 

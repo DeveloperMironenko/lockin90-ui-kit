@@ -4,6 +4,7 @@ import { Checkbox, RadioGroup } from '../components/Checkbox';
 const meta = {
   title: 'Primitives/Checkbox',
   component: Checkbox,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Checkbox>;
 export default meta;
 

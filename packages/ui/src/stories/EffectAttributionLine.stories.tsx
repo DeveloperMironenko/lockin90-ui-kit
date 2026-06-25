@@ -4,6 +4,7 @@ import { EffectAttributionLine } from '../components/EffectAttributionLine';
 const meta = {
   title: 'Primitives/EffectAttributionLine',
   component: EffectAttributionLine,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof EffectAttributionLine>;
 export default meta;
 

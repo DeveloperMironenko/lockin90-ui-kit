@@ -4,6 +4,7 @@ import { Stepper, NumberStepper } from '../components/Stepper';
 const meta = {
   title: 'Primitives/Stepper',
   component: Stepper,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Stepper>;
 export default meta;
 

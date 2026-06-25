@@ -5,6 +5,7 @@ const meta = {
   title: 'Primitives/DateField',
   component: DateField,
   args: { label: 'Publish date' },
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof DateField>;
 export default meta;
 

@@ -5,6 +5,7 @@ import { Table, type TableColumn } from '../components/Table';
 const meta = {
   title: 'Primitives/Table',
   component: Table,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof Table>;
 export default meta;
 

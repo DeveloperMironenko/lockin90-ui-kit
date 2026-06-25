@@ -4,6 +4,7 @@ import { KeyValue, StatusDot } from '../components/KeyValue';
 const meta = {
   title: 'Primitives/KeyValue',
   component: KeyValue,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof KeyValue>;
 export default meta;
 

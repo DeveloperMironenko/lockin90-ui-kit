@@ -4,6 +4,7 @@ import { Accordion } from '../components/Accordion';
 const meta = {
   title: 'Primitives/Accordion',
   component: Accordion,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Accordion>;
 export default meta;
 

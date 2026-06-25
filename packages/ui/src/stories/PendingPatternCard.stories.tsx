@@ -4,6 +4,7 @@ import { PendingPatternCard } from '../components/PendingPatternCard';
 const meta = {
   title: 'Primitives/PendingPatternCard',
   component: PendingPatternCard,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof PendingPatternCard>;
 export default meta;
 

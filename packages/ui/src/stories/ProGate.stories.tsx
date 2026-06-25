@@ -4,6 +4,7 @@ import { ProGate, LockedRow } from '../components/ProGate';
 const meta = {
   title: 'Components/ProGate',
   component: ProGate,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof ProGate>;
 export default meta;
 

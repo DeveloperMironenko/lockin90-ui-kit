@@ -4,6 +4,7 @@ import { Eyebrow } from '../components/Eyebrow';
 const meta = {
   title: 'Primitives/Eyebrow',
   component: Eyebrow,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Eyebrow>;
 export default meta;
 

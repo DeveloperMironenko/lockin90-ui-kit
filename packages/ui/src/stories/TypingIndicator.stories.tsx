@@ -4,6 +4,7 @@ import { TypingIndicator } from '../components/TypingIndicator';
 const meta = {
   title: 'Primitives/TypingIndicator',
   component: TypingIndicator,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof TypingIndicator>;
 export default meta;
 

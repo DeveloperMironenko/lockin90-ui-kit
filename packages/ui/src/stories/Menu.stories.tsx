@@ -4,6 +4,7 @@ import { Menu } from '../components/Menu';
 const meta = {
   title: 'Primitives/Menu',
   component: Menu,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Menu>;
 export default meta;
 

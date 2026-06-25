@@ -4,6 +4,7 @@ import { PhaseWheel } from '../components/PhaseWheel';
 const meta = {
   title: 'Primitives/PhaseWheel',
   component: PhaseWheel,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof PhaseWheel>;
 export default meta;
 

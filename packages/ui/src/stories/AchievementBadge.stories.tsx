@@ -5,6 +5,7 @@ const meta = {
   title: 'Primitives/AchievementBadge',
   component: AchievementBadge,
   args: { title: 'Sunrise Streak' },
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof AchievementBadge>;
 export default meta;
 

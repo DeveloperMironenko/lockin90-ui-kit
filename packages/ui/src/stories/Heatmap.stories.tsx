@@ -4,6 +4,7 @@ import { Heatmap, type HeatmapCell } from '../components/Heatmap';
 const meta = {
   title: 'Primitives/Heatmap',
   component: Heatmap,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof Heatmap>;
 export default meta;
 

@@ -4,6 +4,7 @@ import { Timeline } from '../components/Timeline';
 const meta = {
   title: 'Primitives/Timeline',
   component: Timeline,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof Timeline>;
 export default meta;
 

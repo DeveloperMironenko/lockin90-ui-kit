@@ -4,6 +4,7 @@ import { CharCounter } from '../components/CharCounter';
 const meta = {
   title: 'Primitives/CharCounter',
   component: CharCounter,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof CharCounter>;
 export default meta;
 

@@ -4,6 +4,7 @@ import { DayTimelineBlocks } from '../components/DayTimelineBlocks';
 const meta = {
   title: 'Primitives/DayTimelineBlocks',
   component: DayTimelineBlocks,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof DayTimelineBlocks>;
 export default meta;
 

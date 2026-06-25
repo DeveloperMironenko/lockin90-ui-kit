@@ -4,6 +4,7 @@ import { MetricTile, ProgressDots } from '../components/MetricTile';
 const meta = {
   title: 'Primitives/MetricTile',
   component: MetricTile,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof MetricTile>;
 export default meta;
 

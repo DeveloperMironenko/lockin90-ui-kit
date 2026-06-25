@@ -4,6 +4,7 @@ import { RangeBar } from '../components/RangeBar';
 const meta = {
   title: 'Primitives/RangeBar',
   component: RangeBar,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof RangeBar>;
 export default meta;
 

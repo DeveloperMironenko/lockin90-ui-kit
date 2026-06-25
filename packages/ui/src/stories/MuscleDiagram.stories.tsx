@@ -4,6 +4,7 @@ import { MuscleDiagram } from '../components/MuscleDiagram';
 const meta = {
   title: 'Primitives/MuscleDiagram',
   component: MuscleDiagram,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof MuscleDiagram>;
 export default meta;
 

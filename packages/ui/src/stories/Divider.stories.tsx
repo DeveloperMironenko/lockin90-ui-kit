@@ -4,6 +4,7 @@ import { Divider } from '../components/Divider';
 const meta = {
   title: 'Primitives/Divider',
   component: Divider,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Divider>;
 export default meta;
 

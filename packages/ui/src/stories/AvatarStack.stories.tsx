@@ -15,6 +15,7 @@ const meta = {
   title: 'Foundations/AvatarStack',
   component: AvatarStack,
   args: { avatars: ROSTER, max: 4, size: 32 },
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof AvatarStack>;
 export default meta;
 

@@ -4,6 +4,7 @@ import { Skeleton } from '../components/Skeleton';
 const meta = {
   title: 'Primitives/Skeleton',
   component: Skeleton,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Skeleton>;
 export default meta;
 

@@ -5,6 +5,7 @@ const meta = {
   title: 'Primitives/VideoThumbnail',
   component: VideoThumbnail,
   args: { width: 150, aspect: 1.4 },
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof VideoThumbnail>;
 export default meta;
 

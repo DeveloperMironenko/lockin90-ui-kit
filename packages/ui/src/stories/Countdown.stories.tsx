@@ -4,6 +4,7 @@ import { Countdown } from '../components/Countdown';
 const meta = {
   title: 'Primitives/Countdown',
   component: Countdown,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Countdown>;
 export default meta;
 

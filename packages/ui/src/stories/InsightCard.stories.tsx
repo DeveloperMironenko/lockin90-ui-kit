@@ -4,6 +4,7 @@ import { InsightCard } from '../components/InsightCard';
 const meta = {
   title: 'Primitives/InsightCard',
   component: InsightCard,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof InsightCard>;
 export default meta;
 

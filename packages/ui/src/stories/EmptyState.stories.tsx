@@ -5,6 +5,7 @@ import { Button } from '../components/Button';
 const meta = {
   title: 'Primitives/EmptyState',
   component: EmptyState,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof EmptyState>;
 export default meta;
 

@@ -4,6 +4,7 @@ import { DeltaPill } from '../components/DeltaPill';
 const meta = {
   title: 'Primitives/DeltaPill',
   component: DeltaPill,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof DeltaPill>;
 export default meta;
 

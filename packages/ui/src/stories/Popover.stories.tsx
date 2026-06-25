@@ -5,6 +5,7 @@ import { Button } from '../components/Button';
 const meta = {
   title: 'Primitives/Popover',
   component: Popover,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Popover>;
 export default meta;
 

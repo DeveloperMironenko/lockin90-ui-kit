@@ -6,6 +6,7 @@ const meta = {
   title: 'Primitives/RichTextEditor',
   component: RichTextEditor,
   args: { value: '', onChange: () => {} },
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof RichTextEditor>;
 export default meta;
 

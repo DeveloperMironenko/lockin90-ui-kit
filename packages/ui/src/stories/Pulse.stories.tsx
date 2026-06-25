@@ -4,6 +4,7 @@ import { Pulse } from '../components/Pulse';
 const meta = {
   title: 'Primitives/Pulse',
   component: Pulse,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Pulse>;
 export default meta;
 

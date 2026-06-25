@@ -4,6 +4,7 @@ import { DotsLoader } from '../components/DotsLoader';
 const meta = {
   title: 'Primitives/DotsLoader',
   component: DotsLoader,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof DotsLoader>;
 export default meta;
 

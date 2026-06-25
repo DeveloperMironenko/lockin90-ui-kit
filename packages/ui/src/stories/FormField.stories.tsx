@@ -6,6 +6,7 @@ import { Input } from '../components/Input';
 const meta = {
   title: 'Primitives/FormField',
   component: FormField,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof FormField>;
 export default meta;
 

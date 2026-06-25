@@ -4,6 +4,7 @@ import { BackLink } from '../components/BackLink';
 const meta = {
   title: 'Primitives/BackLink',
   component: BackLink,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof BackLink>;
 export default meta;
 

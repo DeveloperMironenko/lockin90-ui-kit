@@ -5,6 +5,7 @@ const meta = {
   title: 'Foundations/Avatar',
   component: Avatar,
   args: { name: 'Maya Kane', size: 48 },
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Avatar>;
 export default meta;
 

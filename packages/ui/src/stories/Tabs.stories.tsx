@@ -4,6 +4,7 @@ import { Tabs } from '../components/Tabs';
 const meta = {
   title: 'Primitives/Tabs',
   component: Tabs,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Tabs>;
 export default meta;
 

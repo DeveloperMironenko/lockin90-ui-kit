@@ -4,6 +4,7 @@ import { Alert } from '../components/Alert';
 const meta = {
   title: 'Primitives/Alert',
   component: Alert,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Alert>;
 export default meta;
 

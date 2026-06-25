@@ -4,6 +4,7 @@ import { Highlight } from '../components/Highlight';
 const meta = {
   title: 'Primitives/Highlight',
   component: Highlight,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Highlight>;
 export default meta;
 

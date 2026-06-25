@@ -6,6 +6,7 @@ import type { MenuItemData } from '../components/Menu';
 const meta = {
   title: 'Primitives/SplitButton',
   component: SplitButton,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof SplitButton>;
 export default meta;
 

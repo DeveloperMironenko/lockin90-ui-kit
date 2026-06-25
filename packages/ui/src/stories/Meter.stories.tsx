@@ -4,6 +4,7 @@ import { Meter } from '../components/Meter';
 const meta = {
   title: 'Primitives/Meter',
   component: Meter,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Meter>;
 export default meta;
 

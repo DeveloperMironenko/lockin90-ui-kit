@@ -5,6 +5,7 @@ import { Button } from '../components/Button';
 const meta = {
   title: 'Primitives/Modal',
   component: Modal,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof Modal>;
 export default meta;
 

@@ -4,6 +4,7 @@ import { BarFill } from '../components/BarFill';
 const meta = {
   title: 'Primitives/BarFill',
   component: BarFill,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof BarFill>;
 export default meta;
 

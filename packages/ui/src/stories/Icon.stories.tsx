@@ -5,6 +5,7 @@ const meta = {
   title: 'Foundations/Icon',
   component: Icon,
   args: { name: 'share', size: 24 },
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Icon>;
 export default meta;
 

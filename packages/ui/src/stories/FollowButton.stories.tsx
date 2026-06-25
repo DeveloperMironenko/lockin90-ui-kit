@@ -11,6 +11,7 @@ function Toggling({ following: initial = false, ...rest }: Partial<FollowButtonP
 const meta = {
   title: 'Primitives/FollowButton',
   component: FollowButton,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof FollowButton>;
 export default meta;
 

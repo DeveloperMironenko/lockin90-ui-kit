@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-const meta = { title: 'Foundations/Colors' } satisfies Meta;
+const meta = {
+  title: 'Foundations/Colors',
+  parameters: { layout: 'padded' },
+} satisfies Meta;
 export default meta;
 
 interface Token {

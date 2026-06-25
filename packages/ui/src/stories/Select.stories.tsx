@@ -4,6 +4,7 @@ import { Select } from '../components/Select';
 const meta = {
   title: 'Primitives/Select',
   component: Select,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Select>;
 export default meta;
 

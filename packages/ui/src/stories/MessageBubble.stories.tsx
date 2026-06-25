@@ -4,6 +4,7 @@ import { MessageBubble } from '../components/MessageBubble';
 const meta = {
   title: 'Primitives/MessageBubble',
   component: MessageBubble,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof MessageBubble>;
 export default meta;
 

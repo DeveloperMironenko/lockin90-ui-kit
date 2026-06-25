@@ -4,6 +4,7 @@ import { Gauge } from '../components/Gauge';
 const meta = {
   title: 'Primitives/Gauge',
   component: Gauge,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof Gauge>;
 export default meta;
 

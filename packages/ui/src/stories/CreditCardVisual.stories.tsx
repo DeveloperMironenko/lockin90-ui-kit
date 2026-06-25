@@ -4,6 +4,7 @@ import { CreditCardVisual } from '../components/CreditCardVisual';
 const meta = {
   title: 'Primitives/CreditCardVisual',
   component: CreditCardVisual,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof CreditCardVisual>;
 export default meta;
 

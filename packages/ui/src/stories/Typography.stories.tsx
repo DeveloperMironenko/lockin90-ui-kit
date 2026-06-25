@@ -1,7 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { type ReactNode } from 'react';
 
-const meta = { title: 'Foundations/Typography' } satisfies Meta;
+const meta = {
+  title: 'Foundations/Typography',
+  parameters: { layout: 'padded' },
+} satisfies Meta;
 export default meta;
 
 function Row({ label, children }: { label: string; children: ReactNode }) {

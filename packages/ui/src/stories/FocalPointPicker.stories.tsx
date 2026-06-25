@@ -6,6 +6,7 @@ const meta = {
   title: 'Primitives/FocalPointPicker',
   component: FocalPointPicker,
   args: { src: '', value: { x: 0.5, y: 0.5 }, onChange: () => {} },
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof FocalPointPicker>;
 export default meta;
 

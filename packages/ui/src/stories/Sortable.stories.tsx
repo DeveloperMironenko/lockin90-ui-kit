@@ -6,6 +6,7 @@ const meta = {
   title: 'Primitives/Sortable',
   component: Sortable,
   args: { items: [], onReorder: () => {} },
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof Sortable>;
 export default meta;
 

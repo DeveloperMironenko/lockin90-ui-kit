@@ -5,6 +5,7 @@ const meta = {
   title: 'Primitives/NoteField',
   component: NoteField,
   args: { label: 'Private notes' },
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof NoteField>;
 export default meta;
 

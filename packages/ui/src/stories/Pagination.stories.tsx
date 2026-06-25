@@ -4,6 +4,7 @@ import { Pagination, Breadcrumb } from '../components/Pagination';
 const meta = {
   title: 'Primitives/Pagination',
   component: Pagination,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof Pagination>;
 export default meta;
 

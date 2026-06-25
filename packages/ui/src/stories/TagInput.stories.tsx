@@ -5,6 +5,7 @@ import { CodeInput } from '../components/TagInput';
 const meta = {
   title: 'Primitives/TagInput',
   component: TagInput,
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof TagInput>;
 export default meta;
 

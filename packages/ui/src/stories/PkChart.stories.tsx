@@ -4,6 +4,7 @@ import { PkChart } from '../components/PkChart';
 const meta = {
   title: 'Primitives/PkChart',
   component: PkChart,
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof PkChart>;
 export default meta;
 

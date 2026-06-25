@@ -9,6 +9,8 @@
     "test": "pnpm -r run test",
     "typecheck": "pnpm -r run typecheck",
     "storybook": "pnpm --filter @lockin90/ui storybook",
+    "storybook:native": "pnpm --filter @lockin90/ui-native storybook",
+    "storybook:all": "pnpm --parallel --filter @lockin90/ui --filter @lockin90/ui-native storybook",
     "build-storybook": "pnpm --filter @lockin90/ui build-storybook",
     "changeset": "changeset",
     "version-packages": "changeset version",

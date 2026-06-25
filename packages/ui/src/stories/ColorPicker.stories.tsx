@@ -6,6 +6,7 @@ const meta = {
   title: 'Primitives/ColorPicker',
   component: ColorPicker,
   args: { value: '#7C5CFF', onChange: () => {} },
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof ColorPicker>;
 export default meta;
 

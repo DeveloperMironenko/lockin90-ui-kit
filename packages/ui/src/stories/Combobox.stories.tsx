@@ -7,6 +7,7 @@ const meta = {
   component: Combobox,
   // each story overrides via `render`; these satisfy the required props on `meta`.
   args: { options: [], onSearch: () => {}, onSelect: () => {} },
+  parameters: { layout: 'padded' },
 } satisfies Meta<typeof Combobox>;
 export default meta;
 
