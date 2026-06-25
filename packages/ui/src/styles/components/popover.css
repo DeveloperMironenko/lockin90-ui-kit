@@ -12,6 +12,13 @@
   display: inline-flex;
 }
 
+/* ---- custom trigger wrapper: a bare inline click-target (no button chrome) so
+   the consumer's own trigger renders as-is and isn't a nested <button> ---- */
+.lk-pop-trigger-wrap {
+  display: inline-flex;
+  cursor: pointer;
+}
+
 /* ---- trigger (default "?" info button) ---- */
 .lk-pop-trigger {
   display: inline-flex;

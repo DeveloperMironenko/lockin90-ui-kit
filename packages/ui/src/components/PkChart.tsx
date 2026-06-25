@@ -270,12 +270,13 @@ export function PkChart({
             )}
           </svg>
 
-          {/* dose marker tags — %-positioned HTML overlays so they stay crisp */}
+          {/* dose marker tags — %-positioned HTML overlays so they stay crisp.
+              Alternate two rows so closely-spaced doses don't overlap. */}
           {markerDoses.map((d, i) => (
             <div
               key={i}
               className="lk-pk-marker lk-pk-marker--dose"
-              style={{ left: `${(doseX(d.at) / VB_W) * 100}%`, top: '0%' }}
+              style={{ left: `${(doseX(d.at) / VB_W) * 100}%`, top: i % 2 === 0 ? '0px' : '20px' }}
             >
               <span className="lk-pk-dose-tag">
                 {`+${d.mg}${unit}`}

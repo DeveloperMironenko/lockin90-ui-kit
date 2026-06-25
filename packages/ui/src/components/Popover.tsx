@@ -88,15 +88,29 @@ export function Popover({ trigger, children, align = 'center', className, ...res
 
   return (
     <div ref={rootRef} className={cn('lk-pop', className)} {...rest}>
-      <button
-        type="button"
-        className="lk-pop-trigger"
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-      >
-        {trigger ?? <Icon name="info" size={16} />}
-      </button>
+      {trigger ? (
+        // Custom trigger: a bare inline wrapper (NOT a <button>) so an
+        // interactive trigger like <Button> isn't nested in a button — which is
+        // invalid HTML and breaks the click. The trigger keeps its own chrome.
+        <span
+          className="lk-pop-trigger-wrap"
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          {trigger}
+        </span>
+      ) : (
+        <button
+          type="button"
+          className="lk-pop-trigger"
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <Icon name="info" size={16} />
+        </button>
+      )}
 
       {open && typeof document !== 'undefined'
         ? createPortal(

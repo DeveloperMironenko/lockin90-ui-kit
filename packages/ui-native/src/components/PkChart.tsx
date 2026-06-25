@@ -267,11 +267,15 @@ export function PkChart({
             </Svg>
           )}
 
-          {/* dose marker tags — %-positioned overlays so they stay crisp */}
+          {/* dose marker tags — %-positioned overlays so they stay crisp.
+              Alternate two rows so closely-spaced doses don't overlap. */}
           {markerDoses.map((d, i) => (
             <View
               key={i}
-              style={[styles.doseMarker, { left: `${(doseX(d.at) / VB_W) * 100}%` as DimensionValue }]}
+              style={[
+                styles.doseMarker,
+                { left: `${(doseX(d.at) / VB_W) * 100}%` as DimensionValue, top: 2 + (i % 2) * 20 },
+              ]}
               pointerEvents="none"
             >
               <View style={styles.doseTag}>
@@ -409,11 +413,11 @@ const styles = StyleSheet.create({
     letterSpacing: 0.36,
     color: colors.textDim,
   },
-  // threshold label pinned to the right edge at the threshold y
+  // threshold label pinned to the right edge, sitting just BELOW the dashed line
   thTagWrap: {
     position: 'absolute',
     right: 4,
-    marginTop: -8,
+    marginTop: 5,
   },
   thTag: {
     paddingHorizontal: 6,

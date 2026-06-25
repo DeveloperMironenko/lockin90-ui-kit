@@ -149,16 +149,13 @@ export function ReauthDialog({
           </Pressable>
         ) : null}
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Cancel"
+        <Button
+          variant="ghost"
+          title="Cancel"
+          style={styles.submit}
           disabled={loading}
           onPress={close}
-          style={styles.cancel}
-          hitSlop={6}
-        >
-          <Text style={[styles.cancelLabel, loading && styles.disabled]}>Cancel</Text>
-        </Pressable>
+        />
       </View>
     </Modal>
   );
@@ -173,7 +170,8 @@ const styles = StyleSheet.create({
     color: colors.textDim,
   },
   error: {},
-  pw: { gap: 14 },
+  // match web: input→Confirm gap == the body's 16px column gap (== Confirm→Cancel)
+  pw: { gap: 16 },
   submit: { width: '100%' },
   or: {
     flexDirection: 'row',
@@ -210,11 +208,5 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   pressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },
-  cancel: { alignSelf: 'center', paddingVertical: 4, paddingHorizontal: 8, marginTop: -2 },
-  cancelLabel: {
-    fontFamily: fonts.ui,
-    fontSize: 13,
-    color: colors.textFaint,
-  },
   disabled: { opacity: 0.5 },
 });

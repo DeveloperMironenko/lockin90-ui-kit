@@ -12,10 +12,10 @@
   align-items: center;
   gap: 8px;
   align-self: flex-start;
-  /* don't let a flex parent squeeze the bubble below its content, which would
-     make the dots overflow asymmetrically (less padding on one side) */
+  /* don't let a flex parent squeeze the bubble below its content (which made the
+     dots overflow / sit asymmetrically). flex:none sizes it to its content and
+     never shrinks — works for both the dots-only and labelled cases. */
   flex: none;
-  width: fit-content;
   max-width: 82%;
   padding: 12px 16px;
   border-radius: var(--r-pill);
