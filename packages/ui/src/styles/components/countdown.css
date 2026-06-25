@@ -25,19 +25,16 @@
   gap: 9px;
 }
 
-/* gradient-border accent cell — opaque dark interior, gradient visible on border */
+/* gradient-fill accent cell — vivid color fill + glow */
 .lk-countdown-lit {
   border-color: transparent;
-  background:
-    var(--bg-1, #0C0F1A) padding-box,
-    var(--grad-cta) border-box;
+  background: var(--grad-cta);
   box-shadow: var(--glow-accent);
 }
 
-/* label needs to stay legible on the dark-interior lit cell */
+/* white semi-transparent label so it reads on any gradient fill */
 .lk-countdown-lit .lk-countdown-label {
-  color: var(--accent-2, #22D3EE);
-  opacity: 0.85;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .lk-countdown-num {

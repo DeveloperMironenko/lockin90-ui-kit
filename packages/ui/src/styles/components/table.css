@@ -75,7 +75,7 @@
 
 .lk-table-sort-icon {
   flex: none;
-  color: var(--text-faint);
+  color: var(--text-dim);
   transition: color 0.18s var(--ease);
 }
 /* the active column's chevron picks up the accent for a clear "sorted by this" cue */

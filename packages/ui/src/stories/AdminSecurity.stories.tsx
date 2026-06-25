@@ -5,7 +5,7 @@ import { ReferenceRangeBar } from '../admin/ReferenceRangeBar';
 /* Combined catalog for the two operator-console primitives:
    RecoveryCodeGrid (MFA backup codes) + ReferenceRangeBar (lab reference ranges). */
 const meta = {
-  title: 'Admin/RecoveryCodeGrid & ReferenceRangeBar',
+  title: 'Primitives/RecoveryCodeGrid & ReferenceRangeBar',
   parameters: { layout: 'padded' },
 } satisfies Meta;
 export default meta;

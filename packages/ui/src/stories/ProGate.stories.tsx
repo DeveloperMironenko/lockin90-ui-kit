@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ProGate, LockedRow } from '../components/ProGate';
 
 const meta = {
-  title: 'Components/ProGate',
+  title: 'Primitives/ProGate',
   component: ProGate,
   parameters: { layout: 'centered' },
 } satisfies Meta<typeof ProGate>;

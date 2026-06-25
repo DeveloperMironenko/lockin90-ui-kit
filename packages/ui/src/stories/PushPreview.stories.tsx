@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PushPreview } from '../admin/PushPreview';
 
 const meta = {
-  title: 'Admin/PushPreview',
+  title: 'Primitives/PushPreview',
   component: PushPreview,
   parameters: { layout: 'centered' },
   args: {

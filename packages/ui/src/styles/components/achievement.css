@@ -1,21 +1,17 @@
 /* ============================================================================
-   AchievementBadge — a centered medal: a circular tier-colored medallion
-   holding the icon, optionally wrapped by a progress Ring (in-progress badges),
-   with the title, description and an optional unlock date below. Unlocked
-   badges get an animated gradient hairline + glow on hover; locked badges are
-   desaturated, dimmed and carry a small lock overlay in the corner. Tier color
-   is driven inline by `--lk-badge-tier`. Mirrors the Aurora Flux badge gallery.
-   Key: .lk-badge
+   AchievementBadge — a centered medal card: tier-colored medallion + progress
+   Ring (optional), title, description, unlock date. Unlocked badges animate a
+   gradient hairline; locked ones are desaturated + dimmed + lock overlay.
+   Key: .lk-achv  (deliberately NOT .lk-badge — that class belongs to Toast)
    ========================================================================== */
-.lk-badge {
+.lk-achv {
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;    /* children fill card width → text wraps, not clips */
   text-align: center;
-  padding: 40px 20px 32px;
-  min-width: 110px;
-  /* overflow:hidden zeroes the min-content cross-size in flex — prevent collapse */
+  padding: 22px;
+  width: 160px;
   min-height: 200px;
   border-radius: var(--r-lg);
   overflow: hidden;
@@ -28,17 +24,15 @@
 }
 
 /* ── unlocked: animated gradient hairline + lift/glow on hover ───────────── */
-.lk-badge--unlocked {
+.lk-achv--unlocked {
   border-color: transparent;
-  /* subtle tier-colored radial bloom at the top of the card */
   background: radial-gradient(
     ellipse 80% 55% at 50% 0%,
-    color-mix(in srgb, var(--lk-badge-tier, var(--accent)) 10%, transparent),
+    color-mix(in srgb, var(--lk-achv-tier, var(--accent)) 10%, transparent),
     var(--bg-1) 65%
   );
 }
-/* gradient border — alternate direction creates a seamless loop */
-.lk-badge--unlocked::before {
+.lk-achv--unlocked::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -46,7 +40,7 @@
   border-radius: inherit;
   background: var(--grad-flux);
   background-size: 200% 100%;
-  animation: lk-badge-flow 5s ease-in-out infinite alternate;
+  animation: lk-achv-flow 5s ease-in-out infinite alternate;
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
@@ -54,40 +48,40 @@
   mask-composite: exclude;
   pointer-events: none;
 }
-.lk-badge--unlocked:hover {
+.lk-achv--unlocked:hover {
   transform: translateY(-5px);
   box-shadow: var(--glow-accent);
 }
 
-@keyframes lk-badge-flow {
+@keyframes lk-achv-flow {
   from { background-position: 0% 0; }
   to   { background-position: 100% 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lk-badge--unlocked::before {
+  .lk-achv--unlocked::before {
     animation: none;
     background-position: 0% 0;
   }
 }
 
 /* ── locked: desaturated + dimmed ────────────────────────────────────────── */
-.lk-badge--locked {
+.lk-achv--locked {
   opacity: 0.62;
   filter: saturate(0.55);
 }
-.lk-badge--locked:hover {
+.lk-achv--locked:hover {
   opacity: 0.85;
   transform: translateY(-3px);
   border-color: var(--border-2);
 }
 
-.lk-badge:focus-within {
+.lk-achv:focus-within {
   outline: 2px solid var(--accent-2);
   outline-offset: 2px;
 }
 
 /* ── lock overlay (corner) ───────────────────────────────────────────────── */
-.lk-badge-lock {
+.lk-achv-lock {
   position: absolute;
   top: 12px;
   right: 12px;
@@ -96,72 +90,76 @@
 }
 
 /* ── crest: holds the medal (and the optional progress ring around it) ────── */
-.lk-badge-crest {
+.lk-achv-crest {
   display: grid;
   place-items: center;
+  align-self: center;       /* re-center in stretch layout */
   margin-bottom: 13px;
 }
 
 /* the medallion — tier-colored disc with radial glow + inset highlight */
-.lk-badge-medal {
+.lk-achv-medal {
   width: 64px;
   height: 64px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--lk-badge-tier, var(--accent)) 28%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lk-achv-tier, var(--accent)) 28%, transparent);
   background: radial-gradient(
     circle at 38% 35%,
-    color-mix(in srgb, var(--lk-badge-tier, var(--accent)) 45%, transparent),
-    color-mix(in srgb, var(--lk-badge-tier, var(--accent)) 12%, #080A12) 65%,
+    color-mix(in srgb, var(--lk-achv-tier, var(--accent)) 45%, transparent),
+    color-mix(in srgb, var(--lk-achv-tier, var(--accent)) 12%, #080A12) 65%,
     #080A12 90%
   );
-  color: var(--lk-badge-tier, var(--accent));
+  color: var(--lk-achv-tier, var(--accent));
 }
-.lk-badge--unlocked .lk-badge-medal {
-  border-color: color-mix(in srgb, var(--lk-badge-tier, var(--accent)) 55%, transparent);
+.lk-achv--unlocked .lk-achv-medal {
+  border-color: color-mix(in srgb, var(--lk-achv-tier, var(--accent)) 55%, transparent);
   box-shadow:
-    0 0 20px color-mix(in srgb, var(--lk-badge-tier, var(--accent)) 35%, transparent),
+    0 0 20px color-mix(in srgb, var(--lk-achv-tier, var(--accent)) 35%, transparent),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-/* when wrapped by a Ring, the medal sits inside the ring's centered slot —
-   shrink it so the ring arc reads clearly around it */
-.lk-badge-crest .lk-ring .lk-badge-medal {
+/* when wrapped by a Ring, shrink the medal so the ring arc reads clearly */
+.lk-achv-crest .lk-ring .lk-achv-medal {
   width: 56px;
   height: 56px;
 }
 
 /* ── text block ──────────────────────────────────────────────────────────── */
-.lk-badge-name {
+.lk-achv-name {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 14.5px;
   letter-spacing: -0.01em;
   color: var(--text);
+  word-break: break-word;
 }
-.lk-badge-desc {
+.lk-achv-desc {
   font-size: 11.5px;
   color: var(--text-dim);
   margin-top: 5px;
   line-height: 1.4;
+  word-break: break-word;
 }
-.lk-badge-date {
+.lk-achv-date {
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--zone-high);
   margin-top: 11px;
   display: inline-flex;
+  align-self: center;       /* re-center in stretch layout */
   align-items: center;
   gap: 6px;
 }
-.lk-badge-date .lk-icon {
+.lk-achv-date .lk-icon {
   color: var(--zone-high);
 }
-.lk-badge-prog {
+.lk-achv-prog {
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--text-dim);
   margin-top: 11px;
   letter-spacing: 0.04em;
+  align-self: center;
 }

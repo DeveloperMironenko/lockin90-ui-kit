@@ -100,45 +100,48 @@ export function DayTimelineBlocks({
       style={{ ['--tl-h']: `${height}px`, ...style } as CSSProperties}
       {...rest}
     >
-      <div className="lk-daytl-track">
-        {/* faint hour gridlines */}
-        {ticks.map((h) =>
-          h > startHour && h < endHour ? (
-            <i
-              key={`g${h}`}
-              className="lk-daytl-grid"
-              aria-hidden="true"
-              style={{ left: `${pct(h) * 100}%` }}
-            />
-          ) : null,
-        )}
+      {/* wrapper gives the now-pointer a positioning context outside the clipping track */}
+      <div className="lk-daytl-wrap">
+        <div className="lk-daytl-track">
+          {/* faint hour gridlines */}
+          {ticks.map((h) =>
+            h > startHour && h < endHour ? (
+              <i
+                key={`g${h}`}
+                className="lk-daytl-grid"
+                aria-hidden="true"
+                style={{ left: `${pct(h) * 100}%` }}
+              />
+            ) : null,
+          )}
 
-        {/* the colored time blocks */}
-        {blocks.map((b, i) => {
-          const left = pct(b.start);
-          const width = Math.max(0, pct(b.end) - left);
-          if (width <= 0) return null;
-          return (
-            <div
-              key={i}
-              className="lk-daytl-block"
-              title={b.label}
-              style={
-                {
-                  left: `${left * 100}%`,
-                  width: `${width * 100}%`,
-                  background: b.color ?? DEFAULT_COLOR,
-                } as CSSProperties
-              }
-            >
-              {b.label != null && (
-                <span className="lk-daytl-block-label">{b.label}</span>
-              )}
-            </div>
-          );
-        })}
+          {/* the colored time blocks */}
+          {blocks.map((b, i) => {
+            const left = pct(b.start);
+            const width = Math.max(0, pct(b.end) - left);
+            if (width <= 0) return null;
+            return (
+              <div
+                key={i}
+                className="lk-daytl-block"
+                title={b.label}
+                style={
+                  {
+                    left: `${left * 100}%`,
+                    width: `${width * 100}%`,
+                    background: b.color ?? DEFAULT_COLOR,
+                  } as CSSProperties
+                }
+              >
+                {b.label != null && (
+                  <span className="lk-daytl-block-label">{b.label}</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
 
-        {/* the "now" marker line + dot */}
+        {/* now-pointer sits in the wrapper, NOT inside the clipping track */}
         {nowFrac != null && (
           <span
             className="lk-daytl-now"

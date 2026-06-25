@@ -55,20 +55,21 @@
   height: 10px;
   border-radius: var(--r-pill);
   border: 1px solid var(--border);
+  /* vertical margin lets the marker glow render without being clipped */
+  margin: 7px 0;
+  overflow: visible;
   background: linear-gradient(
     90deg,
-    rgba(255, 77, 109, 0.30) 0%,
-    rgba(255, 77, 109, 0.30) var(--low, 18%),
-    rgba(52, 245, 197, 0.28) var(--low, 18%),
-    rgba(52, 245, 197, 0.28) var(--high, 78%),
-    rgba(255, 77, 109, 0.30) var(--high, 78%),
-    rgba(255, 77, 109, 0.30) 100%
+    rgba(255, 77, 109, 0.35) 0%,
+    rgba(255, 77, 109, 0.35) var(--low, 18%),
+    rgba(52, 245, 197, 0.15) var(--low, 18%),
+    rgba(52, 245, 197, 0.15) var(--high, 78%),
+    rgba(255, 77, 109, 0.35) var(--high, 78%),
+    rgba(255, 77, 109, 0.35) 100%
   );
-  /* the [min,low] low zone reads amber, the [high,max] high zone reads red.
-     overflow stays visible so the marker dot can sit above the track. */
 }
 
-/* the in-range (green) optimal band drawn as an explicit fill for emphasis */
+/* the in-range (optimal) band — vivid solid green matching the ok-zone marker color */
 .lk-rangebar-band {
   position: absolute;
   top: 0;
@@ -76,8 +77,9 @@
   left: var(--low, 18%);
   right: calc(100% - var(--high, 78%));
   border-radius: var(--r-pill);
-  background: linear-gradient(90deg, rgba(52, 245, 197, 0.45), rgba(34, 211, 238, 0.40));
-  box-shadow: inset 0 0 8px rgba(52, 245, 197, 0.3);
+  background: linear-gradient(90deg, var(--zone-high, #34F5C5), var(--ok, #34F5C5));
+  opacity: 0.72;
+  box-shadow: 0 0 10px rgba(52, 245, 197, 0.4);
 }
 
 /* the value marker — a glowing dot at the value's fraction, tone-colored */
@@ -91,6 +93,6 @@
   transform: translate(-50%, -50%);
   background: var(--marker, var(--zone-high));
   border: 2.5px solid var(--bg-0);
-  box-shadow: 0 0 0 2px var(--marker, var(--zone-high)), 0 0 12px var(--marker, var(--zone-high));
+  box-shadow: 0 0 0 2px var(--marker, var(--zone-high)), 0 0 14px var(--marker, var(--zone-high));
   z-index: 3;
 }

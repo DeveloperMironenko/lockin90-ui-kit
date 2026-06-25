@@ -93,12 +93,12 @@ function SortIcon({ state }: { state: 'none' | 'asc' | 'desc' }) {
   return (
     <svg
       className={cn('lk-table-sort-icon', state !== 'none' && 'lk-table-sort-active')}
-      width="11"
-      height="11"
+      width="14"
+      height="14"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2.5"
+      strokeWidth="2.2"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"

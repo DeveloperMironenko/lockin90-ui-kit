@@ -86,7 +86,7 @@ export function Countdown({ to, parts, units = ALL_UNITS, highlightUnit, style }
         return (
           <View key={unit} style={[styles.cell, lit && styles.cellLit]}>
             <Text style={styles.num}>{pad(value[unit])}</Text>
-            <Text style={styles.label}>{UNIT_LABEL[unit]}</Text>
+            <Text style={[styles.label, lit && styles.labelLit]}>{UNIT_LABEL[unit]}</Text>
           </View>
         );
       })}
@@ -113,9 +113,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.glass,
   },
   cellLit: {
-    borderColor: colors.accent,
-    backgroundColor: colors.glass2,
+    borderColor: 'transparent',
+    backgroundColor: colors.accent,
     ...nativeShadows.glowAccent,
+  },
+  labelLit: {
+    color: 'rgba(255,255,255,0.72)',
   },
   num: {
     fontFamily: fonts.display,

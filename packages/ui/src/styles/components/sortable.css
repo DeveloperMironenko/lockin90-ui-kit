@@ -21,8 +21,12 @@
   border-radius: var(--r-sm);
   background: var(--glass);
   border: 1px solid var(--border);
+  cursor: grab;
   transition: background 0.18s var(--ease-soft), border-color 0.18s var(--ease-soft),
     opacity 0.18s var(--ease-soft), box-shadow 0.18s var(--ease-soft);
+}
+.lk-sortable-row:active {
+  cursor: grabbing;
 }
 
 /* ---- the row being dragged: lift + dim ---- */

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { InlineEdit, type InlineEditProps } from '../admin/InlineEdit';
 
 const meta = {
-  title: 'Admin/InlineEdit',
+  title: 'Primitives/InlineEdit',
   component: InlineEdit,
   // Defaults satisfy the required props; each story's `render` supplies its own
   // stateful instance via <Live>.

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { SecretField } from '../admin/SecretField';
 
 const meta = {
-  title: 'Admin/SecretField',
+  title: 'Primitives/SecretField',
   component: SecretField,
   parameters: { layout: 'centered' },
 } satisfies Meta<typeof SecretField>;

@@ -22,7 +22,7 @@
   content: 'LIVE PREVIEW · ' attr(data-channel);
   position: absolute;
   top: 9px;
-  right: 11px;
+  right: 20px;
   font-family: var(--font-mono);
   font-size: 8.5px;
   letter-spacing: 0.14em;

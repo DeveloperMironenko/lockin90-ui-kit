@@ -14,6 +14,11 @@
   width: 100%;
 }
 
+/* wrapper gives the now-pointer a positioning context so it can overflow the track */
+.lk-daytl-wrap {
+  position: relative;
+}
+
 /* the rail track — faint glass, hairline border, clips the blocks */
 .lk-daytl-track {
   position: relative;
@@ -64,39 +69,39 @@
   text-overflow: ellipsis;
 }
 
-/* the bright "now" marker — full-height accent line + a glowing dot on top.
-   The track uses overflow:hidden so we must keep the line+dot fully inside
-   the track bounds (top/bottom 0), and float the dot above the track using
-   a sibling pseudo-element via the wrapper that escapes the clip. */
+/* the bright "now" marker — spans the full wrapper (track + overflow).
+   Positioned relative to .lk-daytl-wrap so it can protrude above/below the track. */
 .lk-daytl-now {
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: -6px;
+  bottom: -6px;
   width: 2px;
   margin-left: -1px;
-  background: linear-gradient(to bottom, rgba(124, 92, 255, 0.0), var(--accent) 30%);
-  box-shadow: 0 0 6px rgba(124, 92, 255, 0.7);
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(124, 92, 255, 0.8);
   z-index: 8;
   pointer-events: none;
 }
 
+/* glowing circle at the top of the now-line */
 .lk-daytl-now::before {
   content: '';
   position: absolute;
-  top: 3px;
+  top: -1px;
   left: 50%;
   transform: translateX(-50%);
   width: 10px;
   height: 10px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 8px 2px rgba(124, 92, 255, 0.8);
+  box-shadow: 0 0 10px 2px rgba(124, 92, 255, 0.85);
 }
 
+/* white center pin inside the circle */
 .lk-daytl-now::after {
   content: '';
   position: absolute;
-  top: 6px;
+  top: 2px;
   left: 50%;
   transform: translateX(-50%);
   width: 4px;

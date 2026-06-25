@@ -66,23 +66,8 @@
   height: 18px;
 }
 
-/* Quiet text Cancel affordance under the actions */
+/* Cancel — same height as the Confirm button (full-width ghost Button) */
 .lk-reauth-cancel {
-  align-self: center;
-  margin-top: -2px;
-  padding: 4px 8px;
-  border: 0;
-  background: transparent;
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--text-faint);
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-.lk-reauth-cancel:hover:not(:disabled) {
-  color: var(--text);
-}
-.lk-reauth-cancel:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  width: 100%;
+  justify-content: center;
 }

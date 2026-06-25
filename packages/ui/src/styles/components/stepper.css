@@ -26,7 +26,10 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  flex: 0 0 auto;
+  /* Fixed to node width so label overhang doesn't push the line away from the circle */
+  flex: 0 0 30px;
+  width: 30px;
+  overflow: visible;
 }
 
 .lk-step-node {

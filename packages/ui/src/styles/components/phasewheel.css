@@ -12,10 +12,15 @@
   display: inline-grid;
   place-items: center;
   flex: none;
+  /* extra padding so cardinal labels + marker labels have room to render */
+  padding: 24px;
+  box-sizing: content-box;
 }
 
 .lk-pw-svg {
   display: block;
+  /* let ticks/labels extend past the ring edge without clipping */
+  overflow: visible;
   /* subtle depth so the phase bands read against the surface */
   filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.35));
 }

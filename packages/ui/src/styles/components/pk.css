@@ -91,14 +91,15 @@
   color: var(--text-dim);
 }
 
-/* right-aligned threshold label pinned at the threshold y */
+/* right-aligned threshold label pinned ABOVE the threshold y — opaque bg so the
+   dashed line doesn't bleed through the label text */
 .lk-pk-th-tag {
   position: absolute; right: 4px;
-  transform: translateY(-50%);
+  transform: translateY(-100%) translateY(-4px);
   font-family: var(--font-mono); font-size: 9px; line-height: 1;
   letter-spacing: 0.04em; white-space: nowrap;
   padding: 2px 6px; border-radius: var(--r-sm, 10px);
-  border: 1px solid var(--bad); background: var(--glass-2, rgba(12, 15, 26, 0.7));
+  border: 1px solid var(--bad); background: var(--bg-0, #080A12);
   color: var(--bad);
   pointer-events: none;
 }

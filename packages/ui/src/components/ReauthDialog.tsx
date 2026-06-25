@@ -146,9 +146,15 @@ export function ReauthDialog({
           </Button>
         ) : null}
 
-        <button type="button" className="lk-reauth-cancel" onClick={close} disabled={loading}>
+        <Button
+          type="button"
+          variant="ghost"
+          className="lk-reauth-cancel"
+          onClick={close}
+          disabled={loading}
+        >
           Cancel
-        </button>
+        </Button>
       </div>
     </Modal>
   );

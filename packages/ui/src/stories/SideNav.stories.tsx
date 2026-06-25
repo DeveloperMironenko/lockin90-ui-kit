@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { SideNav, type NavGroupData } from '../admin/SideNav';
 
 const meta = {
-  title: 'Admin/SideNav',
+  title: 'Primitives/SideNav',
   component: SideNav,
   parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof SideNav>;

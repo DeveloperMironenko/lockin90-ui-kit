@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PulseStrip } from '../admin/PulseStrip';
 
 const meta = {
-  title: 'Admin/PulseStrip',
+  title: 'Primitives/PulseStrip',
   component: PulseStrip,
   parameters: { layout: 'padded' },
 } satisfies Meta<typeof PulseStrip>;

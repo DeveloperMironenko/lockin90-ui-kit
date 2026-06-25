@@ -104,15 +104,16 @@
   font-weight: 700;
   font-size: 16px;
   font-variant-numeric: tabular-nums;
-  /* dark ink reads against the bright spectrum fill */
-  color: var(--bg-0);
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
 }
 
 .lk-funnel-conv {
   font-family: var(--font-mono);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
-  color: rgba(8, 10, 18, 0.7);
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .lk-funnel-drop {

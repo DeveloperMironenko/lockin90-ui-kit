@@ -21,7 +21,7 @@
   font-weight: 600;
   letter-spacing: -0.005em;
   color: var(--text-dim);
-  padding: 7px 10px;
+  padding: 7px 16px;
   border: 0;
   border-radius: var(--r-pill);
   background: transparent;

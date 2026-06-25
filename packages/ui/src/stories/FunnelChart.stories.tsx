@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { FunnelChart, type FunnelStep } from '../admin/FunnelChart';
 
 const meta = {
-  title: 'Admin/FunnelChart',
+  title: 'Primitives/FunnelChart',
   component: FunnelChart,
   parameters: { layout: 'padded' },
 } satisfies Meta<typeof FunnelChart>;

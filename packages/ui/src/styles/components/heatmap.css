@@ -75,9 +75,10 @@
   box-shadow: 0 0 6px var(--zone-low, #ff4d6d);
 }
 
-/* in-cell label (grid variant) — small mono day number */
+/* in-cell label (grid variant) — small mono day number; white with opacity reads on any cell color */
 .lk-heatmap-label {
   font-size: 10px;
   line-height: 1;
-  color: var(--text-dim, #aab2c6);
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 600;
 }

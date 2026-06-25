@@ -3,7 +3,7 @@ import { MethodChip, type Method } from '../admin/MethodChip';
 import { RedactedField } from '../admin/RedactedField';
 
 const meta = {
-  title: 'Admin/MethodChip & RedactedField',
+  title: 'Primitives/MethodChip & RedactedField',
   component: MethodChip,
   parameters: { layout: 'centered' },
 } satisfies Meta<typeof MethodChip>;

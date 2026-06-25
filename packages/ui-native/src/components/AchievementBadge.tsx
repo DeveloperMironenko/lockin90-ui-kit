@@ -58,7 +58,14 @@ export function AchievementBadge({
       style={[
         styles.medal,
         { width: medalSize, height: medalSize, borderRadius: medalSize / 2 },
-        !locked && { borderColor: tint(accent, 0.38) },
+        { backgroundColor: tint(accent, locked ? 0.06 : 0.22), borderColor: tint(accent, locked ? 0.2 : 0.5) },
+        !locked && {
+          shadowColor: accent,
+          shadowOpacity: 0.45,
+          shadowRadius: 10,
+          shadowOffset: { width: 0, height: 0 },
+          elevation: 6,
+        },
       ]}
     >
       <Icon name={icon} size={30} color={accent} />
@@ -117,9 +124,9 @@ function tint(hex: string, alpha: number): string {
 
 const styles = StyleSheet.create({
   badge: {
-    paddingTop: 20,
-    paddingHorizontal: 18,
-    paddingBottom: 18,
+    padding: 22,
+    width: 160,
+    minHeight: 200,
     borderRadius: radii.lg,
     borderWidth: 1,
     alignItems: 'center',
@@ -139,7 +146,9 @@ const styles = StyleSheet.create({
     top: 12,
     right: 12,
   },
+  /* fixed height so regular (64px medal) and in-progress (84px ring) cards match */
   crest: {
+    height: 84,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 13,

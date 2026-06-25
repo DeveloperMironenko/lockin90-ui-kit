@@ -36,24 +36,24 @@ export interface HeatmapProps extends HTMLAttributes<HTMLDivElement> {
   max?: number;
 }
 
-/** low-intensity ramp end — faint glass so empty/low cells read as "background" */
-const DEFAULT_FROM = '#0E1422';
+/** low-intensity ramp end — dark violet, clearly visible and distinct from the bg */
+const DEFAULT_FROM = '#2B1F5C';
 /** high-intensity ramp end — mint (the brand "high" zone) */
 const DEFAULT_TO = '#34F5C5';
 
-/** A small calendar-week sample so `<Heatmap />` renders something on its own. */
+/** A small calendar-week sample covering the full intensity range so the scale reads. */
 const DEFAULT_CELLS: HeatmapCell[] = [
-  { value: 0.63, label: '1' },
-  { value: 0.77, label: '2' },
-  { value: 0.91, label: '3' },
-  { value: 0.71, label: '4' },
-  { value: 0.41, label: '5', flag: true },
-  { value: 0.66, label: '6' },
-  { value: 0.79, label: '7' },
-  { value: 0.83, label: '8' },
-  { value: 0.7, label: '9' },
-  { value: 0.75, label: '10' },
-  { value: 0.78, label: '11', today: true },
+  { value: 0.15, label: '1' },
+  { value: 0.3, label: '2' },
+  { value: 0.85, label: '3' },
+  { value: 0.55, label: '4' },
+  { value: 0.08, label: '5', flag: true },
+  { value: 0.72, label: '6' },
+  { value: 0.92, label: '7' },
+  { value: 0.38, label: '8' },
+  { value: 0.61, label: '9' },
+  { value: 0.78, label: '10' },
+  { value: 0.95, label: '11', today: true },
 ];
 
 /** Clamp to [0, 1]. */
@@ -92,7 +92,7 @@ export function lerpColor(from: string, to: string, t: number): string {
 export function Heatmap({
   cells = DEFAULT_CELLS,
   columns = 7,
-  cellSize = 16,
+  cellSize = 28,
   gap = 4,
   radius,
   colorFrom = DEFAULT_FROM,

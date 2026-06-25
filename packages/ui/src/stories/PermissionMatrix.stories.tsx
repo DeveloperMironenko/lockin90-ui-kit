@@ -8,7 +8,7 @@ import {
 } from '../admin/PermissionMatrix';
 
 const meta = {
-  title: 'Admin/PermissionMatrix',
+  title: 'Primitives/PermissionMatrix',
   component: PermissionMatrix,
   parameters: { layout: 'padded' },
   args: { rows: [], cols: [], cells: {} },

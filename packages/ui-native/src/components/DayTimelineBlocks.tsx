@@ -96,49 +96,52 @@ export function DayTimelineBlocks({
 
   return (
     <View style={[styles.root, style]}>
-      <View style={[styles.track, { height }]}>
-        {/* faint hour gridlines */}
-        {ticks.map((h) =>
-          h > startHour && h < endHour ? (
-            <View
-              key={`g${h}`}
-              pointerEvents="none"
-              style={[styles.grid, { left: `${pct(h) * 100}%` as DimensionValue }]}
-            />
-          ) : null,
-        )}
+      {/* wrapper lets the now-pointer overflow the clipping track */}
+      <View style={styles.wrap}>
+        <View style={[styles.track, { height }]}>
+          {/* faint hour gridlines */}
+          {ticks.map((h) =>
+            h > startHour && h < endHour ? (
+              <View
+                key={`g${h}`}
+                pointerEvents="none"
+                style={[styles.grid, { left: `${pct(h) * 100}%` as DimensionValue }]}
+              />
+            ) : null,
+          )}
 
-        {/* the colored time blocks */}
-        {blocks.map((b, i) => {
-          const left = pct(b.start);
-          const width = Math.max(0, pct(b.end) - left);
-          if (width <= 0) return null;
-          return (
-            <View
-              key={i}
-              style={[
-                styles.block,
-                {
-                  left: `${left * 100}%` as DimensionValue,
-                  width: `${width * 100}%` as DimensionValue,
-                  backgroundColor: b.color ?? DEFAULT_COLOR,
-                },
-              ]}
-            >
-              {b.label != null && (
-                <Text numberOfLines={1} style={styles.blockLabel}>
-                  {b.label}
-                </Text>
-              )}
-            </View>
-          );
-        })}
+          {/* the colored time blocks */}
+          {blocks.map((b, i) => {
+            const left = pct(b.start);
+            const width = Math.max(0, pct(b.end) - left);
+            if (width <= 0) return null;
+            return (
+              <View
+                key={i}
+                style={[
+                  styles.block,
+                  {
+                    left: `${left * 100}%` as DimensionValue,
+                    width: `${width * 100}%` as DimensionValue,
+                    backgroundColor: b.color ?? DEFAULT_COLOR,
+                  },
+                ]}
+              >
+                {b.label != null && (
+                  <Text numberOfLines={1} style={styles.blockLabel}>
+                    {b.label}
+                  </Text>
+                )}
+              </View>
+            );
+          })}
+        </View>
 
-        {/* the "now" marker line + dot */}
+        {/* now-pointer is a sibling of the track, not inside it — escapes overflow:hidden */}
         {nowFrac != null && (
           <View
             pointerEvents="none"
-            style={[styles.now, { left: `${nowFrac * 100}%` as DimensionValue }]}
+            style={[styles.now, { left: `${nowFrac * 100}%` as DimensionValue, top: -6, bottom: -6 }]}
           >
             <View style={styles.nowDot} />
           </View>
@@ -179,6 +182,10 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: 8,
   },
+  /* wrapper lets the now-pointer overflow the clipping track */
+  wrap: {
+    position: 'relative',
+  },
   /* the rail track — faint glass, hairline border, clips the blocks */
   track: {
     position: 'relative',
@@ -214,36 +221,36 @@ const styles = StyleSheet.create({
     lineHeight: 11,
     color: 'rgba(8,10,18,0.92)',
   },
-  /* the bright "now" marker line */
+  /* the bright "now" marker line — kept inside track bounds to avoid overflow:hidden clip */
   now: {
     position: 'absolute',
-    top: -2,
-    bottom: -2,
+    top: 0,
+    bottom: 0,
     width: 2,
     marginLeft: -1,
     backgroundColor: colors.accent,
     shadowColor: colors.accent,
-    shadowOpacity: 0.9,
-    shadowRadius: 5,
+    shadowOpacity: 0.7,
+    shadowRadius: 4,
     shadowOffset: { width: 0, height: 0 },
     elevation: 6,
     zIndex: 8,
   },
-  /* the glowing dot on top of the now line */
+  /* glowing circle at the top of the now-line */
   nowDot: {
     position: 'absolute',
-    top: -3,
+    top: -1,
     left: 1,
-    marginLeft: -4,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    marginLeft: -5,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: colors.accent,
     shadowColor: colors.accent,
     shadowOpacity: 0.9,
-    shadowRadius: 5,
+    shadowRadius: 8,
     shadowOffset: { width: 0, height: 0 },
-    elevation: 6,
+    elevation: 8,
   },
   /* hour axis row under the rail */
   axis: {
