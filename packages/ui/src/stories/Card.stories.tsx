@@ -10,6 +10,10 @@ export default meta;
 
 export const Default: StoryObj<typeof meta> = { args: { children: 'Glass card surface' } };
 
+export const Lit: StoryObj<typeof meta> = {
+  args: { lit: true, children: 'Lit hairline on the top edge' },
+};
+
 export const WarnTone: StoryObj<typeof meta> = {
   args: { tone: 'warn', children: 'Your subscription renews in 3 days' },
 };

@@ -1,14 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PasswordStrengthMeter } from '../components/PasswordStrengthMeter';
 
-const meta = {
+const meta: Meta<typeof PasswordStrengthMeter> = {
   title: 'Primitives/PasswordStrengthMeter',
   component: PasswordStrengthMeter,
   parameters: { layout: 'centered' },
-} satisfies Meta<typeof PasswordStrengthMeter>;
+  decorators: [
+    (Story) => (
+      <div style={{ width: 280 }}>
+        <Story />
+      </div>
+    ),
+  ],
+};
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof PasswordStrengthMeter>;
 
 export const Weak: Story = {
   args: { score: 1 },

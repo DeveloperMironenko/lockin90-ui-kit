@@ -32,6 +32,8 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--text-dim);
+  /* keep the attribution reason on a single line */
+  white-space: nowrap;
 }
 
 /* tones — colors the value + leading icon (label stays dim) */

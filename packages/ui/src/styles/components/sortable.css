@@ -21,11 +21,15 @@
   border-radius: var(--r-sm);
   background: var(--glass);
   border: 1px solid var(--border);
-  cursor: grab;
   transition: background 0.18s var(--ease-soft), border-color 0.18s var(--ease-soft),
     opacity 0.18s var(--ease-soft), box-shadow 0.18s var(--ease-soft);
 }
-.lk-sortable-row:active {
+
+/* whole-row drag mode (handle={false}) — the entire row is the grab surface */
+.lk-sortable-row--draggable {
+  cursor: grab;
+}
+.lk-sortable-row--draggable:active {
   cursor: grabbing;
 }
 
@@ -67,7 +71,7 @@
   cursor: grabbing;
 }
 .lk-sortable-handle:disabled {
-  cursor: default;
+  cursor: not-allowed;
   opacity: 0.4;
 }
 
@@ -96,9 +100,10 @@
   margin-top: -2px;
 }
 
-/* ---- disabled: whole list inert ---- */
+/* ---- disabled: whole list inert + disabled cursor on every row ---- */
 .lk-sortable-disabled .lk-sortable-row {
   opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* ---- screen-reader-only keyboard hint ---- */

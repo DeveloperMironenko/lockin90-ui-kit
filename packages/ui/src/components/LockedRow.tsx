@@ -1,14 +1,5 @@
-import { type ButtonHTMLAttributes, type HTMLAttributes, type ReactNode } from 'react';
+import { type ButtonHTMLAttributes } from 'react';
 import { cn } from '../cn';
-
-export interface ProGateProps extends HTMLAttributes<HTMLDivElement> {
-  /** Lock-card heading. */
-  title?: string;
-  /** Lock-card supporting line. */
-  subtitle?: string;
-  /** Gated content, shown blurred behind the overlay. */
-  children?: ReactNode;
-}
 
 /** Padlock — body + shackle. */
 function LockIcon({ className }: { className?: string }) {
@@ -17,32 +8,6 @@ function LockIcon({ className }: { className?: string }) {
       <rect x="4" y="10.5" width="16" height="10" rx="2.2" />
       <path d="M8 10.5V7a4 4 0 0 1 8 0v3.5" />
     </svg>
-  );
-}
-
-/** Premium-lock overlay: blurred gated content behind a centered lock card. */
-export function ProGate({
-  title = 'PRO Feature',
-  subtitle = 'Visualize PR progression with PRO',
-  children,
-  className,
-  ...rest
-}: ProGateProps) {
-  return (
-    <div className={cn('lk-pro', className)} {...rest}>
-      <div className="lk-pro-content" aria-hidden="true">
-        {children}
-      </div>
-      <div className="lk-pro-overlay">
-        <div className="lk-pro-card">
-          <span className="lk-pro-lock">
-            <LockIcon />
-          </span>
-          <div className="lk-pro-title">{title}</div>
-          <div className="lk-pro-sub">{subtitle}</div>
-        </div>
-      </div>
-    </div>
   );
 }
 

@@ -12,12 +12,19 @@
   align-items: center;
   gap: 8px;
   align-self: flex-start;
+  /* don't let a flex parent squeeze the bubble below its content, which would
+     make the dots overflow asymmetrically (less padding on one side) */
+  flex: none;
+  width: fit-content;
   max-width: 82%;
   padding: 12px 16px;
   border-radius: var(--r-pill);
   background: var(--glass-2);
   border: 1px solid var(--border-2);
   font-family: var(--font-ui);
+}
+.lk-typing-dots {
+  flex: none;
 }
 
 .lk-typing-label {

@@ -15,7 +15,7 @@ import { BrandMark } from '../components/BrandMark';
 import { Icon } from '../components/Icon';
 import { Avatar } from '../components/Avatar';
 import { SegmentedTabs } from '../components/SegmentedTabs';
-import { LockedRow } from '../components/ProGate';
+import { LockedRow } from '../components/LockedRow';
 
 const meta = {
   title: 'Docs/Primitives',

@@ -14,6 +14,8 @@ export interface TagInputProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onC
   onChange?: (tags: string[]) => void;
   /** placeholder for the text input */
   placeholder?: string;
+  /** error state — red border + glow (e.g. a duplicate / invalid tag) */
+  invalid?: boolean;
 }
 
 /** Cross/× glyph used to remove a tag. */
@@ -30,6 +32,7 @@ export function TagInput({
   tags: tagsProp = ['sleep', 'recovery'],
   onChange,
   placeholder = 'Add a tag…',
+  invalid = false,
   className,
   ...rest
 }: TagInputProps) {
@@ -66,7 +69,11 @@ export function TagInput({
   };
 
   return (
-    <div className={cn('lk-taginput', className)} {...rest}>
+    <div
+      className={cn('lk-taginput', invalid && 'lk-taginput--invalid', className)}
+      aria-invalid={invalid || undefined}
+      {...rest}
+    >
       {tags.map((tag, i) => (
         <span key={`${tag}-${i}`} className="lk-taginput-tag">
           {tag}
@@ -105,6 +112,8 @@ export interface CodeInputProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   value?: string;
   /** called with the joined code whenever it changes */
   onChange?: (code: string) => void;
+  /** error state — red boxes (e.g. an incorrect / expired code) */
+  invalid?: boolean;
 }
 
 /** Segmented N-digit verification code — auto-advance, backspace, paste. */
@@ -112,6 +121,7 @@ export function CodeInput({
   length = 6,
   value = '',
   onChange,
+  invalid = false,
   className,
   ...rest
 }: CodeInputProps) {
@@ -173,7 +183,11 @@ export function CodeInput({
   };
 
   return (
-    <div className={cn('lk-code', className)} {...rest}>
+    <div
+      className={cn('lk-code', invalid && 'lk-code--invalid', className)}
+      aria-invalid={invalid || undefined}
+      {...rest}
+    >
       {chars.map((ch, i) => (
         <input
           key={i}

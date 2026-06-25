@@ -22,6 +22,8 @@ export interface PricingTierCardProps {
   badge?: string;
   /** CTA slot — consumer passes a `<Button>` (renders at the bottom) */
   cta?: ReactNode;
+  /** dim + disable the whole card (unavailable / current plan / coming soon) */
+  disabled?: boolean;
   className?: string;
 }
 
@@ -43,13 +45,20 @@ export function PricingTierCard({
   ribbonLabel = 'Most popular',
   badge,
   cta,
+  disabled = false,
   className,
 }: PricingTierCardProps) {
   return (
     <Card
-      hover={!featured}
+      hover={!featured && !disabled}
       flat={featured}
-      className={cn('lk-tier', featured && 'lk-tier-featured', className)}
+      aria-disabled={disabled || undefined}
+      className={cn(
+        'lk-tier',
+        featured && 'lk-tier-featured',
+        disabled && 'lk-tier--disabled',
+        className,
+      )}
     >
       {featured && <span className="lk-tier-ribbon">{ribbonLabel}</span>}
 

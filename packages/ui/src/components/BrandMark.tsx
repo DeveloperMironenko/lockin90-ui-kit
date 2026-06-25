@@ -64,7 +64,10 @@ export function BrandMark({ variant = 'mark', size = 28, title = 'LockIn90', ...
         </defs>
         <rect width="343" height="302" fill={`url(#${gid}b)`} />
         <rect width="343" height="302" fill={`url(#${gid}g)`} />
-        <MarkGlyph />
+        {/* center the solid glyph (line+dot bbox x[33,318] y[60,271]) in the tile */}
+        <g transform="translate(-4 -14.5)">
+          <MarkGlyph />
+        </g>
       </svg>
     );
   }

@@ -1,5 +1,16 @@
 import { View, Text, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Path, Circle, Rect, Defs, LinearGradient, RadialGradient, Stop } from 'react-native-svg';
+import Svg, {
+  Path,
+  Circle,
+  Rect,
+  Defs,
+  LinearGradient,
+  RadialGradient,
+  Stop,
+  G,
+  Text as SvgText,
+  TSpan,
+} from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 export type BrandMarkVariant = 'mark' | 'lockup' | 'icon' | 'mono';
@@ -33,12 +44,28 @@ function Glyph({ mono = false }: { mono?: boolean }) {
 /** LockIn90 brand mark for native — energy line climbing to a glowing lime peak. */
 export function BrandMark({ variant = 'mark', size = 28, style }: BrandMarkProps) {
   if (variant === 'lockup') {
+    // Render the wordmark in SVG so the "90" can carry the energy-spectrum
+    // gradient fill (matching the web `.lk-gradient-text`), with TSpans laying
+    // "LockIn" + "90" out inline automatically.
+    const F = Math.round(size * 1.05);
+    const wmW = Math.round(F * 4.7); // generous box for "LockIn90"
+    const wmH = Math.round(F * 1.35);
     return (
       <View style={[{ flexDirection: 'row', alignItems: 'center', gap: Math.round(size * 0.42) }, style]}>
         <BrandMark variant="mark" size={size} />
-        <Text style={{ fontFamily: fonts.display, fontWeight: '700', fontSize: Math.round(size * 1.05), color: colors.text, letterSpacing: -0.4 }}>
-          LockIn<Text style={{ color: colors.lime }}>90</Text>
-        </Text>
+        <Svg width={wmW} height={wmH}>
+          <Defs>
+            <LinearGradient id="lkWm90" x1="0" y1="0" x2="1" y2="0">
+              <Stop offset="0" stopColor="#A8FF35" />
+              <Stop offset="0.5" stopColor="#22D3EE" />
+              <Stop offset="1" stopColor="#7C5CFF" />
+            </LinearGradient>
+          </Defs>
+          <SvgText x={0} y={F} fontFamily={fonts.display} fontWeight="700" fontSize={F}>
+            <TSpan fill={colors.text}>LockIn</TSpan>
+            <TSpan fill="url(#lkWm90)">90</TSpan>
+          </SvgText>
+        </Svg>
       </View>
     );
   }
@@ -60,7 +87,10 @@ export function BrandMark({ variant = 'mark', size = 28, style }: BrandMarkProps
           </Defs>
           <Rect width={343} height={302} fill="url(#lkNbg)" />
           <Rect width={343} height={302} fill="url(#lkNgl)" />
-          <Glyph />
+          {/* center the solid glyph (line+dot bbox x[33,318] y[60,271]) in the tile */}
+          <G transform="translate(-4 -14.5)">
+            <Glyph />
+          </G>
         </Svg>
       </View>
     );

@@ -60,3 +60,25 @@ export const Elite: Story = {
     cta: <Button style={{ width: '100%' }}>Upgrade to Elite</Button>,
   },
 };
+
+export const Disabled: Story = {
+  args: {
+    name: 'Elite',
+    price: '$29',
+    period: '/mo',
+    disabled: true,
+    description: 'For coaches managing athletes — everything in Pro, plus a roster.',
+    features: [
+      'Manage up to 25 athletes',
+      'Athlete readiness dashboard',
+      'Encrypted coach DMs',
+      '14-day forecast horizon',
+      'Priority support & API',
+    ],
+    cta: (
+      <Button disabled style={{ width: '100%' }}>
+        Coming soon
+      </Button>
+    ),
+  },
+};

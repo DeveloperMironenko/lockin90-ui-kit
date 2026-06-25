@@ -119,9 +119,9 @@ export function PhaseWheel({
   const tickBase = r + thickness / 2 + 2;
   const tickMinor = tickBase + 3;
   const tickMajor = tickBase + 6;
-  const labelRadius = tickMajor + 9;
+  const labelRadius = tickMajor + 16;
   // marker label radius (outside the ring)
-  const markerLabelRadius = r + thickness / 2 + 12;
+  const markerLabelRadius = r + thickness / 2 + 20;
 
   // `now` is hidden when null/undefined; precompute the hand tip + clock label
   // (narrowed here so the render guards stay simple)

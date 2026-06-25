@@ -13,7 +13,7 @@
   place-items: center;
   flex: none;
   /* extra padding so cardinal labels + marker labels have room to render */
-  padding: 24px;
+  padding: 32px;
   box-sizing: content-box;
 }
 

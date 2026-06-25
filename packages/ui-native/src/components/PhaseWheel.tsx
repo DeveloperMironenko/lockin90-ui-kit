@@ -111,7 +111,11 @@ export function PhaseWheel({
   children,
   style,
 }: PhaseWheelProps) {
-  const c = size / 2;
+  // RN SVG hard-clips at its bounds (no overflow:visible), so pad the canvas
+  // out so cardinal + marker labels that sit OUTSIDE the ring aren't cut off.
+  const PAD = 46;
+  const canvas = size + PAD * 2;
+  const c = canvas / 2;
   const r = (size - thickness) / 2;
   const circ = 2 * Math.PI * r;
 
@@ -119,17 +123,17 @@ export function PhaseWheel({
   const tickBase = r + thickness / 2 + 2;
   const tickMinor = tickBase + 3;
   const tickMajor = tickBase + 6;
-  const labelRadius = tickMajor + 9;
+  const labelRadius = tickMajor + 14;
   // marker label radius (outside the ring)
-  const markerLabelRadius = r + thickness / 2 + 12;
+  const markerLabelRadius = r + thickness / 2 + 16;
 
   // `now` is hidden when null/undefined; precompute the hand tip + clock label
   const nowTip = now != null ? hourPoint(c, r, now) : null;
   const nowLabel = now != null ? formatHour(now) : null;
 
   return (
-    <View style={[styles.root, { width: size, height: size }, style]}>
-      <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+    <View style={[styles.root, { width: canvas, height: canvas }, style]}>
+      <Svg width={canvas} height={canvas} viewBox={`0 0 ${canvas} ${canvas}`}>
         {/* rotated group so fraction-of-circle hours start at 12 o'clock, clockwise */}
         <G origin={`${c}, ${c}`} rotation={-90}>
           {/* faint full track ring */}

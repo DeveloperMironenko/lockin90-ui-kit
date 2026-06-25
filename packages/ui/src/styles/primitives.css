@@ -16,7 +16,9 @@
 }
 .lk-card.lk-hover:hover { transform: translateY(-4px); border-color: var(--border-2); box-shadow: var(--elev-2); }
 .lk-card.lk-lit::before {
-  content: ""; position: absolute; inset: 0 0 auto 0; height: 1px; border-radius: var(--r) var(--r) 0 0;
+  /* inset by the corner radius so the straight hairline stays within the top
+     edge and doesn't overshoot the rounded corners */
+  content: ""; position: absolute; inset: 0 var(--r) auto var(--r); height: 1px;
   background: linear-gradient(90deg, transparent, rgba(124, 92, 255, 0.7), rgba(34, 211, 238, 0.7), transparent);
 }
 .lk-card.lk-pad-lg { padding: 30px; }

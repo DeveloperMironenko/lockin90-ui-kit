@@ -29,7 +29,6 @@ export const ProFeatured: Story = {
         name="Pro"
         price="$12"
         period="/mo"
-        badge="Popular"
         featured
         ribbonLabel="Most popular"
         description="The full attribution engine — unlimited everything."

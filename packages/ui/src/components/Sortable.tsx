@@ -169,7 +169,11 @@ export function Sortable({
             key={item.id}
             data-lk-sortable-row
             role="listitem"
-            className={cn('lk-sortable-row', dragging && 'lk-sortable-dragging')}
+            className={cn(
+              'lk-sortable-row',
+              rowDrag && 'lk-sortable-row--draggable',
+              dragging && 'lk-sortable-dragging',
+            )}
           >
             {/* drop indicator — the gap the dragged row would land in */}
             {dragIndex != null && overIndex === i && (

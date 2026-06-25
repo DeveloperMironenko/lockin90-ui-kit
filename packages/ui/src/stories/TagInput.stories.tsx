@@ -11,6 +11,14 @@ export default meta;
 
 export const Default: StoryObj<typeof meta> = { args: {} };
 
+export const Invalid: StoryObj<typeof meta> = {
+  args: { invalid: true, tags: ['sleep', 'recovery'] },
+};
+
 export const Code: StoryObj<typeof meta> = {
   render: () => <CodeInput />,
+};
+
+export const CodeInvalid: StoryObj<typeof meta> = {
+  render: () => <CodeInput value="123456" invalid />,
 };

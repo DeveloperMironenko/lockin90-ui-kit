@@ -24,6 +24,8 @@ export interface PricingTierCardProps {
   badge?: string;
   /** CTA slot — consumer passes a `<Button>` (renders at the bottom) */
   cta?: ReactNode;
+  /** dim + disable the whole card (unavailable / current plan / coming soon) */
+  disabled?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -45,8 +47,10 @@ export function PricingTierCard({
   ribbonLabel = 'Most popular',
   badge,
   cta,
+  disabled = false,
   style,
 }: PricingTierCardProps) {
+  const dim = disabled ? { opacity: 0.5 } : null;
   const body = (
     <>
       {featured ? <Ribbon label={ribbonLabel} /> : null}
@@ -84,7 +88,8 @@ export function PricingTierCard({
         colors={gradients.cta.stops as unknown as [string, string]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={[styles.featuredBorder, style]}
+        style={[styles.featuredBorder, dim, style]}
+        pointerEvents={disabled ? 'none' : undefined}
       >
         <Card flat style={styles.featuredInner}>
           {body}
@@ -94,7 +99,9 @@ export function PricingTierCard({
   }
 
   return (
-    <Card style={[styles.card, style]}>{body}</Card>
+    <Card style={[styles.card, dim, style]} pointerEvents={disabled ? 'none' : undefined}>
+      {body}
+    </Card>
   );
 }
 

@@ -15,6 +15,14 @@
   gap: 4px;
 }
 
+/* ── disabled: dimmed + non-interactive (unavailable / current / coming soon) ── */
+.lk-tier--disabled {
+  opacity: 0.5;
+  filter: saturate(0.6);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
 /* ── featured: cta-gradient hairline border + accent glow ──────────────────── */
 .lk-tier-featured {
   border-color: transparent;

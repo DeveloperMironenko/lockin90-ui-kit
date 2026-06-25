@@ -84,6 +84,24 @@ export function PushPreview({
             <div className="lk-pushprev-body">{body}</div>
           ) : null}
         </div>
+      ) : channel === 'in-app' ? (
+        <div className="lk-pushprev-card">
+          {/* basic-app banner: logo + name + time + close along the TOP, copy below */}
+          <div className="lk-pushprev-apphead">
+            <span className="lk-pushprev-ic">{icon}</span>
+            <span className="lk-pushprev-name">{appName}</span>
+            <span className="lk-pushprev-time">{timeLabel}</span>
+            <span className="lk-pushprev-close" aria-hidden>
+              <Icon name="close" size={13} />
+            </span>
+          </div>
+          <div className="lk-pushprev-title">
+            {placeholder ? 'type to preview…' : title}
+          </div>
+          {!placeholder && body ? (
+            <div className="lk-pushprev-body">{body}</div>
+          ) : null}
+        </div>
       ) : (
         <div className="lk-pushprev-card">
           <span className="lk-pushprev-ic">{icon}</span>
@@ -99,11 +117,6 @@ export function PushPreview({
               <div className="lk-pushprev-body">{body}</div>
             ) : null}
           </div>
-          {channel === 'in-app' ? (
-            <span className="lk-pushprev-close" aria-hidden>
-              <Icon name="close" size={13} />
-            </span>
-          ) : null}
         </div>
       )}
     </div>

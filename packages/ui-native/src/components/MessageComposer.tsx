@@ -141,17 +141,21 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
     alignSelf: 'center',
+    // match the send button's height at rest; grow only on multiline
+    minHeight: 42,
     maxHeight: 120,
     backgroundColor: colors.glass,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radii.pill,
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 16,
+    // center single-line text so the field isn't taller than the buttons
+    textAlignVertical: 'center',
     color: colors.text,
     fontFamily: fonts.ui,
     fontSize: 13.5,
-    lineHeight: 20,
+    lineHeight: 18,
   },
   send: {
     flexShrink: 0,

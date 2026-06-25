@@ -12,7 +12,8 @@
 /* dashed frame + "LIVE PREVIEW · <channel>" corner stamp */
 .lk-pushprev {
   position: relative;
-  padding: 14px;
+  /* extra top room so the "LIVE PREVIEW" chip sits above the card, not over it */
+  padding: 28px 14px 14px;
   border-radius: var(--r);
   border: 1px dashed var(--border-2);
   background: rgba(8, 10, 18, 0.4);
@@ -21,8 +22,12 @@
 .lk-pushprev::after {
   content: 'LIVE PREVIEW · ' attr(data-channel);
   position: absolute;
-  top: 9px;
-  right: 20px;
+  top: 6px;
+  right: 12px;
+  /* opaque chip so the label never collides with the dashed frame corner */
+  padding: 3px 7px;
+  border-radius: var(--r-pill);
+  background: var(--bg-1);
   font-family: var(--font-mono);
   font-size: 8.5px;
   letter-spacing: 0.14em;
@@ -106,10 +111,11 @@
   border-color: var(--border-2);
 }
 
-/* ---- in-app: toast-like inline banner with an accent edge -------------- */
+/* ---- in-app: basic-app banner — logo + name + close along the top ------- */
 .lk-pushprev-in-app .lk-pushprev-card {
   position: relative;
-  align-items: center;
+  flex-direction: column;
+  gap: 8px;
   border-radius: var(--r-lg);
   background: var(--bg-2);
   box-shadow: var(--elev-1), var(--glow-accent);
@@ -123,8 +129,24 @@
   width: 3px;
   background: var(--grad-cta);
 }
-.lk-pushprev-in-app .lk-pushprev-ct {
-  padding-left: 2px;
+/* clear the left accent bar so the header content doesn't sit under it */
+.lk-pushprev-in-app .lk-pushprev-apphead,
+.lk-pushprev-in-app .lk-pushprev-title,
+.lk-pushprev-in-app .lk-pushprev-body {
+  padding-left: 4px;
+}
+/* top header row: icon + name on the left, time + close pushed right */
+.lk-pushprev-apphead {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.lk-pushprev-apphead .lk-pushprev-name {
+  flex: 1;
+  min-width: 0;
+}
+.lk-pushprev-apphead .lk-pushprev-time {
+  margin-left: auto;
 }
 .lk-pushprev-close {
   flex: none;
@@ -135,6 +157,7 @@
   border-radius: 50%;
   color: var(--text-faint);
   background: var(--glass);
+  cursor: pointer;
 }
 .lk-pushprev-close svg {
   display: block;

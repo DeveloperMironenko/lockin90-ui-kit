@@ -55,6 +55,12 @@
 }
 .lk-taginput-input::placeholder { color: var(--text-faint); }
 
+/* error state — red border + glow */
+.lk-taginput--invalid {
+  border-color: var(--bad);
+  box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.16);
+}
+
 /* ============================================================================
    CodeInput — segmented verification-code boxes: a row of single-char mono
    inputs. Focused box gets accent border + glow; filled box a subtle accent
@@ -88,4 +94,14 @@
 .lk-code-box.lk-code-filled {
   border-color: rgba(34, 211, 238, 0.45);
   background: rgba(34, 211, 238, 0.05);
+}
+
+/* error state — every box reads red (incorrect / expired code) */
+.lk-code--invalid .lk-code-box {
+  border-color: var(--bad);
+  background: rgba(255, 77, 109, 0.06);
+}
+.lk-code--invalid .lk-code-box:focus {
+  border-color: var(--bad);
+  box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.18);
 }

@@ -1,68 +1,8 @@
 /* ============================================================================
-   ProGate — premium-lock overlay over blurred gated content (.lk-pro-*), and
    LockedRow — a tappable gated list row with a red lock badge + chevron and a
    thin red left accent bar (.lk-lockrow-*).
    ========================================================================== */
 
-/* ---- ProGate ---- */
-.lk-pro {
-  position: relative;
-  border-radius: var(--r);
-  overflow: hidden;
-}
-.lk-pro-content {
-  filter: blur(6px);
-  opacity: 0.35;
-  pointer-events: none;
-  user-select: none;
-}
-/* empty gate still needs a body to cover */
-.lk-pro-content:empty {
-  min-height: 150px;
-  background: var(--glass);
-}
-.lk-pro-overlay {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 12px;
-}
-.lk-pro-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  max-width: 70%;
-  padding: 16px 22px;
-  text-align: center;
-  background: var(--glass-2);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-}
-.lk-pro-lock { display: inline-flex; }
-.lk-pro-lock svg {
-  width: 24px;
-  height: 24px;
-  stroke: var(--text-faint);
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.lk-pro-title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: -0.01em;
-  color: var(--text);
-}
-.lk-pro-sub {
-  font-family: var(--font-ui);
-  font-size: 12.5px;
-  color: var(--text-dim);
-}
-
-/* ---- LockedRow ---- */
 .lk-lockrow {
   position: relative;
   display: flex;

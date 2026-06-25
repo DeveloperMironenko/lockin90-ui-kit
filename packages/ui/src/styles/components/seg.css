@@ -13,8 +13,13 @@
 }
 
 .lk-seg-tab {
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 auto;
+  /* no min-width:0 — never shrink below content+padding, so the label always
+     stays centered with its full horizontal padding honored */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   text-align: center;
   font-family: var(--font-ui);
   font-size: 13.5px;

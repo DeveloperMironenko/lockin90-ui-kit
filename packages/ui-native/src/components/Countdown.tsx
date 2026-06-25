@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import { colors, radii, fonts, nativeShadows } from '@lockin90/tokens';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, radii, fonts, nativeShadows, gradients } from '@lockin90/tokens';
 
 export type CountdownUnit = 'days' | 'hours' | 'minutes' | 'seconds';
 
@@ -83,10 +84,26 @@ export function Countdown({ to, parts, units = ALL_UNITS, highlightUnit, style }
     <View style={[styles.row, style]} accessibilityRole="timer">
       {units.map((unit) => {
         const lit = highlightUnit === unit;
-        return (
-          <View key={unit} style={[styles.cell, lit && styles.cellLit]}>
+        const inner = (
+          <>
             <Text style={styles.num}>{pad(value[unit])}</Text>
             <Text style={[styles.label, lit && styles.labelLit]}>{UNIT_LABEL[unit]}</Text>
+          </>
+        );
+        // lit cell uses the SAME cta gradient as web's `--grad-cta` (not a flat fill)
+        return lit ? (
+          <LinearGradient
+            key={unit}
+            colors={gradients.cta.stops as unknown as [string, string]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[styles.cell, styles.cellLit]}
+          >
+            {inner}
+          </LinearGradient>
+        ) : (
+          <View key={unit} style={styles.cell}>
+            {inner}
           </View>
         );
       })}
@@ -114,7 +131,6 @@ const styles = StyleSheet.create({
   },
   cellLit: {
     borderColor: 'transparent',
-    backgroundColor: colors.accent,
     ...nativeShadows.glowAccent,
   },
   labelLit: {

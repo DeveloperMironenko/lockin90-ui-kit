@@ -25,7 +25,8 @@
 .lk-reauth-pw {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  /* match the .lk-reauth column gap so input→Confirm == Confirm→Cancel */
+  gap: 16px;
 }
 
 /* full-width primary CTA so it spans the dialog */
