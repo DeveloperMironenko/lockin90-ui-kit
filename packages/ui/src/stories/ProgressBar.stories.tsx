@@ -1,14 +1,22 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ProgressBar } from '../components/ProgressBar';
 
-const meta = {
+const meta: Meta<typeof ProgressBar> = {
   title: 'Primitives/ProgressBar',
   component: ProgressBar,
   parameters: { layout: 'centered' },
-} satisfies Meta<typeof ProgressBar>;
+  // ProgressBar is width:100% — give it a real width so it doesn't collapse
+  decorators: [
+    (Story) => (
+      <div style={{ width: 320 }}>
+        <Story />
+      </div>
+    ),
+  ],
+};
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof ProgressBar>;
 
 export const Determinate: Story = { args: { value: 0.73 } };
 

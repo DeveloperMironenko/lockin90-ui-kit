@@ -23,6 +23,14 @@ const TONE: Record<HighlightTone, { color: string; backgroundColor: string }> = 
  *  colored bold keyword on a faint tinted background. */
 export function Highlight({ tone = 'accent', style, ...rest }: HighlightProps) {
   const t = TONE[tone];
-  const base: TextStyle = { color: t.color, backgroundColor: t.backgroundColor, fontWeight: '600' };
+  // padding + radius mirror web `.lk-hl { padding: 0 5px; border-radius: 5px }`
+  // so the tinted background reads as a pill (applies when not nested in <Text>).
+  const base: TextStyle = {
+    color: t.color,
+    backgroundColor: t.backgroundColor,
+    fontWeight: '600',
+    paddingHorizontal: 5,
+    borderRadius: 5,
+  };
   return <Text {...rest} style={[base, style]} />;
 }
