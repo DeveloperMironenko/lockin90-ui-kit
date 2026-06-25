@@ -25,13 +25,19 @@
   gap: 9px;
 }
 
-/* gradient-border accent cell (padding-box fill + grad-cta border-box) */
+/* gradient-border accent cell — opaque dark interior, gradient visible on border */
 .lk-countdown-lit {
   border-color: transparent;
   background:
-    linear-gradient(var(--glass-2), var(--glass-2)) padding-box,
+    var(--bg-1, #0C0F1A) padding-box,
     var(--grad-cta) border-box;
   box-shadow: var(--glow-accent);
+}
+
+/* label needs to stay legible on the dark-interior lit cell */
+.lk-countdown-lit .lk-countdown-label {
+  color: var(--accent-2, #22D3EE);
+  opacity: 0.85;
 }
 
 .lk-countdown-num {

@@ -64,15 +64,18 @@
   text-overflow: ellipsis;
 }
 
-/* the bright "now" marker — full-height accent line + a glowing dot on top */
+/* the bright "now" marker — full-height accent line + a glowing dot on top.
+   The track uses overflow:hidden so we must keep the line+dot fully inside
+   the track bounds (top/bottom 0), and float the dot above the track using
+   a sibling pseudo-element via the wrapper that escapes the clip. */
 .lk-daytl-now {
   position: absolute;
-  top: -2px;
-  bottom: -2px;
+  top: 0;
+  bottom: 0;
   width: 2px;
   margin-left: -1px;
-  background: var(--accent);
-  box-shadow: 0 0 10px rgba(124, 92, 255, 0.9);
+  background: linear-gradient(to bottom, rgba(124, 92, 255, 0.0), var(--accent) 30%);
+  box-shadow: 0 0 6px rgba(124, 92, 255, 0.7);
   z-index: 8;
   pointer-events: none;
 }
@@ -80,14 +83,26 @@
 .lk-daytl-now::before {
   content: '';
   position: absolute;
-  top: -3px;
+  top: 3px;
   left: 50%;
   transform: translateX(-50%);
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 10px rgba(124, 92, 255, 0.9);
+  box-shadow: 0 0 8px 2px rgba(124, 92, 255, 0.8);
+}
+
+.lk-daytl-now::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #fff;
 }
 
 /* hour axis labels under the rail — mono, positioned by left% */
