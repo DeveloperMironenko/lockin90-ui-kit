@@ -69,12 +69,13 @@
   text-overflow: ellipsis;
 }
 
-/* the bright "now" marker — spans the full wrapper (track + overflow).
-   Positioned relative to .lk-daytl-wrap so it can protrude above/below the track. */
+/* the bright "now" marker — protrudes above the track for the dot, but ends
+   flush with the track's bottom edge (no overhang into the axis below).
+   Positioned relative to .lk-daytl-wrap. */
 .lk-daytl-now {
   position: absolute;
   top: -6px;
-  bottom: -6px;
+  bottom: 0;
   width: 2px;
   margin-left: -1px;
   background: var(--accent);

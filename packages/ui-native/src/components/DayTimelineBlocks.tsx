@@ -141,7 +141,7 @@ export function DayTimelineBlocks({
         {nowFrac != null && (
           <View
             pointerEvents="none"
-            style={[styles.now, { left: `${nowFrac * 100}%` as DimensionValue, top: -6, bottom: -6 }]}
+            style={[styles.now, { left: `${nowFrac * 100}%` as DimensionValue, top: -6, bottom: 0 }]}
           >
             <View style={styles.nowDot} />
           </View>
