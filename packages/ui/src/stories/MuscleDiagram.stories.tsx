@@ -13,6 +13,7 @@ export const Default: StoryObj<typeof meta> = {};
 export const PushDay: StoryObj<typeof meta> = {
   args: {
     view: 'front',
+    bodyType: 'male',
     targets: [
       { group: 'chest', role: 'primary' },
       { group: 'triceps', role: 'secondary' },
@@ -24,6 +25,7 @@ export const PushDay: StoryObj<typeof meta> = {
 export const PullDay: StoryObj<typeof meta> = {
   args: {
     view: 'back',
+    bodyType: 'male',
     targets: [
       { group: 'lats', role: 'primary' },
       { group: 'back', role: 'primary' },
@@ -35,10 +37,35 @@ export const PullDay: StoryObj<typeof meta> = {
 export const Legs: StoryObj<typeof meta> = {
   args: {
     view: 'front',
+    bodyType: 'female',
     targets: [
       { group: 'quads', role: 'primary' },
       { group: 'glutes', role: 'secondary' },
       { group: 'calves', role: 'stabilizer' },
+    ],
+  },
+};
+
+export const FemaleFront: StoryObj<typeof meta> = {
+  args: {
+    view: 'front',
+    bodyType: 'female',
+    targets: [
+      { group: 'abs', role: 'primary' },
+      { group: 'shoulders', role: 'secondary' },
+      { group: 'quads', role: 'secondary' },
+    ],
+  },
+};
+
+export const Nonbinary: StoryObj<typeof meta> = {
+  args: {
+    view: 'front',
+    bodyType: 'nonbinary',
+    targets: [
+      { group: 'chest', role: 'primary' },
+      { group: 'abs', role: 'secondary' },
+      { group: 'biceps', role: 'stabilizer' },
     ],
   },
 };

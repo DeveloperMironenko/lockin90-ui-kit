@@ -58,6 +58,38 @@ export const Legs: StoryObj = {
   ),
 };
 
+export const FemaleFront: StoryObj = {
+  render: () => (
+    <View style={{ width: 360 }}>
+      <MuscleDiagram
+        view="front"
+        bodyType="female"
+        targets={[
+          { group: 'abs', role: 'primary' },
+          { group: 'shoulders', role: 'secondary' },
+          { group: 'quads', role: 'secondary' },
+        ]}
+      />
+    </View>
+  ),
+};
+
+export const Nonbinary: StoryObj = {
+  render: () => (
+    <View style={{ width: 360 }}>
+      <MuscleDiagram
+        view="front"
+        bodyType="nonbinary"
+        targets={[
+          { group: 'chest', role: 'primary' },
+          { group: 'abs', role: 'secondary' },
+          { group: 'biceps', role: 'stabilizer' },
+        ]}
+      />
+    </View>
+  ),
+};
+
 export const NoLegend: StoryObj = {
   render: () => (
     <View style={{ width: 360 }}>

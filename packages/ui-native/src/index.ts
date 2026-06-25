@@ -201,7 +201,7 @@ export type { PricingTierCardProps } from './components/PricingTierCard';
 
 // --- Domain / forms / billing / social (rebuild gap) ---
 export { MuscleDiagram } from './components/MuscleDiagram';
-export type { MuscleDiagramProps, MuscleTarget, MuscleRole, MuscleGroup } from './components/MuscleDiagram';
+export type { MuscleDiagramProps, MuscleTarget, MuscleRole, MuscleGroup, BodyType } from './components/MuscleDiagram';
 export { DayTimelineBlocks } from './components/DayTimelineBlocks';
 export type { DayTimelineBlocksProps, DayBlock } from './components/DayTimelineBlocks';
 export { PasswordStrengthMeter } from './components/PasswordStrengthMeter';
