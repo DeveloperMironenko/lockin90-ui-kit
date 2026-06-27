@@ -29,6 +29,18 @@ pnpm storybook        # @lockin90/ui component explorer at :6006
 pnpm build-storybook  # static Storybook build
 ```
 
+## Component specs (SDDs)
+
+Every primitive has a per-component spec under
+[`docs/sdd/components/`](docs/sdd/components/README.md) — the contract (props/tokens/states), the
+web↔native parity verdict, and the Do/Don't + lookalike-ban that keep apps from hand-rolling or
+diverging. See [`Button.md`](docs/sdd/components/Button.md) (gold standard),
+[`TEMPLATE.md`](docs/sdd/components/TEMPLATE.md), and [`CONVENTIONS.md`](docs/sdd/components/CONVENTIONS.md).
+
+> **Rule:** when you add or change a component, write/update its SDD in the **same unit of work** —
+> code-grounded against the real web + native source. A component without a current SDD is treated
+> like one without a test: **not done.**
+
 ## Consuming in an app
 
 ```bash
