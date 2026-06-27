@@ -12,6 +12,15 @@ export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
   size?: number;
   /** Outline shape — a full circle or a softly-rounded square. @default 'circle' */
   shape?: 'circle' | 'rounded';
+  /**
+   * Visual variant.
+   * - `'default'` — image / monogram identity tile (a real user).
+   * - `'aura'` — an animated energy-spectrum flux orb for the AI coach (Aura);
+   *   ignores `src`/`initials`/`name`/`gradient` and renders the flowing
+   *   `--grad-flux` gradient with `--glow-accent`.
+   * @default 'default'
+   */
+  variant?: 'default' | 'aura';
   /** CSS background for the monogram tile. @default violet→cyan flux gradient */
   gradient?: string;
 }
@@ -33,6 +42,9 @@ function initialsFor(name: string): string {
  * default or softly rounded via `shape="rounded"`. The monogram falls back to
  * initials derived from `name`, then to `'?'`. Mirrors the monogram treatment
  * used by ProfileHeader and Leaderboard.
+ *
+ * `variant="aura"` renders an animated energy-spectrum flux orb (no
+ * image/monogram) for the AI coach — use it ONLY for Aura, never a human user.
  */
 export function Avatar({
   name,
@@ -40,10 +52,31 @@ export function Avatar({
   src,
   size = 44,
   shape = 'circle',
+  variant = 'default',
   gradient = 'linear-gradient(135deg, var(--accent), var(--cyan))',
   className,
   ...rest
 }: AvatarProps) {
+  if (variant === 'aura') {
+    // Aura — the AI coach. A flowing `--grad-flux` orb with `--glow-accent`;
+    // the gradient flow animation lives in `.lk-avatar--aura` (avatar.css) and
+    // is neutralised by the global prefers-reduced-motion rule.
+    return (
+      <span
+        className={cn(
+          'lk-avatar',
+          'lk-avatar--aura',
+          shape === 'rounded' && 'lk-avatar-rounded',
+          className,
+        )}
+        style={{ width: size, height: size }}
+        role="img"
+        aria-label={name ?? 'Aura'}
+        {...rest}
+      />
+    );
+  }
+
   return (
     <span
       className={cn('lk-avatar', shape === 'rounded' && 'lk-avatar-rounded', className)}

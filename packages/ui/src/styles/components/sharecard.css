@@ -1,0 +1,166 @@
+/* ============================================================================
+   ShareCard — the branded, shareable progress/score card (the artifact users
+   post to socials). A void surface with a per-gradient aurora mesh, carrying a
+   BrandMark lockup (top), a headline metric (a big GradientText number or a Ring
+   readout) + caption (centered), up to three supporting Stats, and a watermark
+   foot. Composed from BrandMark + GradientText + Ring + Stat (those carry their
+   own styles); this stylesheet owns the viewport, the mesh, and the card-local
+   typography/layout. `data-gradient` selects the mesh + accent; the size class
+   selects the share aspect. Native twin lives in `@lockin90/ui-native`.
+   Key: .lk-sharecard
+   ========================================================================== */
+.lk-sharecard {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border-2);
+  background: var(--void);
+  color: var(--text);
+  box-shadow: var(--elev-2), var(--glow-accent);
+}
+
+/* share aspect + scale */
+.lk-sharecard-sm {
+  aspect-ratio: 1 / 1;
+  max-width: 320px;
+  padding: 18px;
+}
+.lk-sharecard-md {
+  aspect-ratio: 4 / 5;
+  max-width: 360px;
+  padding: 22px;
+}
+.lk-sharecard-lg {
+  aspect-ratio: 9 / 16;
+  max-width: 340px;
+  padding: 26px;
+}
+
+/* ---- aurora mesh (tokens via color-mix; per gradient) ---- */
+.lk-sharecard-mesh {
+  position: absolute;
+  inset: -12%;
+  z-index: 0;
+  pointer-events: none;
+}
+.lk-sharecard[data-gradient='flux'] .lk-sharecard-mesh {
+  background:
+    radial-gradient(46% 42% at 14% 10%, color-mix(in oklab, var(--accent) 40%, transparent), transparent 60%),
+    radial-gradient(44% 40% at 88% 16%, color-mix(in oklab, var(--cyan) 34%, transparent), transparent 60%),
+    radial-gradient(50% 48% at 78% 92%, color-mix(in oklab, var(--magenta) 30%, transparent), transparent 62%),
+    radial-gradient(46% 46% at 16% 90%, color-mix(in oklab, var(--mint) 26%, transparent), transparent 60%);
+}
+.lk-sharecard[data-gradient='cta'] .lk-sharecard-mesh {
+  background:
+    radial-gradient(50% 46% at 16% 10%, color-mix(in oklab, var(--accent) 42%, transparent), transparent 60%),
+    radial-gradient(46% 42% at 86% 18%, color-mix(in oklab, var(--cyan) 36%, transparent), transparent 60%),
+    radial-gradient(50% 48% at 80% 92%, color-mix(in oklab, var(--accent) 26%, transparent), transparent 62%);
+}
+.lk-sharecard[data-gradient='mint'] .lk-sharecard-mesh {
+  background:
+    radial-gradient(50% 46% at 16% 10%, color-mix(in oklab, var(--mint) 42%, transparent), transparent 60%),
+    radial-gradient(46% 42% at 86% 18%, color-mix(in oklab, var(--cyan) 34%, transparent), transparent 60%),
+    radial-gradient(50% 48% at 80% 92%, color-mix(in oklab, var(--lime) 26%, transparent), transparent 62%);
+}
+.lk-sharecard[data-gradient='violet'] .lk-sharecard-mesh {
+  background:
+    radial-gradient(50% 46% at 16% 10%, color-mix(in oklab, var(--violet) 42%, transparent), transparent 60%),
+    radial-gradient(46% 42% at 86% 18%, color-mix(in oklab, var(--indigo) 34%, transparent), transparent 60%),
+    radial-gradient(50% 48% at 80% 92%, color-mix(in oklab, var(--accent) 26%, transparent), transparent 62%);
+}
+
+/* ---- regions (above the mesh) ---- */
+.lk-sharecard-top,
+.lk-sharecard-body,
+.lk-sharecard-foot {
+  position: relative;
+  z-index: 1;
+}
+.lk-sharecard-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  min-width: 0;
+}
+.lk-sharecard-foot {
+  display: flex;
+  justify-content: center;
+}
+
+/* ---- card-local typography ---- */
+.lk-sharecard-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* the big headline number (a GradientText) — size by the card size */
+.lk-sharecard-metric {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.lk-sharecard-sm .lk-sharecard-metric {
+  font-size: 44px;
+}
+.lk-sharecard-md .lk-sharecard-metric {
+  font-size: 56px;
+}
+.lk-sharecard-lg .lk-sharecard-metric {
+  font-size: 64px;
+}
+
+/* the metric when shown inside the Ring (plain display text) */
+.lk-sharecard-score {
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.lk-sharecard-sm .lk-sharecard-score {
+  font-size: 34px;
+}
+.lk-sharecard-md .lk-sharecard-score {
+  font-size: 42px;
+}
+.lk-sharecard-lg .lk-sharecard-score {
+  font-size: 48px;
+}
+
+.lk-sharecard-metric-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* supporting Stats — centered row (layout-only; the Stat primitive owns its type) */
+.lk-sharecard-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 6px;
+}
+.lk-sharecard-stats .lk-stat {
+  align-items: center;
+  text-align: center;
+}
+
+.lk-sharecard-wm {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}

@@ -6,6 +6,8 @@ export { Alert } from './components/Alert';
 export type { AlertTone, AlertProps } from './components/Alert';
 export { Avatar } from './components/Avatar';
 export type { AvatarProps } from './components/Avatar';
+export { ShareCard } from './components/ShareCard';
+export type { ShareCardProps, ShareCardGradient, ShareCardSize, ShareCardStat } from './components/ShareCard';
 export { BackLink } from './components/BackLink';
 export type { BackLinkProps } from './components/BackLink';
 export { Badge } from './components/Badge';

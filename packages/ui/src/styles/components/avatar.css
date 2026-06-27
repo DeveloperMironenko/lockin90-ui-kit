@@ -30,3 +30,25 @@
   color: #07080d;
   letter-spacing: -0.02em;
 }
+
+/* Aura — the AI coach orb. The energy-spectrum flux gradient flowing under a
+   soft accent glow. Replaces the image/monogram entirely (use ONLY for Aura,
+   never a human user). The 200% background tile drifts edge-to-edge for a
+   continuous "swirling energy" flow; the global prefers-reduced-motion rule in
+   base.css holds it static (the orb stays a still flux gradient + glow). */
+.lk-avatar--aura {
+  background: var(--grad-flux);
+  background-size: 200% 200%;
+  box-shadow: var(--glow-accent);
+  animation: lk-avatar-aura 9s var(--ease-soft) infinite;
+}
+
+@keyframes lk-avatar-aura {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}

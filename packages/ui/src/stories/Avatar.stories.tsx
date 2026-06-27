@@ -22,3 +22,16 @@ export const Sizes: StoryObj<typeof meta> = {
     </div>
   ),
 };
+
+/** The AI coach (Aura) — an animated energy-spectrum flux orb. */
+export const Aura: StoryObj<typeof meta> = { args: { variant: 'aura', name: 'Aura', size: 56 } };
+
+export const AuraSizes: StoryObj<typeof meta> = {
+  render: () => (
+    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+      {[28, 36, 44, 56, 72].map((s) => (
+        <Avatar key={s} variant="aura" name="Aura" size={s} />
+      ))}
+    </div>
+  ),
+};

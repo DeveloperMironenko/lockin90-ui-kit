@@ -24,3 +24,16 @@ export const Sizes: Story = {
     </View>
   ),
 };
+
+/** The AI coach (Aura) — an energy-spectrum flux orb with a soft glow. */
+export const Aura: Story = { args: { variant: 'aura', name: 'Aura', size: 56 } };
+
+export const AuraSizes: Story = {
+  render: () => (
+    <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+      {[28, 36, 44, 56, 72].map((s) => (
+        <Avatar key={s} variant="aura" name="Aura" size={s} />
+      ))}
+    </View>
+  ),
+};
