@@ -8,6 +8,8 @@ export { Avatar } from './components/Avatar';
 export type { AvatarProps } from './components/Avatar';
 export { ShareCard } from './components/ShareCard';
 export type { ShareCardProps, ShareCardGradient, ShareCardSize, ShareCardStat } from './components/ShareCard';
+export { ZoneBar } from './components/ZoneBar';
+export type { ZoneBarProps, ZoneBarZone } from './components/ZoneBar';
 export { BackLink } from './components/BackLink';
 export type { BackLinkProps } from './components/BackLink';
 export { Badge } from './components/Badge';

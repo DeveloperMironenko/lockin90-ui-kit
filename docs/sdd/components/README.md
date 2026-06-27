@@ -24,7 +24,7 @@ Parity legend: ✅ identical API · 🟡 same API, platform-shaped impl · 🔵 
 [Divider](./Divider.md) · [Pulse](./Pulse.md) · [Skeleton](./Skeleton.md) · [Avatar](./Avatar.md) ·
 [AvatarStack](./AvatarStack.md) · [Eyebrow](./Eyebrow.md) · [AuroraBackground](./AuroraBackground.md) ·
 [ScrollProgress](./ScrollProgress.md) · [VersionBadge](./VersionBadge.md) · [QRCode](./QRCode.md) ·
-[ShareCard](./ShareCard.md)
+[ShareCard](./ShareCard.md) · [ZoneBar](./ZoneBar.md)
 
 ## Buttons & form inputs
 [Button](./Button.md) · [SplitButton](./SplitButton.md) · [Input](./Input.md) ·
