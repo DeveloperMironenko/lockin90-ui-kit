@@ -15,7 +15,7 @@ A pnpm workspace with three publishable packages:
 | Package | What it is | Build tool |
 | --- | --- | --- |
 | [`@lockin90/tokens`](packages/tokens) | Design tokens — TS objects, `tokens.css` (`:root` vars), and a Tailwind preset | tsup + generator |
-| [`@lockin90/ui`](packages/ui) | Web (React) components — one curated core set (~40) emitting `lk-*` classes, **no Tailwind / Next required**. Main export + `@lockin90/ui/styles.css` + `@lockin90/ui/components/*`. Storybook included. | tsup (preserves `"use client"`) |
+| [`@lockin90/ui`](packages/ui) | Web (React) components — ~98 cross-platform primitives (109 exports) emitting `lk-*` classes, **no Tailwind / Next required**, plus web-only `/admin` & `/marketing` subpath sets (11 each). Exports: `.` + `@lockin90/ui/styles.css` + `@lockin90/ui/marketing` + `@lockin90/ui/admin`. Storybook included. | tsup (preserves `"use client"`) |
 | [`@lockin90/ui-native`](packages/ui-native) | React Native (Expo) components | react-native-builder-bob |
 
 ## Develop
