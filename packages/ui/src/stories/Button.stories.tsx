@@ -24,3 +24,17 @@ export const Sso: StoryObj<typeof meta> = {
     </div>
   ),
 };
+
+/** `trailing` icon slot — e.g. a forward/arrow CTA. Symmetric with `leading`. */
+export const Trailing: StoryObj<typeof meta> = {
+  render: () => (
+    <div style={{ display: 'flex', gap: 12 }}>
+      <Button variant="primary" trailing={<Icon name="arrow-right" />}>
+        Get started
+      </Button>
+      <Button leading={<Icon name="data-source" />} trailing={<Icon name="arrow-right" />}>
+        Connect a source
+      </Button>
+    </div>
+  ),
+};

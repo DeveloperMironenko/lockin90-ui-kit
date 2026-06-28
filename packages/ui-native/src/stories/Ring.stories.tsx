@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { View } from 'react-native';
+import { gradients } from '@lockin90/tokens';
 import { Ring } from '../components/Ring';
 
 const meta = { title: 'Native/Ring' } satisfies Meta;
@@ -13,6 +14,11 @@ export const Default: Story = {
 
 export const Gradient: Story = {
   render: () => <Ring value={84} size={88} gradient={['#7C5CFF', '#A8FF35']} />,
+};
+
+/** Full flux spectrum — an N-stop gradient arc (lime→mint→cyan→violet→magenta). */
+export const FluxSpectrum: Story = {
+  render: () => <Ring value={88} size={132} thickness={9} gradient={[...gradients.flux.stops]} />,
 };
 
 export const Sizes: Story = {

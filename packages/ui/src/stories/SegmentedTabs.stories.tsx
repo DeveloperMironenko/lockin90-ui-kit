@@ -30,8 +30,8 @@ export const WithCounts: StoryObj<typeof meta> = {
   },
 };
 
-/** Rollout flag — semantic tones colour the active segment + leading dot.
- *  Canary paints amber. */
+/** Rollout flag — semantic per-item tones colour the active segment + leading
+ *  dot. Canary paints amber. (Distinct from the control-level `tone` prop.) */
 export const Tones: StoryObj<typeof meta> = {
   args: {
     tabs: [
@@ -41,4 +41,10 @@ export const Tones: StoryObj<typeof meta> = {
     ],
     active: 1,
   },
+};
+
+/** Control-level `tone="mint"` — the selected segment uses the mint gradient +
+ *  glow + dark label (the onboarding Activity-level control). */
+export const MintTone: StoryObj<typeof meta> = {
+  args: { tabs: ['Sedentary', 'Light', 'Active', 'Athlete'], active: 2, tone: 'mint' },
 };

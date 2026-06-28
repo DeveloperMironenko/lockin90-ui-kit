@@ -112,3 +112,15 @@
   color: var(--lk-seg-tone);
   background: color-mix(in srgb, var(--lk-seg-tone) 16%, transparent);
 }
+
+/* ----------------------------------------------------------------------------
+   Selected-segment tone (the control-level `tone` prop). Default keeps the
+   raised glass pill; `tone="mint"` paints the ACTIVE segment with the mint
+   gradient + mint glow + dark-on-bright label — the onboarding Activity-level
+   control (design `.seg.on.mint`). Idle segments are unaffected.
+   -------------------------------------------------------------------------- */
+.lk-seg[data-tone='mint'] .lk-seg-tab.is-active {
+  color: #0a0a12; /* dark-on-bright label — the kit's gradient-CTA label color */
+  background: var(--grad-mint);
+  box-shadow: var(--glow-mint);
+}

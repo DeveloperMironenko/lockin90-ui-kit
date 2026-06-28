@@ -17,6 +17,9 @@ export interface StepperProps extends ViewProps {
   steps?: Step[];
   /** 0-based index of the active step */
   current?: number;
+  /** when true, render the current node (and all before it) as done/checked —
+   *  the whole rail reads finished (the onboarding "Complete" state) */
+  complete?: boolean;
 }
 
 const DEFAULT_STEPS: Step[] = [
@@ -28,15 +31,17 @@ const DEFAULT_STEPS: Step[] = [
 
 /** Horizontal numbered progress rail — completed nodes filled mint with a
  *  check, the current node filled accent, future nodes faint glass; the
- *  connecting line fills accent up to the current step, faint beyond. */
-export function Stepper({ steps = DEFAULT_STEPS, current = 1, style, ...rest }: StepperProps) {
+ *  connecting line fills accent up to the current step, faint beyond. When
+ *  `complete`, the current node also reads done (mint check) so the whole
+ *  rail shows finished. */
+export function Stepper({ steps = DEFAULT_STEPS, current = 1, complete = false, style, ...rest }: StepperProps) {
   const active = Math.min(Math.max(0, current), Math.max(0, steps.length - 1));
 
   return (
     <View style={[styles.step, style]} {...rest}>
       {steps.map((stepItem, i) => {
-        const done = i < active;
-        const isCurrent = i === active;
+        const done = complete ? i <= active : i < active;
+        const isCurrent = !complete && i === active;
         return (
           <Fragment key={`${stepItem.label}-${i}`}>
             {i > 0 &&

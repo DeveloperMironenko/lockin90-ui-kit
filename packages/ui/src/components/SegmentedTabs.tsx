@@ -39,6 +39,17 @@ export interface SegmentedTabsProps extends Omit<HTMLAttributes<HTMLDivElement>,
    * upsell pattern on a time-range control).
    */
   locked?: number[];
+  /**
+   * Color of the SELECTED segment. `'accent'` (default) keeps the standard
+   * raised glass pill; `'mint'` paints the active segment with the mint
+   * gradient (`--grad-mint`) + mint glow + dark label — the onboarding
+   * Activity-level control (design `.seg.on.mint`).
+   *
+   * Control-level: this is distinct from a rich item's per-segment
+   * `SegmentedTab.tone` (`ok`/`canary`/`danger`), which tints individual
+   * segments' label/badge and is unrelated to the selected-pill color.
+   */
+  tone?: 'accent' | 'mint';
 }
 
 /** iOS-style segmented control — a pill track of equal-width segments; the
@@ -49,11 +60,17 @@ export function SegmentedTabs({
   active = 0,
   onChange,
   locked,
+  tone = 'accent',
   className,
   ...rest
 }: SegmentedTabsProps) {
   return (
-    <div className={cn('lk-seg', className)} role="tablist" {...rest}>
+    <div
+      className={cn('lk-seg', className)}
+      role="tablist"
+      data-tone={tone === 'mint' ? 'mint' : undefined}
+      {...rest}
+    >
       {tabs.map((item, i) => {
         const { label, count, tone } = toTab(item);
         const isLocked = locked?.includes(i) ?? false;

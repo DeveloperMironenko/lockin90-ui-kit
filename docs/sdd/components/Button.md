@@ -19,7 +19,7 @@ The primary **pill action button** of the kit. Three variants:
 
 It is intentionally the *only* sanctioned way to render a button-shaped action in any LockIn90 app; the `primary` variant is the *only* sanctioned gradient CTA. Hand-rolling either is a parity/maintenance violation (see §9).
 
-`leading` renders an optional node before the label (e.g. an SSO brand logo, a `+` icon) — auto-spaced by the row's `gap: 9`.
+`leading` renders an optional node before the label (e.g. an SSO brand logo, a `+` icon); `trailing` renders one after the label (e.g. a trailing-arrow CTA) — both auto-spaced by the row's `gap: 9` and symmetric in behavior.
 
 ## 2. API contract
 
@@ -28,6 +28,7 @@ It is intentionally the *only* sanctioned way to render a button-shaped action i
 | `variant` | `'default' \| 'primary' \| 'ghost'` | `'default'` | ✓ | ✓ | identical union both sides |
 | `size` | `'sm' \| 'md'` | `'md'` | ✓ | ✓ | `sm` = tighter padding + 13px label |
 | `leading` | `ReactNode` | — | ✓ | ✓ | icon/node before the label |
+| `trailing` | `ReactNode` | — | ✓ | ✓ | icon/node after the label — symmetric with `leading` (e.g. a trailing arrow) |
 | **label** | — | — | `children` | `title: string` | **platform-shaped** — web takes children, native takes a `title` string |
 | `className` | `string` | — | ✓ | — | web only |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |
@@ -48,7 +49,7 @@ It is intentionally the *only* sanctioned way to render a button-shaped action i
 | Font | `--font-ui` / `fonts.ui`, 600 | same | same |
 
 - **Padding:** `md` = `12px / 20px`; `sm` = `8px / 14px` (web `.lk-btn-sm`, native `padSm`). Label: `md` 14px, `sm` 13px.
-- **Gap (leading↔label):** `9px` both platforms. Web auto-sizes leading `svg` to 16px (17px on primary, 14px on sm).
+- **Gap (leading/trailing↔label):** `9px` both platforms. Web auto-sizes any slot `svg` (leading or trailing) to 16px (17px on primary, 14px on sm) via the shared `.lk-btn svg` rule — no per-slot class needed.
 - **Web-only motion:** `primary` runs `@keyframes lk-btn-flow` (6s gradient-position drift); hover `translateY(-2px)`; active `scale(.98)`. Native mirrors press feedback via `pressed` (opacity .85 + `scale .98`).
 
 ## 4. States
@@ -76,6 +77,7 @@ There is **no capability gap** that blocks use — the button is fully usable an
 
 - **Primary CTA:** one per surface. `<Button variant="primary">` (web) / `title=` (native).
 - **SSO buttons:** `leading={<Icon name="google" />}` (or `apple`) — the multicolor brand logos resolve via `Icon`.
+- **Trailing-arrow CTA:** `trailing={<Icon name="arrow-right" />}` — symmetric with `leading`, rendered after the label.
 - **Quantity ± / steppers:** use `NumberStepper`, not two `Button`s.
 - **Used by:** `ReauthDialog` (password + Google SSO step-up), auth screens, `PricingTierCard` CTA, `EmptyState` action, modals' footer actions.
 - **Composition with Spinner:** for an async action, put `<Spinner size="sm" />` in `leading` and set `disabled` while pending.
@@ -105,7 +107,7 @@ There is **no capability gap** that blocks use — the button is fully usable an
 - Use `variant="primary"` for the one most-important action on a surface.
 - Use `default` for secondary, `ghost` for tertiary/inline.
 - Put exactly **one** `primary` per visual group/screen.
-- Use `leading` for icons; let the `gap` space them (don't add manual margins).
+- Use `leading`/`trailing` for icons; let the `gap` space them (don't add manual margins). Use `trailing` for forward/arrow CTAs.
 - Set `type="submit"` (web) only when the button submits a form.
 
 **Don't**

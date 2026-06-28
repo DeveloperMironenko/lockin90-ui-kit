@@ -8,12 +8,14 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'sm' | 'md';
   /** optional icon/node rendered before the label (e.g. an SSO brand logo) */
   leading?: ReactNode;
+  /** optional icon/node rendered after the label (e.g. a trailing arrow) */
+  trailing?: ReactNode;
 }
 
-/** Pill button. `primary` = animated energy-gradient CTA. `leading` renders an
- *  icon before the label (auto-spaced + sized by the `.lk-btn` flex gap). */
+/** Pill button. `primary` = animated energy-gradient CTA. `leading`/`trailing` render an
+ *  icon before/after the label (auto-spaced + sized by the `.lk-btn` flex gap). */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'default', size = 'md', leading, className, type = 'button', children, ...rest },
+  { variant = 'default', size = 'md', leading, trailing, className, type = 'button', children, ...rest },
   ref,
 ) {
   return (
@@ -31,6 +33,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     >
       {leading}
       {children}
+      {trailing}
     </button>
   );
 });

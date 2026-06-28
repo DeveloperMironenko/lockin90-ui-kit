@@ -9,13 +9,15 @@ export interface RingProps extends HTMLAttributes<HTMLDivElement> {
   /** Stroke width of both the track and the arc, in px. */
   thickness?: number;
   /** Arc color — any CSS color / token, e.g. 'var(--mint)'. Ignored when a
-   *  two-stop `gradient` is given. */
+   *  `gradient` array is given. */
   color?: string;
   /** Track (unfilled) color. */
   trackColor?: string;
-  /** Optional arc gradient. A `[from, to]` tuple paints a linearGradient of the
-   *  two stops; a single string is treated like a solid `color`. */
-  gradient?: [string, string] | string;
+  /** Optional arc gradient. A `[from, to]` tuple paints a two-stop
+   *  linearGradient; an N-length array (≥2, e.g. `gradients.flux.stops`) paints
+   *  N evenly-spaced stops — the full flux spectrum arc; a single string is
+   *  treated like a solid `color`. */
+  gradient?: string | string[];
   /** Soft drop-shadow glow in the arc color (on by default). */
   glow?: boolean;
   /** Centered content. When omitted the rounded `value` is shown as the number. */
@@ -26,7 +28,8 @@ export interface RingProps extends HTMLAttributes<HTMLDivElement> {
  * Ring — a generic, prop-driven circular-progress primitive: an SVG track +
  * colored progress arc (rotated −90° so it starts at 12 o'clock, round
  * linecap, soft color glow) with absolutely-centered readout content. Solid by
- * default; pass a `[from, to]` `gradient` for a two-stop arc. Matches the
+ * default; pass a `[from, to]` `gradient` for a two-stop arc, or an N-stop
+ * array (e.g. `gradients.flux.stops`) for the full spectrum. Matches the
  * Aurora Flux ring look (energy/goal/substance gauges).
  */
 export function Ring({
@@ -70,8 +73,13 @@ export function Ring({
         {useGradient ? (
           <defs>
             <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor={gradient[0]} />
-              <stop offset="1" stopColor={gradient[1]} />
+              {gradient.map((stopColor, i) => (
+                <stop
+                  key={i}
+                  offset={i / Math.max(1, gradient.length - 1)}
+                  stopColor={stopColor}
+                />
+              ))}
             </linearGradient>
           </defs>
         ) : null}

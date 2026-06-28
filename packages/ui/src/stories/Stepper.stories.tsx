@@ -10,6 +10,11 @@ export default meta;
 
 export const Default: StoryObj<typeof meta> = { args: {} };
 
+/** Onboarding "Complete" — current (final) node also reads done; whole rail finished. */
+export const Complete: StoryObj<typeof meta> = {
+  args: { current: 3, complete: true },
+};
+
 export const Quantity: StoryObj<typeof meta> = {
   render: () => <NumberStepper />,
 };

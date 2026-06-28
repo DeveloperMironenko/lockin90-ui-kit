@@ -13,7 +13,7 @@
 
 Two atoms from one file — note they are unrelated despite the shared name:
 
-- **`Stepper`** — a **horizontal numbered progress rail** for multi-step flows (Account → Profile → Goals → Done). Completed nodes fill **mint** with a check, the current node fills **accent**, future nodes stay faint glass; the connecting line fills accent up to the current step and faint beyond. Display-only (no per-node click).
+- **`Stepper`** — a **horizontal numbered progress rail** for multi-step flows (Account → Profile → Goals → Done). Completed nodes fill **mint** with a check, the current node fills **accent**, future nodes stay faint glass; the connecting line fills accent up to the current step and faint beyond. Pass `complete` to also render the **current** node as done (mint check) so the whole rail reads finished — the onboarding "Complete" state where all nodes are done. Display-only (no per-node click).
 - **`NumberStepper`** (secondary export) — a **compact quantity control**: a glass pill grouping a `−` button, the mono centered value, and a `+` button; the ends dim and disable at `min`/`max`. The sanctioned `±` quantity input (use it instead of two `Button`s, per the `Button` SDD).
 
 Both are the *only* sanctioned forms of their pattern (§9).
@@ -26,6 +26,7 @@ Both are the *only* sanctioned forms of their pattern (§9).
 | --- | --- | --- | --- | --- | --- |
 | `steps` | `Step[]` (`{ label: string }`) | Account/Profile/Goals/Done | ✓ | ✓ | ordered; each a numbered node + label |
 | `current` | `number` | `1` | ✓ | ✓ | 0-based active index; clamped to `[0, steps.length-1]` |
+| `complete` | `boolean` | `false` | ✓ | ✓ | when true, the **current** node (and all before it) read **done** (mint check) — the whole rail shows finished (onboarding "Complete") |
 | `className` | `string` | — | ✓ | — | web only |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |
 | _rest_ | `HTMLAttributes<HTMLDivElement>` (web) · `ViewProps` (native) | — | ✓ | ✓ | spreads to the rail root |
@@ -79,6 +80,7 @@ Both are the *only* sanctioned forms of their pattern (§9).
 | --- | --- | --- | --- |
 | Stepper | future / current / done | `.is-future` / `.is-current` / `.is-done` (§3) | `nodeFuture` / cta gradient / mint gradient |
 | Stepper | line filled | `.is-filled` accent→accent-2 | filled `LinearGradient` for `i <= active` |
+| Stepper | complete → final node checked | current node renders `.is-done` (mint check), not `.is-current`; whole rail done | current node renders mint gradient + check, not cta number |
 | NumberStepper | rest | `.lk-numstep-btn` | `styles.btn` |
 | NumberStepper | hover (web) | text `--text`, bg `--glass` | n/a |
 | NumberStepper | disabled (at min/max) | `:disabled` opacity .35, `--text-faint` | `btnLabelDisabled` opacity .35; `disabled`/`accessibilityState` |
@@ -87,7 +89,7 @@ Both are the *only* sanctioned forms of their pattern (§9).
 
 ## 5. Web ↔ native parity
 
-**Verdict: 🟡 same API, platform-shaped impl.** Both `Stepper` and `NumberStepper` share identical props, the same node/line/pill sizing, the same mint-done / accent-current / faint-future treatment, the same clamps, and the same disabled-at-ends logic. By-necessity differences:
+**Verdict: 🟡 same API, platform-shaped impl.** Both `Stepper` and `NumberStepper` share identical props, the same node/line/pill sizing, the same mint-done / accent-current / faint-future treatment, the same clamps, the same `complete` collapse (current node → done) logic, and the same disabled-at-ends logic. By-necessity differences:
 
 - **Gradients:** web fills nodes/lines via CSS `--grad-cta`/`--grad-mint`/`linear-gradient(--accent,--accent-2)`; native uses `expo-linear-gradient` (`gradients.cta`/`gradients.mint`/`[accent, accent2]`). Same look, no native animation.
 - **Hover:** web `NumberStepper` buttons have a hover (`--glass`); native uses press feedback. Not blocking.
@@ -105,6 +107,7 @@ No capability gap blocks use — both render equivalent steppers.
 ```tsx
 // web
 <Stepper steps={[{ label: 'Account' }, { label: 'Profile' }, { label: 'Goals' }, { label: 'Done' }]} current={step} />
+<Stepper current={3} complete />  {/* onboarding Complete — all 4 nodes checked */}
 <NumberStepper value={reps} min={1} max={50} onChange={setReps} />
 
 // native

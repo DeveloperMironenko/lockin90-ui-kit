@@ -11,7 +11,7 @@
 
 ## 1. Overview
 
-A **generic circular-progress primitive**: an SVG track circle + a colored progress arc (rotated −90° so it starts at 12 o'clock, round linecap, soft color glow) with absolutely-centered readout content. Solid by default; pass a `[from, to]` `gradient` tuple for a two-stop arc. When `children` is omitted it renders the rounded `value` as a big display number. It's the Aurora-Flux ring used for energy/goal/substance gauges.
+A **generic circular-progress primitive**: an SVG track circle + a colored progress arc (rotated −90° so it starts at 12 o'clock, round linecap, soft color glow) with absolutely-centered readout content. Solid by default; pass a `[from, to]` `gradient` tuple for a two-stop arc, or an **N-stop color array** (`≥2`, e.g. `gradients.flux.stops`) for the full lime→mint→cyan→violet→magenta spectrum arc. When `children` is omitted it renders the rounded `value` as a big display number. It's the Aurora-Flux ring used for energy/goal/substance gauges.
 
 `Ring` is the low-level circular gauge — higher-level rings (`Gauge`, `PhaseWheel`, achievement rings) compose or echo it. Reach for `Ring` whenever you need "X% as a circle" with custom center content.
 
@@ -22,17 +22,17 @@ A **generic circular-progress primitive**: an SVG track circle + a colored progr
 | `value` | `number` | `72` | ✓ | ✓ | arc fill 0–100, clamped |
 | `size` | `number` | `108` | ✓ | ✓ | outer diameter (square viewBox) |
 | `thickness` | `number` | `7` | ✓ | ✓ | stroke width of track + arc |
-| `color` | `string` | web `'var(--mint)'` · native `colors.mint` | ✓ | ✓ | arc color; ignored when a `[from,to]` gradient is given |
+| `color` | `string` | web `'var(--mint)'` · native `colors.mint` | ✓ | ✓ | arc color; ignored when a `gradient` array is given |
 | `trackColor` | `string` | web `'var(--border)'` · native `colors.border` | ✓ | ✓ | unfilled track color |
-| `gradient` | `[string, string] \| string` | — | ✓ | ✓ | tuple → 2-stop linearGradient arc; single string → treated like `color` |
+| `gradient` | `string \| string[]` | — | ✓ | ✓ | array (≥2) → N evenly-spaced `linearGradient` stops; `[from,to]` is the 2-stop case; `gradients.flux.stops` → full spectrum; single string → treated like `color` |
 | `glow` | `boolean` | `true` | ✓ | ✓ | soft color glow on the arc |
 | `children` | `ReactNode` | — | ✓ | ✓ | centered content; omit → shows `Math.round(value)` |
 | `className` | `string` | — | ✓ | — | web only |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |
 | _rest_ | `HTMLAttributes<HTMLDivElement>` | — | ✓ | — | web spreads to the root `<div>` |
 
-- **Gradient resolution (both):** `Array.isArray(gradient)` → 2-stop `linearGradient` (`x1,y1=0 → x2,y2=1`); a `string` gradient is treated as a solid `color`; else the `color` prop.
-- **Glow color:** the arc color (or the gradient's **first** stop on web).
+- **Gradient resolution (both):** `Array.isArray(gradient)` → an N-stop `linearGradient` (`x1,y1=0 → x2,y2=1`) with each stop at offset `i / (n−1)` (evenly spaced; a 2-array is the `[from,to]` case); a `string` gradient is treated as a solid `color`; else the `color` prop.
+- **Glow color:** the arc color (or the gradient's **first** stop, `gradient[0]`, on web).
 
 ## 3. Visual spec (tokens — never hardcode)
 
@@ -55,7 +55,7 @@ A **generic circular-progress primitive**: an SVG track circle + a colored progr
 | Progress | arc fills to `value`%; web animates the sweep over 1.1s | arc fills; no animation |
 | 0 / 100 | `dashoffset` = full circumference / 0 | same |
 | Clamp | `value` outside 0–100 clamps | same |
-| Gradient arc | 2-stop `linearGradient` | same |
+| Gradient arc | N-stop `linearGradient` (2-stop tuple or full flux array) | same |
 | Glow off (`glow=false`) | `--lk-ring-glow: transparent` → no shadow | glow duplicate arc not rendered; native also resets `glowPad=0` (slightly larger r) |
 | Custom center | renders `children` instead of the number | same |
 
@@ -78,10 +78,14 @@ No capability gap blocks use.
 - **Composes:** any centered `children` (a number + a `--font-mono` caption, an icon, a `DeltaPill`).
 
 ```tsx
-// web — energy ring with a gradient arc + custom center
+// web — energy ring with a 2-stop gradient arc + custom center
 <Ring value={72} gradient={['var(--violet)', 'var(--cyan)']} size={132}>
   <span className="lk-ring-num lk-tnum">72</span>
 </Ring>
+
+// web/native — full flux spectrum arc (N-stop)
+import { gradients } from '@lockin90/tokens';
+<Ring value={88} gradient={[...gradients.flux.stops]} size={132} />
 
 // native — solid mint ring, default centered number
 <Ring value={72} color={colors.mint} size={132} />
@@ -96,7 +100,7 @@ No capability gap blocks use.
 ## 8. Usage rules — Do / Don't
 
 **Do**
-- Use `gradient={[from, to]}` for the energy/spectrum look; use `color` for a single zone tone.
+- Use `gradient={[from, to]}` for a two-tone arc, or `gradient={[...gradients.flux.stops]}` for the full spectrum; use `color` for a single zone tone.
 - Provide center `children` (number + caption) or rely on the default number.
 - Scale `thickness` with `size` for balanced rings.
 

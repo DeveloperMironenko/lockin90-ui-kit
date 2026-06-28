@@ -11,12 +11,14 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
   title: string;
   /** optional icon/node rendered before the label (e.g. an SSO brand logo) */
   leading?: ReactNode;
+  /** optional icon/node rendered after the label (e.g. a trailing arrow) */
+  trailing?: ReactNode;
   style?: StyleProp<ViewStyle>;
 }
 
-/** Pill button. `primary` paints the energy-gradient CTA. `leading` renders an
- *  icon before the label (the row is `gap: 9`-spaced). */
-export function Button({ variant = 'default', size = 'md', title, leading, style, ...rest }: ButtonProps) {
+/** Pill button. `primary` paints the energy-gradient CTA. `leading`/`trailing` render an
+ *  icon before/after the label (the row is `gap: 9`-spaced). */
+export function Button({ variant = 'default', size = 'md', title, leading, trailing, style, ...rest }: ButtonProps) {
   const pad = size === 'sm' ? styles.padSm : styles.padMd;
   const labelSize = size === 'sm' ? 13 : 14;
 
@@ -32,6 +34,7 @@ export function Button({ variant = 'default', size = 'md', title, leading, style
           >
             {leading}
             <Text style={[styles.label, { fontSize: labelSize, color: '#0A0A12' }]}>{title}</Text>
+            {trailing}
           </LinearGradient>
         )}
       </Pressable>
@@ -53,6 +56,7 @@ export function Button({ variant = 'default', size = 'md', title, leading, style
         >
           {leading}
           <Text style={[styles.label, { fontSize: labelSize, color: ghost ? colors.textDim : colors.text }]}>{title}</Text>
+          {trailing}
         </View>
       )}
     </Pressable>

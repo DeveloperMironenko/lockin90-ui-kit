@@ -1,5 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { colors, radii, fonts } from '@lockin90/tokens';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
 import { Icon } from './Icon';
 
 export interface SegmentedTabsProps {
@@ -15,6 +16,13 @@ export interface SegmentedTabsProps {
    * upsell pattern on a time-range control).
    */
   locked?: number[];
+  /**
+   * Color of the SELECTED segment. `'accent'` (default) keeps the standard
+   * raised glass pill; `'mint'` paints the active segment with the mint
+   * gradient (`gradients.mint`) + mint glow + dark label — the onboarding
+   * Activity-level control (mirrors web `tone="mint"` / design `.seg.on.mint`).
+   */
+  tone?: 'accent' | 'mint';
 }
 
 /**
@@ -28,12 +36,14 @@ export function SegmentedTabs({
   active = 0,
   onChange,
   locked,
+  tone = 'accent',
 }: SegmentedTabsProps) {
   return (
     <View style={styles.track} accessibilityRole="tablist">
       {tabs.map((label, i) => {
         const isActive = i === active;
         const isLocked = locked?.includes(i) ?? false;
+        const isMintActive = isActive && tone === 'mint';
         return (
           <Pressable
             key={i}
@@ -43,14 +53,25 @@ export function SegmentedTabs({
             onPress={isLocked ? undefined : () => onChange?.(i)}
             style={({ pressed }) => [
               styles.tab,
-              isActive && styles.tabActive,
+              isActive && tone === 'accent' && styles.tabActive,
               pressed && !isActive && !isLocked && styles.tabPressed,
               isLocked && styles.tabLocked,
             ]}
           >
+            {isMintActive && (
+              <LinearGradient
+                colors={gradients.mint.stops as unknown as [string, string]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.tabActiveMint}
+              />
+            )}
             <Text
               numberOfLines={1}
-              style={[styles.label, { color: isActive ? colors.text : colors.textDim }]}
+              style={[
+                styles.label,
+                { color: isActive ? (isMintActive ? '#0A0A12' : colors.text) : colors.textDim },
+              ]}
             >
               {label}
             </Text>
@@ -94,6 +115,14 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   tabPressed: { opacity: 0.7 },
+  // mint-tone active segment: a mint-gradient fill (the LinearGradient is
+  // absolutely positioned behind the label) + mint glow, mirroring web
+  // `[data-tone='mint'] .is-active`. The label paints dark-on-bright.
+  tabActiveMint: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: radii.pill,
+    ...nativeShadows.glowMint,
+  },
   label: {
     fontFamily: fonts.ui,
     fontSize: 13.5,

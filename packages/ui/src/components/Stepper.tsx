@@ -15,6 +15,9 @@ export interface StepperProps extends HTMLAttributes<HTMLDivElement> {
   steps?: Step[];
   /** 0-based index of the active step */
   current?: number;
+  /** when true, render the current node (and all before it) as done/checked —
+   *  the whole rail reads finished (the onboarding "Complete" state) */
+  complete?: boolean;
 }
 
 const DEFAULT_STEPS: Step[] = [
@@ -26,9 +29,11 @@ const DEFAULT_STEPS: Step[] = [
 
 /** Horizontal numbered progress rail — completed nodes filled mint with a
  *  check, the current node filled accent, future nodes faint glass; the
- *  connecting line fills accent up to the current step, faint beyond. */
+ *  connecting line fills accent up to the current step, faint beyond. When
+ *  `complete`, the current node also reads done (mint check) so the whole
+ *  rail shows finished. */
 export const Stepper = forwardRef<HTMLDivElement, StepperProps>(function Stepper(
-  { steps = DEFAULT_STEPS, current = 1, className, ...rest },
+  { steps = DEFAULT_STEPS, current = 1, complete = false, className, ...rest },
   ref,
 ) {
   const active = Math.min(Math.max(0, current), Math.max(0, steps.length - 1));
@@ -36,8 +41,8 @@ export const Stepper = forwardRef<HTMLDivElement, StepperProps>(function Stepper
   return (
     <div ref={ref} className={cn('lk-step', className)} {...rest}>
       {steps.map((step, i) => {
-        const done = i < active;
-        const isCurrent = i === active;
+        const done = complete ? i <= active : i < active;
+        const isCurrent = !complete && i === active;
         const state = done ? 'is-done' : isCurrent ? 'is-current' : 'is-future';
         return (
           <Fragment key={`${step.label}-${i}`}>

@@ -15,7 +15,8 @@
 The **iOS-style segmented control** — a glass pill *track* of equal-width segments; the active one is a raised lighter pill (`--glass-2` + soft shadow). The compact "switch between 2–4 sibling views" control (Stats / History / Guide / Ranks). Distinct from the underline `Tabs` (text-on-a-rail) and the bottom `TabBar`.
 
 - **`locked`** — indices that are dimmed, **non-interactive** (never fire `onChange`), and show a lock glyph — the `1Y🔒 / All🔒` upsell pattern on a time-range control. **Identical on both platforms.**
-- **Rich items (web only):** a segment may be a `{ label, count?, tone? }` object instead of a plain string — `count` renders a trailing mono badge; `tone` (`ok` mint / `canary` amber / `danger` red) paints the active label + a leading dot. Used in admin/CMS (catalog type counts, the pipeline Off/Canary/On flag). Native takes plain `string[]` only.
+- **`tone`** (control-level) — color of the **selected** segment. `'accent'` (default) is the standard raised glass pill (unchanged); `'mint'` paints the active segment with the mint gradient + glow + dark-on-bright label — the onboarding Activity-level control (design `.seg.on.mint`). **Identical on both platforms.** Do not confuse with the per-item `SegmentedTab.tone` below (different prop, different scope).
+- **Rich items (web only):** a segment may be a `{ label, count?, tone? }` object instead of a plain string — `count` renders a trailing mono badge; per-item `tone` (`ok` mint / `canary` amber / `danger` red) paints the active label + a leading dot. Used in admin/CMS (catalog type counts, the pipeline Off/Canary/On flag). Native takes plain `string[]` only.
 
 ## 2. API contract
 
@@ -25,6 +26,7 @@ The **iOS-style segmented control** — a glass pill *track* of equal-width segm
 | `active` | `number` | `0` | ✓ | ✓ | index of the active segment |
 | `onChange` | `(index: number) => void` | — | ✓ | ✓ | fires with the pressed index; never fires for `locked` |
 | `locked` | `number[]` | — | ✓ | ✓ | indices dimmed + non-interactive + lock glyph |
+| `tone` | `'accent' \| 'mint'` | `'accent'` | ✓ | ✓ | **control-level** selected-segment color; `'accent'` = current glass pill (unchanged), `'mint'` = mint gradient + glow + dark label |
 | `className` | `string` | — | ✓ | — | web only |
 | _rest_ | `HTMLAttributes<HTMLDivElement>` minus `onChange` (web) | — | ✓ | — | spreads to the track `<div>` |
 
@@ -55,11 +57,13 @@ The **iOS-style segmented control** — a glass pill *track* of equal-width segm
 | Padding | web `7px 16px` · native `7 / 10` |
 | Radius | `--r-pill` / `radii.pill` |
 | Idle text | `--text-dim` / `colors.textDim` |
-| Active | bg `--glass-2`, text `--text`, `box-shadow 0 1px 2px rgba(0,0,0,.3)` (native mirrors via `shadowOpacity .3`, `elevation 2`) |
+| Active (`tone="accent"`, default) | bg `--glass-2`, text `--text`, `box-shadow 0 1px 2px rgba(0,0,0,.3)` (native mirrors via `shadowOpacity .3`, `elevation 2`) |
+| Active (`tone="mint"`) | bg `--grad-mint` / `gradients.mint`, glow `--glow-mint` / `nativeShadows.glowMint`, label `#0A0A12` (dark-on-bright, both platforms) |
 | Locked | `opacity 0.5`, non-interactive, `Icon name="lock" size={12}` |
 
 - **Hover (web):** idle segment text brightens to `--text`.
-- **Rich form (web only):** count badge `.lk-seg-count` — `--font-mono` `10px`, `--glass-2` pill, tabular-nums; tone dot `.lk-seg-dot` — `6px` round in `--ok`/`--warn`/`--bad`; active toned segments tint label + badge toward the tone (`color-mix(tone 16%)`).
+- **Mint tone (web):** `.lk-seg[data-tone='mint'] .lk-seg-tab.is-active` swaps the active pill to `var(--grad-mint)` + `var(--glow-mint)` + dark label; idle segments unchanged. **Native:** a `gradients.mint` `LinearGradient` fills the active segment behind the label (`StyleSheet.absoluteFillObject`, `radii.pill`, `nativeShadows.glowMint`). The dark-on-bright `#0A0A12` label matches `Button` `primary`.
+- **Rich form (web only):** count badge `.lk-seg-count` — `--font-mono` `10px`, `--glass-2` pill, tabular-nums; per-item tone dot `.lk-seg-dot` — `6px` round in `--ok`/`--warn`/`--bad`; active toned segments tint label + badge toward the tone (`color-mix(tone 16%)`).
 
 ## 4. States
 
@@ -69,12 +73,13 @@ The **iOS-style segmented control** — a glass pill *track* of equal-width segm
 | Hover | text → `--text` | n/a |
 | Pressed (non-active) | `:active` (browser) | `tabPressed` opacity .7 |
 | Active | `.is-active` raised pill; `aria-selected` | `tabActive` raised pill; `accessibilityState.selected` |
+| Active + `tone="mint"` | `[data-tone='mint'] .is-active` mint-gradient pill + glow + dark label | mint-gradient `LinearGradient` fill + `nativeShadows.glowMint` + dark label |
 | Locked | `.lk-seg-locked` dim + `disabled` + `aria-disabled`; no `onClick` | `tabLocked` dim + `disabled`; no `onPress` |
-| Toned active (web) | `.lk-seg-{ok,canary,danger}` tints label/badge | n/a — no tone on native |
+| Per-item toned active (web) | `.lk-seg-{ok,canary,danger}` tints label/badge | n/a — no per-item tone on native |
 
 ## 5. Web ↔ native parity
 
-**Verdict: 🟡 same core API, web-only enrichment.** The default control — track, equal-width segments, raised active pill, sizes, fonts — is identical, and the **`locked` upsell behavior is identical** (opacity `0.5`, non-interactive/`disabled`, `Icon name="lock" size={12}`, never fires the change handler). One real difference:
+**Verdict: 🟡 same core API, web-only enrichment.** The default control — track, equal-width segments, raised active pill, sizes, fonts — is identical, and the **`locked` upsell behavior is identical** (opacity `0.5`, non-interactive/`disabled`, `Icon name="lock" size={12}`, never fires the change handler). The **control-level `tone` prop (`accent`/`mint`) is identical on both platforms** — same union, same default (`accent` = unchanged), same mint treatment (mint gradient + glow + dark `#0A0A12` label; web CSS `[data-tone='mint']`, native `expo-linear-gradient` `gradients.mint`). One real difference:
 
 - **Rich item form (`count` + `tone`):** web `tabs` accepts `{ label, count?, tone? }` objects (count badge + semantic tone dot); native `tabs` is `string[]` only. Passing an object on native would be a type error. This enrichment serves **admin/CMS web surfaces** (catalog counts, the Off/Canary/On flag) that have no phone-width native counterpart — so the gap doesn't break web≡native on any shared screen. Treat it as **web-only**: do not rely on `count`/`tone` for a screen that must render on both.
 
@@ -91,6 +96,9 @@ Other differences are substrate only (CSS vs `StyleSheet`, hover vs press). The 
 <SegmentedTabs tabs={['Stats', 'History', 'Guide']} active={tab} onChange={setTab} />
 <SegmentedTabs tabs={['7D', '30D', '1Y', 'All']} active={range} onChange={setRange} locked={[2, 3]} />
 <SegmentedTabs tabs={[{ label: 'On', tone: 'ok' }, { label: 'Canary', tone: 'canary', count: 3 }, { label: 'Off', tone: 'danger' }]} active={0} />
+
+// web + native — control-level mint tone (onboarding Activity-level control)
+<SegmentedTabs tabs={['Sedentary', 'Light', 'Active', 'Athlete']} active={level} onChange={setLevel} tone="mint" />
 
 // native — plain + locked (string[] only)
 <SegmentedTabs tabs={['Stats', 'History', 'Guide']} active={tab} onChange={setTab} />

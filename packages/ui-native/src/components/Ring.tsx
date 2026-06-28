@@ -10,13 +10,15 @@ export interface RingProps {
   size?: number;
   /** Stroke width of both the track and the arc, in px. */
   thickness?: number;
-  /** Arc color — any color. Ignored when a two-stop `gradient` is given. */
+  /** Arc color — any color. Ignored when a `gradient` array is given. */
   color?: string;
   /** Track (unfilled) color. */
   trackColor?: string;
-  /** Optional arc gradient. A `[from, to]` tuple paints a two-stop gradient; a
-   *  single string is treated like a solid `color`. */
-  gradient?: [string, string] | string;
+  /** Optional arc gradient. A `[from, to]` tuple paints a two-stop gradient; an
+   *  N-length array (≥2, e.g. `gradients.flux.stops`) paints N evenly-spaced
+   *  stops — the full flux spectrum arc; a single string is treated like a
+   *  solid `color`. */
+  gradient?: string | string[];
   /** Soft color glow behind the arc (on by default). */
   glow?: boolean;
   /** Centered content. When omitted the rounded `value` is shown as the number. */
@@ -28,7 +30,8 @@ export interface RingProps {
  * Ring — a generic, prop-driven circular-progress primitive: an SVG track +
  * colored progress arc (rotated −90° so it starts at 12 o'clock, round
  * linecap, soft color glow) with absolutely-centered readout content. Solid by
- * default; pass a `[from, to]` `gradient` for a two-stop arc. Matches the
+ * default; pass a `[from, to]` `gradient` for a two-stop arc, or an N-stop
+ * array (e.g. `gradients.flux.stops`) for the full spectrum. Matches the
  * Aurora Flux ring look (energy/goal/substance gauges).
  */
 export function Ring({
@@ -66,8 +69,13 @@ export function Ring({
         {useGradient ? (
           <Defs>
             <LinearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
-              <Stop offset="0" stopColor={gradient[0]} />
-              <Stop offset="1" stopColor={gradient[1]} />
+              {gradient.map((stopColor, i) => (
+                <Stop
+                  key={i}
+                  offset={i / Math.max(1, gradient.length - 1)}
+                  stopColor={stopColor}
+                />
+              ))}
             </LinearGradient>
           </Defs>
         ) : null}
