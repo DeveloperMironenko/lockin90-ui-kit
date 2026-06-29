@@ -20,8 +20,10 @@ export interface ProgressBarProps extends ViewProps {
   value?: number;
   /** Bar height in px (default 8). */
   height?: number;
-  /** Two-stop fill gradient (default the flux gradient endpoints). */
-  gradient?: [string, string];
+  /** Fill gradient stops — accepts any number of colors; defaults to a
+   *  2-stop accent→cyan. Pass the full `gradients.flux.stops` for the
+   *  multi-color energy spectrum used by the onboarding tracker. */
+  gradient?: readonly string[];
   /** The unfilled track color (default a faint glass rail). */
   track?: string;
   /** Optional label rendered above the bar. */
@@ -32,7 +34,7 @@ export interface ProgressBarProps extends ViewProps {
   rounded?: boolean;
 }
 
-const DEFAULT_GRADIENT: [string, string] = [colors.accent, colors.cyan];
+const DEFAULT_GRADIENT: readonly string[] = [colors.accent, colors.cyan];
 /** Width of the sweeping band, as a fraction of the track. */
 const BAND_FRACTION = 0.38;
 
@@ -108,7 +110,7 @@ export function ProgressBar({
             ]}
           >
             <LinearGradient
-              colors={colorStops}
+              colors={colorStops as unknown as readonly [string, string, ...string[]]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={{ flex: 1, borderRadius: radius }}
@@ -116,7 +118,7 @@ export function ProgressBar({
           </Animated.View>
         ) : (
           <LinearGradient
-            colors={colorStops}
+            colors={colorStops as unknown as readonly [string, string, ...string[]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={{ height: '100%', width: `${pct}%` as DimensionValue, borderRadius: radius }}

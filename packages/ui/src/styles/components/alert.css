@@ -54,11 +54,16 @@
 }
 
 .lk-alert-text {
-  margin: 3px 0 0;
+  margin: 0;
   font-family: var(--font-ui);
   font-size: 13px;
   line-height: 1.5;
   color: var(--text-dim);
+}
+/* 3px nudge only when a title sits above the body — otherwise the text is the
+   only content and should align flush with the leading icon. */
+.lk-alert-title + .lk-alert-text {
+  margin-top: 3px;
 }
 
 /* dismiss × — mirrors .lk-modal-close */

@@ -174,6 +174,8 @@ export { ChoiceChip } from './components/ChoiceChip';
 export type { ChoiceChipSize, ChoiceChipProps } from './components/ChoiceChip';
 export { Eyebrow } from './components/Eyebrow';
 export type { EyebrowProps } from './components/Eyebrow';
+export { StateLabel } from './components/StateLabel';
+export type { StateLabelProps } from './components/StateLabel';
 
 // --- Domain charts (sleep / circadian / pharmacokinetics) ---
 export { Hypnogram } from './components/Hypnogram';

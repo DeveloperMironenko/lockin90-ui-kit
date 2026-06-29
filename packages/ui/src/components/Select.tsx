@@ -32,6 +32,8 @@ export interface SelectProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onCha
   placeholder?: string;
   /** small mono uppercase label rendered above the field */
   label?: string;
+  /** appends an accent `*` after the label — matches `FormField` / `Input` */
+  required?: boolean;
   /** red border + glow to signal an invalid value */
   invalid?: boolean;
   /** disable the field */
@@ -58,6 +60,7 @@ export function Select({
   onChange,
   placeholder,
   label,
+  required = false,
   invalid = false,
   disabled = false,
   name,
@@ -224,7 +227,16 @@ export function Select({
 
   return (
     <div ref={rootRef} className={cn('lk-select-wrap', className)} {...rest}>
-      {label ? <span className="lk-select-label">{label}</span> : null}
+      {label ? (
+        <span className="lk-select-label">
+          {label}
+          {required ? (
+            <span className="lk-field-req" aria-hidden="true">
+              *
+            </span>
+          ) : null}
+        </span>
+      ) : null}
 
       <button
         ref={btnRef}

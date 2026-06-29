@@ -1,0 +1,34 @@
+/* ============================================================================
+   StateLabel — numbered section header: mono numeral chip + uppercase label +
+   hairline gradient rule (01 ────── SIGN IN ──────). Used on auth screens.
+   Keys: .lk-statelabel, .lk-statelabel-num, .lk-statelabel-lbl, .lk-statelabel-ln
+   ========================================================================== */
+.lk-statelabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 2px 14px;
+}
+.lk-statelabel-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  color: var(--accent-2);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  background: rgba(34, 211, 238, 0.08);
+  border-radius: var(--r-pill);
+  padding: 2px 9px;
+}
+.lk-statelabel-lbl {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.lk-statelabel-ln {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-2), transparent);
+}

@@ -46,7 +46,8 @@
   font-weight: 600;
   line-height: 1;
   transition: background .25s var(--ease), border-color .25s var(--ease),
-    color .25s var(--ease), box-shadow .3s var(--ease);
+    color .25s var(--ease), box-shadow .3s var(--ease),
+    transform .2s var(--ease);
 }
 
 .lk-step-node .lk-icon {
@@ -102,6 +103,114 @@
 }
 .lk-step-line.is-filled {
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+/* ── Stepper (clickable) ─────────────────────────────────────────────────
+   When the consumer passes `onStepClick`, each step renders as a `<button>`
+   with `.is-clickable`. Reset native button chrome, give a hover affordance
+   (brighten border + lift the node), and disable future steps so they can't
+   be jumped to. Works for both `compact` and `glow` variants. */
+button.lk-step-item.is-clickable {
+  /* strip native button chrome */
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* hover: brighten the node border + lift it slightly */
+.lk-step-item.is-clickable:not(:disabled):hover .lk-step-node {
+  border-color: var(--border);
+  transform: scale(1.06);
+}
+.lk-step-item.is-clickable:not(:disabled):hover .lk-step-label {
+  color: var(--text);
+}
+
+/* focus-visible: ring around the node so keyboard nav reads */
+.lk-step-item.is-clickable:focus { outline: none; }
+.lk-step-item.is-clickable:focus-visible .lk-step-node {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* disabled (future step): no pointer, no hover effect */
+.lk-step-item.is-clickable:disabled {
+  cursor: default;
+}
+.lk-step-item.is-clickable:disabled .lk-step-node {
+  transform: none;
+}
+
+/* reduced-motion: drop the scale hover */
+@media (prefers-reduced-motion: reduce) {
+  .lk-step-item.is-clickable:not(:disabled):hover .lk-step-node {
+    transform: none;
+  }
+}
+
+/* ── Stepper (glow variant) ──────────────────────────────────────────────
+   Onboarding-tracker look — 40px nodes, hollow mint "done", pulsing CTA
+   "current", mint-gradient connectors. Mirrors `.step-node` block in
+   `onboarding.html`. Activate with <Stepper variant="glow" />. */
+.lk-step--glow .lk-step-item {
+  /* Wider track so the larger node + label sit centered on each segment. */
+  flex: 1 1 0;
+  width: auto;
+  min-width: 40px;
+}
+
+.lk-step--glow .lk-step-node {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid var(--border-2);
+  background: var(--bg-1);
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* completed — hollow mint ring with a stroked check */
+.lk-step--glow .lk-step-item.is-done .lk-step-node {
+  border: 1.5px solid var(--zone-high);
+  background: rgba(52, 245, 197, 0.12);
+  color: var(--zone-high);
+  box-shadow: 0 0 0 4px rgba(52, 245, 197, 0.06);
+}
+
+/* current — filled CTA gradient with a pulsing accent glow */
+.lk-step--glow .lk-step-item.is-current .lk-step-node {
+  border-color: transparent;
+  background: var(--grad-cta, var(--accent));
+  color: #07080d;
+  box-shadow: var(--glow-accent), 0 0 0 5px rgba(124, 92, 255, 0.10);
+  animation: lk-step-pulse 2.4s var(--ease) infinite;
+}
+
+/* connector switches to mint gradient + mint glow when filled */
+.lk-step--glow .lk-step-line.is-filled {
+  background: var(--grad-mint, linear-gradient(90deg, var(--mint), var(--accent-2)));
+  box-shadow: var(--glow-mint, none);
+}
+
+@keyframes lk-step-pulse {
+  0%, 100% {
+    box-shadow: var(--glow-accent), 0 0 0 5px rgba(124, 92, 255, 0.10);
+  }
+  50% {
+    box-shadow: 0 0 52px rgba(124, 92, 255, 0.55), 0 0 0 9px rgba(124, 92, 255, 0.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lk-step--glow .lk-step-item.is-current .lk-step-node {
+    animation: none;
+  }
 }
 
 /* ── NumberStepper ────────────────────────────────────────────────────────*/

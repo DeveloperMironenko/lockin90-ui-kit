@@ -266,6 +266,7 @@ const styles = StyleSheet.create({
   /* ---- CodeInput ---- */
   code: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     gap: 10,
   },
   codeBox: {

@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet, type ViewProps } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
@@ -20,6 +20,23 @@ export interface StepperProps extends ViewProps {
   /** when true, render the current node (and all before it) as done/checked —
    *  the whole rail reads finished (the onboarding "Complete" state) */
   complete?: boolean;
+  /** visual treatment — `compact` (default) is the original 30px filled rail;
+   *  `glow` matches the onboarding tracker (40px nodes, hollow mint "done",
+   *  CTA "current" with a stronger glow, mint connectors). Note: the
+   *  web variant pulses the current node — that animation is web-only by
+   *  design; native renders a static stronger glow in its place. */
+  variant?: 'compact' | 'glow';
+  /** When provided, each step's node + label becomes pressable; fired with the
+   *  0-based step index. Steps beyond `current` are disabled by default to
+   *  match the onboarding "no jumping ahead" UX — pass `allowAhead` to override. */
+  onStepPress?: (index: number) => void;
+  /** Allow pressing future steps (default false — only completed/current). */
+  allowAhead?: boolean;
+  /** Web-parity alias of `onStepPress` — provided so the same callback name
+   *  works on both web (`<Stepper onStepClick={…} />`) and native. Future
+   *  steps are always disabled (no `allowAhead` escape hatch on this path) to
+   *  match the web behavior exactly. */
+  onStepClick?: (index: number) => void;
 }
 
 const DEFAULT_STEPS: Step[] = [
@@ -34,8 +51,23 @@ const DEFAULT_STEPS: Step[] = [
  *  connecting line fills accent up to the current step, faint beyond. When
  *  `complete`, the current node also reads done (mint check) so the whole
  *  rail shows finished. */
-export function Stepper({ steps = DEFAULT_STEPS, current = 1, complete = false, style, ...rest }: StepperProps) {
+export function Stepper({
+  steps = DEFAULT_STEPS,
+  current = 1,
+  complete = false,
+  variant = 'compact',
+  onStepPress,
+  allowAhead = false,
+  onStepClick,
+  style,
+  ...rest
+}: StepperProps) {
   const active = Math.min(Math.max(0, current), Math.max(0, steps.length - 1));
+  const isGlow = variant === 'glow';
+  // Web-parity callback wins when both are passed; mirrors web semantics
+  // (no `allowAhead` — future steps are always disabled on this path).
+  const pressHandler = onStepClick ?? onStepPress;
+  const allowAheadResolved = onStepClick ? false : allowAhead;
 
   return (
     <View style={[styles.step, style]} {...rest}>
@@ -47,36 +79,82 @@ export function Stepper({ steps = DEFAULT_STEPS, current = 1, complete = false, 
             {i > 0 &&
               (i <= active ? (
                 <LinearGradient
-                  colors={[colors.accent, colors.accent2]}
+                  colors={
+                    isGlow
+                      ? (gradients.mint.stops as unknown as [string, string])
+                      : [colors.accent, colors.accent2]
+                  }
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
-                  style={styles.line}
+                  style={[
+                    styles.line,
+                    isGlow && (nativeShadows.glowMint as object),
+                  ]}
                 />
               ) : (
                 <View style={[styles.line, styles.lineFaint]} />
               ))}
-            <View style={styles.item}>
+            <PressableMaybe
+              onPress={pressHandler}
+              index={i}
+              pressable={!!pressHandler && (allowAheadResolved || i <= active)}
+              isCurrent={isCurrent}
+              label={stepItem.label}
+              style={[styles.item, isGlow && styles.itemGlow]}
+            >
               {done ? (
-                <LinearGradient
-                  colors={gradients.mint.stops as unknown as [string, string]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={[styles.node, styles.nodeFilled, nativeShadows.glowMint]}
-                >
-                  <Icon name="check" size={14} color={colors.bg1} />
-                </LinearGradient>
+                isGlow ? (
+                  // Glow "done": hollow mint ring with a stroked check —
+                  // no gradient fill; the border + tint carry the state.
+                  <View style={[styles.node, styles.nodeGlow, styles.nodeGlowDone]}>
+                    <Icon name="check" size={16} color={colors.zoneHigh} />
+                  </View>
+                ) : (
+                  <LinearGradient
+                    colors={gradients.mint.stops as unknown as [string, string]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={[styles.node, styles.nodeFilled, nativeShadows.glowMint]}
+                  >
+                    <Icon name="check" size={14} color={colors.bg1} />
+                  </LinearGradient>
+                )
               ) : isCurrent ? (
+                // CTA gradient with accent glow. The web variant pulses this
+                // glow via @keyframes; native renders the peak-state glow
+                // statically — driving an animated shadow on RN would need a
+                // new animation lib for marginal gain, so we keep it still.
                 <LinearGradient
                   colors={gradients.cta.stops as unknown as [string, string]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={[styles.node, styles.nodeFilled, nativeShadows.glowAccent]}
+                  style={[
+                    styles.node,
+                    styles.nodeFilled,
+                    isGlow && styles.nodeGlow,
+                    nativeShadows.glowAccent,
+                  ]}
                 >
-                  <Text style={[styles.nodeNum, styles.nodeNumFilled]}>{i + 1}</Text>
+                  <Text
+                    style={[
+                      styles.nodeNum,
+                      styles.nodeNumFilled,
+                      isGlow && styles.nodeNumGlow,
+                    ]}
+                  >
+                    {i + 1}
+                  </Text>
                 </LinearGradient>
               ) : (
-                <View style={[styles.node, styles.nodeFuture]}>
-                  <Text style={styles.nodeNum}>{i + 1}</Text>
+                <View
+                  style={[
+                    styles.node,
+                    styles.nodeFuture,
+                    isGlow && styles.nodeGlow,
+                    isGlow && styles.nodeGlowFuture,
+                  ]}
+                >
+                  <Text style={[styles.nodeNum, isGlow && styles.nodeNumGlow]}>{i + 1}</Text>
                 </View>
               )}
               <Text
@@ -89,11 +167,46 @@ export function Stepper({ steps = DEFAULT_STEPS, current = 1, complete = false, 
               >
                 {stepItem.label}
               </Text>
-            </View>
+            </PressableMaybe>
           </Fragment>
         );
       })}
     </View>
+  );
+}
+
+/** Internal: render children inside a Pressable when `pressable` is true,
+ *  otherwise inside a plain View. Lets the same JSX path serve both the
+ *  static stepper and the clickable-rail variant without nesting branches. */
+function PressableMaybe({
+  pressable,
+  onPress,
+  index,
+  isCurrent,
+  label,
+  style,
+  children,
+}: {
+  pressable: boolean;
+  onPress: ((index: number) => void) | undefined;
+  index: number;
+  isCurrent: boolean;
+  label: string;
+  style: ViewProps['style'];
+  children: ReactNode;
+}) {
+  if (!pressable || !onPress) return <View style={style}>{children}</View>;
+  return (
+    <Pressable
+      style={style}
+      onPress={() => onPress(index)}
+      accessibilityRole="button"
+      accessibilityLabel={`Go to step ${index + 1}: ${label}`}
+      accessibilityState={isCurrent ? { selected: true } : undefined}
+      hitSlop={6}
+    >
+      {children}
+    </Pressable>
   );
 }
 
@@ -187,6 +300,24 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   lineFaint: { backgroundColor: colors.border },
+
+  /* glow variant — 40px nodes, hollow mint "done", CTA "current" */
+  itemGlow: { flex: 1, minWidth: 40 },
+  nodeGlow: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1.5,
+  },
+  nodeGlowDone: {
+    borderColor: colors.zoneHigh,
+    backgroundColor: 'rgba(52,245,197,0.12)',
+  },
+  nodeGlowFuture: {
+    borderColor: colors.border2,
+    backgroundColor: colors.bg1,
+  },
+  nodeNumGlow: { fontSize: 14 },
 
   /* ── NumberStepper ────────────────────────────────────────────────────── */
   numstep: {

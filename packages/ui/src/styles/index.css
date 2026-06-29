@@ -23,6 +23,7 @@
 @import './components/dotsloader.css';
 @import './components/empty.css';
 @import './components/eyebrow.css';
+@import './components/statelabel.css';
 @import './components/field.css';
 @import './components/focal.css';
 @import './components/gauge.css';

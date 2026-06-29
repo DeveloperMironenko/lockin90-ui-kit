@@ -70,8 +70,12 @@ export { Pulse } from './components/Pulse';
 export type { PulseProps } from './components/Pulse';
 export { Ring } from './components/Ring';
 export type { RingProps } from './components/Ring';
+export { RichText } from './components/RichText';
+export type { RichTextProps } from './components/RichText';
 export { SegmentedTabs } from './components/SegmentedTabs';
 export type { SegmentedTabsProps } from './components/SegmentedTabs';
+export { SsoButton } from './components/SsoButton';
+export type { SsoButtonProps, SsoProvider } from './components/SsoButton';
 export { Select } from './components/Select';
 export type { SelectOption, SelectProps } from './components/Select';
 export { Sheet } from './components/Sheet';
@@ -166,6 +170,8 @@ export { ChoiceChip } from './components/ChoiceChip';
 export type { ChoiceChipSize, ChoiceChipProps } from './components/ChoiceChip';
 export { Eyebrow } from './components/Eyebrow';
 export type { EyebrowProps } from './components/Eyebrow';
+export { StateLabel } from './components/StateLabel';
+export type { StateLabelProps } from './components/StateLabel';
 
 // --- Domain charts (sleep / circadian / pharmacokinetics) ---
 export { Hypnogram } from './components/Hypnogram';

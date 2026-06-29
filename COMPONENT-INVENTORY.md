@@ -66,6 +66,15 @@ _Generated 2026-06-21 from live source in `packages/ui` (web) + `packages/ui-nat
 >   (`empty`+`hint`), `SegmentedTabs` (per-item count+tone), `SearchInput` (`kbdHint`), `Icon` (+`stripe`).
 >
 > Kit total: **~124 primitives** (root cross-platform + the web-only `@lockin90/ui/admin` operator set).
+>
+> **Recent additions (2026-06-27):**
+> - **Stepper:** new `variant="glow"` (onboarding tracker — 40px nodes, hollow done,
+>   pulsing current, mint connectors). Default `compact` behavior unchanged. Both
+>   platforms; the current-node pulse animation is web-only by design (native
+>   renders a static stronger glow).
+> - **StateLabel** — numbered mono section header (`01 ─── SIGN IN ──── hairline`).
+>   Used for auth screens. Both platforms.
+> - **BackLink:** new `variant="pill"` (glass-chip mono affordance — used as the auth brand-panel "Back to site" chip).
 
 ## Architecture
 
@@ -107,6 +116,7 @@ Legend — Parity: ✅ same API · 🟡 same API, platform-shaped impl · 🔵 c
 | **Pulse** | — | Breathing live-status dot | `tone: ok·warn·bad` | 🟡 CSS anim vs shadow |
 | **Skeleton** | — | Shimmer placeholder | `width·height·radius` | 🟡 native fill (shimmer external) |
 | **Avatar** | `initialsFor` | Image or initials tile | `name·initials·src·size`, `shape: circle·rounded` | 🟡 gradient = CSS string vs stop array |
+| **StateLabel** | — | Numbered mono section header (`01 ─── SIGN IN ──── hairline`). Used for auth screens. | `num·label` | 🟡 web gradient hairline; native flat `border2` |
 
 ### 2. Buttons & Form Inputs
 | Component | Exports | Purpose | Key variants/props | Parity |

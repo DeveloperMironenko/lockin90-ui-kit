@@ -67,7 +67,9 @@ export function SegmentedTabs({
               />
             )}
             <Text
-              numberOfLines={1}
+              numberOfLines={2}
+              adjustsFontSizeToFit
+              minimumFontScale={0.8}
               style={[
                 styles.label,
                 { color: isActive ? (isMintActive ? '#0A0A12' : colors.text) : colors.textDim },
@@ -100,8 +102,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
-    paddingVertical: 7,
-    paddingHorizontal: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
     borderRadius: radii.pill,
     backgroundColor: 'transparent',
   },
@@ -125,9 +127,9 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: fonts.ui,
-    fontSize: 13.5,
+    fontSize: 11,
     fontWeight: '600',
-    letterSpacing: -0.07,
     textAlign: 'center',
+    letterSpacing: -0.07,
   },
 });

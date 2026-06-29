@@ -133,7 +133,7 @@ export function Select({
 }
 
 const styles = StyleSheet.create({
-  wrap: { flexDirection: 'column', gap: 6, alignSelf: 'flex-start' },
+  wrap: { flexDirection: 'column', gap: 6, alignSelf: 'stretch' },
   label: {
     fontFamily: fonts.ui,
     fontSize: 10,

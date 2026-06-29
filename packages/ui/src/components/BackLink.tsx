@@ -9,6 +9,15 @@ type CommonProps = {
   href?: string;
   onClick?: () => void;
   className?: string;
+  /**
+   * Visual variant.
+   * - `'default'` — flat accent text link (the original look).
+   * - `'pill'` — glass-chip mono affordance (matches the auth brand-panel
+   *   "Back to site" button: bordered glass surface, dim mono label, no
+   *   icon nudge on hover).
+   * @default 'default'
+   */
+  variant?: 'default' | 'pill';
 };
 
 export type BackLinkProps = CommonProps &
@@ -18,7 +27,15 @@ export type BackLinkProps = CommonProps &
   >;
 
 /** "‹ Back" navigation affordance — chevron-left glyph + label, in accent. */
-export function BackLink({ label = 'Back', href, onClick, className, ...rest }: BackLinkProps) {
+export function BackLink({
+  label = 'Back',
+  href,
+  onClick,
+  className,
+  variant = 'default',
+  ...rest
+}: BackLinkProps) {
+  const rootClass = cn('lk-backlink', variant === 'pill' && 'lk-backlink--pill', className);
   const content = (
     <>
       <Icon name="back" size={18} className="lk-backlink-icon" />
@@ -31,7 +48,7 @@ export function BackLink({ label = 'Back', href, onClick, className, ...rest }: 
       <a
         href={href}
         onClick={onClick}
-        className={cn('lk-backlink', className)}
+        className={rootClass}
         {...(rest as AnchorHTMLAttributes<HTMLAnchorElement>)}
       >
         {content}
@@ -43,7 +60,7 @@ export function BackLink({ label = 'Back', href, onClick, className, ...rest }: 
     <button
       type="button"
       onClick={onClick}
-      className={cn('lk-backlink', className)}
+      className={rootClass}
       {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
     >
       {content}

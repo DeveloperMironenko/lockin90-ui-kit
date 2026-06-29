@@ -18,6 +18,16 @@ export interface StepperProps extends HTMLAttributes<HTMLDivElement> {
   /** when true, render the current node (and all before it) as done/checked —
    *  the whole rail reads finished (the onboarding "Complete" state) */
   complete?: boolean;
+  /** visual treatment — `compact` (default) is the original 30px filled rail;
+   *  `glow` matches the onboarding tracker (40px nodes, hollow mint "done",
+   *  pulsing CTA "current", mint connectors). */
+  variant?: 'compact' | 'glow';
+  /** When provided, each step renders as a focusable `<button>` instead of a
+   *  plain `<div>` — clicking (or ENTER / SPACE) fires with the 0-based index.
+   *  Future steps (i > current and not `complete`) are rendered disabled to
+   *  match the onboarding "no jumping ahead" UX; done + current stay live.
+   *  Omit to render the original non-interactive node (backward-compatible). */
+  onStepClick?: (index: number) => void;
 }
 
 const DEFAULT_STEPS: Step[] = [
@@ -33,17 +43,44 @@ const DEFAULT_STEPS: Step[] = [
  *  `complete`, the current node also reads done (mint check) so the whole
  *  rail shows finished. */
 export const Stepper = forwardRef<HTMLDivElement, StepperProps>(function Stepper(
-  { steps = DEFAULT_STEPS, current = 1, complete = false, className, ...rest },
+  {
+    steps = DEFAULT_STEPS,
+    current = 1,
+    complete = false,
+    variant = 'compact',
+    onStepClick,
+    className,
+    ...rest
+  },
   ref,
 ) {
   const active = Math.min(Math.max(0, current), Math.max(0, steps.length - 1));
+  const clickable = typeof onStepClick === 'function';
 
   return (
-    <div ref={ref} className={cn('lk-step', className)} {...rest}>
+    <div
+      ref={ref}
+      className={cn('lk-step', variant === 'glow' && 'lk-step--glow', className)}
+      {...rest}
+    >
       {steps.map((step, i) => {
         const done = complete ? i <= active : i < active;
         const isCurrent = !complete && i === active;
         const state = done ? 'is-done' : isCurrent ? 'is-current' : 'is-future';
+        const isFuture = !done && !isCurrent;
+        const itemClass = cn(
+          'lk-step-item',
+          state,
+          clickable && 'is-clickable',
+        );
+        const nodeContent = (
+          <>
+            <span className="lk-step-node" aria-hidden="true">
+              {done ? <Icon name="check" size={14} /> : i + 1}
+            </span>
+            <span className="lk-step-label">{step.label}</span>
+          </>
+        );
         return (
           <Fragment key={`${step.label}-${i}`}>
             {i > 0 && (
@@ -52,12 +89,20 @@ export const Stepper = forwardRef<HTMLDivElement, StepperProps>(function Stepper
                 aria-hidden="true"
               />
             )}
-            <div className={cn('lk-step-item', state)}>
-              <span className="lk-step-node" aria-hidden="true">
-                {done ? <Icon name="check" size={14} /> : i + 1}
-              </span>
-              <span className="lk-step-label">{step.label}</span>
-            </div>
+            {clickable ? (
+              <button
+                type="button"
+                className={itemClass}
+                onClick={() => onStepClick?.(i)}
+                disabled={isFuture}
+                aria-current={isCurrent ? 'step' : undefined}
+                aria-label={`Go to step ${i + 1}: ${step.label}`}
+              >
+                {nodeContent}
+              </button>
+            ) : (
+              <div className={itemClass}>{nodeContent}</div>
+            )}
           </Fragment>
         );
       })}
