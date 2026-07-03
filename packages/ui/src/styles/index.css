@@ -105,3 +105,20 @@
 @import './components/recoverycodes.css';
 @import './components/refrangebar.css';
 @import './components/qrcode.css';
+@import './components/funnelchart.css';
+@import './components/biomarker.css';
+
+/* --- charts wave (catalog program) --- */
+@import './components/area.css';
+@import './components/beeswarm.css';
+@import './components/bodybattery.css';
+@import './components/bullet.css';
+@import './components/caffeineclock.css';
+@import './components/combo.css';
+@import './components/compare.css';
+@import './components/dist.css';
+@import './components/pyramid.css';
+@import './components/scatter.css';
+@import './components/supplement.css';
+@import './components/unitchart.css';
+@import './components/vitals.css';

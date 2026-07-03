@@ -1,0 +1,51 @@
+/* ============================================================================
+   UnitChart — the shared catalog unit/waffle family (UN-01…UN-05,
+   lockin90-design/charts/unit-charts.html): 90-day program waffle, 10×10
+   share waffle, pictogram tallies, day-dot week strips and the mini habit
+   board in a fixed 320×150 viewBox with mono catalog labels. Colors are
+   prop/data-driven (inline token vars), so this stylesheet only owns layout,
+   label type, the shine blur and the UN-01 TODAY pulse.
+   Key: .lk-unit
+   ========================================================================== */
+.lk-unit { display: block; width: 100%; }
+
+/* the scalable chart canvas — the 320×150 viewBox stretches to the container,
+   keeping its aspect; shine glow may spill slightly past the box */
+.lk-unit-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* catalog mono label (title, captions, day letters, tally counts) */
+.lk-unit-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.06em;
+}
+
+/* chip-pill annotation text (UN-04 '5 OF 7 · ON TRACK') */
+.lk-unit-tag {
+  font-family: var(--font-mono);
+  font-size: 8px; /* viewBox units */
+  letter-spacing: 0.05em;
+}
+
+/* the top-right stat readout ('62%') — display face, catalog 12px/700 */
+.lk-unit-stat {
+  font-family: var(--font-display);
+  font-size: 12px; /* viewBox units */
+  font-weight: 700;
+}
+
+/* UN-01 TODAY pulse: glowing core + expanding fading ring
+   (r 3.6 → 11 over 1.8s, the catalog pulseDot) */
+.lk-unit-pulsecore { filter: drop-shadow(0 0 5px currentColor); }
+.lk-unit-pulsering {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lk-unit-pulse 1.8s linear infinite;
+}
+@keyframes lk-unit-pulse {
+  from { transform: scale(1); opacity: 0.8; }
+  to { transform: scale(3.05); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-unit-pulsering { animation: none; opacity: 0; }
+}

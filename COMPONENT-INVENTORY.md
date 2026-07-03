@@ -65,8 +65,6 @@ _Generated 2026-06-21 from live source in `packages/ui` (web) + `packages/ui-nat
 >   (row tone + expandable detail + sort indicator), `Card` (tone + ghost/dashed), `Stat`/`MetricTile`
 >   (`empty`+`hint`), `SegmentedTabs` (per-item count+tone), `SearchInput` (`kbdHint`), `Icon` (+`stripe`).
 >
-> Kit total: **~124 primitives** (root cross-platform + the web-only `@lockin90/ui/admin` operator set).
->
 > **Recent additions (2026-06-27):**
 > - **Stepper:** new `variant="glow"` (onboarding tracker — 40px nodes, hollow done,
 >   pulsing current, mint connectors). Default `compact` behavior unchanged. Both
@@ -75,6 +73,24 @@ _Generated 2026-06-21 from live source in `packages/ui` (web) + `packages/ui-nat
 > - **StateLabel** — numbered mono section header (`01 ─── SIGN IN ──── hairline`).
 >   Used for auth screens. Both platforms.
 > - **BackLink:** new `variant="pill"` (glass-chip mono affordance — used as the auth brand-panel "Back to site" chip).
+>
+> **Recent additions (2026-07-03) — charts catalog program (`docs/sdd/CHARTS-PLAN.md`):**
+> - The full `lockin90-design/charts/` design catalog — **251 named variants across 35 families** —
+>   now lives in the kit, web + native in lockstep. One component per family (never a lookalike);
+>   catalog SELECTs (color / segments / state / …) are plain props and every chart takes a `shine`
+>   glow modifier. Ask-by-ID contract: catalog ID → component + `variant` + props resolves via
+>   [docs/sdd/CHART-MAP.md](./docs/sdd/CHART-MAP.md).
+> - **9 primitives EXTENDED** with catalog `variant` unions + option props (defaults unchanged):
+>   LineChart, BarChart, ProgressBar, Ring, Gauge, DonutChart, Heatmap, Hypnogram, PhaseWheel.
+> - **+27 NEW chart components** (same API both platforms; web inline-SVG + `lk-*` CSS ↔ native
+>   `react-native-svg`, glow = wider faint duplicate shape): AreaChart, BeeswarmChart,
+>   BiomarkerRange, BodyBattery, BulletChart, CaffeineClock, ChartState, ComboChart, CompareChart,
+>   CompositeChart, DayWheel, DistributionChart, EnvironmentChart, FunnelChart (cross-platform;
+>   the web-only `@lockin90/ui/admin` FunnelChart is unchanged), MetaphorWidget, RadarChart,
+>   RoseChart, SankeyChart, ScatterChart, SessionChart (+`DEFAULT_SESSION_ZONES`), StatTile,
+>   SupplementChart, TimelineChart, UnitChart, VitalsStrip, WatchComplication, ZonePyramid.
+>
+> Kit total: **~152 primitives** (root cross-platform + the web-only `@lockin90/ui/admin` operator set).
 
 ## Architecture
 
@@ -143,15 +159,45 @@ Legend — Parity: ✅ same API · 🟡 same API, platform-shaped impl · 🔵 c
 | **Chip** | — | Status pill, optional glow dot | `tone: default·high·mid·low·accent` | 🟡 native `label` required vs web children |
 | **Badge** | (in Toast)² | Tiny count/dot pill | `tone: accent·high·mid·low·neutral`, `dot` | 🟡 |
 | **StatusDot** | (in KeyValue)¹ | Tiny status dot + pulse | `tone: high·mid·low·accent·neutral`, `pulse` | 🟡 |
-| **Ring** | — | Circular progress, glow arc | `value·size·thickness·gradient·glow` | 🟡 SVG both; native glow via 2nd circle |
+| **Ring** | — | Circular progress, glow arc | `value·size·thickness·gradient·glow`; NEW `variant: score·dual·triple·thin-halo·dashed-track·pulse·delta`, `zone`, `delta` | 🟡 SVG both; native glow via 2nd circle |
 | **BarFill** | — | Thin gradient progress bar (0–1) | `value·height·visible` | 🟡 |
 | **Sparkline** | — | Mini trend line + area + end dot | `data·fill·dot·strokeWidth` | 🟡 |
-| **BarChart** | — | Vertical gradient bars, highlights | `bars·max·showValues` | 🟡 gradient string vs tuple |
-| **LineChart** | — | Smooth/straight line, area, grid, axes, markers | `data·axis·smooth·yAxis·markers` | 🟡 web stretch-SVG vs fixed viewBox |
-| **DonutChart** | — | Segmented donut, center total | `segments·thickness·gap` | 🟡 SVG dashoffset vs RN rotation |
-| **Hypnogram** | `SleepStage`·`HypnogramSegment` | Sleep-stage timeline — capsule bars on Awake/REM/Light/Deep bands + connectors | `segments·height·axis·showStageLabels` | 🟡 web stretch-SVG vs measured viewBox |
-| **PhaseWheel** | `PhaseArc`·`PhaseMarker` | Circular 24h circadian clock — phase arcs, hour ticks, now-hand | `arcs·markers·now·size·thickness·hourTicks` | 🟡 SVG dashoffset vs RN rotation |
+| **BarChart** | `BarChartVariant`·`BarChartLegendItem` | Vertical gradient bars, highlights | `bars·max·showValues`; NEW `variant` (14: bars·spectrum·zone·lollipop·diverging-tide·stacked·grouped-pair·value-caps·fade-history·today-pulse·rank-rows·waterfall·goal-bars·sparkbar-micro), `legend` | 🟡 gradient string vs tuple |
+| **LineChart** | `LineChartVariant`·`LineSeries`·`LineCurve`·`LinePattern`·`GradientStop`·`LineLabel` | Smooth/straight line, area, grid, axes, markers | `data·axis·smooth·yAxis·markers`; NEW `variant` (solid·gradient·veil·tide-split·glass-fill·curve-styles·dash-dot·stroke-weight·neon·aurora-halo·ghost-echo·bead-chain·comet-head·peak-flag + marker/compare/band/forecast forms), multi-`series`, `curve`, `pattern` | 🟡 web stretch-SVG vs fixed viewBox |
+| **DonutChart** | — | Segmented donut, center total | `segments·thickness·gap`; NEW `variant: donut·duo-split·split-arcs·zone-share·hero-arc·callout-arcs·…`, `hero`, `callouts`, nested `innerSegments`, `shine` | 🟡 SVG dashoffset vs RN rotation |
+| **Hypnogram** | `SleepStage`·`HypnogramSegment`·`HypnogramVariant`·`EfficiencyInterval`·`SleepNight` | Sleep-stage timeline — capsule bars on Awake/REM/Light/Deep bands + connectors | `segments·height·axis·showStageLabels`; NEW `variant: hypnogram·efficiency-bars·sleep-week·bedtime-drift·night-coach` | 🟡 web stretch-SVG vs measured viewBox |
+| **PhaseWheel** | `PhaseArc`·`PhaseMarker`·`PhaseWheelVariant`·`CyclePhase` | Circular 24h circadian clock — phase arcs, hour ticks, now-hand | `arcs·markers·now·size·thickness·hourTicks`; NEW `variant: circadian·phase-wheel·coach-wheel·phase-strip`, cycle `phases` | 🟡 SVG dashoffset vs RN rotation |
 | **PkChart** | `PkDose`·`PkThreshold` | Pharmacokinetics curve — Bateman model, threshold + danger tint, dose markers, peak | `doses·samples·halfLifeH·tMaxH·threshold·unit` | 🟡 web stretch-SVG vs measured viewBox |
+| **ProgressBar** | `ProgressBarVariant` | Linear progress bar (extended) | NEW `variant: progress·zone-progress·step-cells·milestone-line·ghost-compare·overflow-badge·head-pill·countdown-drain` | 🟡 |
+| **Gauge** | `GaugeZone` | Arc gauge (extended) | `value·min·max·zones·gradient`; NEW `sweep`, `ticks`+`tickPosition`, `cap`, `zone`, `shine`, `label`/`showValue` | 🟡 web SVG ↔ RN-svg |
+| **Heatmap** | `HeatmapCell`·`lerpColor` | Value grid / calendar heatmap (extended) | `cells·columns·colorFrom/To`; NEW `variant: grid·strip`, `scale: zone·spectrum·diverge`, row/col labels, `dayLetters`, `dots`, `glass`, `focusRow`, `showValues`, today ring + `todayPulse`, `shine` | 🟡 web SVG ↔ RN-svg |
+| **FunnelChart** | `FunnelStage`·`FunnelChartFill` | Stage-conversion funnel — bands or bars + drop labels | `variant: band-funnel·bar-funnel·zone-funnel·compare-funnel`, `fill: tokens·glass`, `shine` | 🟡 web SVG ↔ RN-svg |
+| **BiomarkerRange** | `BiomarkerMarker`·`BiomarkerTrend` | Lab markers on reference ranges — rows / tiles / trend / history | `variant: panel-rows·single-marker·marker-trend·panel-grid·range-history` | 🟡 web SVG ↔ RN-svg |
+| **AreaChart** | `AreaSeries`·`AreaMultiple` | Stacked / stream / percent area compositions | `variant: stack·percent-stack·stream-center·effect-stack·fade-stack·mini-multiples` | 🟡 web SVG ↔ RN-svg |
+| **CompareChart** | `CompareMetric`·`RankSeries`·`LadderStep` | Before/after + rank comparisons | `variant: slope-panel·dumbbell-rows·bump-ranks·delta-arrows·mirror-bars·cohort-slopes·ladder-steps` | 🟡 web SVG ↔ RN-svg |
+| **ScatterChart** | `ScatterPoint` | Correlation dots, bubbles, quadrants, density | `variant: mint-scatter·trend-fit·bubble-dose·quadrant-map·zone-dots·today-marker·density-cloud` | 🟡 web SVG ↔ RN-svg |
+| **DistributionChart** | `DistributionBell`·`BoxRow`·`RidgeRow` | Histogram / bell / box / violin / ridgeline | `variant: histogram·bell-percentile·cohort-bells·box-rows·violin·ridgeline` | 🟡 web SVG ↔ RN-svg |
+| **TimelineChart** | `TimelineEvent`·`TimelineSpan`·`TimelineLane`·`TimelineCluster`·`TimelineMilestone` | Event/duration timelines — lanes, gantt, 24h ticks, feed | `variant` (14: event-line…milestone-flags), `markerStyle: dots·pins·pills`, `feedLayout` | 🟡 web SVG ↔ RN-svg |
+| **SessionChart** | `DEFAULT_SESSION_ZONES`·`SessionZone`·`SessionRound`·`SessionRecovery` | Workout / sauna / recovery / glucose session traces | `variant: hr-zones-session·hr-intervals·time-in-zones·hr-recovery·sauna-rounds·sauna-heat-ramp·night-recovery·glucose-response·response-overlay` | 🟡 web SVG ↔ RN-svg |
+| **SankeyChart** | `SankeyNode`·`SankeyLink`·`SankeyFactor`·`SankeyChord` | Flow ribbons source → outcome | `variant` (9: duo-flow…chord-factors), `ribbonStyle: solid·spectrum·glass·gradient` | 🟡 web SVG ↔ RN-svg |
+| **RadarChart** | `RadarSeries`·`RadarFill` | Spider / balance polygon + overlays | `variant: balance-radar·target-overlay·cohort-ghost·zone-vertices·weeks-trail·mini-triples`, `fill` | 🟡 web SVG ↔ RN-svg |
+| **RoseChart** | `RosePetal` | Polar-area rose | `variant: balance-rose·week-rose·rose-compare` | 🟡 web SVG ↔ RN-svg |
+| **DayWheel** | `DayWheelEvent` | Radial 24h day view | `variant: clock-events·radial-bars·zone-wheel·radial-heat` | 🟡 web SVG ↔ RN-svg |
+| **UnitChart** | `UnitSegment`·`UnitPictogramRow`·`UnitHabitRow` | Waffle / pictogram / day-dot unit counts | `variant: waffle-90·waffle-share·pictogram-rows·day-dots·habit-grid` | 🟡 web SVG ↔ RN-svg |
+| **BeeswarmChart** | `BeeswarmPoint`·`BeeswarmGroup`·`BeeswarmTick` | Dot swarms on an axis — history / scores / PR | `variant: history-swarm·score-swarm·pr-swarm·month-swarm` | 🟡 web SVG ↔ RN-svg |
+| **ZonePyramid** | `PyramidZone` | HR-zone pyramid Z5→Z1 | `variant: zone-pyramid·target-pyramid·mirror-pyramid` | 🟡 web SVG ↔ RN-svg |
+| **ComboChart** | `ComboMetric` | Dual-metric combos — bars+line, area+line, bars+plan | `variant: bars-line·area-line·bars-plan` | 🟡 web SVG ↔ RN-svg |
+| **BulletChart** | `BulletRow` | Bullet rows — measure vs target vs ranges | `variant: bullets·single-bullet·over-bullets` | 🟡 web SVG ↔ RN-svg |
+| **SupplementChart** | `SupplementRow`·`SupplementSeries`·`SupplementVessel` | Supplement level kinetics + liquid batteries | `variant` (9: saturation-story…battery-hero) | 🟡 web SVG ↔ RN-svg |
+| **BodyBattery** | `BatteryDrainEvent` | Energy-reserve day curve / battery glyphs | `variant: battery-day·battery-glyph·drain-events·battery-week·battery-vs` | 🟡 web SVG ↔ RN-svg |
+| **CaffeineClock** | `CaffeineDose` | Caffeine decay vs bedtime | `variant: decay-curve·stacked-doses·safe-window` | 🟡 web SVG ↔ RN-svg |
+| **VitalsStrip** | — | ECG / HRV / respiration monitor strips | `variant: ecg-strip·hrv-rhythm·monitor·night-hr·anomaly-beat` | 🟡 web SVG ↔ RN-svg |
+| **MetaphorWidget** | `MetaphorHabit`·`MetaphorMeal`·`MetaphorCamp` | Skeuomorphic widgets — thermometer, hourglass, garden, bottle, pacer… | `variant` (9: thermometer…breath-session) | 🟡 web SVG ↔ RN-svg |
+| **StatTile** | `StatTileStat`·`StatTileRow`·`StatTileAccessory` | Big-number KPI tiles + chart accessories | `variant: stat-tile·hero-number·duo-tile·stat-list`, `accessory: none·spark·bars·ring·progress` | 🟡 web SVG ↔ RN-svg |
+| **CompositeChart** | `CompositeTreemapItem`·`CompositeHorizonRow`·`CompositeGoalNode` | Treemap / horizon / calendar-micro / goal-tree | `variant: treemap·horizon-rows·calendar-micro·goal-tree` | 🟡 web SVG ↔ RN-svg |
+| **ChartState** | — | Chart loading / empty / locked / error / partial-sync states | `variant: skeleton-chart·loading-ring·empty-cta·locked-forecast·error-retry·partial-sync` | 🟡 web SVG ↔ RN-svg |
+| **WatchComplication** | `WatchComplicationCorners` | Watch-face complication tiles | `variant: ring-score·battery-gauge·micro-spark·corner-gauge·inline-pill·rings-trio` | 🟡 web SVG ↔ RN-svg |
+| **EnvironmentChart** | — | Sun / UV / pollen / AQI environment views | `variant: sun-uv-arc·pollen-rows·aqi-day·outdoor-window` | 🟡 web SVG ↔ RN-svg |
 | **Table** | — | Sticky-header data table, sortable, dense | `columns·rows·sortKey·sortDir·dense` | 🟡 `<table>` vs flex Views in ScrollView |
 
 ### 4. Navigation & Layout

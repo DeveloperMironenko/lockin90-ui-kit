@@ -1,118 +1,141 @@
-# SDD — `ProgressBar` (+ `BarFill` cross-ref)
+# SDD — `ProgressBar` (+ `ProgressBarVariant` type · `BarFill` cross-ref)
 
 > **Package:** `@lockin90/ui` (web) · `@lockin90/ui-native` (native) — root cross-platform primitive.
 > **Source:** `packages/ui/src/components/ProgressBar.tsx` · `packages/ui-native/src/components/ProgressBar.tsx` ·
-> web CSS `packages/ui/src/styles/components/progressbar.css` (`.lk-progressbar*`).
-> **Exports:** `ProgressBar`, type `ProgressBarProps`.
-> **Status:** Shipped. **Parity:** 🟡 same modes & look; the **`gradient` prop type differs** (web `string` / CSS gradient · native `[from, to]` tuple), and the indeterminate sweep is CSS-keyframes (web) vs `Animated` (native).
-> **Stories:** `packages/ui/src/stories/ProgressBar.stories.tsx` · `packages/ui-native/src/stories/ProgressBar.stories.tsx`.
+> web CSS `packages/ui/src/styles/components/progressbar.css` (`.lk-progressbar*` classic · `.lk-pbv*` variants).
+> **Exports:** `ProgressBar`, type `ProgressBarProps` (plus in-file `ProgressBarVariant`).
+> **Status:** Shipped. **Parity:** 🟡 same modes & look; the **`gradient` prop type differs** (web `string` · native `[from, to]` tuple), the indeterminate sweep is CSS vs `Animated`, and native pills anchor without a true translateX(-50%).
+> **Stories:** `packages/ui/src/stories/ProgressBar.stories.tsx` · `packages/ui-native/src/stories/ProgressBar.stories.tsx` — variant stories named by catalog ID (`PL01Progress` …).
 
 ---
 
 ## 1. Overview
 
-An **Aurora-Flux linear progress bar** with a gradient fill, in two modes:
+An **Aurora-Flux linear progress bar** in three modes:
 
 - **Determinate** — a known `value` 0..1 → an inline-width gradient fill.
-- **Indeterminate** — omit `value` → a gradient band sweeps continuously (use while a duration is unknown).
+- **Indeterminate** — omit `value` → a sweeping gradient band.
+- **Catalog variants (`variant="…"`)** — the 8 named forms from `lockin90-design/charts/progress-charts.html` (PL-01…PL-16): a mono title + bold `%` header row, optional `sub` copy, and per-variant structure (zone coloring, step cells, milestone ticks, ghost compare, overflow badge, head pill, countdown drain). Rendered in DOM/Views (not SVG) so the bar stays truly full-width responsive.
 
-It's the richer sibling of `BarFill` (a static fraction fill only): `ProgressBar` adds the indeterminate animation, an optional label / percentage row, and configurable height / paint / track. It's a **full-width** bar (`width:100%`) — wrap it to constrain width (the kit's stories use a width wrapper).
+Richer sibling of `BarFill` (static fraction only); for a labelled value-in-range use `Meter`.
+
+### Catalog ID → variant map
+
+| ID | `variant` | Form | Extra props used |
+| --- | --- | --- | --- |
+| PL-01 | `progress` | title+%+sub row | `color`/`gradient` (COLOR SELECT) · `height` 3/8/18 (HEIGHT SELECT) · `shine` |
+| PL-04 | `zone-progress` | fill + % colored by value zone (mint/amber/coral) | — |
+| PL-08 | `step-cells` | discrete cells, filled = done, counter under | `steps` (default 10) |
+| PL-09 | `milestone-line` | ticks + dots at 25/50/75, lit when passed | `milestones` (override fractions) |
+| PL-11 | `ghost-compare` | white-16% ghost layer under = previous period | `ghost` (0..1) |
+| PL-13 | `overflow-badge` | fill caps at 100% + lime `+N OVER` pill; `%` shows the real value | `value` may exceed 1 |
+| PL-14 | `head-pill` | chip-pill with `%` rides the fill head | — |
+| PL-16 | `countdown-drain` | coral fill anchored right, drains right→left | `sub` (time remaining copy) |
+| — | *(option)* | GOAL tick + pill (`--zone-mid`) on any linear variant | `target` (0..1) |
 
 ## 2. API contract
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `value` | `number \| undefined` | `undefined` | ✓ | ✓ | 0..1 → determinate; `undefined` → **indeterminate** |
-| `height` | `number` | `8` | ✓ | ✓ | bar height in px |
-| **`gradient`** | web `string` · native `[string, string]` | web `'var(--grad-flux)'` · native `[colors.accent, colors.cyan]` | ✓ | ✓ | **platform-shaped** — CSS color/gradient string vs a 2-stop tuple |
-| `track` | `string` | web `'rgba(255,255,255,0.07)'` · native `colors.glass` | ✓ | ✓ | unfilled rail color |
-| `label` | `string` | — | ✓ | ✓ | label above the bar |
-| `showValue` | `boolean` | `false` | ✓ | ✓ | render `%` (determinate only) |
-| `rounded` | `boolean` | `true` | ✓ | ✓ | fully-rounded ends (web `--r-pill`; native `height`-radius) |
-| `className` | `string` | — | ✓ | — | web only |
-| `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |
-| _rest_ | `HTMLAttributes<HTMLDivElement>` (web, `Omit<…,'role'>`) / `ViewProps` (native) | — | ✓ | ✓ | spreads to root |
+| `value` | `number \| undefined` | `undefined` | ✓ | ✓ | 0..1 determinate; `undefined` → indeterminate (variants treat as 0); `overflow-badge` accepts > 1 |
+| `height` | `number` | `8` | ✓ | ✓ | the PL-01 HEIGHT SELECT (3 hairline / 8 default / 18 thick) |
+| **`gradient`** | web `string` · native `[string, string]` | classic: `--grad-flux` / `[accent, cyan]` · variants: none | ✓ | ✓ | **platform-shaped**; in variant mode wins over `color` |
+| `color` | `string` | variant `--mint` (`countdown-drain` → `--zone-low`) | ✓ | ✓ | variant solid fill (web `var()` / native hex); ignored by `zone-progress` |
+| `track` | `string` | `rgba(255,255,255,0.07)` / `colors.glass` (classic native) | ✓ | ✓ | unfilled rail |
+| `label` | `string` | — | ✓ | ✓ | classic: meta label · variants: the mono uppercase **title** |
+| `showValue` | `boolean` | classic `false` · **variants `true`** | ✓ | ✓ | variants render the bold display `%` top-right unless `showValue={false}` |
+| `rounded` | `boolean` | `true` | ✓ | ✓ | pill ends |
+| `variant` | `ProgressBarVariant` | — | ✓ | ✓ | see the ID map |
+| `sub` | `string` | — | ✓ | ✓ | mono faint copy under the bar (step-cells: replaces the counter) |
+| `steps` | `number` | `10` | ✓ | ✓ | `step-cells` cell count; done = `round(value·steps)` |
+| `milestones` | `number[]` | `[0.25,0.5,0.75]` on `milestone-line` | ✓ | ✓ | tick/dot fractions; usable on other linear variants too |
+| `ghost` | `number` | — | ✓ | ✓ | previous-period fraction (white-16% layer) |
+| `target` | `number` | — | ✓ | ✓ | GOAL tick + `GOAL n` pill at the fraction |
+| `shine` | `boolean` | `false` | ✓ | ✓ | glow underlay (web blur(6px) dup · native wider faint dup) |
+| `className` / _rest_ | web `Omit<HTMLAttributes,'role'>` / native `ViewProps` | — | ✓ | ✓ | spreads to root |
 
-- `v = clamp(value, 0, 1)`; `pct = round(v·100)`. Meta row shows only when `label` or (`showValue && !indeterminate`).
+- Readout: `pct = round(value·100)` — clamped 0..100 except `overflow-badge` (catalog shows e.g. `112%`); `aria-valuenow` always clamps to 100.
 
 ## 3. Visual spec (tokens — never hardcode)
 
-| Element | Web | Native |
-| --- | --- | --- |
-| Track | height `--lk-pb-h`, `--lk-pb-radius` (`--r-pill` / 0), bg `--lk-pb-track`, `overflow:hidden` | height `height`, radius `rounded?height:0`, bg `track`, `overflow:hidden` |
-| Determinate fill | width `--lk-pb-v%`, bg `--lk-pb-fill` (`--grad-flux`), `background-size:240%`, glow `--glow-accent`, width transition 1.2s | `expo-linear-gradient(gradient, start{0,0}→end{1,0})` sized to `pct%` |
-| Indeterminate | 38% band, `box-shadow 0 0 12px rgba(124,92,255,.55)`; `lkPbSlide 1.5s` + `lkPbFlow 4s` | `Animated` band `BAND_FRACTION=0.38`, `translateX` over a 1500ms `bezier(.22,1,.36,1)` loop |
-| Label | `--font-mono` 10.5px `--text-dim` (`.lk-progressbar-meta` gap 10px, mb 7px) | `JetBrains Mono` 10.5px `colors.textDim` (`meta` mb 7) |
-| Value `%` | `--font-mono` 10.5px `--accent-2`, tnum | `JetBrains Mono` 10.5px `colors.accent2` |
+Classic mode unchanged (flux fill, 38% sweep band, mono 10.5px meta).
 
-- **Reduced motion (web only):** `@media (prefers-reduced-motion: reduce)` stops the sweep and parks a calm centered band (`left: 24%`), and disables the fill width transition.
-- **Per-instance vars (web):** `--lk-pb-h`, `--lk-pb-fill`, `--lk-pb-track`, `--lk-pb-radius`, `--lk-pb-v`.
+Variant mode (both platforms, catalog-exact):
+
+| Element | Value |
+| --- | --- |
+| Header | title 10px `--font-mono` uppercase ls .06em `--text-faint` · `%` 15px `--font-display` 700 `--text` (zone variant → zone color), mb 9px |
+| Track | height `height`, `--r-pill` radius, `rgba(255,255,255,.07)` |
+| Fill | absolute layer, width `value%`, `color`/`gradient` paint; web tweens width 1.2s (reduced-motion off) |
+| Zone fill | `--zone-high/mid/low` at ≥0.62 / ≥0.38 / else (catalog `zoneOf`) |
+| Ghost | `rgba(255,255,255,.16)` layer under the fill |
+| Step cells | flex row, 3px gap, r3, base `rgba(255,255,255,.07)`; counter `N / M STEPS` under |
+| Milestones | 1px ticks `rgba(255,255,255,.3)` ±3px past the track · 4.8px dots 7px above (lit = fill color, else white-20%) |
+| GOAL tick | 1.6px `--zone-mid` rule ±5px + `GOAL n` pill |
+| Chip-pill | h13 r6.5, bg `rgba(8,10,18,.78)`, 1px hairline @35% of the text color, 8px mono (catalog `C.tag`) |
+| Overflow pill | `--lime` `+N OVER`, right-aligned under the bar |
+| Drain fill | `--zone-low`, anchored **right**, width = remaining fraction |
+| Sub / foot | 10px mono `--text-faint`, mt 7px (sub left · overflow pill right) |
+| Shine | web blurred dup (blur 6px, ±2.5px, @.5) · native wider dup (+5px h, @.35, no blur) |
 
 ## 4. States
 
 | State | Web | Native |
 | --- | --- | --- |
-| Determinate | fill to `pct%`; width tweens 1.2s | gradient fill to `pct%`; no tween |
-| Indeterminate | sweeping band (`lkPbSlide`+`lkPbFlow`) | `Animated` translateX loop (measures track width via `onLayout`) |
-| `showValue` | `%` shown (determinate only) | same |
-| Reduced motion | sweep stops, calm centered band | **not handled** — the loop keeps running |
-| `rounded=false` | square ends | square ends |
-| Clamp | `value` outside 0..1 clamps | same |
+| Classic determinate / indeterminate | unchanged | unchanged |
+| Variant | `.lk-pbv--<variant>` DOM structure | View structure |
+| Overflow (`value>1`) | fill caps at 100%, `%` real, `+N OVER` pill | same |
+| Milestone passed | dot takes the fill color | same |
+| Reduced motion | fill tween disabled (`prefers-reduced-motion`) | fills are static widths |
 
-`role="progressbar"` (web) carries the ARIA state; no hover/focus/disabled.
+`role="progressbar"` + aria values on web (both modes); no hover/focus/disabled.
 
 ## 5. Web ↔ native parity
 
-**Verdict: 🟡 same modes, platform-shaped paint + motion.** Identical modes (determinate/indeterminate), the same 38% band fraction, the same percentage/label semantics, and the same flux look. Real differences:
+**Verdict: 🟡 same API & forms, platform-shaped paint + anchoring.** Identical prop names, defaults, catalog geometry (pill 13px, dots 4.8px, ticks ±3px, 35% hairline). Real differences:
 
-- **`gradient` prop type differs (genuine API shape):** web accepts any CSS color **or** gradient **string** (default `var(--grad-flux)`); native accepts a **`[from, to]` tuple** (default `[accent, cyan]`) for `expo-linear-gradient`. Callers must pass the platform-appropriate value — the one intentional API divergence.
-- **Default track differs:** web `rgba(255,255,255,.07)` vs native `colors.glass`.
-- **Sweep engine:** CSS keyframes (web) vs `Animated.loop` + measured track width (native).
-- **Reduced motion:** honored on web (`prefers-reduced-motion`); native does **not** respect a reduce-motion setting here — the sweep loops regardless. Flagged as a real (minor) gap.
-- **className ↔ style:** universal substrate.
-
-No capability gap blocks use, but the `gradient` prop type and reduced-motion handling are the parity-sensitive points.
+- **`gradient` type** — web CSS string ↔ native tuple (pre-existing kit convention).
+- **Pill anchoring** — web centers pills with `translateX(-50%)` + `clamp()` against the edges; native centers via a zero-width `alignItems:'center'` anchor **without edge clamping** (RN has no % transforms). Extreme head-pill positions (~0%/100%) can overhang on native.
+- **Hairline tint** — web `color-mix(currentColor 35%)`; native appends a `59` alpha to hex tokens (`tint35`).
+- **Shine / motion** — web blur + width tween; native duplicate + static widths.
+- Reduced motion honored on web only (as before, indeterminate sweep included).
 
 ## 6. Composition & usage
 
-- **Used for:** uploads/imports/sync with a known fraction (determinate), and "loading, duration unknown" (indeterminate). For a static fraction with no animation/label, prefer `BarFill`; for a labelled value-in-range, prefer `Meter`.
-- **Composes from:** none (self-contained).
+- **Used for:** goal/intake rows (PL-01/04), habit streaks (PL-08), multi-stage flows (PL-09), period compares (PL-11), beaten goals (PL-13), edge-labelled fills (PL-14), cutoffs/deadlines (PL-16), uploads/sync (classic).
+- **Composes from:** none — self-contained (header + sub included; don't wrap it in another labelled row).
 
 ```tsx
-// web — determinate upload with a label + %
-<div style={{ width: 320 }}>
-  <ProgressBar value={0.62} label="Uploading" showValue />
-</div>
+// web — PL-13 beaten goal
+<ProgressBar variant="overflow-badge" value={1.12} color="var(--lime)" label="STEP GOAL" sub="11,2k of 10k" />
 
-// web — indeterminate
-<ProgressBar />
-
-// native — determinate with a custom 2-stop gradient
-<ProgressBar value={0.62} gradient={[colors.violet, colors.cyan]} label="Uploading" showValue />
+// native — PL-08 habit streak
+<ProgressBar variant="step-cells" value={0.7} steps={10} color={colors.mint} label="HABIT STREAK · THIS WEEK" />
 ```
 
 ## 7. Accessibility
 
-- **Web:** root is `role="progressbar"` with `aria-valuemin/max/now` set when determinate (omitted when indeterminate), and `aria-label` = `label` (falling back to `'Loading'` when indeterminate).
-- **Native:** no ARIA progressbar role is wired; pass an `accessibilityLabel` / `accessibilityRole` via `...rest` when the progress matters.
-- **Motion:** respect `prefers-reduced-motion` is web-only today — on native, avoid relying on the sweep to convey state; pair indeterminate use with a text "Loading" where possible.
+- **Web:** `role="progressbar"` with `aria-valuemin/max/now` (now clamped ≤100) and `aria-label` = `label` in both modes; decorative layers are `aria-hidden`.
+- **Native:** no ARIA role wired; pass `accessibilityLabel`/`accessibilityRole` via `...rest` when the progress matters.
+- The overflow `%`/pill and the step counter give text equivalents; zone color is a supporting encoding — state the meaning in `label`/`sub`.
 
 ## 8. Usage rules — Do / Don't
 
 **Do**
-- Pass `value` 0..1 when the fraction is known; omit it for indeterminate.
-- Wrap in a width-constrained container — `ProgressBar` is full-width by default.
-- Pass `gradient` in the **platform-correct** form (string on web, `[from,to]` on native).
+- Ask for progress forms **by catalog ID** (PL-xx) — the map resolves them mechanically.
+- Pass `value > 1` only with `overflow-badge`; every other variant clamps.
+- Use `sub` for the human copy (`94 g logged · 36 g to go`) instead of composing an extra text row.
+- Wrap in a width-constrained container — the bar is full-width.
 
 **Don't**
-- ✗ Don't pass a tuple to web `gradient` or a string to native `gradient` — they're platform-shaped.
-- ✗ Don't use `ProgressBar` for a static fraction with no animation — use `BarFill`.
-- ✗ Don't hardcode the fill/track colors — use token values / token-derived gradients.
-- ✗ Don't hand-roll an indeterminate sweep — extend `ProgressBar` on both platforms.
+- ✗ Don't pass a tuple to web `gradient` or a string to native `gradient` — platform-shaped.
+- ✗ Don't hand-roll cells/milestones/drain bars — they're variants here.
+- ✗ Don't use `countdown-drain` for a filling value — it encodes **remaining** time, anchored right.
+- ✗ Don't hardcode the zone thresholds, pill chrome, or ghost/track alphas — catalog constants.
 
 ## 9. Anti-patterns & lookalike ban
 
-- **No lookalikes.** A custom sweeping/loading bar re-creating the flux gradient + band is a parity violation — import `ProgressBar`.
-- **New need → both platforms.** A new tone, a buffer track, or a stepped variant ships to web **and** native with the same prop name + tokens (and keep the `gradient` shapes documented).
-- **Tokens only.** Fill defaults to `--grad-flux` / `[accent, cyan]`; the track and any custom paint must be token values — no drifting hex.
-- **Parity gate.** Before shipping, confirm the web phone-width bar ≡ native bar (same value, label, %, gradient look) — and reconcile the reduced-motion behavior if the indeterminate sweep matters.
+- **No lookalikes.** A custom title+% progress row or step-cell strip re-creates PL-01/PL-08 — import `ProgressBar` with the `variant`.
+- **New variant → BOTH platforms** with the same prop names + tokens, in the same unit of work.
+- **Tokens only.** Allowed literals are the catalog's structural alphas (track 7%, ghost 16%, tick 30%, pill bg) — everything colored comes from tokens.
+- **Parity gate.** Web phone-width ≡ native for the same variant/props; the known native deltas are the un-clamped pill anchor and duplicate-based shine.

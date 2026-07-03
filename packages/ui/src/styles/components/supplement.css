@@ -1,0 +1,57 @@
+/* ============================================================================
+   SupplementChart — the catalog supplement-level family (SP-01…SP-10,
+   lockin90-design/charts/supplement-charts.html): saturation stories,
+   half-life decay, adherence and the liquid battery vessels in a fixed
+   320×150 viewBox. Colors are prop/data-driven (inline), so this stylesheet
+   only owns layout, label type and the shine blurs.
+   Key: .lk-supp
+   ========================================================================== */
+.lk-supp { display: block; width: 100%; }
+
+/* the scalable chart canvas — the 320×150 viewBox stretches to the container,
+   keeping its aspect; glow underlays may spill slightly past the box */
+.lk-supp-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* catalog mono label (title, band labels, axis captions, vessel names) */
+.lk-supp-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.06em;
+}
+
+/* chip-pill tag text (SATURATED / MISSED / restock pills) */
+.lk-supp-tag-text {
+  font-family: var(--font-mono);
+  font-size: 8px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.05em;
+}
+
+/* top-right display stat (e.g. 'LVL 78%') */
+.lk-supp-stat {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* the % readout centered inside a liquid vessel */
+.lk-supp-vpct {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+/* the battery-hero big % (SP-10 right-side stats) */
+.lk-supp-hero-num {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* shine — the blurred glow underlay along a level line (catalog blur(5)) */
+.lk-supp-shine { filter: blur(5px); }
+
+/* vessel liquid shine — the wider catalog blur(6) under the liquid fill */
+.lk-supp-shine-wide { filter: blur(6px); }
+
+/* glowing pulse dot (color driven by inline `currentColor`) */
+.lk-supp-glowdot { filter: drop-shadow(0 0 5px currentColor); }

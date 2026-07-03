@@ -88,3 +88,70 @@
   display: flex; justify-content: space-between; padding: 0 1px;
   font-family: var(--font-mono); font-size: 9.5px; color: var(--text-faint);
 }
+
+/* ============================================================================
+   Catalog-variant additions (LC-01…LC-56, lockin90-design/charts/line-charts.html)
+   ========================================================================== */
+
+/* variant main line — NO default glow (unlike the legacy .lk-lc-line);
+   neon / aurora-halo add their drop-shadow inline */
+.lk-lc-stroke { }
+
+/* shine: a wide blurred hue-matched duplicate drawn under the crisp line
+   (gradient/zone-safe, unlike a single-color drop-shadow) */
+.lk-lc-shine { filter: blur(5px); }
+
+/* small round variant dots (beads, comet head, peaks, goal hits, pins, now,
+   anomalies) — HTML overlays centered on their data point via inline left/top %
+   so they stay circular under the non-uniform SVG stretch. Size/color inline. */
+.lk-lc-vdot {
+  position: absolute; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.lk-lc-vdot--glow { box-shadow: 0 0 6px currentColor; }
+
+/* thin outline ring around anomaly dots (LC-49) */
+.lk-lc-vring {
+  position: absolute; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid currentColor; opacity: 0.5;
+  pointer-events: none;
+}
+
+/* pulse ring riding the NOW / comet dot (LC-34/52/54/56) — reduced-motion safe */
+.lk-lc-pulse {
+  position: absolute; width: 9px; height: 9px; border-radius: 50%;
+  border: 1.4px solid currentColor;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: lk-lc-pulse 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes lk-lc-pulse {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-lc-pulse { animation: none; opacity: 0.35; }
+}
+
+/* tiny mono annotations (NOW / GOAL / PEAK / DIP / CALIBRATING / 100 / 0) —
+   position + anchor transform + color are inline */
+.lk-lc-note {
+  position: absolute; transform: translate(-50%, -50%);
+  font-family: var(--font-mono); font-size: 8.5px; line-height: 1;
+  letter-spacing: 0.06em; white-space: nowrap;
+  pointer-events: none;
+}
+
+/* chip-pill series/inline labels (the catalog tag(): dark chip + tinted
+   hairline border) — legible even across lines. Color inline (currentColor). */
+.lk-lc-chip {
+  position: absolute; transform: translate(-50%, -50%);
+  font-family: var(--font-mono); font-size: 8px; line-height: 1;
+  letter-spacing: 0.05em; white-space: nowrap;
+  padding: 3px 7px; border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--bg-0) 78%, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  pointer-events: none;
+}

@@ -48,3 +48,45 @@ export const Sizes: StoryObj<typeof meta> = {
     </div>
   ),
 };
+
+/* ---- catalog reproductions (donut-charts DN-13 / DN-14) ------------------ */
+
+/** DN-13 gauge-270 — 270° gauge (opens down) · red→amber→green arc · 5 ticks. */
+export const DN13Gauge270: StoryObj<typeof meta> = {
+  args: {
+    value: 62,
+    size: 150,
+    thickness: 11,
+    sweep: 270,
+    gradient: ['var(--zone-low)', 'var(--zone-mid)', 'var(--zone-high)'],
+    ticks: 5,
+    tickPosition: 'out',
+    cap: false,
+    label: 'STRAIN',
+  },
+};
+
+/** DN-14 half-gauge — 180° semicircle · round caps · stat under the arc. */
+export const DN14HalfGauge: StoryObj<typeof meta> = {
+  args: {
+    value: 44,
+    size: 140,
+    thickness: 12,
+    sweep: 180,
+    color: 'var(--cyan)',
+    cap: false,
+    label: 'HYDRATION',
+  },
+};
+
+/** Zone verdict coloring — arc + readout track the value's zone. */
+export const ZoneVerdict: StoryObj<typeof meta> = {
+  args: { value: 64 },
+  render: () => (
+    <div style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
+      <Gauge value={24} zone label="LOW" size={120} />
+      <Gauge value={52} zone label="MID" size={120} />
+      <Gauge value={81} zone label="HIGH" size={120} shine />
+    </div>
+  ),
+};

@@ -4,126 +4,149 @@
 > **Source:** `packages/ui/src/components/DonutChart.tsx` · `packages/ui-native/src/components/DonutChart.tsx` ·
 > web CSS `packages/ui/src/styles/components/donut.css` (`.lk-donut*`).
 > **Exports:** `DonutChart`, type `DonutSegment`, type `DonutChartProps`.
-> **Status:** Shipped. **Parity:** ✅ identical API & math — web SVG `<circle>` dashoffset vs native `react-native-svg` `<Circle>` (both rotate −90°); color is `var()` (web) vs hex (native).
-> **Stories:** `packages/ui/src/stories/DonutChart.stories.tsx` · `packages/ui-native/src/stories/DonutChart.stories.tsx`.
+> **Status:** Shipped (extended with the catalog **share arcs**, pie-charts PC-01…PC-13). **Parity:** 🟡 same API & math; web shine is a `blur()` duplicate + web-only arc transition; native shine is a wider faint duplicate arc; color is `var()` (web) vs hex (native).
+> **Stories:** `packages/ui/src/stories/DonutChart.stories.tsx` · `packages/ui-native/src/stories/DonutChart.stories.tsx` (catalog stories `PC01DuoSplit` … `PC13NestedArcs`).
 
 ---
 
 ## 1. Overview
 
-A **segmented-donut chart** — an SVG ring split into colored arcs sized by each segment's share of the total, with a small gap between segments, over a faint track ring. The center shows custom `children` or the **summed total**. The macro/breakdown ("Carbs / Protein / Fat") donut is the canonical use.
+Proportional composition as a ring — **two renderers behind one API**:
 
-- Drawn as **stroke-dasharray arcs on a single circle** (radius `r`), rotated −90° so arcs chain clockwise from 12 o'clock.
-- `DonutSegment` (an arc descriptor: `value`, `color`, optional `label`) is a secondary export for callers building `segments`.
+- **`variant="donut"` (default, legacy)** — stroke-dasharray arcs on one circle over a faint track ring, small fixed gap; the macro-breakdown donut. Unchanged.
+- **Share arcs (every other variant)** — the catalog's pie replacement: luminous **round-cap segmented stroke arcs with cap-compensated real gaps**, no track, no fills. Tiny segments render as **dots**.
 
-Distinct from `Ring` (a full-circle single-value 0–100 progress) and `Gauge` (a partial-sweep dial with a scale): `DonutChart` is a **proportional multi-segment** breakdown.
+| Catalog ID | `variant` | Extra props |
+| --- | --- | --- |
+| PC-01 `duo-split` | `duo-split` | 2 segments (mint + glass remainder), center stat |
+| PC-02 `split-arcs` | `split-arcs` | 2–5 spectrum-ordered segments (SELECT = your `segments`) |
+| PC-04 `zone-share` | `zone-share` | segment colors = `--zone-*` verdict tokens |
+| PC-05 `hero-arc` | `hero-arc` | `hero` (defaults 0) → +4px & shine, others 30% |
+| PC-07 `callout-arcs` | `callout-arcs` | `callouts` (default on) → leader lines + chip pills from `label` |
+| PC-09 `thin-share` | `thin-share` | thickness defaults 6 — halo weight |
+| PC-11 `mini-multiples` | `mini-multiples` | one small ring (size 72 / sw 8); **compose 3 side by side** + day captions (see stories) |
+| PC-13 `nested-arcs` | `nested-arcs` | `innerSegments` coarse ring + outer `segments` shaded via per-segment `opacity` + callouts |
+
+`DonutSegment` (`value`, `color`, `label?`, `opacity?`) is the shared descriptor. Distinct from `Ring` (single 0–100 progress) and `Gauge` (min/max dial).
 
 ## 2. API contract
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `segments` | `DonutSegment[]` | `DEFAULT_SEGMENTS` (Carbs/Protein/Fat) | ✓ | ✓ | drawn clockwise from 12 o'clock |
-| `size` | `number` | `120` | ✓ | ✓ | overall diameter in px |
-| `thickness` | `number` | `14` | ✓ | ✓ | ring stroke width in px |
-| `gap` | `number` | `2` | ✓ | ✓ | inter-segment gap, in **degrees** (converted to a px arc length) |
-| `track` | `string` | `'rgba(255,255,255,0.07)'` | ✓ | ✓ | background ring color |
-| `children` | `ReactNode` | — | ✓ | ✓ | center content; omit → summed total is shown |
-| `className` | `string` | — | ✓ | — | web only |
-| `style` | `CSSProperties` / `StyleProp<ViewStyle>` | — | ✓ | ✓ | wrapper style |
-| _rest_ | `HTMLAttributes<HTMLDivElement>` | — | ✓ | — | web only |
+| `segments` | `DonutSegment[]` | Carbs/Protein/Fat | ✓ | ✓ | drawn clockwise from 12 o'clock |
+| `variant` | `'donut' \| 'duo-split' \| 'split-arcs' \| 'zone-share' \| 'hero-arc' \| 'callout-arcs' \| 'thin-share' \| 'mini-multiples' \| 'nested-arcs'` | `'donut'` | ✓ | ✓ | `donut` = legacy renderer; all others = share arcs |
+| `size` | `number` | `120` (`72` mini-multiples) | ✓ | ✓ | overall diameter |
+| `thickness` | `number` | `14` legacy · `13` share · `6` thin-share · `8` mini | ✓ | ✓ | ring stroke width |
+| `gap` | `number` | `2` legacy · `5` share | ✓ | ✓ | degrees; share arcs grow every gap by the cap overhang (below) |
+| `track` | `string` | `'rgba(255,255,255,0.07)'` | ✓ | ✓ | legacy only — share arcs draw no track |
+| `hero` | `number` | `0` for `hero-arc`, else — | ✓ | ✓ | hero index: +4px stroke, shine; others dim to 30% |
+| `shine` | `boolean` | on for `hero-arc`, else `false` | ✓ | ✓ | glow underlay behind full-opacity segments |
+| `callouts` | `boolean` | on for `callout-arcs`/`nested-arcs` | ✓ | ✓ | leader lines + chip pills from `segment.label`; reserves **34px** per side (ring shrinks) |
+| `innerSegments` | `DonutSegment[]` | — | ✓ | ✓ | `nested-arcs` inner coarse ring at `~0.47·r`, sw `round(0.9·thickness)`, 6° base gap |
+| `children` | `ReactNode` | — | ✓ | ✓ | center content; omit → summed total |
+| `className` / `style` / _rest_ | | — | web / both / web | | substrate |
 
-**`DonutSegment`:** `value: number` (arc ∝ `value / Σvalues`), `color: string` (web `var()`/hex, native hex/rgb), `label?: string` (for a11y / external legends).
+**`DonutSegment`:** `value: number` (∝ share), `color: string`, `label?: string` (a11y / legends / callout chip text), `opacity?: number` (per-segment override — PC-13 family shading; also respected by the legacy renderer).
 
-- **Geometry (identical both sides):** `c = size/2`, `r = (size−thickness)/2`, `circ = 2πr`. `total = Σmax(0,value) || 1`. `gapPx = (gap/360)·circ`. Each positive segment trims a leading gap (capped at its own length) when there is >1 drawn arc; `strokeDasharray = "len (circ−len)"`, `strokeDashoffset = −(cursor + trim)`.
+- **Share-arc math (the catalog `arcRing`, ported verbatim):**
+  `capDeg = (thickness / r) · 180/π` (the round-cap angular overhang) · `gapT = capDeg + gap` · `avail = max(0, 360 − n·gapT)` · per segment: `sweep = frac·avail`, arc from `a + gapT/2 + capDeg/2` to `a + gapT/2 + sweep − capDeg/2`, then `a += gapT + sweep`. **`a1 ≤ a0` → the segment renders as a dot** (`r = swi/2` at the mid angle). Hero: `swi = thickness + 4`; non-hero opacity `0.3` unless `segment.opacity` set.
+- **Geometry:** `c = size/2`; `r = max(10, (size − thickness)/2 − (callouts ? 34 : 0))`. Angles: catalog convention — 0° = 12 o'clock, clockwise (no group rotation in the share path).
+- **Callout chips:** leader line `r+sw/2+2 → +13`; chip `w = label.length·5.35 + 12`, h 13, rx 6.5, x clamped into the box; text 8px mono in the segment color.
+- **Legacy math** unchanged (dasharray/offset chain, gap trim capped at each arc's length).
 
 ## 3. Visual spec (tokens — never hardcode)
 
 | Aspect | Web | Native |
 | --- | --- | --- |
-| Track ring | `stroke = track` (rgba default) | `stroke = track` |
-| Segment arcs | `stroke = segment.color`, `strokeLinecap round` | `stroke = segment.color`, `strokeLinecap round` |
-| Rotation | `<g transform="rotate(-90 c c)">` | `<G origin="c,c" rotation={-90}>` |
-| SVG depth | `filter: drop-shadow(0 0 6px rgba(0,0,0,.35))` | — (no filter) |
-| Center total | `.lk-donut-total` `26px`, `lk-display` (`var(--font-display)`), `ls −.02em`, `var(--text)` | `fonts.display 26px`, lineHeight `26`, `ls −0.5`, `colors.text` |
-| Center layout | `.lk-donut-center` absolute inset, col, gap `2px` | absolute fill, col, gap `2`, `pointerEvents="none"` |
-
-- Default segments: web `var(--cyan)/var(--lime)/var(--accent)`, native `colors.cyan/lime/accent` (50/30/20).
-- **Web-only motion:** `.lk-donut-seg` animates `stroke-dasharray`/`stroke-dashoffset` `0.7s var(--ease)`. Native has no arc transition.
+| Share arcs | `<path>` round caps, `stroke = segment.color`, per-arc `opacity` | `react-native-svg` `<Path>` |
+| Dots (tiny segments) | `<circle r=swi/2>` at the mid angle | `<Circle>` |
+| Shine | wider (+5) duplicate, `blur(5px)`, 45% — only on `opacity === 1` segments | wider (+6) duplicate at 30%, no blur |
+| Callout line | `.lk-donut-callout line` — `color-mix(var(--text) 30%)` 1px | `colors.text` at 30% |
+| Callout chip | rect `color-mix(var(--bg-0) 78%)` bg + segment-color hairline 35% / text 8px `var(--font-mono)` | `${colors.bg0}C7` bg + `strokeOpacity 0.35` / `fonts.mono` 8 |
+| Legacy track/arcs | as before (`rotate(-90)` group, round caps, `.lk-donut-seg` 0.7s dasharray transition) | as before |
+| Center | `.lk-donut-center` absolute overlay; `.lk-donut-total` 26px `--font-display` | mirrored `styles.center`/`styles.total` |
+| SVG depth | `.lk-donut-svg` `drop-shadow(0 0 6px rgba(0,0,0,.35))` | — |
 
 ## 4. States
 
 | State | Web | Native |
 | --- | --- | --- |
-| Default | track + arcs + center total | same |
-| Custom center | `children` replaces total | same |
-| Zero/negative segment | filtered from draw (`len ≤ 0` → `null`) | same |
-| Single segment | no gap trimmed (`drawn ≤ 1`) | same |
-| All zero | `total` floors to `1`; center shows `1` | same |
+| Share default | gap-compensated arcs, no track | same |
+| Tiny segment | dot at mid angle | same |
+| Hero | +4px + shine; others 30% | same |
+| Per-segment `opacity` | overrides the hero dim (nested shading) | same |
+| Callouts | lines + chips; unlabeled segments get none | same |
+| Nested | inner ring + outer ring + callouts | same |
+| Zero/negative segment | zero sweep → dot of zero share is skipped naturally (legacy: filtered) | same |
+| All zero | `total` floors to 1 | same |
 
 No hover/focus/disabled — presentational.
 
 ## 5. Web ↔ native parity
 
-**Verdict: ✅ identical.** The arc math is byte-for-byte the same (same `c/r/circ/total/gapPx/trim/offset` computation), the same defaults (`size 120`, `thickness 14`, `gap 2`, track rgba), the same clockwise-from-12 layout, and the same round-cap arcs. Substrate-only differences:
+**Verdict: 🟡 same API & math, platform-shaped shine.** The `shareArcs()` function is byte-for-byte identical on both sides (cap compensation, dots, hero, opacity), same variant defaults, same callout geometry and chip sizing. Differences:
 
-- **SVG library:** web `<svg>`/`<circle>` with a `rotate(-90 c c)` group transform + string `strokeDasharray`; native `react-native-svg` `<Circle>` with `<G origin rotation={-90}>` + array `strokeDasharray={[len, circ−len]}`. Same visual.
-- **Color literal:** web segment/`track` colors may be CSS `var()`; native needs a resolved hex/rgb (no `var()` in RN SVG). App code reads 1:1.
-- **Polish:** web adds a soft `drop-shadow` on the SVG + an arc dasharray transition; native omits both (no cheap RN equivalent) — acceptable, documented.
+- **Shine:** web blurred duplicate (`filter: blur(5px)`); native wider faint duplicate (RN filter rule). Slightly tighter halo on native.
+- **Legacy arc transition + SVG drop-shadow:** web-only polish.
+- **Color literal:** web `var()`; native hex (`bg0`+alpha for chips). App code reads 1:1.
+- **Text substrate:** web SVG `<text>` styled by `.lk-donut-callout`; native `SvgText` with `fonts.mono` — same size/anchor.
 
 No capability gap.
 
 ## 6. Composition & usage
 
-- **Used for:** macro/nutrient breakdowns, category splits, any small proportional ring with a center total/figure.
-- **Composes from:** nothing — leaf primitive. Pass a `GradientText` or `Stat` as `children` for a styled center; build a legend from `KeyValue`/`Chip` using each segment's `label` + `color`.
+- **Used for:** macro breakdowns (legacy), goal done-vs-left, zone shares, time splits, two-level day composition.
+- **Composes from:** nothing — leaf primitive. Center via `children`; **legends stay external** (`Chip`/`KeyValue` rows using each segment's `label` + `color`); PC-11 = three mini DonutCharts in a row + captions (see `PC11MiniMultiples` story).
 
 ```tsx
-// web
+// web — PC-02 split-arcs (macro split, center stat)
 <DonutChart
+  variant="split-arcs"
   segments={[
-    { value: 50, color: 'var(--cyan)', label: 'Carbs' },
-    { value: 30, color: 'var(--lime)', label: 'Protein' },
-    { value: 20, color: 'var(--accent)', label: 'Fat' },
+    { value: 45, color: 'var(--mint)', label: 'PROTEIN' },
+    { value: 33, color: 'var(--cyan)', label: 'CARBS' },
+    { value: 22, color: 'var(--violet)', label: 'FAT' },
   ]}
-  size={120}
 />
 
-// native
+// native — PC-13 nested-arcs (inner coarse split + shaded outer breakdown)
 <DonutChart
+  variant="nested-arcs"
+  size={210}
+  thickness={10}
+  innerSegments={[{ value: 50, color: colors.mint }, { value: 30, color: colors.cyan }, { value: 20, color: colors.violet }]}
   segments={[
-    { value: 50, color: colors.cyan, label: 'Carbs' },
-    { value: 30, color: colors.lime, label: 'Protein' },
-    { value: 20, color: colors.accent, label: 'Fat' },
+    { value: 20, color: colors.mint, label: 'DEEP', opacity: 1 },
+    { value: 13, color: colors.mint, label: 'REM', opacity: 0.68 },
+    /* … */
   ]}
-  size={120}
->
-  <Text>1850</Text>
-</DonutChart>
+/>
 ```
 
 ## 7. Accessibility
 
-- **Web:** the `<svg>` has `role="img"` + an auto-built `aria-label` listing each segment's `label` and rounded percentage (e.g. "Donut chart: Carbs 50%, Protein 30%, Fat 20%."). Always supply `label` on segments so this reads.
-- **Native:** no built-in accessibility label — provide an external legend or an `accessibilityLabel` on a wrapping `View`.
-- Center total uses `var(--text)`/`colors.text` for contrast; keep custom `children` legible against the surface.
+- **Web:** the `<svg>` has `role="img"` + an auto-built `aria-label` listing each segment's `label` + rounded % (both renderers). Always supply `label`s.
+- **Native:** provide an external legend or an `accessibilityLabel` on a wrapping `View`.
+- Callout chip text is 8px decorative duplication of the legend — don't make it the only naming surface for screen readers (the aria-label covers it on web).
 
 ## 8. Usage rules — Do / Don't
 
 **Do**
-- Provide `label` on every segment (drives the web a11y label + any legend).
-- Keep `gap` small (default `2°`); large gaps eat short segments (trim caps at the segment length).
-- Use token colors (`var(--cyan)` / `colors.cyan`) for segments.
-- Pass `children` for a custom center figure; omit it to show the summed total.
+- Resolve catalog asks via §1: PC-ID → variant + props.
+- Keep ≤5 segments (catalog rule) and give every segment a `label`.
+- Let tiny segments become dots — that's the honest rendering, don't inflate values.
+- Size up (`size ≥ 180`) when `callouts` are on — the ring shrinks by 34px/side.
 
 **Don't**
-- ✗ Don't hand-roll a multi-arc SVG ring — use `DonutChart`.
-- ✗ Don't pass a CSS `var()` color on native (RN SVG can't resolve it) — pass the hex.
-- ✗ Don't use `DonutChart` for a single 0–100 progress — use `Ring`; for a min/max dial use `Gauge`.
-- ✗ Don't hardcode the track/segment colors — source them from tokens.
+- ✗ Don't hand-roll segmented stroke arcs or the cap-compensation math — use `DonutChart`.
+- ✗ Don't use pie **fills** — this system renders composition as strokes only.
+- ✗ Don't pass CSS `var()` colors on native — pass hex.
+- ✗ Don't use it for single progress (`Ring`) or a min/max dial (`Gauge`).
+- ✗ Don't build an in-component legend — compose one next to the chart.
 
 ## 9. Anti-patterns & lookalike ban
 
-- **No lookalikes.** A custom dasharray ring re-implements this primitive and will drift — import `DonutChart`.
-- **New need → add to BOTH platforms.** Need a legend slot, hover tooltip, or animation parity? Add it to web and native with the same prop name + tokens — never a one-off.
-- **Tokens only.** Segment/track/center colors must come from `@lockin90/tokens`; hardcoded hexes break on Aurora Flux renames.
-- **Parity gate.** Before shipping, confirm the web phone-width and native donuts show the same arcs, gaps, and center — only the color-literal form (`var()` vs hex) may differ.
+- **No lookalikes.** A custom dasharray ring or a re-derived `arcRing` will drift from the cap-compensation spec — import `DonutChart`.
+- **New need → add to BOTH platforms.** Percent labels around the ring, hairline mode, or animation parity ship to web and native together.
+- **Tokens only.** Segment/track/chip colors from `@lockin90/tokens`.
+- **Parity gate.** Before shipping, confirm web phone-width ≡ native: same arcs, gaps, dots, hero, callouts, center — only the shine substrate + color-literal form may differ.

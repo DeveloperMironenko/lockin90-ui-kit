@@ -1,0 +1,1330 @@
+{
+ "total": 251,
+ "families": {
+  "area-charts": [
+   {
+    "id": "AR-01",
+    "name": "stack",
+    "spec": "SELECT 2–4 SERIES · stacked fading areas + edge lines + legend"
+   },
+   {
+    "id": "AR-03",
+    "name": "percent-stack",
+    "spec": "normalized to a full column — shares, not amounts"
+   },
+   {
+    "id": "AR-04",
+    "name": "stream-center",
+    "spec": "streamgraph — stack centered on the midline, organic silhouette"
+   },
+   {
+    "id": "AR-05",
+    "name": "effect-stack",
+    "spec": "trio stack + chip labels INSIDE their bands + NOW rule — the effect-pipeline chart"
+   },
+   {
+    "id": "AR-06",
+    "name": "fade-stack",
+    "spec": "each band fades 55%→12% vertically — lighter look"
+   },
+   {
+    "id": "AR-07",
+    "name": "mini-multiples",
+    "spec": "3 small duo-stacks side by side + day captions"
+   }
+  ],
+  "bar-charts": [
+   {
+    "id": "BC-01",
+    "name": "bars",
+    "spec": "rounded bars rx3 · SELECT COLOR: any token / vertical gradient / glass 14% · SELECT DENSITY: 7 wide blocks → 12 default → 24 thin sticks"
+   },
+   {
+    "id": "BC-04",
+    "name": "spectrum-bars",
+    "spec": "each bar hued by x-position (lime→…→magenta spectrum)"
+   },
+   {
+    "id": "BC-05",
+    "name": "zone-bars",
+    "spec": "bar color = value zone (≥62 mint · ≥38 amber · else coral)"
+   },
+   {
+    "id": "BC-08",
+    "name": "lollipop",
+    "spec": "stem 2px + 3.4px head dot · --cyan"
+   },
+   {
+    "id": "BC-11",
+    "name": "diverging-tide",
+    "spec": "± around 50% midline · above --mint / below --zone-low"
+   },
+   {
+    "id": "BC-12",
+    "name": "stacked",
+    "spec": "SELECT 2–3 SEGMENTS (60/40 · 45/33/22) · outer corners rounded, seams square"
+   },
+   {
+    "id": "BC-14",
+    "name": "grouped-pair",
+    "spec": "two series side-by-side · --mint vs --violet 85%"
+   },
+   {
+    "id": "BC-15",
+    "name": "value-caps",
+    "spec": "mono value labels above every 2nd bar · n≤10"
+   },
+   {
+    "id": "BC-16",
+    "name": "fade-history",
+    "spec": "opacity ramps 25%→100% toward newest"
+   },
+   {
+    "id": "BC-17",
+    "name": "today-pulse",
+    "spec": "all bars 30% except today 100% + pulse dot above"
+   },
+   {
+    "id": "BC-18",
+    "name": "rank-rows",
+    "spec": "horizontal ranked pills · spectrum order · mono row labels"
+   },
+   {
+    "id": "BC-19",
+    "name": "waterfall",
+    "spec": "floating +/− steps (mint gain / coral loss) + connector ticks"
+   },
+   {
+    "id": "BC-20",
+    "name": "goal-bars",
+    "spec": "bars + dashed --zone-mid GOAL rule at 68%"
+   },
+   {
+    "id": "BC-22",
+    "name": "sparkbar-micro",
+    "spec": "no grid · 16 micro bars · fits inside stat cards"
+   },
+   {
+    "id": "BC-24",
+    "name": "forecast-bars",
+    "spec": "past solid · future outlined dashed · NOW rule between"
+   }
+  ],
+  "beeswarm-charts": [
+   {
+    "id": "BW-01",
+    "name": "history-swarm",
+    "spec": "60 sessions as a swarm along the duration axis · colored by type (strength violet / cardio cyan / mobility lime) · this week ringed white · legend"
+   },
+   {
+    "id": "BW-02",
+    "name": "score-swarm",
+    "spec": "daily scores swarmed on a 0–100 axis, zone-colored · TODAY pulses with a pill — you vs your own history"
+   },
+   {
+    "id": "BW-03",
+    "name": "pr-swarm",
+    "spec": "all sessions as faint white dots · the PR glows mint + pill — one hero dot"
+   },
+   {
+    "id": "BW-04",
+    "name": "month-swarm",
+    "spec": "two swarms stacked on a shared axis (this month mint / last faint) + mean ticks + delta pill"
+   }
+  ],
+  "biomarker-charts": [
+   {
+    "id": "BR-01",
+    "name": "panel-rows",
+    "spec": "4 marker rows: faint scale + mint reference band + value dot (mint in-range / coral out) + LOW/HIGH flag above out-of-range dots"
+   },
+   {
+    "id": "BR-02",
+    "name": "single-marker",
+    "spec": "one large row with the anatomy labeled: LOW/OPTIMAL/HIGH zones, range numbers, pulsing value dot + big result"
+   },
+   {
+    "id": "BR-03",
+    "name": "marker-trend",
+    "spec": "rows + last-4-tests spark and direction arrow per marker (improving mint / worsening coral / flat dim)"
+   },
+   {
+    "id": "BR-04",
+    "name": "panel-grid",
+    "spec": "2×3 tiles: name + OK/LOW/HIGH verdict + mini range row + value; out-of-range tiles get a coral border"
+   },
+   {
+    "id": "BR-05",
+    "name": "range-history",
+    "spec": "one marker over 5 test dates: dots + connecting line crossing INTO the shaded reference band — the recovery story"
+   }
+  ],
+  "body-battery-charts": [
+   {
+    "id": "BB-01",
+    "name": "battery-day",
+    "spec": "zone-stroked % curve over 24h · violet sleep shading + CHARGING bolt · NOW pulse + % pill · day axis"
+   },
+   {
+    "id": "BB-02",
+    "name": "battery-glyph",
+    "spec": "big battery glyph (rounded body + terminal), zone-colored fill · SELECT STATE: level + empty-ETA / charging bolt + full-ETA / low warning + advice pill"
+   },
+   {
+    "id": "BB-05",
+    "name": "drain-events",
+    "spec": "day curve + coral event pills at the dips (MEETING −8% …)"
+   },
+   {
+    "id": "BB-06",
+    "name": "battery-week",
+    "spec": "7 mini vertical batteries, end-level fill + % + day letters"
+   },
+   {
+    "id": "BB-07",
+    "name": "battery-vs",
+    "spec": "today zone curve + dashed white-30% yesterday + pills"
+   }
+  ],
+  "bullet-charts": [
+   {
+    "id": "BL-01",
+    "name": "bullets",
+    "spec": "range bands + slim value bar + white target tick · SELECT: rows, density (16px / 13px compact), metric tokens or attainment-zone coloring · over-target overflows magenta"
+   },
+   {
+    "id": "BL-02",
+    "name": "single-bullet",
+    "spec": "one large bullet with the anatomy labeled: LOW/OK/GOOD bands + TARGET pill + value"
+   },
+   {
+    "id": "BL-05",
+    "name": "over-bullets",
+    "spec": "the over-limit story: magenta overflow segment past the scale end + OVER pills"
+   }
+  ],
+  "caffeine-charts": [
+   {
+    "id": "CF-01",
+    "name": "decay-curve",
+    "spec": "exponential half-life decay (t½ 5.7h) from the dose spike · amber dashed 50MG sleep threshold + crossing dot · violet dashed bedtime rule with verdict pill"
+   },
+   {
+    "id": "CF-02",
+    "name": "stacked-doses",
+    "spec": "each dose decays as its own faint curve + bold white TOTAL curve · the late 14:00 dose leaves 54MG at bed → coral verdict"
+   },
+   {
+    "id": "CF-03",
+    "name": "safe-window",
+    "spec": "day strip with mint→amber→magenta gradient + computed LAST SAFE COFFEE tick (one half-life before bed) + NOW pulse + past cups"
+   }
+  ],
+  "combo-charts": [
+   {
+    "id": "CB-01",
+    "name": "bars-line",
+    "spec": "bars metric + line metric on one canvas · SELECT METRIC PAIR (workouts×energy · sleep×HRV · kcal×weight …) + a token per metric · stacked legend pills"
+   },
+   {
+    "id": "CB-04",
+    "name": "area-line",
+    "spec": "mint energy area + amber strain line — strain spikes where energy dips"
+   },
+   {
+    "id": "CB-05",
+    "name": "bars-plan",
+    "spec": "mint volume bars + dashed white stepped plan line (progressive overload ramp)"
+   }
+  ],
+  "compare-charts": [
+   {
+    "id": "CP-01",
+    "name": "slope-panel",
+    "spec": "2 columns · one slope per metric · up = own hue, down = coral · deltas at right"
+   },
+   {
+    "id": "CP-02",
+    "name": "dumbbell-rows",
+    "spec": "horizontal dot-pairs (dim start → solid end) + connector + signed deltas"
+   },
+   {
+    "id": "CP-03",
+    "name": "bump-ranks",
+    "spec": "rank lanes 1-4 · smooth rank lines + dots (big at latest) + #rank labels"
+   },
+   {
+    "id": "CP-04",
+    "name": "delta-arrows",
+    "spec": "center zero-line · 5px arrow bars, length = change, mint/coral + % labels"
+   },
+   {
+    "id": "CP-05",
+    "name": "mirror-bars",
+    "spec": "mirrored bars around a center spine — before left (dim), after right (hued)"
+   },
+   {
+    "id": "CP-06",
+    "name": "cohort-slopes",
+    "spec": "your mint slope 3.5px over 8 faint cohort slopes"
+   },
+   {
+    "id": "CP-07",
+    "name": "ladder-steps",
+    "spec": "4 milestone dots climbing · done mint-60% · NOW pulse · ahead dashed"
+   }
+  ],
+  "composite-charts": [
+   {
+    "id": "CM-01",
+    "name": "treemap",
+    "spec": "nested rounded rects, 28% fills + tinted borders · SELECT COLORING: time share / zone verdicts"
+   },
+   {
+    "id": "CM-03",
+    "name": "horizon-rows",
+    "spec": "folded 2-layer bands, 4 metrics × 40 days · SELECT MODE: absolute / |deviation| vs baseline"
+   },
+   {
+    "id": "CM-05",
+    "name": "calendar-micro",
+    "spec": "month grid where every day is a micro-chart · SELECT CELL: sparkline / bars"
+   },
+   {
+    "id": "CM-07",
+    "name": "goal-tree",
+    "spec": "root goal ring (74) + 3 child habit rings with % + bezier connectors + pills"
+   }
+  ],
+  "cycle-charts": [
+   {
+    "id": "CW-01",
+    "name": "phase-wheel",
+    "spec": "4 phase arcs (coral/cyan/lime/violet, round caps, gaps) · D-labels · today pulse + center day/phase + legend · optional FOCUS state (others 20% + days-left center)"
+   },
+   {
+    "id": "CW-04",
+    "name": "coach-wheel",
+    "spec": "wheel + violet recommendation pill under (\"lower intensity, more sleep\")"
+   },
+   {
+    "id": "CW-05",
+    "name": "phase-strip",
+    "spec": "the wheel unrolled: 4 phase pills on a 28-day strip + TODAY rule + D-ticks"
+   }
+  ],
+  "distribution-charts": [
+   {
+    "id": "DS-01",
+    "name": "histogram",
+    "spec": "14 bins · --mint bars, opacity scales with count · rx3"
+   },
+   {
+    "id": "DS-02",
+    "name": "bell-percentile",
+    "spec": "cyan bell + veil fill · mint YOU rule + \"P82\" pill"
+   },
+   {
+    "id": "DS-03",
+    "name": "cohort-bells",
+    "spec": "violet your-curve vs text-35% dashed cohort curve + pills"
+   },
+   {
+    "id": "DS-04",
+    "name": "box-rows",
+    "spec": "4 horizontal box-whisker rows · IQR box 30% fill + median 2px + whisker caps"
+   },
+   {
+    "id": "DS-05",
+    "name": "violin",
+    "spec": "symmetric violet→cyan violin (bimodal visible) + MEDIAN rule + pill"
+   },
+   {
+    "id": "DS-07",
+    "name": "ridgeline",
+    "spec": "4 stacked week-curves, opacity ramps to newest + drift pill"
+   }
+  ],
+  "donut-charts": [
+   {
+    "id": "DN-01",
+    "name": "score-ring",
+    "spec": "r52 ring, 11px round-cap arc + center stat · SELECT ARC: any token / gradient (lime→mint→cyan)"
+   },
+   {
+    "id": "DN-03",
+    "name": "zone-ring",
+    "spec": "arc + number colored by value zone (36 → coral)"
+   },
+   {
+    "id": "DN-04",
+    "name": "dual-ring",
+    "spec": "concentric r52 mint + r38 violet · shared center stat"
+   },
+   {
+    "id": "DN-05",
+    "name": "triple-ring",
+    "spec": "activity-style: r52 mint 82% · r39 cyan 64% · r26 violet 45%"
+   },
+   {
+    "id": "DN-06",
+    "name": "thin-halo",
+    "spec": "4px thin ring — quiet, avatar-badge scale"
+   },
+   {
+    "id": "DN-07",
+    "name": "dashed-track",
+    "spec": "dotted 2-5 track · solid round-cap arc on top"
+   },
+   {
+    "id": "DN-08",
+    "name": "pulse-ring",
+    "spec": "pulsing dot rides the arc end (reduced-motion safe)"
+   },
+   {
+    "id": "DN-09",
+    "name": "delta-ring",
+    "spec": "score ring + mint delta chip under center"
+   },
+   {
+    "id": "DN-13",
+    "name": "gauge-270",
+    "spec": "270° gauge (opens down) · red→amber→green arc · 5 ticks"
+   },
+   {
+    "id": "DN-14",
+    "name": "half-gauge",
+    "spec": "180° semicircle · round caps · stat under the arc"
+   }
+  ],
+  "environment-charts": [
+   {
+    "id": "EN-01",
+    "name": "sun-uv-arc",
+    "spec": "the sun path arc sunrise→sunset, segments colored by UV (cyan low / amber mid / coral high) + NOW pulse on the arc + horizon with times + PEAK pill"
+   },
+   {
+    "id": "EN-02",
+    "name": "pollen-rows",
+    "spec": "3 hourly cell rows (tree/grass/weed), brightness+color = load, worst window flagged"
+   },
+   {
+    "id": "EN-03",
+    "name": "aqi-day",
+    "spec": "stepped AQI curve + area, dashed MODERATE rule + NOW pulse with verdict pill"
+   },
+   {
+    "id": "EN-04",
+    "name": "outdoor-window",
+    "spec": "UV + pollen + air rows stacked + computed mint BEST WINDOW box where all three are low"
+   }
+  ],
+  "funnel-charts": [
+   {
+    "id": "FN-01",
+    "name": "band-funnel",
+    "spec": "centered trapezoid bands + stage labels · SELECT FILL: tokens / glass 16%"
+   },
+   {
+    "id": "FN-03",
+    "name": "bar-funnel",
+    "spec": "left-aligned stage bars + % + coral per-stage drop labels at right"
+   },
+   {
+    "id": "FN-04",
+    "name": "zone-funnel",
+    "spec": "bar funnel, stage color = conversion zone (good/warn/bad)"
+   },
+   {
+    "id": "FN-05",
+    "name": "compare-funnel",
+    "spec": "thin bars over white-14% ghost bars (previous period)"
+   }
+  ],
+  "heatmap-charts": [
+   {
+    "id": "HM-01",
+    "name": "heat-grid",
+    "spec": "7×16 day cells · SELECT SCALE: zone verdicts / single-hue mint / spectrum (indigo→violet→cyan→mint)"
+   },
+   {
+    "id": "HM-03",
+    "name": "streak-year",
+    "spec": "30×7 micro cells (GitHub-style) · mint scale"
+   },
+   {
+    "id": "HM-04",
+    "name": "month-cal",
+    "spec": "5×7 month grid · day numerals in-cell · weekday letters"
+   },
+   {
+    "id": "HM-06",
+    "name": "dot-matrix",
+    "spec": "circles sized AND opacified by value (double encoding)"
+   },
+   {
+    "id": "HM-07",
+    "name": "glass-grid",
+    "spec": "glass 5% cells · mint border opacity carries the value"
+   },
+   {
+    "id": "HM-08",
+    "name": "gap-aware",
+    "spec": "missing slots render as dashed empty cells — never fake zeros"
+   },
+   {
+    "id": "HM-09",
+    "name": "hour-day",
+    "spec": "24h × 7d · hour labels top · spectrum scale"
+   },
+   {
+    "id": "HM-10",
+    "name": "week-strips",
+    "spec": "five week rows × 7 day pills · rounded 6px"
+   },
+   {
+    "id": "HM-11",
+    "name": "corr-matrix",
+    "spec": "5×5 diverging matrix (mint + / coral −) · signed values in cells"
+   },
+   {
+    "id": "HM-12",
+    "name": "diverge-heat",
+    "spec": "diverging: above baseline mint / below coral, opacity = magnitude"
+   },
+   {
+    "id": "HM-13",
+    "name": "focus-row",
+    "spec": "one row full strength · others dimmed to 22%"
+   },
+   {
+    "id": "HM-14",
+    "name": "value-cells",
+    "spec": "big cells with mono values inside (dark text on hot cells)"
+   },
+   {
+    "id": "HM-15",
+    "name": "today-ring",
+    "spec": "month-cal + white ring around today + pulse above"
+   }
+  ],
+  "line-charts": [
+   {
+    "id": "LC-01",
+    "name": "solid",
+    "spec": "stroke 2.5px · smooth (monotone) · no fill · SELECT COLOR: any token below"
+   },
+   {
+    "id": "LC-09",
+    "name": "gradient",
+    "spec": "gradient stroke 3px · SELECT GRADIENT: --grad-flux (signature) / --grad-cta / --grad-mint / --grad-violet / --grad-warm / lime→mint"
+   },
+   {
+    "id": "LC-15",
+    "name": "veil",
+    "spec": "line + 26%→2% vertical-fade area · SELECT COLOR or gradient (spectrum veil = the today-screen hero)"
+   },
+   {
+    "id": "LC-19",
+    "name": "tide-split",
+    "spec": "baseline 50% · above: --mint line+fill · below: --zone-low line+fill · dashed baseline"
+   },
+   {
+    "id": "LC-20",
+    "name": "glass-fill",
+    "spec": "stroke --text-dim 2.5px · flat --glass-2 fill · quietest fill variant"
+   },
+   {
+    "id": "LC-21",
+    "name": "curve-styles",
+    "spec": "SELECT CURVE: monotone smooth (default, no overshoot) / sharp-linear (labs, weights) / step-after (doses, tiers)"
+   },
+   {
+    "id": "LC-24",
+    "name": "dash-dot",
+    "spec": "SELECT PATTERN: dashed 7-5 (planned / projected) / dotted round-cap 3px (reference lines)"
+   },
+   {
+    "id": "LC-26",
+    "name": "stroke-weight",
+    "spec": "SELECT WEIGHT: 1px hairline (context) / 2.5px default / 4.5px bold hero · any color"
+   },
+   {
+    "id": "LC-28",
+    "name": "neon",
+    "spec": "glow drop-shadow 7–8px behind the stroke · SELECT COLOR: any token or gradient"
+   },
+   {
+    "id": "LC-30",
+    "name": "aurora-halo",
+    "spec": "stroke --grad-flux 3px · wide soft halo 12px accent-55%"
+   },
+   {
+    "id": "LC-32",
+    "name": "ghost-echo",
+    "spec": "main --cyan 2.5px + 2 echoes offset +7px/+14px at 19%/10% opacity"
+   },
+   {
+    "id": "LC-33",
+    "name": "bead-chain",
+    "spec": "--mint 2.5px · 2.6px dot at every datum · n≤16 only"
+   },
+   {
+    "id": "LC-34",
+    "name": "comet-head",
+    "spec": "--mint 2.5px · end dot 3.6px + SVG pulse ring (reduced-motion safe)"
+   },
+   {
+    "id": "LC-35",
+    "name": "peak-flag",
+    "spec": "--cyan 2.5px · auto PEAK (mint) + DIP (coral) dots & mono labels"
+   },
+   {
+    "id": "LC-36",
+    "name": "now-split",
+    "spec": "--accent 2.5px · vertical NOW rule · past solid / future dashed 5-5 75%"
+   },
+   {
+    "id": "LC-37",
+    "name": "goal-line",
+    "spec": "--cyan 2.5px · dashed --zone-mid GOAL rule at 72% · mint dots above goal"
+   },
+   {
+    "id": "LC-38",
+    "name": "event-pins",
+    "spec": "--mint 2.5px · accent pin flags at event times (stem 16px + glow dot)"
+   },
+   {
+    "id": "LC-39",
+    "name": "multi-compare",
+    "spec": "SELECT 2–3 SERIES · mint vs violet (+ lime for trio) · smooth · shared axis"
+   },
+   {
+    "id": "LC-41",
+    "name": "you-vs-cohort",
+    "spec": "YOU --mint 2.5px solid · COHORT text-35% 1.8px dashed"
+   },
+   {
+    "id": "LC-42",
+    "name": "ghost-prev",
+    "spec": "current --cyan 2.5px · previous period same hue at 28%"
+   },
+   {
+    "id": "LC-43",
+    "name": "calibrating-taper",
+    "spec": "--zone-mid 2.5px · solid→dashed at 55% + CALIBRATING mono tag"
+   },
+   {
+    "id": "LC-44",
+    "name": "delta-ribbon",
+    "spec": "A mint / B violet + accent-12% ribbon fill between them"
+   },
+   {
+    "id": "LC-45",
+    "name": "confidence-veil",
+    "spec": "--cyan 2.5px · ±9% CI band cyan 16%→3% + 25% edge"
+   },
+   {
+    "id": "LC-46",
+    "name": "forecast-fan",
+    "spec": "--accent 2.5px · NOW rule at 60% · widening accent-20% fan + dashed future"
+   },
+   {
+    "id": "LC-47",
+    "name": "range-band",
+    "spec": "median --violet 2.5px · min/max violet-14% band + 30% edge lines"
+   },
+   {
+    "id": "LC-48",
+    "name": "raw-vs-avg",
+    "spec": "raw linear text-16% 1px · 5-pt moving avg --cyan 2.6px smooth"
+   },
+   {
+    "id": "LC-49",
+    "name": "anomaly-spark",
+    "spec": "line text-40% 1.5px · outliers >|0.14| from 5-pt avg → coral dot + ring"
+   },
+   {
+    "id": "LC-50",
+    "name": "zone-ribbon",
+    "spec": "stroke = vertical zone gradient (high mint / mid amber / low coral) userSpaceOnUse · 3px"
+   },
+   {
+    "id": "LC-51",
+    "name": "day-fade",
+    "spec": "stroke = TIME gradient (x-axis): mint 6am → lime noon → amber 6pm → coral 11pm · 3px · color = time cue, NOT value (contrast LC-50)"
+   },
+   {
+    "id": "LC-52",
+    "name": "forecast-horizon",
+    "spec": "past --mint solid 2.5px · NOW rule + mint pulse dot at current position · future --violet dashed 5-5 + violet fan 20%→2% · inline mono labels ACTUAL (mint) / FORECAST (violet) over their segments"
+   },
+   {
+    "id": "LC-54",
+    "name": "zone-forecast",
+    "spec": "stroke = VALUE gradient y-mapped userSpaceOnUse (green --zone-high = 100 → amber --zone-mid = 50 → red --zone-low = 0) 3px · past solid / future dashed 5-5 + neutral fan · NOW rule + pulse dot · y-ends labeled 100 (green"
+   },
+   {
+    "id": "LC-56",
+    "name": "coach-forecast",
+    "spec": "LC-54 zone-forecast + two SUBDUED context lines: WITHOUT CAFFEINE CRASH — full-day counterfactual, text-30% 1.6px dashed 3-4 · RECOMMENDED — coach path from NOW, --mint 60% dotted 2-4, climbing back toward the counterfac"
+   }
+  ],
+  "metaphor-charts": [
+   {
+    "id": "MT-01",
+    "name": "thermometer",
+    "spec": "glass tube + bulb · liquid column = value (cyan→amber→coral) · SELECT: metric, TARGET tick, bulb glow"
+   },
+   {
+    "id": "MT-03",
+    "name": "fasting-hourglass",
+    "spec": "hourglass frame · amber sand top = remaining, bottom = elapsed + falling stream · countdown + pill"
+   },
+   {
+    "id": "MT-05",
+    "name": "habit-garden",
+    "spec": "6 plants: growth stage = streak weeks (sprout→bloom w/ lime glow), wilted coral = broken · name + streak under each"
+   },
+   {
+    "id": "MT-06",
+    "name": "plant-stages",
+    "spec": "5 growth stages in a row (SPROUT → WK 8+ bloom) + your-plant pill"
+   },
+   {
+    "id": "MT-07",
+    "name": "mountain-route",
+    "spec": "indigo mountain profile + veil fill · camp flags D30/D60 + lime SUMMIT D90 · YOU pulse at day 56"
+   },
+   {
+    "id": "MT-09",
+    "name": "hydration-bottle",
+    "spec": "bottle vessel fills UP through the day · cyan liquid + wave + bubbles · 8 glass ticks (done = cyan) + next-glass pill"
+   },
+   {
+    "id": "MT-10",
+    "name": "meal-plates",
+    "spec": "day strip with plate rings at meal times — each plate = mini macro donut + kcal above + time under + legend"
+   },
+   {
+    "id": "MT-11",
+    "name": "breath-pacer",
+    "spec": "guide rings + cyan orb that GROWS on inhale, holds, shrinks on exhale (19s SVG loop) + phase timings"
+   },
+   {
+    "id": "MT-12",
+    "name": "breath-session",
+    "spec": "breaths-per-minute curve slowing 14→7 into the shaded CALM ZONE + calm-reached pill"
+   }
+  ],
+  "pie-charts": [
+   {
+    "id": "PC-01",
+    "name": "duo-split",
+    "spec": "2 round-cap arc segments · --mint + glass remainder · center stat + legend"
+   },
+   {
+    "id": "PC-02",
+    "name": "split-arcs",
+    "spec": "SELECT 2–5 SEGMENTS · spectrum-ordered colors · real gaps · center stat + legend"
+   },
+   {
+    "id": "PC-04",
+    "name": "zone-share",
+    "spec": "segments = zone verdicts · center day count + legend"
+   },
+   {
+    "id": "PC-05",
+    "name": "hero-arc",
+    "spec": "hero segment +4px & shine · others 30% — the arc \"explode\""
+   },
+   {
+    "id": "PC-07",
+    "name": "callout-arcs",
+    "spec": "leader lines + chip-pill labels around the ring + center stat"
+   },
+   {
+    "id": "PC-09",
+    "name": "thin-share",
+    "spec": "slim 6px segments at r48 — halo weight + legend"
+   },
+   {
+    "id": "PC-11",
+    "name": "mini-multiples",
+    "spec": "3 small arc rings (r26, 8px) + lead-share center + day labels + palette key"
+   },
+   {
+    "id": "PC-13",
+    "name": "nested-arcs",
+    "spec": "TWO concentric rings (pie-nest): inner coarse split (sleep/train/other) + outer breakdown shaded by family + leader-line chip labels around the outer ring"
+   }
+  ],
+  "progress-charts": [
+   {
+    "id": "PL-01",
+    "name": "progress",
+    "spec": "title+%+sub row · SELECT COLOR or gradient · SELECT HEIGHT: 3px hairline / 8px default / 18px thick"
+   },
+   {
+    "id": "PL-04",
+    "name": "zone-progress",
+    "spec": "fill + % colored by value zone (mint/amber/coral)"
+   },
+   {
+    "id": "PL-08",
+    "name": "step-cells",
+    "spec": "10 cells · filled = done · counter under"
+   },
+   {
+    "id": "PL-09",
+    "name": "milestone-line",
+    "spec": "ticks + dots at 25/50/75 — lit when passed"
+   },
+   {
+    "id": "PL-11",
+    "name": "ghost-compare",
+    "spec": "white-16% ghost layer under = previous period"
+   },
+   {
+    "id": "PL-13",
+    "name": "overflow-badge",
+    "spec": "fill caps at 100% + lime \"+12 OVER\" pill"
+   },
+   {
+    "id": "PL-14",
+    "name": "head-pill",
+    "spec": "chip-pill with % rides the fill head"
+   },
+   {
+    "id": "PL-16",
+    "name": "countdown-drain",
+    "spec": "coral fill drains right→left — time remaining"
+   }
+  ],
+  "pyramid-charts": [
+   {
+    "id": "PY-01",
+    "name": "zone-pyramid",
+    "spec": "5 centered bars Z5→Z1 (coral/amber/lime/mint/cyan), width = time · % left, h:mm right, zone letter inside · base-heavy shape reads as healthy"
+   },
+   {
+    "id": "PY-02",
+    "name": "target-pyramid",
+    "spec": "PY-01 + dashed white target outline per zone (80/20 plan) + amber OVER pill where you exceed"
+   },
+   {
+    "id": "PY-03",
+    "name": "mirror-pyramid",
+    "spec": "population-pyramid layout: this week right (solid) vs last week left (32%), zone labels on the spine + delta pill"
+   }
+  ],
+  "radar-charts": [
+   {
+    "id": "RD-01",
+    "name": "balance-radar",
+    "spec": "5 axes, pentagon grid, fill+edge+vertex dots · SELECT FILL: mint / gradient"
+   },
+   {
+    "id": "RD-02",
+    "name": "target-overlay",
+    "spec": "mint shape over dashed violet target pentagon (80%) + YOU/TARGET pills"
+   },
+   {
+    "id": "RD-03",
+    "name": "cohort-ghost",
+    "spec": "mint shape + text-35% dashed cohort ghost + pills"
+   },
+   {
+    "id": "RD-04",
+    "name": "zone-vertices",
+    "spec": "neutral shape · vertex dots colored by value zone (mint/amber/coral)"
+   },
+   {
+    "id": "RD-06",
+    "name": "weeks-trail",
+    "spec": "3 overlays W1→W3, opacity 30→100% — the shape expanding"
+   },
+   {
+    "id": "RD-07",
+    "name": "mini-triples",
+    "spec": "3 small radars (R30, no labels) + day captions"
+   }
+  ],
+  "radial-charts": [
+   {
+    "id": "RA-01",
+    "name": "clock-events",
+    "spec": "24h tick ring (bold 6h) + glowing event dots on the rim + NOW hand + pulse + digital center"
+   },
+   {
+    "id": "RA-03",
+    "name": "radial-bars",
+    "spec": "24 radiating 4.5px round bars, length = value, color = zone"
+   },
+   {
+    "id": "RA-05",
+    "name": "zone-wheel",
+    "spec": "24 arc segments · zone color + opacity by value · center score"
+   },
+   {
+    "id": "RA-06",
+    "name": "radial-heat",
+    "spec": "7 concentric day-rings × 24 mint segments, opacity = value"
+   }
+  ],
+  "rose-charts": [
+   {
+    "id": "RS-01",
+    "name": "balance-rose",
+    "spec": "6 petals (train/sleep/food/mind/social/recover), petal length = score, spectrum colors + ring guides + labels — the weak petal is obvious"
+   },
+   {
+    "id": "RS-02",
+    "name": "week-rose",
+    "spec": "7 day-petals, mint opacity by score, today solid + day letters around"
+   },
+   {
+    "id": "RS-03",
+    "name": "rose-compare",
+    "spec": "violet filled petals (this week) over white dashed outlines (last week)"
+   }
+  ],
+  "sankey-charts": [
+   {
+    "id": "SK-01",
+    "name": "duo-flow",
+    "spec": "2 sources → 2 targets · ribbons 40% src-colored · 8px rounded nodes"
+   },
+   {
+    "id": "SK-02",
+    "name": "source-split",
+    "spec": "one accent source fans into 3 targets"
+   },
+   {
+    "id": "SK-03",
+    "name": "merge-flow",
+    "spec": "3 inputs merge into one mint outcome"
+   },
+   {
+    "id": "SK-05",
+    "name": "zone-outcomes",
+    "spec": "inputs flow into good/ok/bad zone-colored outcomes"
+   },
+   {
+    "id": "SK-06",
+    "name": "three-stage",
+    "spec": "sources → stages → outcomes (3 columns)"
+   },
+   {
+    "id": "SK-09",
+    "name": "highlight-path",
+    "spec": "one ribbon 85% · rest dimmed to 14%"
+   },
+   {
+    "id": "SK-10",
+    "name": "labeled-nodes",
+    "spec": "chip-pill labels on both node columns"
+   },
+   {
+    "id": "SK-11",
+    "name": "thin-streams",
+    "spec": "many small sources stream into 2 outcomes · 4 hues"
+   },
+   {
+    "id": "SK-13",
+    "name": "chord-factors",
+    "spec": "5 factor nodes on a circle \\u00b7 chords through the center, width = link strength, source-colored 30% + glow dots + chip labels"
+   }
+  ],
+  "scatter-charts": [
+   {
+    "id": "SC-01",
+    "name": "mint-scatter",
+    "spec": "3px --mint dots 85% · axis captions · grid"
+   },
+   {
+    "id": "SC-02",
+    "name": "trend-fit",
+    "spec": "dots + dashed --cyan least-squares line + R² pill"
+   },
+   {
+    "id": "SC-03",
+    "name": "bubble-dose",
+    "spec": "bubble r 2-8px = third variable (dose) + size key + dark rims"
+   },
+   {
+    "id": "SC-04",
+    "name": "quadrant-map",
+    "spec": "dashed midlines + 4 quadrant captions (SWEET SPOT mint / DANGER coral)"
+   },
+   {
+    "id": "SC-05",
+    "name": "zone-dots",
+    "spec": "dot color = y-value zone (mint/amber/coral)"
+   },
+   {
+    "id": "SC-06",
+    "name": "today-marker",
+    "spec": "history dots 28% · TODAY lime pulse + pill"
+   },
+   {
+    "id": "SC-07",
+    "name": "density-cloud",
+    "spec": "90 small dots 40% + dashed --cyan centroid ring \"TYPICAL YOU\""
+   }
+  ],
+  "session-charts": [
+   {
+    "id": "SN-01",
+    "name": "hr-zones-session",
+    "spec": "5 HR zone bands (Z1 indigo → Z5 coral, 6% fills + Z labels) · trace stroked by zone height · time axis"
+   },
+   {
+    "id": "SN-02",
+    "name": "hr-intervals",
+    "spec": "zone bands + 5 coral-shaded work blocks · square-ish HR swings between Z2 and Z5"
+   },
+   {
+    "id": "SN-03",
+    "name": "time-in-zones",
+    "spec": "5 zone rows · rounded bars sized by minutes + MIN labels"
+   },
+   {
+    "id": "SN-04",
+    "name": "hr-recovery",
+    "spec": "zone session + pulse at peak + dashed 60s bracket + mint recovery tag"
+   },
+   {
+    "id": "SN-05",
+    "name": "sauna-rounds",
+    "spec": "3 amber round blocks (ROUND pills) + PLUNGE tags · TEMP amber solid + HR coral dotted + legend"
+   },
+   {
+    "id": "SN-06",
+    "name": "sauna-heat-ramp",
+    "spec": "temp ramp stroked cyan→amber→coral by height · dashed TARGET 90°C rule · live pulse + state tag"
+   },
+   {
+    "id": "SN-07",
+    "name": "night-recovery",
+    "spec": "violet night canvas · HRV mint rising + RHR violet dashed falling · delta tags · clock axis"
+   },
+   {
+    "id": "SN-09",
+    "name": "glucose-response",
+    "spec": "meal-anchored curve (-30m\\u2026+2h) \\u00b7 mint baseline band 80-110 \\u00b7 MEAL rule + peak dot + return-time pill"
+   },
+   {
+    "id": "SN-10",
+    "name": "response-overlay",
+    "spec": "3 faint white-18% single-meal curves + bold cyan mean \\u00b7 baseline band + MEAL rule"
+   }
+  ],
+  "sleep-charts": [
+   {
+    "id": "SL-01",
+    "name": "hypnogram",
+    "spec": "4 stage rows (AWAKE amber · REM cyan · LIGHT indigo · DEEP violet) · 6px round segments + faint jump connectors · violet night canvas · clock axis"
+   },
+   {
+    "id": "SL-02",
+    "name": "stage-summary",
+    "spec": "100% stacked stage bar + stage names, H:M under each + in-bed/asleep/up line"
+   },
+   {
+    "id": "SL-03",
+    "name": "sleep-score",
+    "spec": "violet→mint ring (84) + 4 stage mini-bars with minutes on the right"
+   },
+   {
+    "id": "SL-04",
+    "name": "efficiency-bars",
+    "spec": "violet asleep bars up / amber awake bars down from the midline · ASLEEP/AWAKE tags · clock axis"
+   },
+   {
+    "id": "SL-05",
+    "name": "sleep-week",
+    "spec": "7 duration bars (violet ≥ target−30m, amber under) + dashed mint TARGET 8H rule + day letters"
+   },
+   {
+    "id": "SL-06",
+    "name": "bedtime-drift",
+    "spec": "BED (violet, coral when late) + WAKE (amber) dots joined per day · mint CONSISTENT WINDOW band"
+   },
+   {
+    "id": "SL-07",
+    "name": "night-coach",
+    "spec": "hypnogram + wake-window rule · SELECT: with mint recommendation pill / data-only"
+   }
+  ],
+  "state-charts": [
+   {
+    "id": "SV-01",
+    "name": "skeleton-chart",
+    "spec": "gray placeholder bars + title/legend stubs at the real chart geometry — no layout shift when data lands"
+   },
+   {
+    "id": "SV-02",
+    "name": "loading-ring",
+    "spec": "small spinner arc + what is actually loading (\"SYNCING WHOOP + OURA\")"
+   },
+   {
+    "id": "SV-03",
+    "name": "empty-cta",
+    "spec": "dashed ghost bars + one-line reason + filled mint CTA pill"
+   },
+   {
+    "id": "SV-04",
+    "name": "locked-forecast",
+    "spec": "dashed ghost curve + \"unlocks at 7 days\" + 3/7 progress dots — progress toward the feature"
+   },
+   {
+    "id": "SV-05",
+    "name": "error-retry",
+    "spec": "coral warning triangle + plain-words reason + RETRY pill"
+   },
+   {
+    "id": "SV-06",
+    "name": "partial-sync",
+    "spec": "line solid until last synced point, dashed ghost after + shaded pending region + amber SYNC PENDING pill"
+   }
+  ],
+  "supplement-charts": [
+   {
+    "id": "SP-01",
+    "name": "saturation-story",
+    "spec": "level line builds to SATURATED band (5 doses) → coral MISSED×3 window, level decays but holds → rebuilds · dose dots under (filled taken / dashed missed) · zone bands + pills + today pulse"
+   },
+   {
+    "id": "SP-02",
+    "name": "active-stack",
+    "spec": "4 rows: name + level bar + % + status pill (SATURATED / OK / TAKE TODAY / DEPLETED)"
+   },
+   {
+    "id": "SP-03",
+    "name": "half-life",
+    "spec": "exponential decay from dose tag · NOW rule + pulse + \"STILL ACTIVE · 84 MG\" pill · 0h→+12h axis"
+   },
+   {
+    "id": "SP-04",
+    "name": "dose-level",
+    "spec": "dose dots + faint intake stems + resulting level line + key pill"
+   },
+   {
+    "id": "SP-05",
+    "name": "depletion-forecast",
+    "spec": "solid past · dashed decay projection after NOW · coral pulse where it crosses LOW + restock pill"
+   },
+   {
+    "id": "SP-06",
+    "name": "adherence-level",
+    "spec": "taken/missed day cells strip on top + resulting cyan level line under + level pill"
+   },
+   {
+    "id": "SP-07",
+    "name": "stack-levels",
+    "spec": "3 level curves: creatine slow-build mint · magnesium mid cyan · caffeine sawtooth amber dashed + pills"
+   },
+   {
+    "id": "SP-09",
+    "name": "liquid-batteries",
+    "spec": "5 battery vessels in a bar-chart row: glass body + cap · wavy liquid fill, gradient 90%\\u219245% + surface highlight + bubbles \\u00b7 liquid color = level zone (mint/amber/coral) \\u00b7 % in vessel + names under"
+   },
+   {
+    "id": "SP-10",
+    "name": "battery-hero",
+    "spec": "one large 56px vessel with bubbles + liquid shine \\u00b7 FULL/LOW ticks on the side \\u00b7 right stats: 78% \\u00b7 SATURATED pill \\u00b7 \"holds ~9 days off\""
+   }
+  ],
+  "timeline-charts": [
+   {
+    "id": "TL-01",
+    "name": "event-line",
+    "spec": "events on a time rail · SELECT MARKERS: plain dots / icon pins with glow heads / chip pills alternating"
+   },
+   {
+    "id": "TL-04",
+    "name": "now-strip",
+    "spec": "past dots 100% · future 35% · NOW rule + pulse"
+   },
+   {
+    "id": "TL-05",
+    "name": "planned-hollow",
+    "spec": "past = filled dots · planned = dashed hollow rings"
+   },
+   {
+    "id": "TL-06",
+    "name": "zone-strip",
+    "spec": "10px zone band under the axis (energy by hour) + events"
+   },
+   {
+    "id": "TL-07",
+    "name": "spark-under",
+    "spec": "faint white-10% energy sparkline behind the strip"
+   },
+   {
+    "id": "TL-08",
+    "name": "heat-ticks",
+    "spec": "25 vertical ticks colored by hourly value zone"
+   },
+   {
+    "id": "TL-09",
+    "name": "range-blocks",
+    "spec": "rounded 16px span pills on one lane + dark inline labels"
+   },
+   {
+    "id": "TL-10",
+    "name": "multi-lane",
+    "spec": "3 named lanes (BODY/MIND/LIFE) · 14px span pills"
+   },
+   {
+    "id": "TL-11",
+    "name": "gantt-mini",
+    "spec": "3 phase bars + dashed dependency elbows"
+   },
+   {
+    "id": "TL-12",
+    "name": "duration-brackets",
+    "spec": "bracket outlines + chip labels over the axis"
+   },
+   {
+    "id": "TL-13",
+    "name": "cluster-bubbles",
+    "spec": "bubbles sized by event count · count numeral inside"
+   },
+   {
+    "id": "TL-14",
+    "name": "ticks-24h",
+    "spec": "24 hour-ticks (bold every 6h) + hour labels + events"
+   },
+   {
+    "id": "TL-15",
+    "name": "feed",
+    "spec": "vertical event feed · SELECT LAYOUT: single-side / alternating"
+   },
+   {
+    "id": "TL-17",
+    "name": "milestone-flags",
+    "spec": "flag pennants on stems + chip labels under the axis"
+   },
+   {
+    "id": "TL-18",
+    "name": "journey-line",
+    "spec": "6px lime→mint progress rail · milestone rings · DAY pill + pulse at position"
+   },
+   {
+    "id": "TL-20",
+    "name": "now-zone-strip",
+    "spec": "zone band + past/future dots + NOW pulse — the full day widget"
+   }
+  ],
+  "unit-charts": [
+   {
+    "id": "UN-01",
+    "name": "waffle-90",
+    "spec": "90 dots (15×6) · filled mint ramps toward today · lime TODAY pulse + caption"
+   },
+   {
+    "id": "UN-02",
+    "name": "waffle-share",
+    "spec": "10×10 squares partitioned by zone colors + dot legend"
+   },
+   {
+    "id": "UN-03",
+    "name": "pictogram-rows",
+    "spec": "icon rows (dumbbell/moon/cup glyphs) · done 100% vs remaining 18% + counts"
+   },
+   {
+    "id": "UN-04",
+    "name": "day-dots",
+    "spec": "7 big 10px dots · done = mint + dark check · pending outline + day letters + pill"
+   },
+   {
+    "id": "UN-05",
+    "name": "habit-grid",
+    "spec": "3 habit rows × 7 day dots, each row its own hue"
+   }
+  ],
+  "vitals-charts": [
+   {
+    "id": "VT-01",
+    "name": "ecg-strip",
+    "spec": "PQRST beats (sharp polyline, no smoothing) on faint ECG-paper verticals · big mono BPM readout · pulse on the latest R peak"
+   },
+   {
+    "id": "VT-02",
+    "name": "hrv-rhythm",
+    "spec": "cyan ECG with visibly uneven beat spacing + RR bracket ruler underneath (ms per gap) + HRV pill — variability is the story"
+   },
+   {
+    "id": "VT-03",
+    "name": "monitor",
+    "spec": "two traces (ECG mint + slow respiration cyan) + right stat column HR/HRV/RESP big mono"
+   },
+   {
+    "id": "VT-04",
+    "name": "night-hr",
+    "spec": "compressed full-night HR curve (indigo) in a shaded sleep window · LOW pill at the dip · WAKE spike amber · 11PM/3AM/7AM ticks"
+   },
+   {
+    "id": "VT-05",
+    "name": "anomaly-beat",
+    "spec": "normal strip with ONE premature beat re-drawn coral + dashed ring + IRREGULAR pill"
+   }
+  ],
+  "watch-charts": [
+   {
+    "id": "WC-01",
+    "name": "ring-score",
+    "spec": "graphic-circular complication: 82% mint ring on a faint track + big value + label (drawn 2× for the catalog)"
+   },
+   {
+    "id": "WC-02",
+    "name": "battery-gauge",
+    "spec": "270° gauge, zone-colored + bolt glyph + % — body battery at a glance"
+   },
+   {
+    "id": "WC-04",
+    "name": "micro-spark",
+    "spec": "big value + 10-point micro sparkline + end dot inside the circle"
+   },
+   {
+    "id": "WC-05",
+    "name": "corner-gauge",
+    "spec": "square face with 4 corner micro-widgets — featured TL: half-arc gauge + tiny value (UV 6); others show text/dots/ring fits"
+   },
+   {
+    "id": "WC-06",
+    "name": "inline-pill",
+    "spec": "wide pill: mini ring + mono text + progress bar — one-line data"
+   },
+   {
+    "id": "WC-07",
+    "name": "rings-trio",
+    "spec": "three concentric rings (move mint / train cyan / sleep violet) with round caps"
+   }
+  ],
+  "stat-tiles": [
+   {
+    "id": "ST-01",
+    "name": "stat-tile",
+    "spec": "big number + delta · SELECT ACCESSORY: none / 16-pt spark / micro bars / goal ring / progress bar · optional verdict glow-dot"
+   },
+   {
+    "id": "ST-06",
+    "name": "hero-number",
+    "spec": "centered 52px number + delta + insight line"
+   },
+   {
+    "id": "ST-07",
+    "name": "duo-tile",
+    "spec": "two stats split by a hairline, each with own delta"
+   },
+   {
+    "id": "ST-10",
+    "name": "stat-list",
+    "spec": "3 rows: label + bold value + colored mini-spark each"
+   }
+  ]
+ }
+}

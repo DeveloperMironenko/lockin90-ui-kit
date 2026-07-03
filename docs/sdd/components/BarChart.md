@@ -1,132 +1,154 @@
-# SDD — `BarChart` (+ `BarItem` type)
+# SDD — `BarChart` (+ `BarItem`, `BarChartVariant`, `BarChartLegendItem` types)
 
 > **Package:** `@lockin90/ui` (web) · `@lockin90/ui-native` (native) — root cross-platform primitive.
 > **Source:** `packages/ui/src/components/BarChart.tsx` · `packages/ui-native/src/components/BarChart.tsx` ·
-> web CSS `packages/ui/src/styles/components/bc.css` (`.lk-bc*`).
-> **Exports:** `BarChart`, type `BarItem`, type `BarChartProps`.
-> **Status:** Shipped. **Parity:** 🟡 same API & visuals; the `gradient` default-fill prop is platform-shaped (web CSS string ↔ native `[string, string]` tuple).
-> **Stories:** `packages/ui/src/stories/BarChart.stories.tsx` · `packages/ui-native/src/stories/BarChart.stories.tsx`.
+> web CSS `packages/ui/src/styles/components/bc.css` (`.lk-bc*` classic · `.lk-bcv*` variants).
+> **Exports:** `BarChart`, type `BarItem`, type `BarChartProps` (plus in-file `BarChartVariant`, `BarChartLegendItem`).
+> **Status:** Shipped. **Parity:** 🟡 same API & visuals; the classic `gradient` prop is platform-shaped (web CSS string ↔ native tuple) and the BC-17 pulse ring animates on web only.
+> **Stories:** `packages/ui/src/stories/BarChart.stories.tsx` · `packages/ui-native/src/stories/BarChart.stories.tsx` — variant stories named by catalog ID (`BC01Bars` …).
 
 ---
 
 ## 1. Overview
 
-A **generic vertical bar chart** — a flex row of columns, each a gradient-filled bar sized by `value / max` of the chart area, with an optional value label above and a mono/uppercase label below. **Not an SVG**: it is a flexbox layout (web `display:flex`, native `flexDirection:'row'`), bars are gradient `<div>`/`LinearGradient` rectangles. The weekday-energy strip on dashboards is the canonical use.
+The kit's only sanctioned **vertical bar chart**, in two modes:
 
-- Highlighted bars (`highlight: true`) get a **brighter mint gradient + soft glow** and a brighter value/label.
-- Per-bar `color` overrides the shared `gradient`.
-- `BarItem` (the bar descriptor) is a secondary export consumed by callers building `bars`.
+- **Classic (no `variant`)** — a flex row of gradient-filled columns sized by `value / max`, value label above, mono label below; `highlight: true` bars get a brighter mint gradient + glow. The weekday-energy strip is the canonical use. **Not an SVG.**
+- **Catalog variants (`variant="…"`)** — an inline-SVG chart on the design catalog's **320×150 geometry** (plot inset l10 r12 t16 b14), implementing the 15 named forms from `lockin90-design/charts/bar-charts.html` (BC-01…BC-24). The SVG scales uniformly to the container width, so the render matches the catalog card at any size.
 
-It is the only sanctioned vertical-bar primitive; for a single horizontal progress bar use `BarFill`/`ProgressBar`, for a stacked composition use `StackedBar`.
+For a single horizontal progress bar use `BarFill`/`ProgressBar`; for a 100%-stacked horizontal composition use `StackedBar`; HR zones → `ZoneBar`.
+
+### Catalog ID → variant map
+
+| ID | `variant` | Form | Extra props used |
+| --- | --- | --- | --- |
+| BC-01 | `bars` | rounded rx3 bars | `color` / `gradientStops` / `glass` (COLOR SELECT) · density = `bars.length` (7/12/24) · `shine` |
+| BC-04 | `spectrum-bars` | bar hue by x-position (lime→magenta) | — |
+| BC-05 | `zone-bars` | color = value zone (≥62% mint · ≥38% amber · else coral) | — |
+| BC-08 | `lollipop` | 2px stem + 3.4px head dot | `color` (default `--cyan`) |
+| BC-11 | `diverging-tide` | ± around the 50% midline, mint/coral | `legend` |
+| BC-12 | `stacked` | stacked segments — **outer corners rounded, seams square** | `series` (2–3 = segment SELECT) · `legend` (colors drive segments) |
+| BC-14 | `grouped-pair` | two series side-by-side (mint / violet 85%) | `series` (2) · `legend` |
+| BC-15 | `value-caps` | mono value labels above every 2nd bar (n≤10) | `color` |
+| BC-16 | `fade-history` | opacity ramps 25%→100% toward newest | — |
+| BC-17 | `today-pulse` | all bars 30%, today 100% + pulse dot above | `BarItem.highlight` picks the bar (default last) |
+| BC-18 | `rank-rows` | horizontal ranked pills, spectrum order (top 6, sorted desc) | `BarItem.label` = row label |
+| BC-19 | `waterfall` | floating ± steps + connector ticks — values are the **running level** | `waterfallStart` |
+| BC-20 | `goal-bars` | bars + dashed `--zone-mid` GOAL rule | `goal` (also usable on other variants) |
+| BC-22 | `sparkbar-micro` | no grid, bw 0.5, rx1 micro bars for stat cards | `grid` defaults `false` |
+| BC-24 | `forecast-bars` | past solid · future outlined dashed · NOW rule | `forecastFrom` (first projected index) |
 
 ## 2. API contract
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `bars` | `BarItem[]` | `DEFAULT_BARS` (weekday M–S) | ✓ | ✓ | drawn left → right |
-| `max` | `number` | max bar value | ✓ | ✓ | value mapping to 100% height; denom floored at 1 |
-| `height` | `number` | `150` | ✓ | ✓ | chart-area height in px (web `--bc-h`) |
-| `showValues` | `boolean` | `true` | ✓ | ✓ | value label above each bar |
-| **`gradient`** | web `string` · native `[string, string]` | web `linear-gradient(180deg, var(--cyan), var(--accent))` · native `[colors.cyan, colors.accent]` | ✓ | ✓ | **platform-shaped** — CSS background string vs top→bottom stop tuple |
-| `className` | `string` | — | ✓ | — | web only |
+| `bars` | `BarItem[]` | `DEFAULT_BARS` (weekday M–S) | ✓ | ✓ | drawn left → right; variant density = `bars.length` |
+| `max` | `number` | max visible value | ✓ | ✓ | value ↔ 100% height (stacked → max bar **total**); denom floored at 1 |
+| `height` | `number` | `150` | ✓ | ✓ | **classic only** — variants keep the 320×150 catalog aspect |
+| `showValues` | `boolean` | `true` (classic) | ✓ | ✓ | classic: label above each bar · variants: opt-in caps every 2nd bar (`value-caps` has them always) |
+| **`gradient`** | web `string` · native `[string, string]` | cyan→accent 180° | ✓ | ✓ | **classic only, platform-shaped** |
+| `variant` | `BarChartVariant` | — | ✓ | ✓ | see the ID map above |
+| `color` | `string` | `--mint` (`lollipop` → `--cyan`) | ✓ | ✓ | variant solid fill (web `var()` / native hex) |
+| `gradientStops` | `string[]` | — | ✓ | ✓ | variant vertical fill gradient, top→bottom (overrides `color`) |
+| `glass` | `boolean` | `false` | ✓ | ✓ | variant glass fill `rgba(255,255,255,.14)` |
+| `series` | `number[][]` | — | ✓ | ✓ | `stacked` (2–3) / `grouped-pair` (2); `series[k][i]` = series k, bar i; replaces `bars` as data |
+| `legend` | `BarChartLegendItem[]` | — | ✓ | ✓ | dot legend top-right; its colors also color `series` segments (else mint/violet/cyan) |
+| `title` | `string` | — | ✓ | ✓ | mono context label top-left (classic web: passthrough HTML tooltip) |
+| `goal` | `number` | — | ✓ | ✓ | dashed GOAL rule at `goal/max` |
+| `forecastFrom` | `number` | — | ✓ | ✓ | index of the first dashed forecast bar + NOW rule |
+| `waterfallStart` | `number` | first bar value | ✓ | ✓ | waterfall starting level |
+| `shine` | `boolean` | `false` | ✓ | ✓ | glow underlay (web blur(5px) dup · native wider faint dup) |
+| `grid` | `boolean` | `true` (`sparkbar-micro` → `false`) | ✓ | ✓ | 25/50/75 gridlines + baseline |
+| `className` / _rest_ | `HTMLAttributes<HTMLDivElement>` | — | ✓ | — | web only |
 | `style` | `CSSProperties` / `StyleProp<ViewStyle>` | — | ✓ | ✓ | merged onto the root |
-| _rest_ | `HTMLAttributes<HTMLDivElement>` | — | ✓ | — | web only |
 
-**`BarItem`:** `value: number` (height ∝ `value/max`), `label?: string` (mono/uppercase/faint below), `color?: string` (override fill — web any CSS background, native a solid hex), `highlight?: boolean`.
-
-- Each bar's `pct` is `clamp(value/denom, 0, 1)`. Web sets `--bc-pct` (CSS computes `height: pct * --bc-h`); native computes `barHeight = pct * height` directly.
-- Fill resolution: `color ?? (highlight ? HIGHLIGHT_GRADIENT : gradient)`. Highlight default — web `var(--grad-mint)`, native `gradients.mint.stops[0..1]`.
+**`BarItem`:** `value` (height ∝ `value/max`; waterfall = running level; rank-rows = pill length), `label?` (below bar / rank-row name), `color?` (classic fill override), `highlight?` (classic mint+glow; `today-pulse` target).
 
 ## 3. Visual spec (tokens — never hardcode)
 
-| Aspect | Web | Native |
-| --- | --- | --- |
-| Default fill | `--cyan → --accent` 180° | `colors.cyan → colors.accent` (start `{0,0}`→end `{0,1}`) |
-| Highlight fill | `--grad-mint` | `gradients.mint.stops` |
-| Bar radius | `8px 8px 4px 4px` | TL/TR `8`, BL/BR `4` |
-| Bar border | `1px var(--border)` | `1px colors.border` |
-| Highlight glow | `box-shadow 0 0 18px rgba(52,245,197,.22)`, border→transparent | `shadowColor colors.mint`, opacity `.22`, radius `18`, `elevation 8`, border→transparent |
-| Value label | `11px var(--text-dim)`, `lk-mono`; HL → `var(--zone-high)` | `fonts.mono 11px colors.textDim`; HL → `colors.zoneHigh` |
-| Bottom label | `10px var(--text-faint)` uppercase `ls .04em`, `lk-mono`; HL → `var(--text-dim)` | `fonts.mono 10px colors.textFaint` uppercase `ls .4`; HL → `colors.textDim` |
+Classic mode unchanged (see git history): cyan→accent 180° default fill, `--grad-mint` highlight, radius `8/8/4/4`, `1px --border`, mint glow `0 0 18px rgba(52,245,197,.22)`, labels `--text-dim`/`--text-faint` mono.
 
-- **Gaps:** `10px` between columns; `8px` within a column (value↔bar↔label).
-- **Column height:** web reserves `calc(--bc-h + 30px)` so labels fit above/below; native lays out with `alignItems:'flex-end'`.
-- **Web-only motion:** `.lk-bc-bar` animates `height 1.1s var(--ease)` on data change. Native has no height transition.
+Variant mode (both platforms, catalog-exact):
+
+| Aspect | Value |
+| --- | --- |
+| Geometry | viewBox `0 0 320 150`, plot inset l10 r12 t16 b14, bar width 0.62·step (micro 0.5), rx3 (micro rx1) |
+| Grid | 25/50/75 lines `rgba(255,255,255,.05)`, baseline `.09` |
+| Title/labels | 8.5px `--font-mono`/`fonts.mono`, ls .06em, `--text-faint` (`--text-dim` for legend/rank labels) |
+| Spectrum | `--lime --mint --cyan --indigo --violet --magenta` (BC-04 x-ramp, BC-18 rank palette) |
+| Zones | `--zone-high/mid/low` at ≥0.62 / ≥0.38 / else (catalog `zoneOf`) |
+| Series palette | mint · violet(.85 grouped) · cyan — overridable via `legend[].color` |
+| Diverge / waterfall | `--mint` up / `--zone-low` down; waterfall connector `rgba(255,255,255,.25)` |
+| Goal rule | `--zone-mid` 1px dash 5-4 @.85 + mono GOAL label |
+| NOW rule | `rgba(255,255,255,.22)` 1px + mono NOW label |
+| Forecast bars | outlined `stroke-width 1.4` dash 4-3 @.8 in the bar's fill color |
+| Stacked rounding | **outer corners r3 only** (top of top seg, bottom of bottom), 1px square seams — `stackSegPath()` ported from the catalog |
+| Pulse (BC-17) | dot r3.6 + ring r3.6; web ring scales 1→3 @1.8s (`lkBcvPulse`, reduced-motion → static), dot glow `drop-shadow(0 0 5px)`; native: static ring r7 @.35 + wider faint dot dup (r6.5 @.25) |
+| Shine | web `filter: blur(5px)` dup @.5 · native wider dup (+5px, rx4) @.35 |
 
 ## 4. States
 
 | State | Web | Native |
 | --- | --- | --- |
-| Default | `.lk-bc-col` > `.lk-bc-bar` | `View` col > bar |
-| Highlight | `.lk-bc-hl` → mint gradient + glow, brighter labels | `barHl`/`valHl`/`labelHl` styles |
-| Per-bar color | inline `background` overrides gradient | solid-color `View` instead of `LinearGradient` |
-| Zero / negative value | `pct` clamps to 0 → empty column | same |
-| Empty `bars` | renders an empty flex row | same |
+| Classic default/highlight/color | unchanged (`.lk-bc*`) | unchanged |
+| Variant | `.lk-bcv` > uniform-scaling `<svg>` | fixed-aspect `View` (320:150) > `Svg` |
+| Zero/negative values | clamp to 0 → 2px min bar | same |
+| Empty `bars`/`series` | empty plot (grid/title still render) | same |
+| Reduced motion | pulse ring parks static (`prefers-reduced-motion`) | pulse is always static |
 
-No hover, focus, disabled, or loading states — it is presentational.
+No hover/focus/disabled — presentational.
 
 ## 5. Web ↔ native parity
 
-**Verdict: 🟡 same API, one platform-shaped prop.** Identical props (`bars`, `max`, `height`, `showValues`), identical defaults (the weekday sample, 150px height), identical bar math (`value/max` clamp), radii, borders, glow magnitude, and label typography. Differences are substrate-only:
+**Verdict: 🟡 same API, substrate-shaped rendering.** Identical prop names/defaults, identical geometry (same constants + same `stackSegPath` string math), identical token roles. Real differences:
 
-- **`gradient` prop shape:** web takes a CSS background **string** (`linear-gradient(...)`); native takes a `[topColor, bottomColor]` **tuple** for `expo-linear-gradient`. App code reads 1:1 (same intent, different literal). The default cyan→accent vertical fill is identical visually.
-- **Substrate:** web = `<div>` flex + CSS height + `lk-mono` class; native = `View`/`LinearGradient` + `StyleSheet`. Web animates bar height; native does not.
-- **`color` override:** web accepts any CSS background; native expects a solid hex (renders a plain `View`).
-
-No capability gap — fully usable and visually equivalent on both platforms.
+- **Classic `gradient`:** web CSS string ↔ native `[top, bottom]` tuple (pre-existing, unchanged).
+- **BC-17 pulse:** web ring animates via CSS keyframes; native renders a **static** ring + faint halo (no SMIL/Animated SVG radius without new deps). Same dot, same colors.
+- **Shine:** web = blurred duplicate; native = wider faint duplicate (SVG filters are unreliable on device — same rule as Ring's glow).
+- Color literals: web `var(--x)` ↔ native `colors.x` hex — the kit-wide convention.
 
 ## 6. Composition & usage
 
-- **Used for:** weekday/period energy strips, adherence-by-day, any small categorical bar series on a `Card`.
-- **Composes from:** nothing — leaf primitive. Wrap in `Card` for a titled panel; pair with a legend built from `KeyValue`/`Chip`.
+- **Used for:** weekday/period energy strips (classic), and any BC-xx catalog chart on dashboards, stat cards (`sparkbar-micro`), reports (`value-caps`), plans (`forecast-bars`, `goal-bars`).
+- **Composes from:** nothing — leaf primitive. Wrap in `Card`; the built-in `title`/`legend` replace ad-hoc chart headers.
 
 ```tsx
-// web
+// web — BC-12 stacked, 2 segments
 <BarChart
-  bars={[
-    { value: 71, label: 'M' },
-    { value: 79, label: 'W', highlight: true },
-    { value: 61, label: 'S', color: 'var(--zone-mid)' },
-  ]}
-  max={100}
-  height={140}
+  variant="stacked"
+  title="SLEEP MIX · LAST 12 NIGHTS"
+  series={[deepMinutes, lightMinutes]}
+  max={480}
+  legend={[{ label: 'DEEP', color: 'var(--mint)' }, { label: 'LIGHT', color: 'var(--violet)' }]}
 />
 
-// native
-<BarChart
-  bars={[
-    { value: 71, label: 'M' },
-    { value: 79, label: 'W', highlight: true },
-    { value: 61, label: 'S', color: colors.zoneMid },
-  ]}
-  max={100}
-  height={140}
-/>
+// native — BC-24 forecast
+<BarChart variant="forecast-bars" title="ENERGY · ACTUAL + PLAN" bars={days} max={100} forecastFrom={7} />
 ```
 
 ## 7. Accessibility
 
-- The chart is **decorative-by-default**: web renders a plain `<div>` (no `role`). Provide an accessible summary in surrounding copy or an `aria-label` via `...rest` on web when the bars carry meaning.
-- Value labels (`showValues`) and bottom `label`s give a sighted text readout; keep `label` short (single letters/abbreviations).
-- Contrast: highlight value uses `--zone-high`/`colors.zoneHigh` on the dark surface; non-highlight uses `--text-dim`. Don't supply low-contrast custom `color`s for the fills.
+- Classic root is a plain `<div>`; variant web SVG is `aria-hidden` unless an `aria-label` is spread onto the root — provide one whenever the chart carries meaning (native: `accessibilityLabel` via `style`-adjacent wrapper).
+- In-SVG text (title, values, labels) gives a sighted readout; keep labels short and mono-friendly.
+- Zone/spectrum colors are supporting encodings — don't make color the only signal in surrounding copy.
 
 ## 8. Usage rules — Do / Don't
 
 **Do**
-- Pass an explicit `max` when comparing charts across cards (so bar heights are comparable).
-- Use `highlight` for the single "today"/focus bar — at most one per chart.
-- Use per-bar `color` from tokens (`var(--zone-mid)` / `colors.zoneMid`) for semantic bars.
-- Give the native `gradient` as a 2-stop tuple; give web a `linear-gradient(...)` string.
+- Pass an explicit `max` so heights are comparable across cards (and so catalog stories reproduce with headroom).
+- Ask for charts **by catalog ID** — the ID map above resolves `BC-xx` → `variant` + props mechanically.
+- Use `legend` colors to recolor `stacked`/`grouped-pair` series (tokens only).
+- Give `waterfall` the running **levels** (plus `waterfallStart`), not deltas.
 
 **Don't**
-- ✗ Don't hand-roll a column-of-divs bar chart — use `BarChart`.
-- ✗ Don't hardcode the gradient/radius/border/glow — they come from tokens.
-- ✗ Don't pass a CSS string as native `gradient` (or a tuple on web) — wrong-platform shape.
-- ✗ Don't use `BarChart` for a single progress value — use `BarFill`/`ProgressBar`.
+- ✗ Don't hand-roll any BC-xx form — every one is a `variant` here.
+- ✗ Don't pass `height`/`gradient` expecting variant effects — they're classic-mode props (`gradientStops` is the variant gradient).
+- ✗ Don't hardcode zone thresholds or spectrum hex — they're the catalog constants, sourced from tokens.
+- ✗ Don't use `BarChart variant="stacked"` for a single 100% composition row — that's `StackedBar`.
 
 ## 9. Anti-patterns & lookalike ban
 
-- **No lookalikes.** A custom flex-row of gradient bars re-creates this primitive and will drift from the kit — import `BarChart`.
-- **New need → add a prop on BOTH platforms.** If you need axis ticks, stacked bars, or animation parity, add the prop/variant to both implementations with the same name and tokens — never a one-off local chart.
-- **Tokens only.** Any fill/border/glow/label color not sourced from `@lockin90/tokens` is a bug even if it matches today (Aurora Flux token renames will break hardcoded values).
-- **Parity gate.** Before shipping, confirm the web phone-width render and native render show the same bars, highlight, and labels — only the `gradient` prop literal may differ in shape.
+- **No lookalikes.** A local SVG of bars/lollipops/waterfalls re-creates this primitive and will drift — import `BarChart` with the right `variant`.
+- **New variant → BOTH platforms** in the same unit of work, same prop names, same catalog geometry (kit hard rule #3).
+- **Tokens only.** The only literals allowed are the catalog's structural white-alphas (grid/seams/NOW rule) and the glass 14% fill.
+- **Parity gate.** Before shipping a screen, confirm web phone-width ≡ native for the same variant/props — the only allowed visual difference is the static native pulse ring + duplicate-based shine.

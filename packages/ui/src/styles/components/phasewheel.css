@@ -94,3 +94,175 @@
   letter-spacing: -0.02em;
   color: var(--text);
 }
+
+/* ============================================================================
+   Cycle variants (CW-01 phase-wheel · CW-04 coach-wheel · CW-05 phase-strip):
+   a 28-day cycle rendered as phase arcs with round caps + gaps (wheels) or as
+   phase pills on a linear strip. Structure:
+   .lk-pw.lk-pw-cycle > .lk-pw-cycle-row (.lk-pw-dial + .lk-pw-legend) + .lk-pw-tip
+   .lk-pw.lk-pw-strip > .lk-pw-svg
+   ========================================================================== */
+.lk-pw-cycle {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+.lk-pw-cycle-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.lk-pw-dial {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+/* phase arcs — focus dim animates smoothly */
+.lk-pw-cycle-arc {
+  transition: opacity 0.45s var(--ease, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+/* `shine` — soft glow in the arc's own color (set via inline `color`) */
+.lk-pw-arc-shine {
+  filter: drop-shadow(0 0 5px currentColor) drop-shadow(0 0 12px currentColor);
+}
+
+/* cycle-day labels (D1 / D8 / …) just outside the ring */
+.lk-pw-dlabel {
+  fill: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+
+/* today — dot on the ring + expanding pulse ring */
+.lk-pw-today {
+  fill: var(--text);
+  filter: drop-shadow(0 0 5px var(--text));
+}
+
+.lk-pw-today-pulse {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.4;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lk-pw-pulse 1.8s ease-out infinite;
+}
+
+@keyframes lk-pw-pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2.75); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lk-pw-today-pulse { animation: none; opacity: 0.3; transform: scale(1.8); }
+}
+
+/* center readout — big day + small phase name */
+.lk-pw-day {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.lk-pw-daysub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+
+/* phase legend beside the wheel */
+.lk-pw-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lk-pw-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lk-pw-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.lk-pw-legend-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+/* coach recommendation pill — tinted by the current phase (--lk-pw-tip) */
+.lk-pw-tip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--bg-0) 78%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lk-pw-tip, var(--violet)) 35%, transparent);
+  color: var(--lk-pw-tip, var(--violet));
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------- strip -- */
+.lk-pw-strip {
+  display: inline-block;
+  padding: 0;
+}
+
+/* phase name INSIDE a pill — dark text on the colored fill */
+.lk-pw-strip-name {
+  fill: var(--bg-0);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+}
+
+/* D-ticks under the strip */
+.lk-pw-strip-tick {
+  fill: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+
+/* TODAY vertical rule */
+.lk-pw-strip-rule {
+  stroke: var(--text);
+  stroke-opacity: 0.4;
+  stroke-width: 1.2;
+}
+
+/* TODAY tag pill (stroke/text colored by the current phase, inline) */
+.lk-pw-tag-box {
+  fill: var(--bg-0);
+  fill-opacity: 0.78;
+  stroke-opacity: 0.35;
+  stroke-width: 0.8;
+}
+
+.lk-pw-tag-text {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.05em;
+}

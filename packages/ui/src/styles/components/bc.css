@@ -56,3 +56,38 @@
   letter-spacing: 0.04em;
 }
 .lk-bc-col.lk-bc-hl .lk-bc-label { color: var(--text-dim); }
+
+/* ============================================================================
+   Catalog variants (`variant="…"`) — the SVG chart forms from the design
+   catalog (bar-charts.html, BC-01…BC-24). Fixed 320×150 viewBox scaled
+   uniformly to the container width, so text/geometry match the catalog card.
+   Key: .lk-bcv > svg · .lk-bcv-label (mono in-plot text) · .lk-bcv-shine
+   (glow underlay) · .lk-bcv-pulse-dot/-ring (BC-17 today pulse)
+   ========================================================================== */
+.lk-bcv { display: block; width: 100%; }
+.lk-bcv svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* mono in-plot labels — catalog C.label (8.5px JetBrains Mono, .06em) */
+.lk-bcv-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.06em;
+}
+
+/* glow underlay — a blurred duplicate behind the bar (catalog C.blur(5)) */
+.lk-bcv-shine { filter: blur(5px); }
+
+/* BC-17 today pulse: glowing dot + expanding ring above the highlighted bar */
+.lk-bcv-pulse-dot { filter: drop-shadow(0 0 5px var(--c)); }
+.lk-bcv-pulse-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lkBcvPulse 1.8s var(--ease, cubic-bezier(0.22, 1, 0.36, 1)) infinite;
+}
+@keyframes lkBcvPulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(3); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-bcv-pulse-ring { animation: none; transform: scale(1.7); opacity: 0.35; }
+}

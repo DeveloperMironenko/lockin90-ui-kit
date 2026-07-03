@@ -1,0 +1,47 @@
+/* ============================================================================
+   DistributionChart — the shared catalog distribution family (DS-01/02/03/04/
+   05/07, lockin90-design/charts/distribution-charts.html): histogram bins,
+   percentile bells, cohort overlays, box-whisker rows, KDE violin and
+   ridgeline in a fixed 320×150 viewBox with mono catalog labels + chip pills.
+   Colors are prop/data-driven (inline), so this stylesheet only owns layout,
+   label type, the shine blur and the YOU-rule pulse ring.
+   Key: .lk-dst
+   ========================================================================== */
+.lk-dst { display: block; width: 100%; }
+
+/* the scalable chart canvas — the 320×150 viewBox stretches to the container,
+   keeping its aspect; the shine blur may spill slightly past the box */
+.lk-dst-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* catalog mono label (title, axis ends, box-row names, ridge weeks, caption) */
+.lk-dst-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.06em;
+}
+
+/* chip-pill text (the catalog tag(): dark rect + tinted hairline drawn in SVG,
+   this is the centered 8px mono caption inside it) */
+.lk-dst-tag {
+  font-family: var(--font-mono);
+  font-size: 8px; /* viewBox units */
+  letter-spacing: 0.05em;
+}
+
+/* shine — the catalog's blurred wide underlay beneath the 2.5px bell line */
+.lk-dst-shine { filter: blur(5px); }
+
+/* pulse ring riding the YOU rule's dot (shine, DS-02) — reduced-motion safe.
+   SVG circle, so scale from the circle's own box, not the viewBox origin. */
+.lk-dst-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lk-dst-pulse 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes lk-dst-pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(3); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-dst-pulse { animation: none; opacity: 0.35; }
+}

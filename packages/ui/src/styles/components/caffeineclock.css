@@ -1,0 +1,33 @@
+/* ============================================================================
+   CaffeineClock — the catalog caffeine family (CF-01…CF-03,
+   lockin90-design/charts/caffeine-charts.html): half-life decay curves,
+   stacked doses and the safe-window strip in a fixed 320×150 viewBox.
+   Colors are prop/data-driven (inline), so this stylesheet only owns
+   layout, label type and the glow effects.
+   Key: .lk-caff
+   ========================================================================== */
+.lk-caff { display: block; width: 100%; }
+
+/* the scalable chart canvas — the 320×150 viewBox stretches to the container,
+   keeping its aspect; glow underlays may spill slightly past the box */
+.lk-caff-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* catalog mono label (title, MG captions, hour ticks, threshold label) */
+.lk-caff-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.06em;
+}
+
+/* chip-pill tag text (BED verdict / LAST SAFE COFFEE / crossing pills) */
+.lk-caff-tag-text {
+  font-family: var(--font-mono);
+  font-size: 8px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.05em;
+}
+
+/* shine — the blurred glow underlay along the decay curve (catalog blur(5)) */
+.lk-caff-shine { filter: blur(5px); }
+
+/* glowing NOW pulse dot (color driven by inline `currentColor`) */
+.lk-caff-glowdot { filter: drop-shadow(0 0 5px currentColor); }

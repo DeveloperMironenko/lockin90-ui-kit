@@ -4,122 +4,138 @@
 > **Source:** `packages/ui/src/components/Gauge.tsx` · `packages/ui-native/src/components/Gauge.tsx` ·
 > web CSS `packages/ui/src/styles/components/gauge.css` (`.lk-gauge*`).
 > **Exports:** `Gauge`, type `GaugeZone`, type `GaugeProps`.
-> **Status:** Shipped. **Parity:** 🟡 same API & arc math; web adds glow `drop-shadow` filters (arc + end cap) that native has no cheap equivalent for; color is `var()` (web) vs hex (native).
-> **Stories:** `packages/ui/src/stories/Gauge.stories.tsx` · `packages/ui-native/src/stories/Gauge.stories.tsx`.
+> **Status:** Shipped (extended with the catalog gauges DN-13/DN-14: `gradient`, `zone`, `shine`, `tickPosition`, `cap`). **Parity:** 🟡 same API & arc math; web glow/shine use `drop-shadow`/`blur` filters vs native's wider faint duplicate arc; `tickPosition="out"` shrinks the native radius by 8px (RN SVG clips at the viewBox).
+> **Stories:** `packages/ui/src/stories/Gauge.stories.tsx` · `packages/ui-native/src/stories/Gauge.stories.tsx` (catalog stories `DN13Gauge270`, `DN14HalfGauge`, `ZoneVerdict`).
 
 ---
 
 ## 1. Overview
 
-A **partial-circle dial** — an SVG arc track (default **270° sweep**, open at bottom-center) showing a `value` on a `[min,max]` scale, with a progress arc + round end-cap dot to the current value, optional colored `zones` bands (low/mid/high), optional `ticks`, and a centered value/label readout. The "readiness / score out of 100" dial is the canonical use.
+A **partial-circle dial** — an SVG arc track (default **270° sweep**, open at bottom-center) showing a `value` on a `[min,max]` scale, with a progress arc + round end-cap dot, optional colored `zones` bands, optional `ticks`, and a centered value/label readout.
 
-- `GaugeZone` (a band: `to` upper bound + `color`) is a secondary export. Bands stack low→high from `min`; each paints from the previous band's `to` up to its own. When `zones` are present the **progress arc is suppressed** (the bands already color the scale).
+`Gauge` owns the catalog **gauge variants** (donut-charts DN-13/DN-14):
 
-Distinct from `Ring` (full-circle single-color 0–100 progress) and `DonutChart` (proportional segments): `Gauge` adds an arbitrary sweep, a min/max scale, multi-zone bands, and ticks.
+| Catalog ID | Ask | Props |
+| --- | --- | --- |
+| DN-13 `gauge-270` | strain/load meter | `sweep={270}` (default) + `gradient={[low, mid, high]}` (red→amber→green) + `ticks={5}` + `tickPosition="out"` + `cap={false}` |
+| DN-14 `half-gauge` | compact card meter | `sweep={180}` + `color` + `cap={false}` (stat sits under the dome) |
+
+- `GaugeZone` (a band: `to` upper bound + `color`) is a secondary export. Bands stack low→high from `min`; when `zones` are present the **progress arc is suppressed** (the bands already color the scale).
+- New paint modes on the value arc: `color` (solid), `gradient` (N-stop along the sweep), `zone` (verdict color for arc + readout).
+
+Distinct from `Ring` (full-circle 0–100 progress) and `DonutChart` (proportional segments): `Gauge` adds an arbitrary sweep, a min/max scale, bands and ticks.
 
 ## 2. API contract
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
 | `value` | `number` | — (required) | ✓ | ✓ | clamped to `[min,max]` |
-| `min` | `number` | `0` | ✓ | ✓ | scale floor |
-| `max` | `number` | `100` | ✓ | ✓ | scale ceiling |
+| `min` / `max` | `number` | `0` / `100` | ✓ | ✓ | scale |
 | `size` | `number` | `140` | ✓ | ✓ | square box size in px |
-| `thickness` | `number` | `12` | ✓ | ✓ | arc stroke width in px |
+| `thickness` | `number` | `12` | ✓ | ✓ | arc stroke width |
 | `sweep` | `number` | `270` | ✓ | ✓ | total sweep in deg, opening at bottom-center; clamped `[0,360]` |
-| `zones` | `GaugeZone[]` | — | ✓ | ✓ | colored bands; when present the value arc is suppressed |
-| `ticks` | `number` | `0` | ✓ | ✓ | evenly-spaced tick marks across the sweep (0 = off) |
-| `label` | `string` | — | ✓ | ✓ | small caption under the value |
-| `showValue` | `boolean` | `true` | ✓ | ✓ | numeric readout (rounded) |
+| `zones` | `GaugeZone[]` | — | ✓ | ✓ | colored bands; suppress the value arc |
+| `color` | `string` | web CSS default `var(--accent)` · native `colors.accent` | ✓ | ✓ | value-arc color; ignored when `gradient` array / `zone` |
+| `gradient` | `string \| string[]` | — | ✓ | ✓ | N-stop `linearGradient` **along the sweep (left→right)**; DN-13 = `['--zone-low','--zone-mid','--zone-high']`; single string → solid |
+| `zone` | `boolean` | `false` | ✓ | ✓ | arc + readout colored by the value's zone verdict on `[min,max]` (≥62% high · ≥38% mid · low) |
+| `shine` | `boolean` | `false` | ✓ | ✓ | glow underlay under the value arc (catalog shine) |
+| `ticks` | `number` | `0` | ✓ | ✓ | evenly-spaced marks across the sweep |
+| `tickPosition` | `'span' \| 'out'` | `'span'` | ✓ | ✓ | `span` straddles the arc (legacy); `out` = just outside it (DN-13). Native `out` shrinks `r` by 8px |
+| `cap` | `boolean` | `true` | ✓ | ✓ | the end-cap dot at the current value |
+| `label` | `string` | — | ✓ | ✓ | mono caption under the value |
+| `showValue` | `boolean` | `true` | ✓ | ✓ | rounded numeric readout |
 | `children` | `ReactNode` | — | ✓ | ✓ | overrides the value+label center |
-| `className` | `string` | — | ✓ | — | web only |
-| `style` | `CSSProperties` / `StyleProp<ViewStyle>` | — | ✓ | ✓ | wrapper style |
-| _rest_ | `HTMLAttributes<HTMLDivElement>` | — | ✓ | — | web only |
+| `className` / `style` / _rest_ | | — | web / both / web | | substrate |
 
-**`GaugeZone`:** `to: number` (upper bound on the `[min,max]` scale), `color: string` (web `var()`/hex, native hex/rgb).
+**`GaugeZone`:** `to: number`, `color: string` (web `var()`/hex, native hex/rgb).
 
-- **Geometry (identical both sides):** `cx=cy=size/2`, `r=(size−thickness)/2`. `startDeg = 90 + (360−sweep)/2`, `endDeg = startDeg + sweep`. `toAngle(v) = startDeg + ((v−min)/span)·sweep`. Shared `polar()` + `arcPath()` helpers build each arc (`large-arc` flag set when span > 180°). End cap is a circle of radius `thickness/2 + 1` at `valueAngle`. Ticks span `tickInner = r − thickness/2 − 2` → `tickOuter = r + thickness/2 + 2`.
+- **Geometry (identical both sides):** `cx=cy=size/2`, `r=(size−thickness)/2` (native `− 8` when `tickPosition="out"`). `startDeg = 90 + (360−sweep)/2`, `toAngle(v) = startDeg + ((v−min)/span)·sweep`. Cap = circle `thickness/2 + 1` at `valueAngle`.
+- **Ticks:** `span` → `r ± (thickness/2 + 2)`; `out` → `r + thickness/2 + 2.5 … + 7.5` (catalog's outside ticks).
+- **Paint resolution:** `zone` verdict > `gradient` array (`url(#…)`, `useId`-keyed) > `color` > accent. Cap tints to the arc (gradient → its **last** stop); glow tints to the solid (gradient → its middle stop).
 
 ## 3. Visual spec (tokens — never hardcode)
 
 | Aspect | Web | Native |
 | --- | --- | --- |
-| Track arc | `.lk-gauge-track` `stroke var(--border)`, round caps | `stroke colors.border`, round caps |
-| Zone band | `.lk-gauge-zone` `stroke = zone.color`, round caps | `stroke = zone.color`, round caps |
-| Value arc | `.lk-gauge-arc` `stroke var(--accent)` + `drop-shadow(0 0 8px var(--accent))` | `stroke colors.accent` (no glow) |
-| End cap | `.lk-gauge-cap` `fill var(--text)`, `stroke var(--accent)` 2px + `drop-shadow(0 0 6px var(--accent))` | `fill colors.text`, `stroke colors.accent` 2px (no glow) |
-| Ticks | `.lk-gauge-tick` `stroke var(--text-faint)` 1.5px | `stroke colors.textFaint` 1.5px round |
-| Value | `.lk-gauge-value` `34px var(--font-display)` 700 `ls −.03em` `var(--text)` | `fonts.display 34px` 700 `ls −1` lineHeight `34` `colors.text` |
-| Label | `.lk-gauge-label` `10.5px var(--font-mono)` `ls .16em` uppercase `var(--text-faint)` | `fonts.mono 10.5px` `ls 1.6` uppercase `colors.textFaint` |
-| Overflow | `.lk-gauge > svg { overflow: visible }` (glow/cap spill) | n/a (no glow to spill) |
+| Track arc | `.lk-gauge-track` `var(--border)`, round caps | `colors.border` |
+| Zone band | `.lk-gauge-zone` `stroke = zone.color` | same |
+| Value arc | `.lk-gauge-arc` CSS `var(--accent)` default; custom paint via inline `stroke`; glow `drop-shadow(0 0 8px var(--lk-gauge-glow))` | inline stroke; no drop-shadow |
+| Shine | wider (+5) blurred (`blur(6px)`) duplicate at 50% under the arc | wider (+8) duplicate at 35%, no blur |
+| Gradient | `<linearGradient x1=0 y1=0 x2=1 y2=0>` — horizontal across the dial | same via `react-native-svg` `Defs` |
+| End cap | `.lk-gauge-cap` `fill var(--text)`; stroke + `drop-shadow` tinted to the arc (inline) | `fill colors.text`, stroke tinted, no glow |
+| Ticks | `.lk-gauge-tick` `var(--text-faint)` 1.5px | `colors.textFaint` 1.5px round |
+| Value / label | `34px var(--font-display)` 700 / `10.5px var(--font-mono)` uppercase `--text-faint`; `zone` → value takes the verdict color | mirrored via `fonts.*`/`colors.*` |
+| Overflow | `.lk-gauge > svg { overflow: visible }` (glow/cap/outside ticks spill) | clips → the `out` radius pad |
 
 ## 4. States
 
 | State | Web | Native |
 | --- | --- | --- |
-| Value arc (no zones) | drawn only when `v > min` | same |
-| Zoned | bands replace the value arc; cap still drawn | same |
-| End cap | drawn only when `v > min` | same |
-| Ticks off | `ticks=0` → none | same |
-| Custom center | `children` replaces value+label | same |
-| `showValue=false` | hides the numeric readout | same |
+| Value arc (no zones) | drawn only when `v > min`; solid / gradient / zone paint | same |
+| Zoned bands | replace the value arc (+ shine); cap still drawn | same |
+| `zone` verdict | arc + readout recolored | same |
+| Shine | blurred underlay when `v > min` and no bands | duplicate underlay |
+| `cap={false}` | no end dot (DN-13/14 catalog look) | same |
+| Ticks `out` | outside the arc | same, radius shrunk 8px |
+| Custom center / `showValue=false` | as before | same |
 
 No hover/focus/disabled — presentational.
 
 ## 5. Web ↔ native parity
 
-**Verdict: 🟡 same API & geometry, web-only glow.** The arc/tick/cap math is identical (shared `polar`/`arcPath`, same `startDeg/endDeg/toAngle`, same zone-band reduce, same cap radius). Same defaults (`size 140`, `thickness 12`, `sweep 270`, `min 0`, `max 100`). Differences:
+**Verdict: 🟡 same API & geometry, platform-shaped glow.** The arc/tick/cap math is identical; same defaults; same paint-resolution order. Differences:
 
-- **Glow (web only):** the value arc and end cap carry `drop-shadow` filters (`var(--accent)`) and the SVG is `overflow: visible`. Native has no `drop-shadow` analogue for SVG strokes — the arc/cap render without glow. Visually very close; documented gap, does not block use.
-- **Color literal:** web zone/accent colors may be CSS `var()`; native needs resolved hex/rgb. App code reads 1:1.
-- **Substrate:** web `<svg>`/`<path>`/`<line>`/`<circle>` + CSS classes; native `react-native-svg` `Path`/`Line`/`Circle` with inline strokes.
+- **Glow/shine:** web `drop-shadow` + `blur()` filters; native wider faint duplicate arc (kit-wide RN rule — no SVG filters).
+- **Outside ticks:** web lets them spill (`overflow: visible`); native shrinks `r` by 8px so they fit the viewBox — the dial is marginally smaller with `tickPosition="out"`.
+- **Color literal:** web `var()`; native hex/rgb. App code reads 1:1.
 
 No capability gap — fully usable on both.
 
 ## 6. Composition & usage
 
-- **Used for:** readiness/recovery/score dials, any single metric on a `[min,max]` scale, with or without semantic zone bands.
-- **Composes from:** nothing — leaf primitive. Pass a `GradientText`/`Stat` as `children` for a styled center; build a zone legend from `KeyValue`/`Chip`.
+- **Used for:** readiness/strain/score dials, any single metric on a `[min,max]` scale, with or without semantic bands.
+- **Composes from:** nothing — leaf primitive. Pass `GradientText`/`Stat` as `children`; build a zone legend from `KeyValue`/`Chip`.
 
 ```tsx
-// web — zoned readiness dial
+// web — DN-13 gauge-270 (red→amber→green strain meter)
 <Gauge
-  value={78}
-  zones={[
-    { to: 40, color: 'var(--zone-low)' },
-    { to: 70, color: 'var(--zone-mid)' },
-    { to: 100, color: 'var(--zone-high)' },
-  ]}
-  label="READINESS"
+  value={62}
+  gradient={['var(--zone-low)', 'var(--zone-mid)', 'var(--zone-high)']}
+  ticks={5}
+  tickPosition="out"
+  cap={false}
+  label="STRAIN"
 />
 
-// native — simple accent arc with ticks
-<Gauge value={78} ticks={5} label="READINESS" />
+// native — DN-14 half-gauge
+<Gauge value={44} sweep={180} color={colors.cyan} cap={false} label="HYDRATION" />
+
+// web — zoned readiness dial (bands, unchanged legacy use)
+<Gauge value={78} zones={[{ to: 40, color: 'var(--zone-low)' }, { to: 70, color: 'var(--zone-mid)' }, { to: 100, color: 'var(--zone-high)' }]} label="READINESS" />
 ```
 
 ## 7. Accessibility
 
-- **Web:** the root `<div>` has `role="img"` + `aria-label="Gauge: {round(v)} of {max}."`; the inner `<svg>` is `aria-hidden`. Provide a richer label via `...rest` if zones carry meaning.
-- **Native:** no built-in accessibility label — wrap in a `View` with `accessibilityRole="image"` + `accessibilityLabel` if the value must be announced.
-- Value text uses `var(--text)`/`colors.text` for contrast; zone colors should come from the `--zone-*` tokens to stay legible.
+- **Web:** root `role="img"` + `aria-label="Gauge: {round(v)} of {max}."`; `<svg>` is `aria-hidden`. Enrich via `...rest` when zones/gradients carry meaning.
+- **Native:** wrap in a `View` with `accessibilityRole="image"` + `accessibilityLabel` when the value must be announced.
+- `zone` readout colors are the `--zone-*` tokens — all pass contrast on the void surface.
 
 ## 8. Usage rules — Do / Don't
 
 **Do**
-- Set an explicit `min`/`max` when the scale isn't 0–100.
-- Use `zones` for semantic low/mid/high bands (from `--zone-low/mid/high`); they suppress the accent arc by design.
-- Use `--zone-*` / `colors.zone*` tokens for band colors.
-- Pass `children` for a custom center; otherwise rely on `value` + `label`.
+- Resolve DN-13/DN-14 with the §1 prop rows.
+- Use `gradient` for a value-arc ramp, `zones` for stepped semantic **bands** — they're different visuals (ramped arc vs banded scale).
+- Use `--zone-*` / `colors.zone*` tokens for gradients and bands; set `min`/`max` when the scale isn't 0–100.
 
 **Don't**
+- ✗ Don't combine `zone` with `gradient` — the verdict wins by design.
 - ✗ Don't hand-roll an arc dial — use `Gauge`.
-- ✗ Don't pass a CSS `var()` zone color on native — pass the hex.
-- ✗ Don't use `Gauge` for a full-circle 0–100 progress — use `Ring`; for proportional segments use `DonutChart`.
-- ✗ Don't hardcode the accent/track/zone colors — source them from tokens.
+- ✗ Don't pass CSS `var()` colors on native — pass hex.
+- ✗ Don't use `Gauge` for full-circle progress (`Ring`) or proportional segments (`DonutChart`).
 
 ## 9. Anti-patterns & lookalike ban
 
 - **No lookalikes.** A custom `arcPath` dial duplicates this primitive — import `Gauge`.
-- **New need → add to BOTH platforms.** Need a needle, gradient arc, or native glow parity? Add the prop/visual to web and native with the same name + tokens — never a one-off.
-- **Tokens only.** Arc/zone/cap/value colors must come from `@lockin90/tokens`; hardcoded values break on renames.
-- **Parity gate.** Before shipping, confirm the web phone-width and native dials show the same sweep, value, zones, and ticks — only the web glow + color-literal form may differ.
+- **New need → add to BOTH platforms.** A needle, minor ticks, or native glow parity ships to web and native with the same prop name + tokens — never a one-off.
+- **Tokens only.** Arc/zone/cap/tick/value colors come from `@lockin90/tokens`.
+- **Parity gate.** Before shipping, confirm web phone-width ≡ native: same sweep, value, paint mode, ticks and cap — only the web glow/blur + the native `out`-tick radius pad may differ.

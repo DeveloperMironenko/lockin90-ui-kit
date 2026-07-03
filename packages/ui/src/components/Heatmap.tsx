@@ -9,8 +9,12 @@ export interface HeatmapCell {
   label?: string;
   /** mark this cell — draws a low-zone ring + dot (e.g. a flagged low-energy day) */
   flag?: boolean;
-  /** mark this cell as "today"/"now" — draws an accent border */
+  /** mark this cell as "today"/"now" — draws an accent (or `todayColor`) ring */
   today?: boolean;
+  /** missing-data slot — renders as a dashed empty cell, never a fake zero (HM-08) */
+  missing?: boolean;
+  /** explicit in-cell text when `showValues` is on (overrides the computed value) */
+  display?: string;
 }
 
 export interface HeatmapProps extends HTMLAttributes<HTMLDivElement> {
@@ -24,9 +28,9 @@ export interface HeatmapProps extends HTMLAttributes<HTMLDivElement> {
   gap?: number;
   /** cell corner radius in px */
   radius?: number;
-  /** low-intensity end of the color ramp (hex) */
+  /** low-intensity end of the color ramp (hex) — legacy ramp, ignored when `scale` is set */
   colorFrom?: string;
-  /** high-intensity end of the color ramp (hex) */
+  /** high-intensity end of the color ramp (hex) — legacy ramp, ignored when `scale` is set */
   colorTo?: string;
   /** override the ramp entirely: map a normalized value (0..1) → any CSS color */
   colorScale?: (value: number) => string;
@@ -34,6 +38,37 @@ export interface HeatmapProps extends HTMLAttributes<HTMLDivElement> {
   variant?: 'grid' | 'strip';
   /** the value that maps to full intensity (1.0); values normalize as `value / max` */
   max?: number;
+  /** Catalog color scale — token color + value-driven opacity (HM-01 SELECT):
+   *  - `'zone'` — zone verdict tokens (≥0.62 high · ≥0.38 mid · low)
+   *  - `'spectrum'` — indigo → violet → cyan → mint by quartile (HM-09)
+   *  - `'diverge'` — above 0.5 mint / below coral, opacity = |Δ| (HM-11/12)
+   *  - any color string — single hue, opacity = value (e.g. `'var(--mint)'`, HM-03)
+   *  When set, the legacy `colorFrom/To` ramp is ignored. */
+  scale?: 'zone' | 'spectrum' | 'diverge' | (string & {});
+  /** row captions at the left, one per row (e.g. MON…SUN) */
+  rowLabels?: string[];
+  /** column captions above the grid at specific column indices (HM-09 hour marks) */
+  colLabels?: { at: number; label: string }[];
+  /** weekday letters under the columns — `true` = 'MTWTFSS', or a custom string */
+  dayLetters?: boolean | string;
+  /** HM-06 dot-matrix — circles sized AND opacified by value (double encoding) */
+  dots?: boolean;
+  /** HM-07 glass-grid — glass cells; the border's color opacity carries the value */
+  glass?: boolean;
+  /** HM-13 focus-row — this row index at full strength, others dimmed to 22% */
+  focusRow?: number;
+  /** in-cell mono values (HM-11/14): `'pct'` → `round(t·100)`; `true` → diverging
+   *  scales show a signed `(t−0.5)·2` coefficient, others `t` to 1 decimal;
+   *  per-cell `display` overrides */
+  showValues?: boolean | 'pct';
+  /** glow underlay on hot cells (t > 0.78) — soft box-shadow in the cell color */
+  shine?: boolean;
+  /** the `today` ring color (default `var(--accent)`; HM-15 uses `var(--text)`) */
+  todayColor?: string;
+  /** HM-15 today-ring — adds a pulsing dot above the `today` cell (reduced-motion safe) */
+  todayPulse?: boolean;
+  /** in-cell label placement: `center` (legacy) or `corner` (HM-04 month-cal numerals) */
+  labelPosition?: 'center' | 'corner';
 }
 
 /** low-intensity ramp end — dark violet, clearly visible and distinct from the bg */
@@ -80,14 +115,37 @@ export function lerpColor(from: string, to: string, t: number): string {
   return `rgb(${r}, ${g}, ${bl})`;
 }
 
+/** A token color at a value-driven opacity (CSS `color-mix` keeps it tokens-only). */
+function mix(color: string, op: number): string {
+  return `color-mix(in srgb, ${color} ${Math.round(clamp01(op) * 100)}%, transparent)`;
+}
+
+/** The catalog `heatFill` scales: color token + opacity per normalized value. */
+function heatFill(scale: string, t: number): { color: string; op: number } {
+  if (scale === 'zone') {
+    const color = t >= 0.62 ? 'var(--zone-high)' : t >= 0.38 ? 'var(--zone-mid)' : 'var(--zone-low)';
+    return { color, op: 0.25 + t * 0.75 };
+  }
+  if (scale === 'spectrum') {
+    const color =
+      t < 0.25 ? 'var(--indigo)' : t < 0.5 ? 'var(--violet)' : t < 0.75 ? 'var(--cyan)' : 'var(--mint)';
+    return { color, op: 0.35 + t * 0.65 };
+  }
+  if (scale === 'diverge') {
+    const d = t - 0.5;
+    return { color: d >= 0 ? 'var(--mint)' : 'var(--zone-low)', op: Math.min(1, 0.1 + Math.abs(d) * 1.7) };
+  }
+  return { color: scale, op: 0.08 + t * 0.92 }; /* single hue */
+}
+
 /**
  * Heatmap — a compact grid/strip of small intensity-colored cells. One primitive
- * covers both a calendar-month grid (`columns=7`, optional per-day `label` +
- * `today`/`flag`) and a linear contribution/compliance strip (`variant="strip"`,
- * e.g. `columns=30`). Each cell's background interpolates the `colorFrom →
- * colorTo` ramp by its normalized `value / max` (or a custom `colorScale`).
- * Flagged cells get a low-zone ring + dot; `today` gets an accent border.
- * Tokens-driven, no Tailwind. Presentational — hover polish lives in CSS.
+ * covers the calendar-month grid, the contribution strip, and the catalog
+ * heatmap family (HM-01…HM-15): token `scale`s (zone / spectrum / diverge /
+ * single-hue), row/column captions + day letters, dot-matrix and glass cells,
+ * gap-aware missing slots, a focus row, in-cell mono values, and the
+ * today-ring + pulse. Legacy behavior (colorFrom→colorTo ramp) is unchanged
+ * when `scale` is not set. Tokens-driven, no Tailwind.
  */
 export function Heatmap({
   cells = DEFAULT_CELLS,
@@ -100,49 +158,160 @@ export function Heatmap({
   colorScale,
   variant = 'grid',
   max = 1,
+  scale,
+  rowLabels,
+  colLabels,
+  dayLetters,
+  dots = false,
+  glass = false,
+  focusRow,
+  showValues,
+  shine = false,
+  todayColor,
+  todayPulse = false,
+  labelPosition = 'center',
   className,
   style,
   ...rest
 }: HeatmapProps) {
   const denom = max > 0 ? max : 1;
   const r = radius ?? (variant === 'strip' ? 4 : undefined);
+  const rows = Math.max(1, Math.ceil(cells.length / columns));
+  const letters = dayLetters === true ? 'MTWTFSS' : dayLetters || '';
+  const hasFrame = Boolean(rowLabels?.length || colLabels?.length || letters);
 
-  return (
-    <div
-      className={cn('lk-heatmap', `lk-heatmap--${variant}`, className)}
-      style={
-        {
-          '--hm-cols': columns,
-          '--hm-size': `${cellSize}px`,
-          '--hm-gap': `${gap}px`,
-          ...(r != null ? { '--hm-radius': `${r}px` } : {}),
-          ...style,
-        } as CSSProperties
-      }
-      role="img"
-      {...rest}
-    >
-      {cells.map((c, i) => {
+  const rootVars = {
+    '--hm-cols': columns,
+    '--hm-size': `${cellSize}px`,
+    '--hm-gap': `${gap}px`,
+    ...(r != null ? { '--hm-radius': `${r}px` } : {}),
+    ...(todayColor ? { '--lk-hm-today': todayColor } : {}),
+    ...style,
+  } as CSSProperties;
+
+  const cellNodes = cells.map((c, i) => {
         const t = clamp01(c.value / denom);
-        const bg = colorScale ? colorScale(t) : lerpColor(colorFrom, colorTo, t);
+        const row = Math.floor(i / columns);
+
+    if (c.missing) {
+      return <div key={i} className="lk-heatmap-cell lk-heatmap-cell--missing" title={c.label} />;
+    }
+
+        // resolve the fill: catalog scale (token + opacity) or legacy ramp
+        let color: string;
+        let op = 1;
+        if (scale != null) {
+          const hf = heatFill(scale, t);
+          color = hf.color;
+          op = hf.op;
+        } else {
+          color = colorScale ? colorScale(t) : lerpColor(colorFrom, colorTo, t);
+        }
+        if (focusRow != null) op = row === focusRow ? op : op * 0.22;
+        const fill = scale != null ? mix(color, op) : focusRow != null && row !== focusRow ? mix(color, op) : color;
+
+        const cellStyle: CSSProperties = dots
+          ? {}
+          : glass
+            ? { background: 'var(--glass)', borderColor: mix(color, 0.25 + t * 0.75) }
+            : { background: fill };
+        if (shine && t > 0.78 && !dots && !glass) {
+          cellStyle.boxShadow = `0 0 8px ${mix(color, op * 0.6)}`;
+        }
+
+        // in-cell text: computed value (HM-11/14) or the day label
+        const valueText = showValues
+          ? (c.display ??
+            (scale === 'diverge'
+              ? `${t >= 0.5 ? '+' : '−'}${Math.abs((t - 0.5) * 2).toFixed(1)}`
+              : showValues === 'pct'
+                ? String(Math.round(t * 100))
+                : String(Math.round(t * 10) / 10)))
+          : undefined;
+        const text = variant === 'grid' && !dots ? (valueText ?? c.label) : undefined;
+        const darkText = scale != null && t > 0.55;
+
         return (
           <div
             key={i}
             className={cn(
               'lk-heatmap-cell',
+              dots && 'lk-heatmap-cell--dot',
               c.flag && 'lk-heatmap-cell--flag',
               c.today && 'lk-heatmap-cell--today',
             )}
-            style={{ background: bg } as CSSProperties}
+            style={cellStyle}
             title={c.label}
           >
+            {dots && (
+              <span
+                className="lk-heatmap-dot"
+                style={{
+                  width: cellSize * (0.35 + t * 0.65),
+                  height: cellSize * (0.35 + t * 0.65),
+                  background: scale != null ? mix(color, op) : color,
+                }}
+                aria-hidden="true"
+              />
+            )}
             {c.flag && <span className="lk-heatmap-flag" aria-hidden="true" />}
-            {variant === 'grid' && c.label != null && (
-              <span className="lk-heatmap-label lk-mono">{c.label}</span>
+            {c.today && todayPulse && <span className="lk-heatmap-pulse" aria-hidden="true" />}
+            {text != null && (
+              <span
+                className={cn(
+                  'lk-heatmap-label lk-mono',
+                  labelPosition === 'corner' && 'lk-heatmap-label--corner',
+                  darkText && 'lk-heatmap-label--dark',
+                )}
+              >
+                {text}
+              </span>
             )}
           </div>
         );
-      })}
+  });
+
+  if (!hasFrame) {
+    return (
+      <div
+        className={cn('lk-heatmap', `lk-heatmap--${variant}`, className)}
+        style={rootVars}
+        role="img"
+        {...rest}
+      >
+        {cellNodes}
+      </div>
+    );
+  }
+
+  return (
+    <div className={cn('lk-heatmap-frame', className)} style={rootVars} role="img" {...rest}>
+      {colLabels?.length ? (
+        <div className="lk-heatmap-collabels" aria-hidden="true">
+          {colLabels.map((cl, i) => (
+            <span key={i} style={{ left: cl.at * (cellSize + gap) + cellSize / 2 }}>
+              {cl.label}
+            </span>
+          ))}
+        </div>
+      ) : null}
+      {rowLabels?.length ? (
+        <div className="lk-heatmap-rowlabels" aria-hidden="true">
+          {rowLabels.slice(0, rows).map((t, i) => (
+            <span key={i}>{t}</span>
+          ))}
+        </div>
+      ) : null}
+      <div className={cn('lk-heatmap', `lk-heatmap--${variant}`)}>{cellNodes}</div>
+      {letters ? (
+        <div className="lk-heatmap-letters" aria-hidden="true">
+          {Array.from(letters.slice(0, columns)).map((ch, i) => (
+            <span key={i} style={{ left: i * (cellSize + gap) + cellSize / 2 }}>
+              {ch}
+            </span>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

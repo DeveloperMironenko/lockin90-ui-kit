@@ -49,3 +49,82 @@
   font-family: var(--font-mono); font-size: 9.5px; color: var(--text-faint);
 }
 .lk-hyp--labels .lk-hyp-axis { padding-left: var(--lk-hyp-gutter); }
+
+/* ---- catalog variants (SL-04/05/06/07) ------------------------------------
+   efficiency-bars · sleep-week · bedtime-drift · night-coach. SVG shapes keep
+   the stretched viewBox; tags / dots / day letters are HTML overlays. */
+
+/* faint violet night canvas behind the marks (SL-04/06) */
+.lk-hyp-night { fill: var(--violet); opacity: 0.05; }
+
+/* SL-04: asleep bars up (violet) / awake bars down (amber) from the midline */
+.lk-hyp-eff-up { fill: var(--violet); opacity: 0.8; }
+.lk-hyp-eff-down { fill: var(--zone-mid); opacity: 0.95; }
+
+/* SL-05: faint horizontal gridlines + bottom baseline; bar fill set inline */
+.lk-hyp-grid line { stroke: var(--border); stroke-width: 1; opacity: 0.55; }
+.lk-hyp-base { stroke: var(--border); stroke-width: 1; }
+.lk-hyp-week-bar { opacity: 0.9; }
+
+/* SL-05: dashed mint target rule (dash pattern set inline, viewBox units) */
+.lk-hyp-target { stroke: var(--mint); stroke-width: 1; opacity: 0.85; }
+
+/* SL-06: mint consistency band + per-day bed↔wake join lines */
+.lk-hyp-window { fill: var(--mint); opacity: 0.07; }
+.lk-hyp-join { stroke: var(--border-2); stroke-width: 2; }
+
+/* SL-07: dashed amber wake-window rule (dash pattern set inline) */
+.lk-hyp-rule { stroke: var(--zone-mid); stroke-width: 1; opacity: 0.7; }
+
+/* floating pill tag over the plot (color set inline). Dark-backed like the
+   catalog's C.tag so it stays readable over bright bars; color-mix keeps a
+   hint of translucency where supported. */
+.lk-hyp-tag {
+  position: absolute;
+  font-family: var(--font-mono); font-size: 9px; line-height: 1;
+  letter-spacing: 0.04em; white-space: nowrap;
+  padding: 3px 7px; border-radius: var(--r-pill);
+  border: 1px solid currentColor;
+  background: var(--bg-1);
+  background: color-mix(in srgb, var(--bg-1) 80%, transparent);
+  pointer-events: none;
+}
+/* centered horizontally on its inline `left` */
+.lk-hyp-tag--mid { transform: translateX(-50%); }
+/* sits fully above its inline `top` (e.g. over a target rule) */
+.lk-hyp-tag--above { transform: translateY(calc(-100% - 4px)); }
+
+/* SL-06: round bed/wake dots — HTML overlays so they stay perfectly circular */
+.lk-hyp-dot {
+  position: absolute; width: 8px; height: 8px; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* SL-06: BED / WAKE side labels pinned at the series' mean y */
+.lk-hyp-side {
+  position: absolute; left: 2px;
+  transform: translateY(-50%);
+  font-family: var(--font-mono); font-size: 10px; line-height: 1;
+  letter-spacing: 0.02em; pointer-events: none;
+}
+
+/* SL-05/06: day letters centered under each column (inline left %) */
+.lk-hyp-days { position: relative; height: 12px; }
+.lk-hyp-day {
+  position: absolute; top: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-mono); font-size: 9.5px; line-height: 1;
+  color: var(--text-faint);
+}
+
+/* shine — the catalog's glow underlay. Web = a soft drop-shadow/box-shadow in
+   the mark's own color (`--lk-hyp-glow` is set inline per mark, same pattern
+   as .lk-ring-arc's --lk-ring-glow). */
+.lk-hyp--shine .lk-hyp-bars rect,
+.lk-hyp--shine .lk-hyp-eff-up,
+.lk-hyp--shine .lk-hyp-eff-down,
+.lk-hyp--shine .lk-hyp-week-bar {
+  filter: drop-shadow(0 0 7px var(--lk-hyp-glow, transparent));
+}
+.lk-hyp--shine .lk-hyp-dot { box-shadow: 0 0 8px var(--lk-hyp-glow, transparent); }

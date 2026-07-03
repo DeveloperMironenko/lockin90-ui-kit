@@ -1,0 +1,30 @@
+/* ============================================================================
+   BulletChart — the shared catalog bullet family (BL-01/02/05,
+   lockin90-design/charts/bullet-charts.html): actual-vs-target-vs-range KPI
+   bars (rows / labeled single / over-limit) in a fixed 320×150 viewBox with
+   mono catalog labels. Colors are prop/data-driven (inline token vars), so
+   this stylesheet only owns layout, label type and the shine blur.
+   Key: .lk-bullet
+   ========================================================================== */
+.lk-bullet { display: block; width: 100%; }
+
+/* the scalable chart canvas — the 320×150 viewBox stretches to the container,
+   keeping its aspect; shine glow may spill slightly past the box */
+.lk-bullet-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* catalog mono label (title, row labels, values, band words, captions) */
+.lk-bullet-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.06em;
+}
+
+/* chip-pill annotation text (TARGET / OVER pills) */
+.lk-bullet-tag {
+  font-family: var(--font-mono);
+  font-size: 8px; /* viewBox units */
+  letter-spacing: 0.05em;
+}
+
+/* shine — the blurred duplicate under each value bar (catalog blur 4px) */
+.lk-bullet-shine { filter: blur(4px); }

@@ -1,0 +1,50 @@
+/* ============================================================================
+   ScatterChart — the shared catalog scatter/bubble family (SC-01…SC-07,
+   lockin90-design/charts/scatter-charts.html): a normalized correlation cloud
+   in a fixed 320×150 viewBox with mono axis captions, dashed --cyan fit line
+   + R² pill, third-variable bubbles, quadrant map, zone dots, TODAY pulse and
+   the density-cloud centroid ring. Colors are prop/data-driven (inline), so
+   this stylesheet only owns layout, label/chip type, the shine glow and the
+   TODAY pulse ring.
+   Key: .lk-sct
+   ========================================================================== */
+.lk-sct { display: block; width: 100%; }
+
+/* the scalable chart canvas — the 320×150 viewBox stretches to the container,
+   keeping its aspect; shine/pulse glow may spill slightly past the box */
+.lk-sct-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* catalog mono label (title, axis captions, quadrant captions) */
+.lk-sct-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.06em;
+}
+
+/* chip-pill annotation text (catalog tag(): TODAY / R² / size key / centroid) */
+.lk-sct-tag {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.05em;
+}
+
+/* shine — soft glow in the dot color; `--lk-sct-glow` is set inline per dot */
+.lk-sct-shine { filter: drop-shadow(0 0 4px var(--lk-sct-glow, transparent)); }
+
+/* today-marker highlight dot — always glows lime (catalog pulseDot) */
+.lk-sct-pulse-dot { filter: drop-shadow(0 0 5px var(--lime)); }
+
+/* pulse ring expanding off the TODAY dot — the catalog pulseDot's SMIL tween
+   (r 3.6→11 · opacity .8→0 · 1.8s) as a CSS scale; reduced-motion safe */
+.lk-sct-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lk-sct-pulse 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes lk-sct-pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(3); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-sct-pulse { animation: none; opacity: 0.35; }
+}

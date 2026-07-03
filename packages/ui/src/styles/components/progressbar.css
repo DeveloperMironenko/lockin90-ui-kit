@@ -52,3 +52,100 @@
   }
   .lk-progressbar-fill { transition: none; }
 }
+
+/* ============================================================================
+   Catalog variants (`variant="…"`) — the progress forms from the design
+   catalog (progress-charts.html, PL-01…PL-16): title+%+sub rows, zone fill,
+   step cells, milestone ticks/dots, ghost compare, overflow badge, head pill,
+   countdown drain. Key: .lk-pbv (root modifier) > .lk-pbv-head + .lk-pbv-rail
+   (> track + overlays) / .lk-pbv-cells + .lk-pbv-foot
+   ========================================================================== */
+
+/* header row: mono title left, bold display % right (catalog header) */
+.lk-pbv-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  margin-bottom: 9px;
+}
+.lk-pbv-title {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-faint);
+}
+.lk-pbv-pct {
+  font-family: var(--font-display); font-size: 15px; font-weight: 700;
+  color: var(--text);
+}
+
+/* the rail wraps the track so ticks / dots / pills can overflow it */
+.lk-pbv-rail { position: relative; }
+.lk-pbv-rail.has-marks { margin-top: 12px; }
+.lk-pbv-rail.has-pills { margin-top: 20px; }
+
+/* variant fill layers (absolute, so ghost/drain/fill can stack) */
+.lk-pbv-fill {
+  position: absolute; top: 0; bottom: 0; left: 0;
+  border-radius: inherit;
+  transition: width 1.2s var(--ease);
+}
+.lk-pbv-fill--drain { left: auto; right: 0; }
+.lk-pbv-ghost {
+  position: absolute; top: 0; bottom: 0; left: 0;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* glow underlay — a blurred duplicate behind the track (catalog shine) */
+.lk-pbv-shine {
+  position: absolute; left: 0; top: -2.5px; bottom: -2.5px;
+  border-radius: var(--lk-pb-radius, var(--r-pill));
+  filter: blur(6px); opacity: 0.5;
+}
+.lk-pbv-rail .lk-progressbar-track { position: relative; }
+
+/* PL-08 step cells */
+.lk-pbv-cells { display: flex; gap: 3px; }
+.lk-pbv-cell {
+  flex: 1; border-radius: 3px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* PL-09 milestone ticks + dots (lit when passed) */
+.lk-pbv-tick {
+  position: absolute; top: -3px; bottom: -3px; width: 1px;
+  background: rgba(255, 255, 255, 0.3);
+}
+.lk-pbv-dot {
+  position: absolute; top: -9px; width: 4.8px; height: 4.8px;
+  border-radius: 50%; transform: translateX(-50%);
+}
+
+/* GOAL tick (target) — amber rule through the bar */
+.lk-pbv-goaltick {
+  position: absolute; top: -5px; bottom: -5px; width: 1.6px;
+  background: var(--zone-mid); transform: translateX(-50%);
+}
+
+/* chip-pill (catalog C.tag): dark rounded rect + tinted hairline + mono text */
+.lk-pbv-pill {
+  position: absolute; bottom: calc(100% + 7px); transform: translateX(-50%);
+  height: 13px; padding: 0 6px; border-radius: 6.5px;
+  background: rgba(8, 10, 18, 0.78);
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.05em;
+  line-height: 11px; white-space: nowrap;
+}
+.lk-pbv-pill--static { position: static; transform: none; }
+
+/* sub-copy + foot row (sub left · overflow pill right) */
+.lk-pbv-sub {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em;
+  color: var(--text-faint); margin-top: 7px;
+}
+.lk-pbv-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-top: 7px;
+}
+.lk-pbv-foot .lk-pbv-sub { margin-top: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lk-pbv-fill { transition: none; }
+}

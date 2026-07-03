@@ -1,0 +1,47 @@
+/* ============================================================================
+   CompareChart — the shared catalog before/after compare family (CP-01…CP-07,
+   lockin90-design/charts/compare-charts.html): metric slopes between two day
+   columns, dumbbell rows, bump rank lanes, delta arrows, mirrored bars, the
+   cohort hero slope and the program-milestone ladder in a fixed 320×150
+   viewBox with mono catalog labels + chip-pill tags. Colors are prop/data-
+   driven (inline), so this stylesheet only owns layout, label type, the
+   slope shine blur and the reduced-motion-safe NOW pulse ring.
+   Key: .lk-cmp
+   ========================================================================== */
+.lk-cmp { display: block; width: 100%; }
+
+/* the scalable chart canvas — the 320×150 viewBox stretches to the container,
+   keeping its aspect; the shine blur may spill slightly past the box */
+.lk-cmp-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* catalog mono label (title, metric names, deltas, column captions, legend) */
+.lk-cmp-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.06em;
+}
+
+/* chip-pill tag text (cohort hero badge, ladder milestone chips) */
+.lk-cmp-tag {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.05em;
+}
+
+/* shine — blurred wider duplicate of the slope lines (catalog blur(5px)) */
+.lk-cmp-shine { filter: blur(5px); }
+
+/* expanding pulse ring on the ladder NOW dot (catalog pulseDot r 3.6→11) —
+   reduced-motion safe */
+.lk-cmp-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lk-cmp-pulse 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes lk-cmp-pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(3); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-cmp-pulse { animation: none; opacity: 0.35; }
+}

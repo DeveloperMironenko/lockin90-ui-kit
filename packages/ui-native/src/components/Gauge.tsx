@@ -1,7 +1,12 @@
-import { type ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Path, Line, Circle } from 'react-native-svg';
+import Svg, { Path, Line, Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
+
+/** Zone verdict color for a normalized 0..1 value (catalog thresholds). */
+function zoneColor01(t: number): string {
+  return t >= 0.62 ? colors.zoneHigh : t >= 0.38 ? colors.zoneMid : colors.zoneLow;
+}
 
 /** A colored band on the [min,max] scale, filled up to its `to` value. Bands
  *  are stacked low→high; each paints from the previous band's `to` up to its
@@ -29,8 +34,28 @@ export interface GaugeProps {
   /** colored zone bands up to each `to` on the [min,max] scale. When omitted a
    *  single accent progress arc to `value` is drawn over the track. */
   zones?: GaugeZone[];
+  /** value-arc color (default `colors.accent`). Ignored when a `gradient`
+   *  array is given or `zone` is on. */
+  color?: string;
+  /** value-arc gradient along the sweep (left → right). An array (≥2) paints N
+   *  evenly-spaced gradient stops — e.g. `[colors.zoneLow, colors.zoneMid,
+   *  colors.zoneHigh]` is the DN-13 red→amber→green strain gauge; a single
+   *  string is treated like a solid `color`. */
+  gradient?: string | string[];
+  /** color the value arc + readout by the value's zone verdict on the
+   *  [min,max] scale (≥62% → high, ≥38% → mid, else low). */
+  zone?: boolean;
+  /** glow underlay — a wider faint duplicate of the value arc (the catalog's
+   *  shine modifier; off by default). No blur filter on native (RN limitation). */
+  shine?: boolean;
   /** number of tick marks along the arc (default 0 = off) */
   ticks?: number;
+  /** tick placement: `span` straddles the arc (default, legacy) · `out` sits
+   *  just outside it (DN-13 gauge-270 look). `out` shrinks the arc radius by
+   *  8px so the outer ticks fit the viewBox (native SVG clips). */
+  tickPosition?: 'span' | 'out';
+  /** draw the end-cap dot at the current value (default true) */
+  cap?: boolean;
   /** small caption under the value */
   label?: string;
   /** show the numeric value readout (default true) */
@@ -60,7 +85,9 @@ function arcPath(cx: number, cy: number, r: number, startDeg: number, endDeg: nu
  * Gauge — an arc/dial primitive: a partial-circle track (default 270° sweep,
  * open at the bottom-center) showing a `value` on a [min,max] scale. Supports
  * colored `zones` bands (low/mid/high), a progress arc + round end cap to the
- * current value, optional `ticks`, and a centered value/label readout. Distinct
+ * current value, optional `ticks`, and a centered value/label readout. Covers
+ * the catalog gauges: DN-13 `gauge-270` (`gradient` + `ticks` +
+ * `tickPosition="out"`) and DN-14 `half-gauge` (`sweep={180}`). Distinct
  * from `Ring` (a full-circle 0–100 single-color progress); Gauge adds an
  * arbitrary sweep, a min/max scale, multi-zone bands and ticks.
  */
@@ -72,19 +99,42 @@ export function Gauge({
   thickness = 12,
   sweep = 270,
   zones,
+  color,
+  gradient,
+  zone = false,
+  shine = false,
   ticks = 0,
+  tickPosition = 'span',
+  cap = true,
   label,
   showValue = true,
   children,
   style,
 }: GaugeProps) {
+  const uid = useId();
+  const gradId = `lk-gauge-grad-${uid.replace(/[^a-zA-Z0-9]/g, '')}`;
+
   const span = max - min || 1;
   const sw = Math.max(0, Math.min(360, sweep));
   const v = Math.max(min, Math.min(max, value));
 
   const cx = size / 2;
   const cy = size / 2;
-  const r = (size - thickness) / 2;
+  // reserve room for outside ticks — native SVG clips at the viewBox
+  const outPad = tickPosition === 'out' ? 8 : 0;
+  const r = (size - thickness) / 2 - outPad;
+
+  // value-arc paint: zone verdict > N-stop gradient > single color > accent
+  const t01 = (v - min) / span;
+  const useGradient = Array.isArray(gradient) && !zone;
+  const solid = zone
+    ? zoneColor01(t01)
+    : typeof gradient === 'string'
+      ? gradient
+      : (color ?? colors.accent);
+  const arcStroke = useGradient ? `url(#${gradId})` : solid;
+  // cap tint follows the arc (gradient → its last stop, where the arc ends)
+  const capColor = useGradient ? gradient[gradient.length - 1]! : solid;
 
   // The gap is centered at the bottom (screen-angle 90°). The arc starts to the
   // left of bottom and sweeps clockwise over the top to the right of bottom.
@@ -116,15 +166,30 @@ export function Gauge({
       tickMarks.push(startDeg + (n === 1 ? 0 : (i / (n - 1)) * sw));
     }
   }
-  const tickOuter = r + thickness / 2 + 2;
-  const tickInner = r - thickness / 2 - 2;
+  // `span` straddles the arc (legacy); `out` sits just past its outer edge (DN-13)
+  const tickOuter = r + thickness / 2 + (tickPosition === 'out' ? 7.5 : 2);
+  const tickInner = tickPosition === 'out' ? r + thickness / 2 + 2.5 : r - thickness / 2 - 2;
 
   const valueAngle = toAngle(v);
-  const cap = polar(cx, cy, r, valueAngle);
+  const capPt = polar(cx, cy, r, valueAngle);
 
   return (
     <View style={[styles.root, { width: size, height: size }, style]}>
       <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        {useGradient ? (
+          <Defs>
+            <LinearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
+              {gradient.map((stopColor, i) => (
+                <Stop
+                  key={i}
+                  offset={i / Math.max(1, gradient.length - 1)}
+                  stopColor={stopColor}
+                />
+              ))}
+            </LinearGradient>
+          </Defs>
+        ) : null}
+
         {/* track — the full sweep, faint */}
         <Path
           d={arcPath(cx, cy, r, startDeg, endDeg)}
@@ -146,12 +211,24 @@ export function Gauge({
           />
         ))}
 
+        {/* shine — a wider faint duplicate under the value arc (no blur on RN) */}
+        {shine && !hasZones && v > min ? (
+          <Path
+            d={arcPath(cx, cy, r, startDeg, valueAngle)}
+            fill="none"
+            stroke={arcStroke}
+            strokeWidth={thickness + 8}
+            strokeOpacity={0.35}
+            strokeLinecap="round"
+          />
+        ) : null}
+
         {/* progress arc to value — only when there are no zones */}
         {!hasZones && v > min ? (
           <Path
             d={arcPath(cx, cy, r, startDeg, valueAngle)}
             fill="none"
-            stroke={colors.accent}
+            stroke={arcStroke}
             strokeWidth={thickness}
             strokeLinecap="round"
           />
@@ -176,13 +253,13 @@ export function Gauge({
         })}
 
         {/* end cap — a dot marking the current value on the arc */}
-        {v > min ? (
+        {cap && v > min ? (
           <Circle
-            cx={cap.x}
-            cy={cap.y}
+            cx={capPt.x}
+            cy={capPt.y}
             r={thickness / 2 + 1}
             fill={colors.text}
-            stroke={colors.accent}
+            stroke={capColor}
             strokeWidth={2}
           />
         ) : null}
@@ -191,7 +268,11 @@ export function Gauge({
       <View style={styles.center} pointerEvents="none">
         {children ?? (
           <>
-            {showValue ? <Text style={styles.value}>{Math.round(v)}</Text> : null}
+            {showValue ? (
+              <Text style={[styles.value, zone ? { color: solid } : null]}>
+                {Math.round(v)}
+              </Text>
+            ) : null}
             {label ? <Text style={styles.label}>{label}</Text> : null}
           </>
         )}

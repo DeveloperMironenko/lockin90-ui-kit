@@ -1,0 +1,38 @@
+/* ============================================================================
+   ZonePyramid — the shared catalog pyramid family (PY-01…PY-03,
+   lockin90-design/charts/pyramid-charts.html): time-in-zone training pyramids
+   (centered bars / dashed targets / mirrored week-vs-week) in a fixed 320×150
+   viewBox with mono catalog labels. Colors are prop/data-driven (inline token
+   vars), so this stylesheet only owns layout, label type and the shine blur.
+   Key: .lk-pyr
+   ========================================================================== */
+.lk-pyr { display: block; width: 100%; }
+
+/* the scalable chart canvas — the 320×150 viewBox stretches to the container,
+   keeping its aspect; shine glow may spill slightly past the box */
+.lk-pyr-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* catalog mono label (title, %/time labels, zone letters above thin bars,
+   period headings, captions) */
+.lk-pyr-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.06em;
+}
+
+/* the zone letter INSIDE a wide bar — dark bold mono on the bar color */
+.lk-pyr-zone {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units */
+  font-weight: 700;
+}
+
+/* chip-pill annotation text (OVER / delta pills) */
+.lk-pyr-tag {
+  font-family: var(--font-mono);
+  font-size: 8px; /* viewBox units */
+  letter-spacing: 0.05em;
+}
+
+/* shine — the blurred duplicate bar under each solid bar (catalog blur 4px) */
+.lk-pyr-shine { filter: blur(4px); }

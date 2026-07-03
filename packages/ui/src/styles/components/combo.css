@@ -1,0 +1,31 @@
+/* ============================================================================
+   ComboChart — the shared catalog combo family (CB-01/04/05,
+   lockin90-design/charts/combo-charts.html): dual-metric bars+line /
+   area+line / bars+stepped-plan canvases in a fixed 320×150 viewBox with
+   mono catalog labels and stacked legend pills. Colors are prop/data-driven
+   (inline token vars), so this stylesheet only owns layout, label type and
+   the shine blur.
+   Key: .lk-combo
+   ========================================================================== */
+.lk-combo { display: block; width: 100%; }
+
+/* the scalable chart canvas — the 320×150 viewBox stretches to the container,
+   keeping its aspect; the shine glow may spill slightly past the box */
+.lk-combo-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* catalog mono label (title, bottom caption) */
+.lk-combo-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.06em;
+}
+
+/* chip-pill text (legend pills, goal pill, note pill) */
+.lk-combo-tag {
+  font-family: var(--font-mono);
+  font-size: 8px; /* viewBox units */
+  letter-spacing: 0.05em;
+}
+
+/* shine — the blurred wide underlay beneath the 2.2px smooth line (catalog blur) */
+.lk-combo-shine { filter: blur(5px); }

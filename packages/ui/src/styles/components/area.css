@@ -1,0 +1,31 @@
+/* ============================================================================
+   AreaChart — the shared catalog stacked-area family (AR-01/03/04/05/06/07,
+   lockin90-design/charts/area-charts.html): plain / percent / centered-stream
+   stacks, chip-labeled effect stacks + NOW rule, per-band fade gradients and
+   mini duo-stack multiples in a fixed 320×150 viewBox with mono catalog
+   labels. Colors are prop/data-driven (inline), so this stylesheet only owns
+   layout, label type and the shine blur.
+   Key: .lk-area
+   ========================================================================== */
+.lk-area { display: block; width: 100%; }
+
+/* the scalable chart canvas — the 320×150 viewBox stretches to the container,
+   keeping its aspect; the shine glow may spill slightly past the box */
+.lk-area-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* catalog mono label (title, legend, NOW caption, day captions) */
+.lk-area-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.06em;
+}
+
+/* chip-pill tag text (effect-stack series names inside the bands) */
+.lk-area-tag-text {
+  font-family: var(--font-mono);
+  font-size: 8px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.05em;
+}
+
+/* shine — the blurred mint underlay along the stack's top edge (catalog blur) */
+.lk-area-shine { filter: blur(5px); }

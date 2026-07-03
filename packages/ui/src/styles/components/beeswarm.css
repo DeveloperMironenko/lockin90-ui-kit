@@ -1,0 +1,44 @@
+/* ============================================================================
+   BeeswarmChart — the shared catalog beeswarm family (BW-01…BW-04,
+   lockin90-design/charts/beeswarm-charts.html): session/day dot swarms along
+   a value axis (greedy collision-free placement) in a fixed 320×150 viewBox
+   with mono catalog labels + chip pills. Colors are prop/data-driven (inline
+   token vars), so this stylesheet only owns layout, label type and the
+   BW-02 TODAY pulse (the PR glow + shine underlays blur inline).
+   Key: .lk-swarm
+   ========================================================================== */
+.lk-swarm { display: block; width: 100%; }
+
+/* the scalable chart canvas — the 320×150 viewBox stretches to the container,
+   keeping its aspect; glow underlays may spill slightly past the box */
+.lk-swarm-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* catalog mono label (title, axis ticks, legend, row labels, end label) */
+.lk-swarm-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.06em;
+}
+
+/* chip-pill annotation text (TODAY / PR / delta pills) */
+.lk-swarm-tag {
+  font-family: var(--font-mono);
+  font-size: 8px; /* viewBox units */
+  letter-spacing: 0.05em;
+}
+
+/* BW-02 TODAY pulse: glowing core + expanding fading ring
+   (r 3.6 → 11 over 1.8s, the catalog pulseDot) */
+.lk-swarm-pulsecore { filter: drop-shadow(0 0 5px currentColor); }
+.lk-swarm-pulsering {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lk-swarm-pulse 1.8s linear infinite;
+}
+@keyframes lk-swarm-pulse {
+  from { transform: scale(1); opacity: 0.8; }
+  to { transform: scale(3.05); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-swarm-pulsering { animation: none; opacity: 0; }
+}

@@ -43,3 +43,23 @@
   letter-spacing: -0.02em;
   color: var(--text);
 }
+
+/* PC-07 / PC-13 callouts — leader line + chip-pill label around the ring.
+   The chip rect's stroke + text fill are set inline to the segment color. */
+.lk-donut-callout line {
+  stroke: color-mix(in srgb, var(--text) 30%, transparent);
+  stroke-width: 1;
+}
+
+.lk-donut-callout rect {
+  fill: color-mix(in srgb, var(--bg-0) 78%, transparent);
+  stroke-opacity: 0.35;
+  stroke-width: 0.8;
+}
+
+.lk-donut-callout text {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.05em;
+  text-anchor: middle;
+}

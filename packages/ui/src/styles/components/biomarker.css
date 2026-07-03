@@ -1,0 +1,61 @@
+/* ============================================================================
+   BiomarkerRange — the shared catalog biomarker family (BR-01…BR-05,
+   lockin90-design/charts/biomarker-charts.html): lab-panel reference-range
+   rows / single-marker anatomy / trend sparks / verdict tiles / range history
+   in a fixed 320×150 viewBox with mono catalog labels. Colors are data-driven
+   (inline token vars), so this stylesheet only owns layout, label type, the
+   shine glow and the BR-02 pulse. NOT the admin ReferenceRangeBar
+   (.lk-refrangebar-*) — this is the cross-platform product-surface family.
+   Key: .lk-bmr
+   ========================================================================== */
+.lk-bmr { display: block; width: 100%; }
+
+/* the scalable chart canvas — the 320×150 viewBox stretches to the container,
+   keeping its aspect; shine glow may spill slightly past the box */
+.lk-bmr-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* catalog mono label (titles, marker names, readouts, flags, zone words) */
+.lk-bmr-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.06em;
+}
+
+/* trend direction arrow (↑ / ↓ / →) — larger mono glyph */
+.lk-bmr-arrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+/* chip-pill annotation text (range-history DEFICIENT / context pills) */
+.lk-bmr-tag {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.05em;
+}
+
+/* the single-marker big result readout ('48 NG/ML') — display face */
+.lk-bmr-result {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* shine — value dots glow in their own state color (currentColor set inline) */
+.lk-bmr-dot--shine { filter: drop-shadow(0 0 5px currentColor); }
+
+/* BR-02 pulsing value dot: glowing core + expanding fading ring
+   (r 3.6 → 11 over 1.8s, the catalog pulseDot) */
+.lk-bmr-pulsecore { filter: drop-shadow(0 0 5px currentColor); }
+.lk-bmr-pulsering {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lk-bmr-pulse 1.8s linear infinite;
+}
+@keyframes lk-bmr-pulse {
+  from { transform: scale(1); opacity: 0.8; }
+  to { transform: scale(3.05); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-bmr-pulsering { animation: none; opacity: 0; }
+}

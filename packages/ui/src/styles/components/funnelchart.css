@@ -1,0 +1,25 @@
+/* ============================================================================
+   FunnelChart — the shared catalog conversion-funnel family (FN-01/03/04/05,
+   lockin90-design/charts/funnel-charts.html): centered trapezoid bands
+   (band-funnel, tokens/glass fill) or left-aligned stage bars (bar / zone /
+   compare) in a fixed 320×150 viewBox with mono catalog labels. Colors are
+   prop/data-driven (inline), so this stylesheet only owns layout, label type
+   and the shine glow. NOT the admin operator funnel (.lk-funnel-*) — this is
+   the cross-platform product-surface family.
+   Key: .lk-fnl
+   ========================================================================== */
+.lk-fnl { display: block; width: 100%; }
+
+/* the scalable chart canvas — the 320×150 viewBox stretches to the container,
+   keeping its aspect; shine glow may spill slightly past the box */
+.lk-fnl-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* catalog mono label (titles, stage names, %, drop-offs, ghost caption) */
+.lk-fnl-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px; /* viewBox units — scales with the chart */
+  letter-spacing: 0.06em;
+}
+
+/* shine — soft glow in the band/bar color; `--lk-fnl-glow` is set inline */
+.lk-fnl-shine { filter: drop-shadow(0 0 6px var(--lk-fnl-glow, transparent)); }

@@ -52,10 +52,10 @@
   filter: brightness(1.25);
 }
 
-/* today / now — accent border (matches calendar's today highlight) */
+/* today / now — accent ring by default; HM-15 passes todayColor (--lk-hm-today) */
 .lk-heatmap-cell--today {
-  border-color: var(--accent, #7c5cff);
-  box-shadow: 0 0 0 1px var(--accent, #7c5cff);
+  border-color: var(--lk-hm-today, var(--accent, #7c5cff));
+  box-shadow: 0 0 0 1px var(--lk-hm-today, var(--accent, #7c5cff));
 }
 
 /* flagged cell — low-zone ring */
@@ -81,4 +81,153 @@
   line-height: 1;
   color: rgba(255, 255, 255, 0.75);
   font-weight: 600;
+}
+
+/* HM-04 month-cal — tiny numeral pinned to the cell's top-left corner */
+.lk-heatmap-label--corner {
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  font-size: 8px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* dark text on hot cells (scale modes, t > 0.55) — HM-04/14 */
+.lk-heatmap-label--dark {
+  color: var(--void, #05060b);
+}
+
+/* HM-06 dot-matrix — the cell is a transparent slot; the dot carries the value */
+.lk-heatmap-cell--dot {
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lk-heatmap-dot {
+  display: block;
+  border-radius: 50%;
+}
+
+/* HM-08 gap-aware — a missing slot: dashed empty cell, never a fake zero */
+.lk-heatmap-cell--missing {
+  background: transparent;
+  border: 1px dashed var(--border-2, rgba(255, 255, 255, 0.16));
+}
+.lk-heatmap-cell--missing:hover {
+  transform: none;
+  filter: none;
+}
+
+/* HM-15 today-ring — pulsing dot above the today cell (reduced-motion safe) */
+.lk-heatmap-pulse {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: var(--mint, #34f5c5);
+  box-shadow: 0 0 6px var(--mint, #34f5c5);
+}
+.lk-heatmap-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1px solid var(--mint, #34f5c5);
+  animation: lk-heatmap-pulse 1.8s ease-out infinite;
+}
+
+@keyframes lk-heatmap-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lk-heatmap-pulse::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* ---- framed layout (rowLabels / colLabels / dayLetters) --------------------
+   3-row × 2-col grid: [corner|colLabels] / [rowLabels|cells] / [corner|letters].
+   The --hm-* vars live on the frame so the inner grid inherits them. */
+.lk-heatmap-frame {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: start;
+}
+
+.lk-heatmap-frame > .lk-heatmap {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.lk-heatmap-collabels {
+  grid-column: 2;
+  grid-row: 1;
+  position: relative;
+  height: 14px;
+}
+
+.lk-heatmap-collabels > span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.lk-heatmap-rowlabels {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--hm-gap, 4px);
+  width: 40px;
+  padding-right: 6px;
+  box-sizing: border-box;
+}
+
+.lk-heatmap-rowlabels > span {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: var(--hm-size, 16px);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.lk-heatmap-letters {
+  grid-column: 2;
+  grid-row: 3;
+  position: relative;
+  height: 14px;
+}
+
+.lk-heatmap-letters > span {
+  position: absolute;
+  bottom: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
 }

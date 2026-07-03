@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Line, Text as SvgText } from 'react-native-svg';
-import { colors, fonts } from '@lockin90/tokens';
+import Svg, { Circle, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
+import { colors, fonts, radii } from '@lockin90/tokens';
 
 /** A colored phase band on the 24h ring, drawn CLOCKWISE from `from` to `to`
  *  (hours 0..24). When `from > to` the band wraps through midnight (e.g. 23→7). */
@@ -26,21 +26,60 @@ export interface PhaseMarker {
   label?: string;
 }
 
+/** One phase of a cycle (the cycle variants) — phases run consecutively from
+ *  day 1, each `days` long, so the wheel/strip total is the sum of `days`. */
+export interface CyclePhase {
+  /** phase name — legend, center readout + coach pill (rendered UPPERCASE) */
+  name: string;
+  /** phase length in days */
+  days: number;
+  /** the phase color — a hex/rgb color string */
+  color: string;
+}
+
+/** Chart form. `'circadian'` (default) is the original 24h clock; the cycle
+ *  variants are the CW catalog forms (28-day cycle wheel / coach wheel / strip). */
+export type PhaseWheelVariant = 'circadian' | 'phase-wheel' | 'coach-wheel' | 'phase-strip';
+
 export interface PhaseWheelProps {
-  /** colored phase bands on the ring */
+  /** chart form (default `'circadian'` — the 24h clock, unchanged) */
+  variant?: PhaseWheelVariant;
+  /** [circadian] colored phase bands on the ring */
   arcs?: PhaseArc[];
-  /** point markers on the ring */
+  /** [circadian] point markers on the ring */
   markers?: PhaseMarker[];
-  /** the "now" hour, 0..24 → draws a hand from center to the ring + a tip dot.
+  /** [circadian] the "now" hour, 0..24 → draws a hand from center to the ring + a tip dot.
    *  Pass `null` to hide the hand (omitting it keeps the default). */
   now?: number | null;
-  /** overall diameter in px (default 200) */
+  /** overall diameter in px (default 200; ignored by `phase-strip`) */
   size?: number;
-  /** ring stroke width in px (default 16) */
+  /** ring stroke width in px (default 16; ignored by `phase-strip`) */
   thickness?: number;
-  /** hour tick marks around the ring, longer + brighter at 0/6/12/18 (default true) */
+  /** [circadian] hour tick marks around the ring, longer + brighter at 0/6/12/18 (default true) */
   hourTicks?: boolean;
-  /** center content — defaults to the formatted `now` clock, or '24h' when no `now` */
+  /** [cycle] consecutive cycle phases (default: Menstrual 5 coral / Follicular 8
+   *  cyan / Ovulation 3 lime / Luteal 12 violet — the 28-day catalog cycle) */
+  phases?: CyclePhase[];
+  /** [cycle] current cycle day, 1-based → today dot (wheels) / TODAY rule
+   *  (strip) + center readout. Pass `null` to hide (center falls back to the
+   *  cycle length, e.g. '28d'). Default 21. */
+  day?: number | null;
+  /** [phase-wheel · coach-wheel] FOCUS state: the named phase stays full-strength,
+   *  the others dim to 20% and the center shows days left in it (needs `day`).
+   *  Matched case-insensitively against `phases[].name`. */
+  focusPhase?: string;
+  /** [coach-wheel] recommendation text — the pill reads "<PHASE> — <TIP>"
+   *  (default 'lower intensity, more sleep') */
+  tip?: string;
+  /** [phase-wheel · coach-wheel] phase legend beside the wheel
+   *  (default: true for `'phase-wheel'`, false otherwise) */
+  legend?: boolean;
+  /** [phase-wheel · coach-wheel] soft glow behind the phase arcs (default false).
+   *  Rendered as a wider faint duplicate arc — never an SVG filter. */
+  shine?: boolean;
+  /** [phase-strip] total strip width in px (default 300) */
+  width?: number;
+  /** center content — defaults to the formatted `now` clock / cycle-day readout */
   children?: ReactNode;
   /** optional wrapper style */
   style?: StyleProp<ViewStyle>;
@@ -59,6 +98,19 @@ const DEFAULT_MARKERS: PhaseMarker[] = [
   { at: 21, color: '#A855F7', label: 'Melatonin' },
 ];
 
+/** Default 28-day cycle (the catalog's PH table). */
+const DEFAULT_PHASES: CyclePhase[] = [
+  { name: 'Menstrual', days: 5, color: colors.zoneLow }, // coral
+  { name: 'Follicular', days: 8, color: colors.cyan },
+  { name: 'Ovulation', days: 3, color: colors.lime },
+  { name: 'Luteal', days: 12, color: colors.violet },
+];
+
+const DEFAULT_TIP = 'lower intensity, more sleep';
+
+/** angular gap (deg) trimmed off EACH end of a cycle phase arc */
+const ARC_GAP_DEG = 2.5;
+
 /** clockwise span of an arc in hours, wrap-aware (from > to wraps midnight). */
 function arcSpanHours(from: number, to: number) {
   return ((to - from + 24) % 24) || 24;
@@ -70,6 +122,55 @@ function hourPoint(c: number, r: number, h: number) {
   const deg = (h / 24) * 360 - 90;
   const a = (deg * Math.PI) / 180;
   return { x: c + r * Math.cos(a), y: c + r * Math.sin(a) };
+}
+
+/** point on a circle for an angle in degrees, 0° at 12 o'clock, clockwise. */
+function polarPoint(cx: number, cy: number, r: number, aDeg: number) {
+  const a = ((aDeg - 90) * Math.PI) / 180;
+  return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+}
+
+/** SVG arc path from `a0` to `a1` degrees (0° at top, clockwise). */
+function arcPath(cx: number, cy: number, r: number, a0: number, a1: number) {
+  const p0 = polarPoint(cx, cy, r, a0);
+  const p1 = polarPoint(cx, cy, r, a1);
+  const large = (a1 - a0) % 360 > 180 ? 1 : 0;
+  return `M${p0.x.toFixed(2)} ${p0.y.toFixed(2)}A${r} ${r} 0 ${large} 1 ${p1.x.toFixed(2)} ${p1.y.toFixed(2)}`;
+}
+
+/** A cycle phase resolved to its 1-based inclusive day range. */
+interface PhaseRange extends CyclePhase {
+  start: number;
+  end: number;
+}
+
+/** Lay the phases end-to-end from day 1 → `{ ranges, total }`. */
+function phaseRanges(phases: CyclePhase[]): { ranges: PhaseRange[]; total: number } {
+  let start = 1;
+  const ranges = phases.map((p) => {
+    const r = { ...p, start, end: start + p.days - 1 };
+    start += p.days;
+    return r;
+  });
+  return { ranges, total: Math.max(1, start - 1) };
+}
+
+/** angle (deg, 0° at top, clockwise) where cycle day `d` STARTS */
+function dayAngle(d: number, total: number) {
+  return ((d - 1) / total) * 360;
+}
+
+/** the D-tick days of a strip: D1, every 7th day, and the last day. */
+function stripTicks(total: number): number[] {
+  const ticks = [1];
+  for (let d = 7; d <= total; d += 7) ticks.push(d);
+  if (ticks[ticks.length - 1] !== total) ticks.push(total);
+  return ticks;
+}
+
+/** Append an alpha byte to a 6-digit hex token (pass-through otherwise). */
+function withAlpha(color: string, alphaHex: string) {
+  return /^#[0-9a-fA-F]{6}$/.test(color) ? `${color}${alphaHex}` : color;
 }
 
 /** Format an hour (0..24, may be fractional) as a 12h clock like '2:30p'
@@ -94,23 +195,331 @@ const CARDINALS: { h: number; label: string }[] = [
 ];
 
 /**
- * PhaseWheel — a circular 24-hour circadian clock: a faint full track ring with
- * colored phase bands (sleep / focus / dip / wind-down), hour ticks (longer +
- * brighter at the quarters with cardinal labels), point markers on the ring, an
- * optional "now" hand from center to the ring, and centered content (the
- * formatted current time or '24h'). Hour 0 (midnight) sits at the top and time
- * runs clockwise. Tokens-driven.
+ * PhaseWheel — the kit's phase-cycle chart.
+ *
+ * Default (`variant="circadian"`): a circular 24-hour circadian clock — a faint
+ * full track ring with colored phase bands (sleep / focus / dip / wind-down),
+ * hour ticks (longer + brighter at the quarters with cardinal labels), point
+ * markers on the ring, an optional "now" hand from center to the ring, and
+ * centered content (the formatted current time or '24h'). Hour 0 (midnight)
+ * sits at the top and time runs clockwise.
+ *
+ * Cycle variants (the CW catalog):
+ * - `'phase-wheel'` (CW-01) — 4 menstrual-cycle phase arcs (coral/cyan/lime/
+ *   violet, round caps, gaps), D-labels, a today dot, center day/phase readout
+ *   + legend; `focusPhase` dims the other phases to 20% and the center shows
+ *   the days left in the focused phase.
+ * - `'coach-wheel'` (CW-04) — the wheel + a phase-tinted recommendation pill
+ *   under it ("LUTEAL — LOWER INTENSITY, MORE SLEEP").
+ * - `'phase-strip'` (CW-05) — the wheel unrolled: phase pills on a linear
+ *   28-day strip + TODAY rule + D-ticks.
+ *
+ * Tokens-driven.
  */
 export function PhaseWheel({
+  variant = 'circadian',
   arcs = DEFAULT_ARCS,
   markers = DEFAULT_MARKERS,
   now = 14.5,
   size = 200,
   thickness = 16,
   hourTicks = true,
+  phases = DEFAULT_PHASES,
+  day = 21,
+  focusPhase,
+  tip = DEFAULT_TIP,
+  legend,
+  shine = false,
+  width = 300,
   children,
   style,
 }: PhaseWheelProps) {
+  /* ---------------------------------------------------------------- cycle */
+  if (variant !== 'circadian') {
+    const { ranges, total } = phaseRanges(phases);
+    const cday = day == null ? null : Math.min(Math.max(Math.round(day), 1), total);
+    const currentPhase =
+      cday !== null ? ranges.find((r) => cday >= r.start && cday <= r.end) : undefined;
+    const phasesLabel = ranges.map((r) => `${r.name} D${r.start}–${r.end}`).join(', ');
+
+    /* ------------------------------------------------------ CW-05 strip */
+    if (variant === 'phase-strip') {
+      const stripH = 76;
+      const y = 44; // pill row center
+      const x0 = 8;
+      const ww = width - 16;
+      const tagLabel = cday !== null ? `TODAY · D${cday}` : null;
+      const tagW = tagLabel ? tagLabel.length * 5.35 + 12 : 0;
+      const tx = cday !== null ? x0 + (ww * (cday - 0.5)) / total : 0;
+      const tagX = tagLabel ? Math.max(2, Math.min(tx - tagW / 2, width - tagW - 2)) : 0;
+      const todayColor = currentPhase?.color ?? colors.violet;
+      const a11y = `${total}-day cycle strip${
+        cday !== null ? `, day ${cday}${currentPhase ? ` (${currentPhase.name})` : ''}` : ''
+      }: ${phasesLabel}.`;
+
+      return (
+        <View
+          style={[styles.stripRoot, { width }, style]}
+          accessibilityRole="image"
+          accessibilityLabel={a11y}
+        >
+          <Svg width={width} height={stripH} viewBox={`0 0 ${width} ${stripH}`}>
+            {/* phase pills */}
+            {ranges.map((r) => {
+              const xs = x0 + (ww * (r.start - 1)) / total;
+              const xe = x0 + (ww * r.end) / total;
+              const w = xe - xs - 2;
+              if (w <= 0) return null;
+              return (
+                <G key={r.name}>
+                  <Rect
+                    x={xs}
+                    y={y - 8}
+                    width={w}
+                    height={16}
+                    rx={8}
+                    fill={r.color}
+                    opacity={0.8}
+                  />
+                  {w > 52 ? (
+                    <SvgText
+                      x={(xs + xe) / 2}
+                      y={y}
+                      fill={colors.bg0}
+                      fontFamily={fonts.mono}
+                      fontSize={9}
+                      textAnchor="middle"
+                      alignmentBaseline="central"
+                    >
+                      {r.name.toUpperCase()}
+                    </SvgText>
+                  ) : null}
+                </G>
+              );
+            })}
+
+            {/* D-ticks under the strip */}
+            {stripTicks(total).map((d) => (
+              <SvgText
+                key={`tick-${d}`}
+                x={x0 + (ww * (d - 0.5)) / total}
+                y={y + 21}
+                fill={colors.textFaint}
+                fontFamily={fonts.mono}
+                fontSize={9}
+                textAnchor="middle"
+                alignmentBaseline="central"
+              >
+                {`D${d}`}
+              </SvgText>
+            ))}
+
+            {/* TODAY rule + tag */}
+            {tagLabel ? (
+              <G>
+                <Line
+                  x1={tx}
+                  x2={tx}
+                  y1={y - 18}
+                  y2={y + 12}
+                  stroke={colors.text}
+                  strokeOpacity={0.4}
+                  strokeWidth={1.2}
+                />
+                <Rect
+                  x={tagX}
+                  y={y - 26 - 6.5}
+                  width={tagW}
+                  height={13}
+                  rx={6.5}
+                  fill={colors.bg0}
+                  fillOpacity={0.78}
+                  stroke={todayColor}
+                  strokeOpacity={0.35}
+                  strokeWidth={0.8}
+                />
+                <SvgText
+                  x={tagX + tagW / 2}
+                  y={y - 26}
+                  fill={todayColor}
+                  fontFamily={fonts.mono}
+                  fontSize={8}
+                  textAnchor="middle"
+                  alignmentBaseline="central"
+                >
+                  {tagLabel}
+                </SvgText>
+              </G>
+            ) : null}
+          </Svg>
+        </View>
+      );
+    }
+
+    /* --------------------------------------- CW-01 / CW-04 cycle wheels */
+    const showLegend = legend ?? variant === 'phase-wheel';
+    // RN SVG hard-clips at its bounds, so pad the canvas for the D-labels.
+    const PAD = 16;
+    const canvas = size + PAD * 2;
+    const c = canvas / 2;
+    const r = (size - thickness) / 2;
+    const dLabelRadius = r + thickness / 2 + 6;
+
+    const focus =
+      focusPhase != null
+        ? ranges.find((p) => p.name.toLowerCase() === focusPhase.toLowerCase())
+        : undefined;
+    const daysLeft = focus && cday !== null ? Math.max(0, focus.end - cday) : null;
+
+    const big =
+      daysLeft !== null
+        ? `${daysLeft}d`
+        : cday !== null
+          ? variant === 'coach-wheel'
+            ? `D${cday}`
+            : `DAY ${cday}`
+          : `${total}d`;
+    const sub =
+      daysLeft !== null && focus
+        ? `LEFT · ${focus.name.toUpperCase()}`
+        : currentPhase
+          ? currentPhase.name.toUpperCase()
+          : null;
+
+    const tipText =
+      variant === 'coach-wheel'
+        ? `${currentPhase ? `${currentPhase.name} — ` : ''}${tip}`.toUpperCase()
+        : null;
+    const tipColor = currentPhase?.color ?? colors.violet;
+
+    const todayPt = cday !== null ? polarPoint(c, c, r, dayAngle(cday, total)) : null;
+
+    const a11y = `${total}-day cycle wheel${
+      cday !== null ? `, day ${cday}${currentPhase ? ` (${currentPhase.name})` : ''}` : ''
+    }: ${phasesLabel}.${
+      focus && daysLeft !== null ? ` Focus ${focus.name}, ${daysLeft} days left.` : ''
+    }${tipText ? ` Coach: ${tipText}.` : ''}`;
+
+    return (
+      <View
+        style={[styles.cycleRoot, style]}
+        accessibilityRole="image"
+        accessibilityLabel={a11y}
+      >
+        <View style={styles.cycleRow}>
+          <View style={[styles.dial, { width: canvas, height: canvas }]}>
+            <Svg width={canvas} height={canvas} viewBox={`0 0 ${canvas} ${canvas}`}>
+              {/* phase arcs — round caps, 2.5° gap trimmed off each end.
+                  `shine` = a wider faint duplicate arc behind the real one
+                  (no SVG filters on native — Ring precedent). */}
+              {ranges.map((p) => {
+                const a0 = dayAngle(p.start, total) + ARC_GAP_DEG;
+                const a1 = dayAngle(p.end + 1, total) - ARC_GAP_DEG;
+                if (a1 <= a0) return null;
+                const dimmed = focus != null && focus.name !== p.name;
+                const d = arcPath(c, c, r, a0, a1);
+                return (
+                  <G key={p.name} opacity={dimmed ? 0.2 : 0.9}>
+                    {shine ? (
+                      <Path
+                        d={d}
+                        fill="none"
+                        stroke={p.color}
+                        strokeWidth={thickness + 8}
+                        strokeOpacity={0.35}
+                        strokeLinecap="round"
+                      />
+                    ) : null}
+                    <Path
+                      d={d}
+                      fill="none"
+                      stroke={p.color}
+                      strokeWidth={thickness}
+                      strokeLinecap="round"
+                    />
+                  </G>
+                );
+              })}
+
+              {/* D-labels every 7 days (D1, D8, …) just outside the ring */}
+              {Array.from({ length: Math.ceil(total / 7) }, (_, i) => 1 + i * 7).map((d) => {
+                const p = polarPoint(c, c, dLabelRadius, dayAngle(d, total));
+                return (
+                  <SvgText
+                    key={`d-${d}`}
+                    x={p.x}
+                    y={p.y}
+                    fill={colors.textFaint}
+                    fontFamily={fonts.mono}
+                    fontSize={9}
+                    textAnchor="middle"
+                    alignmentBaseline="central"
+                  >
+                    {`D${d}`}
+                  </SvgText>
+                );
+              })}
+
+              {/* today — dot on the ring + static halo (web pulses; native
+                  shows a static ring — StatusDot precedent) */}
+              {todayPt ? (
+                <G>
+                  <Circle cx={todayPt.x} cy={todayPt.y} r={4} fill={colors.text} />
+                  <Circle
+                    cx={todayPt.x}
+                    cy={todayPt.y}
+                    r={8}
+                    fill="none"
+                    stroke={colors.text}
+                    strokeWidth={1.4}
+                    strokeOpacity={0.3}
+                  />
+                </G>
+              ) : null}
+            </Svg>
+
+            <View style={styles.center} pointerEvents="none">
+              {children ?? (
+                <>
+                  <Text style={styles.day}>{big}</Text>
+                  {sub ? <Text style={styles.daySub}>{sub}</Text> : null}
+                </>
+              )}
+            </View>
+          </View>
+
+          {showLegend ? (
+            <View style={styles.legend}>
+              {ranges.map((p) => (
+                <View key={p.name} style={styles.legendItem}>
+                  <View style={[styles.legendDot, { backgroundColor: p.color }]} />
+                  <Text style={styles.legendLabel}>
+                    {`${p.name.toUpperCase()} · D${p.start}-${p.end}`}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
+        </View>
+
+        {tipText ? (
+          <View
+            style={[
+              styles.tip,
+              {
+                backgroundColor: withAlpha(colors.bg0, 'C7'), // 78%
+                borderColor: withAlpha(tipColor, '59'), // 35%
+              },
+            ]}
+          >
+            <Text style={[styles.tipText, { color: tipColor }]}>{tipText}</Text>
+          </View>
+        ) : null}
+      </View>
+    );
+  }
+
+  /* ------------------------------------------------------------ circadian */
   // RN SVG hard-clips at its bounds (no overflow:visible), so pad the canvas
   // out so cardinal + marker labels that sit OUTSIDE the ring aren't cut off.
   const PAD = 46;
@@ -278,5 +687,75 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
     color: colors.text,
     textAlign: 'center',
+  },
+  /* ------------------------------------------------------ cycle variants */
+  cycleRoot: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 12,
+    alignSelf: 'flex-start',
+  },
+  cycleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 18,
+  },
+  dial: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  day: {
+    fontFamily: fonts.display,
+    fontWeight: '700',
+    fontSize: 24,
+    lineHeight: 26,
+    letterSpacing: -0.5,
+    color: colors.text,
+    textAlign: 'center',
+  },
+  daySub: {
+    fontFamily: fonts.mono,
+    fontSize: 9,
+    letterSpacing: 0.5,
+    color: colors.textFaint,
+    textAlign: 'center',
+  },
+  legend: {
+    flexDirection: 'column',
+    gap: 12,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  legendDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  legendLabel: {
+    fontFamily: fonts.mono,
+    fontSize: 9,
+    letterSpacing: 0.5,
+    color: colors.textDim,
+  },
+  tip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: radii.pill,
+    borderWidth: 1,
+  },
+  tipText: {
+    fontFamily: fonts.mono,
+    fontSize: 9,
+    letterSpacing: 0.5,
+  },
+  stripRoot: {
+    alignSelf: 'flex-start',
   },
 });
