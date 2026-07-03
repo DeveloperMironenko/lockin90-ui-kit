@@ -19,6 +19,12 @@ export interface InsightCardProps {
   stats?: { label: string; value: string }[];
   /** accent color of the icon/sparkline */
   tone?: InsightTone;
+  /** explicit accent color for the icon + sparkline — overrides `tone`'s color
+   *  (e.g. `colors.lime`). Lets each card carry its own trend hue. */
+  accentColor?: string;
+  /** fill the area under the sparkline (default true). Set false for a clean
+   *  line-only trend, matching the design's per-pattern sparklines. */
+  sparkFill?: boolean;
   /** leading glyph */
   icon?: IconName;
   style?: StyleProp<ViewStyle>;
@@ -45,10 +51,12 @@ export function InsightCard({
   data,
   stats,
   tone = 'default',
+  accentColor,
+  sparkFill = true,
   icon = 'sparkle',
   style,
 }: InsightCardProps) {
-  const color = TONE_COLOR[tone];
+  const color = accentColor ?? TONE_COLOR[tone];
 
   return (
     <Card style={style}>
@@ -72,7 +80,7 @@ export function InsightCard({
 
         {data && data.length > 0 ? (
           <View style={styles.right}>
-            <Sparkline data={data} color={color} width={120} height={56} fill />
+            <Sparkline data={data} color={color} width={120} height={56} fill={sparkFill} />
           </View>
         ) : null}
       </View>
