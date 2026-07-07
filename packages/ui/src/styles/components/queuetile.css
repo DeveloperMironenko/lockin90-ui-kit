@@ -1,0 +1,50 @@
+/* ============================================================================
+   QueueTile — pending-work row. Tokens from @lockin90/tokens. Namespaced
+   `lk-qtile*`. Matches `.q-item` / `.q-ico` in the admin design.
+   ========================================================================== */
+
+.lk-qtile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  text-decoration: none;
+  transition: background 0.2s var(--ease);
+}
+.lk-qtile:last-child { border-bottom: 0; }
+a.lk-qtile:hover { background: var(--glass); }
+
+.lk-qtile-ico {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  display: grid;
+  place-items: center;
+  flex: none;
+  border: 1px solid var(--border);
+}
+
+.lk-qtile-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.lk-qtile-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+.lk-qtile-sub {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+.lk-qtile-num {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+}

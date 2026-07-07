@@ -7,6 +7,9 @@ export interface BrandMarkProps extends Omit<SVGProps<SVGSVGElement>, 'height' |
   variant?: BrandMarkVariant;
   /** pixel height of the mark (the lockup wordmark scales with it) */
   size?: number;
+  /** explicit wordmark font-size (px) for the `lockup` — defaults to `size × 1.05`.
+   *  Lets the mark be larger than the text (e.g. the dashboard's 34px mark + 19px text). */
+  wordmarkSize?: number;
   title?: string;
 }
 
@@ -35,14 +38,18 @@ function MarkGlyph({ mono = false }: { mono?: boolean }) {
  * LockIn90 brand mark — a sky-cyan energy line climbing to a glowing lime peak dot.
  * `icon` renders the dark store-tile (violet glow); `lockup` adds the wordmark.
  */
-export function BrandMark({ variant = 'mark', size = 28, title = 'LockIn90', ...rest }: BrandMarkProps) {
+export function BrandMark({ variant = 'mark', size = 28, wordmarkSize, title = 'LockIn90', ...rest }: BrandMarkProps) {
   const gid = useId().replace(/:/g, '');
 
   if (variant === 'lockup') {
+    const textPx = wordmarkSize ?? Math.round(size * 1.05);
+    // Keep the legacy gap when the wordmark tracks the mark; use a text-relative
+    // gap when the wordmark is sized independently (design's 34px mark + 19px text).
+    const gapPx = wordmarkSize != null ? Math.round(wordmarkSize * 0.52) : Math.round(size * 0.42);
     return (
-      <span style={{ display: 'inline-flex', alignItems: 'center', gap: Math.round(size * 0.42) }}>
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: gapPx }}>
         <BrandMark variant="mark" size={size} aria-hidden />
-        <span className="lk-display" style={{ fontSize: Math.round(size * 1.05), fontWeight: 700, letterSpacing: '-0.02em' }}>
+        <span className="lk-display" style={{ fontSize: textPx, fontWeight: 700, letterSpacing: '-0.02em' }}>
           LockIn<span className="lk-gradient-text">90</span>
         </span>
       </span>

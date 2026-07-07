@@ -88,6 +88,13 @@
 .lk-btn-ghost:hover { color: var(--text); border-color: var(--border-2); }
 .lk-btn-sm { padding: 8px 14px; font-size: 13px; }
 .lk-btn-sm svg { width: 14px; height: 14px; }
+/* SSO / social sign-in: full-width, roomy rounded-square (not the pill) with a
+   brand logo left of the label. Sits in a 2-up SSO grid. */
+.lk-btn-sso {
+  width: 100%; height: 44px; padding: 0 16px;
+  border-radius: var(--r-sm); font-size: 13.5px; gap: 10px;
+}
+.lk-btn-sso svg { width: 18px; height: 18px; }
 
 /* ---- chips / badges / pills ---- */
 .lk-chip {

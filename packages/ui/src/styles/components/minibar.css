@@ -1,0 +1,44 @@
+/* ============================================================================
+   MiniBar — labelled proportion row. Tokens from @lockin90/tokens. Namespaced
+   `lk-minibar*`.
+   ========================================================================== */
+
+.lk-minibar {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+}
+
+.lk-minibar-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lk-minibar-track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.lk-minibar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.7s var(--ease);
+}
+
+.lk-minibar-caption {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+  white-space: nowrap;
+}

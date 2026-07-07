@@ -1,0 +1,42 @@
+/* ============================================================================
+   ChecklistRow — setup/onboarding line. Tokens from @lockin90/tokens.
+   Namespaced `lk-check*`.
+   ========================================================================== */
+
+.lk-check {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+}
+.lk-check:last-child { border-bottom: 0; }
+
+.lk-check-mark {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.lk-check-mark svg { width: 12px; height: 12px; }
+
+.lk-check-mark--done {
+  color: #0a0a12;
+  background: var(--mint);
+  border: 1px solid transparent;
+  box-shadow: 0 0 10px rgba(52, 245, 197, 0.35);
+}
+.lk-check-mark--pending {
+  border: 1.5px solid var(--border-2);
+  background: var(--glass);
+}
+
+.lk-check-label {
+  font-size: 13px;
+  color: var(--text);
+}
+.lk-check-label--done {
+  color: var(--text-dim);
+}

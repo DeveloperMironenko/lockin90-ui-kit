@@ -1,5 +1,6 @@
 import { View, StyleSheet, type ViewProps } from 'react-native';
-import { colors, radii, nativeShadows } from '@lockin90/tokens';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, radii, nativeShadows, gradients } from '@lockin90/tokens';
 import { OptionalBlurView } from '../internal/optionalBlur';
 
 export interface CardProps extends ViewProps {
@@ -38,7 +39,15 @@ export function Card({ lit, padLg, pad, flat, blur, style, children, ...rest }: 
         style={[composed, styles.cardBlur, style]}
         {...rest}
       >
-        {lit && <View style={styles.lit} pointerEvents="none" />}
+        {lit && (
+          <LinearGradient
+            colors={gradients.flux.stops as unknown as [string, string]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.lit}
+            pointerEvents="none"
+          />
+        )}
         {children}
       </OptionalBlurView>
     );
@@ -58,6 +67,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radii.md,
+    // Clip children (edge-to-edge rows, the `lit` hairline) to the rounded
+    // corners so their borders/fills never bleed past the card radius.
+    overflow: 'hidden',
     padding: 22,
     ...nativeShadows.elev1,
   },
@@ -74,10 +86,9 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 1,
+    height: 1.5,
     borderTopLeftRadius: radii.md,
     borderTopRightRadius: radii.md,
-    backgroundColor: colors.accent,
-    opacity: 0.6,
+    opacity: 0.85,
   },
 });

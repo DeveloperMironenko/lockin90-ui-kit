@@ -1,0 +1,76 @@
+/* ============================================================================
+   StatCard — KPI cell (label / value / delta / spark bar). Tokens from
+   @lockin90/tokens. Namespaced `lk-statcard*`. Matches `.stat` + `.stat-cell`
+   + `.barfill` in the admin design.
+   ========================================================================== */
+
+.lk-statcard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* Uniform height: set just above the tallest card's natural content (label + value + one
+     extra row — delta OR spark) so EVERY card clamps to the same height without dead space. */
+  min-height: 104px;
+  padding: 14px 16px;
+  /* Opaque violet-tinted fill so every card reads identically regardless of the
+     aurora gradient behind it (translucent glass would bleed purple on the left,
+     teal on the right). Brighter border matches the "lit" look of the lead card. */
+  background: linear-gradient(180deg, rgba(124, 92, 255, 0.10), rgba(124, 92, 255, 0.03)), var(--bg-1);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r);
+  box-shadow: var(--elev-1);
+}
+
+.lk-statcard-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-faint);
+}
+
+.lk-statcard-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.lk-statcard-value--gradient {
+  background: linear-gradient(135deg, #7C5CFF, #22D3EE, #7C5CFF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.lk-statcard-value--mint {
+  color: var(--mint);
+}
+
+.lk-statcard-delta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.lk-statcard-delta--up { color: var(--zone-high); }
+.lk-statcard-delta--down { color: var(--zone-low); }
+.lk-statcard-delta--flat { color: var(--text-faint); }
+
+.lk-statcard-spark {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  margin-top: 3px;
+}
+.lk-statcard-spark > i {
+  display: block;
+  height: 100%;
+  width: calc(var(--v, 0) * 100%);
+  border-radius: 999px;
+  background: var(--grad-cta);
+  transition: width 1.1s var(--ease);
+}

@@ -34,6 +34,8 @@ export { DateField, TreeItem } from './components/DateField';
 export type { DateFieldProps, TreeItemProps } from './components/DateField';
 export { Divider } from './components/Divider';
 export type { DividerProps } from './components/Divider';
+export { SectionDivider } from './components/SectionDivider';
+export type { SectionDividerProps } from './components/SectionDivider';
 export { DonutChart } from './components/DonutChart';
 export type { DonutSegment, DonutChartProps } from './components/DonutChart';
 export { EmptyState } from './components/EmptyState';

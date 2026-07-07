@@ -5,6 +5,7 @@ export type IconName =
   // core (original 11)
   | 'back'
   | 'chevron'
+  | 'chevronLeft'
   | 'share'
   | 'more'
   | 'lock'
@@ -139,6 +140,7 @@ export interface IconProps extends HTMLAttributes<HTMLSpanElement> {
 const GLYPHS: Record<IconName, ReactNode> = {
   back: <polyline points="15 6 9 12 15 18" />,
   chevron: <polyline points="9 6 15 12 9 18" />,
+  chevronLeft: <polyline points="15 6 9 12 15 18" />,
   share: (
     <>
       <path d="M12 3v12" />

@@ -128,7 +128,8 @@ export type IconName =
   | 'pill'
   | 'flask'
   | 'syringe'
-  | 'camera';
+  | 'camera'
+  | 'logout';
 
 export interface IconProps {
   name: IconName;
@@ -265,6 +266,8 @@ function glyphFor(name: IconName, color: string): ReactNode {
       );
     case 'shield':
       return <Path d="M12 3 5 6v5c0 4 3 7 7 9 4-2 7-5 7-9V6z" />;
+    case 'logout':
+      return <Path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />;
     case 'apple':
       return (
         <Path

@@ -16,6 +16,8 @@ export interface ReauthDialogProps {
   onSubmitPassword?: (password: string) => void;
   /** Google re-auth path — invoked by the "Continue with Google" button. */
   onGoogle?: () => void;
+  /** Apple re-auth path — invoked by the "Continue with Apple" button. */
+  onApple?: () => void;
   /** Header title. */
   title?: string;
   /** Short reassurance line under the title. */
@@ -24,10 +26,21 @@ export interface ReauthDialogProps {
   hasPassword?: boolean;
   /** Show the "Continue with Google" button (default false). */
   hasGoogle?: boolean;
+  /** Show the "Continue with Apple" button (default false). */
+  hasApple?: boolean;
   /** Disable inputs + show loading on submit. */
   loading?: boolean;
   /** Error message rendered in a danger Alert above the fields. */
   error?: string;
+  /** Localizable labels — English defaults; pass translated strings to localize. */
+  passwordLabel?: string;
+  passwordPlaceholder?: string;
+  confirmLabel?: string;
+  confirmingLabel?: string;
+  cancelLabel?: string;
+  googleLabel?: string;
+  appleLabel?: string;
+  orLabel?: string;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -55,22 +68,44 @@ function GoogleMark() {
   );
 }
 
+/** Apple mark — the SSO glyph, tinted to the current text color. */
+function AppleMark() {
+  return (
+    <Svg width={17} height={17} viewBox="0 0 24 24">
+      <Path
+        fill={colors.text}
+        d="M16.37 12.7c.03 3.02 2.65 4.02 2.68 4.03-.02.07-.42 1.44-1.38 2.85-.83 1.22-1.7 2.44-3.06 2.46-1.34.03-1.77-.79-3.3-.79-1.53 0-2.01.77-3.28.82-1.32.05-2.32-1.32-3.16-2.54-1.72-2.5-3.03-7.05-1.27-10.12.87-1.53 2.44-2.5 4.14-2.52 1.3-.03 2.52.87 3.31.87.79 0 2.28-1.08 3.84-.92.65.03 2.49.26 3.67 1.99-.1.06-2.19 1.28-2.17 3.51M14.06 4.5c.7-.85 1.17-2.03 1.04-3.2-1 .04-2.22.67-2.94 1.51-.64.75-1.2 1.95-1.05 3.1 1.12.09 2.25-.57 2.95-1.41"
+      />
+    </Svg>
+  );
+}
+
 /**
  * Step-up re-authentication dialog — "confirm it's you" before a sensitive
- * action. A centered Modal with an optional password path + optional Google
- * path; local password state is kept internal and cleared on close.
+ * action. A centered Modal with an optional password path + optional Google /
+ * Apple SSO paths; local password state is kept internal and cleared on close.
  */
 export function ReauthDialog({
   open,
   onClose,
   onSubmitPassword,
   onGoogle,
+  onApple,
   title = "Confirm it's you",
   description = 'For your security, re-enter your password to continue.',
   hasPassword = true,
   hasGoogle = false,
+  hasApple = false,
   loading = false,
   error,
+  passwordLabel = 'Password',
+  passwordPlaceholder = 'Your password',
+  confirmLabel = 'Confirm',
+  confirmingLabel = 'Confirming…',
+  cancelLabel = 'Cancel',
+  googleLabel = 'Continue with Google',
+  appleLabel = 'Continue with Apple',
+  orLabel = 'or',
   style,
 }: ReauthDialogProps) {
   const [password, setPassword] = useState('');
@@ -104,11 +139,11 @@ export function ReauthDialog({
         {hasPassword ? (
           <View style={styles.pw}>
             <Input
-              label="Password"
+              label={passwordLabel}
               secureTextEntry
               autoComplete="current-password"
               textContentType="password"
-              placeholder="Your password"
+              placeholder={passwordPlaceholder}
               value={password}
               editable={!loading}
               invalid={Boolean(error)}
@@ -117,7 +152,7 @@ export function ReauthDialog({
             />
             <Button
               variant="primary"
-              title={loading ? 'Confirming…' : 'Confirm'}
+              title={loading ? confirmingLabel : confirmLabel}
               style={styles.submit}
               disabled={loading || !password}
               onPress={submit}
@@ -125,10 +160,10 @@ export function ReauthDialog({
           </View>
         ) : null}
 
-        {hasPassword && hasGoogle ? (
+        {hasPassword && (hasGoogle || hasApple) ? (
           <View style={styles.or}>
             <View style={styles.ln} />
-            <Text style={styles.orText}>or</Text>
+            <Text style={styles.orText}>{orLabel}</Text>
             <View style={styles.ln} />
           </View>
         ) : null}
@@ -143,7 +178,23 @@ export function ReauthDialog({
             {({ pressed }) => (
               <View style={[styles.google, pressed && styles.pressed, loading && styles.disabled]}>
                 <GoogleMark />
-                <Text style={styles.googleLabel}>Continue with Google</Text>
+                <Text style={styles.googleLabel}>{googleLabel}</Text>
+              </View>
+            )}
+          </Pressable>
+        ) : null}
+
+        {hasApple ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Continue with Apple"
+            disabled={loading}
+            onPress={() => onApple?.()}
+          >
+            {({ pressed }) => (
+              <View style={[styles.apple, pressed && styles.pressed, loading && styles.disabled]}>
+                <AppleMark />
+                <Text style={styles.appleLabel}>{appleLabel}</Text>
               </View>
             )}
           </Pressable>
@@ -151,7 +202,7 @@ export function ReauthDialog({
 
         <Button
           variant="ghost"
-          title="Cancel"
+          title={cancelLabel}
           style={styles.submit}
           disabled={loading}
           onPress={close}
@@ -202,6 +253,25 @@ const styles = StyleSheet.create({
     borderColor: colors.border2,
   },
   googleLabel: {
+    fontFamily: fonts.ui,
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  apple: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 9,
+    width: '100%',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: radii.pill,
+    backgroundColor: colors.glass2,
+    borderWidth: 1,
+    borderColor: colors.border2,
+  },
+  appleLabel: {
     fontFamily: fonts.ui,
     fontSize: 14,
     fontWeight: '600',

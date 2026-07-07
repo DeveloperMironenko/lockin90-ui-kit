@@ -34,6 +34,10 @@ export interface MenuProps extends HTMLAttributes<HTMLDivElement> {
   items?: MenuItemData[];
   /** Which edge of the trigger the panel aligns to. */
   align?: 'left' | 'right';
+  /** Drop the trigger's default button chrome (border / hover bg / open-state
+   *  ring). Use when the trigger is already a complete visual element (e.g.
+   *  an avatar + name row) and the surrounding chrome would be visual noise. */
+  bare?: boolean;
 }
 
 const DEFAULT_ITEMS: MenuItemData[] = [
@@ -48,7 +52,7 @@ const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : use
 /** Popover menu of actions — a glass panel of item rows anchored to a trigger.
  *  The panel is portaled to <body> (no overflow ancestor can clip it) and flips
  *  above the trigger / shifts sideways to stay inside the viewport. */
-export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right', className, ...rest }: MenuProps) {
+export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right', bare = false, className, ...rest }: MenuProps) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<MenuPosition | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -109,7 +113,7 @@ export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right', classNam
     : { top: 0, left: 0, opacity: 0, pointerEvents: 'none' };
 
   return (
-    <div ref={rootRef} className={cn('lk-menu', className)} {...rest}>
+    <div ref={rootRef} className={cn('lk-menu', bare && 'lk-menu--bare', className)} {...rest}>
       <button
         type="button"
         className="lk-menu-trigger"

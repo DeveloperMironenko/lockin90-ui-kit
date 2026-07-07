@@ -1,7 +1,7 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
 
-export type ButtonVariant = 'default' | 'primary' | 'ghost';
+export type ButtonVariant = 'default' | 'primary' | 'ghost' | 'sso';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -26,6 +26,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         'lk-btn',
         variant === 'primary' && 'lk-btn-primary',
         variant === 'ghost' && 'lk-btn-ghost',
+        variant === 'sso' && 'lk-btn-sso',
         size === 'sm' && 'lk-btn-sm',
         className,
       )}

@@ -1,4 +1,4 @@
-import { useId, type HTMLAttributes } from 'react';
+import { useId, useState, type HTMLAttributes } from 'react';
 import { cn } from '../cn';
 
 /** A round HTML overlay dot pinned over a data point (kept circular despite the
@@ -138,6 +138,10 @@ export interface LineChartProps extends HTMLAttributes<HTMLDivElement> {
   fan?: { upper: number[]; lower: number[]; color?: string };
   /** from this data index onward the main line renders dashed (forecast continuation) */
   dashedFromIndex?: number;
+  /** Enable pointer scrubbing: reports the nearest data index on hover (null on
+   *  leave) and draws a cursor line + dot. Lets a consumer read out the hovered
+   *  value (e.g. a gauge that tracks the chart). */
+  onHoverIndex?: (index: number | null) => void;
   /** NOW anchor (data index): vertical rule + dot; past solid / future dashed (LC-36) */
   now?: number;
   /** pulse ring on the NOW dot (reduced-motion safe) */
@@ -550,6 +554,7 @@ export function LineChart({
   band,
   fan,
   dashedFromIndex,
+  onHoverIndex,
   now,
   nowPulse,
   nowLabel = 'NOW',
@@ -576,6 +581,7 @@ export function LineChart({
   ...rest
 }: LineChartProps) {
   const uid = useId();
+  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const strokeId = `lk-lc-stroke-${uid}`;
   const fillId = `lk-lc-fill-${uid}`;
   const zoneId = `lk-lc-zone-${uid}`;
@@ -1217,6 +1223,31 @@ export function LineChart({
             {c.text}
           </span>
         ))}
+        {/* hover scrubbing — cursor line + dot at the nearest data index */}
+        {hoverIdx != null && pts[hoverIdx] && (
+          <span className="lk-lc-cursor" style={{ left: ox(pts[hoverIdx]![0]) }}>
+            <span
+              className="lk-lc-cursor-dot"
+              style={{ top: oy(pts[hoverIdx]![1]), background: strokeColor }}
+            />
+          </span>
+        )}
+        {onHoverIndex && data.length > 1 && (
+          <div
+            className="lk-lc-hover"
+            onMouseMove={(e) => {
+              const box = e.currentTarget.getBoundingClientRect();
+              const frac = (e.clientX - box.left) / box.width;
+              const idx = Math.max(0, Math.min(data.length - 1, Math.round(frac * (data.length - 1))));
+              setHoverIdx(idx);
+              onHoverIndex(idx);
+            }}
+            onMouseLeave={() => {
+              setHoverIdx(null);
+              onHoverIndex(null);
+            }}
+          />
+        )}
         </div>
 
         {/* y-axis value labels, pinned in the right gutter at each tick's y */}

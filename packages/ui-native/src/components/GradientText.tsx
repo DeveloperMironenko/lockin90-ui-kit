@@ -21,6 +21,12 @@ export function GradientText({ gradient = 'flux', style, children, ...rest }: Gr
   const letterSpacing = typeof flat.letterSpacing === 'number' ? flat.letterSpacing : undefined;
   const text = typeof children === 'string' || typeof children === 'number' ? String(children) : '';
 
+  // Horizontal breathing room: react-native-svg lays glyphs out slightly wider than RN's Text
+  // measurement (worse with bold display fonts + negative letterSpacing), so a tight SVG width
+  // clips the last glyph. Pad both sides and draw the text CENTERED (text-anchor middle) so it
+  // never clips left or right regardless of the measurement gap.
+  const pad = Math.max(3, Math.round(fontSize * 0.14));
+
   // pass 1 — lay out the real text (hidden) to measure it; pass 2 draws the SVG
   if (!size || !text) {
     return (
@@ -28,7 +34,7 @@ export function GradientText({ gradient = 'flux', style, children, ...rest }: Gr
         {...rest}
         onLayout={(e: LayoutChangeEvent) => {
           const { width, height } = e.nativeEvent.layout;
-          if (width && height) setSize({ w: Math.ceil(width) + 2, h: Math.ceil(height) });
+          if (width && height) setSize({ w: Math.ceil(width) + pad * 2, h: Math.ceil(height) });
         }}
         style={[style, text ? { opacity: 0 } : null]}
       >
@@ -53,7 +59,8 @@ export function GradientText({ gradient = 'flux', style, children, ...rest }: Gr
         fontWeight={fontWeight}
         fontFamily={fontFamily}
         letterSpacing={letterSpacing}
-        x={0}
+        textAnchor="middle"
+        x={size.w / 2}
         y={size.h * 0.78}
       >
         {text}

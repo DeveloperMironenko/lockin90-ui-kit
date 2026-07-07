@@ -6,6 +6,32 @@
 // --- App shell ---
 export { SideNav } from './SideNav';
 export type { SideNavProps, NavItemData, NavGroupData } from './SideNav';
+export { CommandPalette } from './CommandPalette';
+export type { CommandPaletteProps, CommandPaletteItem } from './CommandPalette';
+export { Panel } from './Panel';
+export type { PanelProps } from './Panel';
+
+// --- Overview / dashboard ---
+export { StatCard } from './StatCard';
+export type { StatCardProps, StatDeltaDir, StatValueTone } from './StatCard';
+export { Sparkline } from './Sparkline';
+export type { SparklineProps, SparkDeltaDir } from './Sparkline';
+export { StatusChip } from './StatusChip';
+export type { StatusChipProps, StatusChipTone } from './StatusChip';
+export { AuditEntry } from './AuditEntry';
+export type { AuditEntryProps } from './AuditEntry';
+export { QueueTile } from './QueueTile';
+export type { QueueTileProps, QueueTileTone } from './QueueTile';
+export { WorkerRow } from './WorkerRow';
+export type { WorkerRowProps, WorkerTone } from './WorkerRow';
+export { MetricRow } from './MetricRow';
+export type { MetricRowProps } from './MetricRow';
+export { ChecklistRow } from './ChecklistRow';
+export type { ChecklistRowProps } from './ChecklistRow';
+export { Statistic } from './Statistic';
+export type { StatisticProps, StatisticSize, StatisticTone } from './Statistic';
+export { MiniBar } from './MiniBar';
+export type { MiniBarProps, MiniBarTone } from './MiniBar';
 
 // --- Data / display ---
 export { MethodChip, type MethodChipProps, type Method } from './MethodChip';

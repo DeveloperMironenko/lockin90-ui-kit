@@ -88,11 +88,12 @@ export function Stepper({
                   end={{ x: 1, y: 0 }}
                   style={[
                     styles.line,
+                    isGlow && styles.lineGlow,
                     isGlow && (nativeShadows.glowMint as object),
                   ]}
                 />
               ) : (
-                <View style={[styles.line, styles.lineFaint]} />
+                <View style={[styles.line, isGlow && styles.lineGlow, styles.lineFaint]} />
               ))}
             <PressableMaybe
               onPress={pressHandler}
@@ -300,6 +301,9 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   lineFaint: { backgroundColor: colors.border },
+  // Glow nodes are 40px tall (vs 30px compact), so the connector must drop to
+  // their vertical center: (40 - 2) / 2 = 19.
+  lineGlow: { marginTop: 19 },
 
   /* glow variant — 40px nodes, hollow mint "done", CTA "current" */
   itemGlow: { flex: 1, minWidth: 40 },

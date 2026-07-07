@@ -30,6 +30,7 @@
 @import './components/heatmap.css';
 @import './components/highlight.css';
 @import './components/hypnogram.css';
+@import './components/sectiondivider.css';
 @import './components/icon.css';
 @import './components/input.css';
 @import './components/pwinput.css';
@@ -99,6 +100,17 @@
 @import './components/secretfield.css';
 @import './components/inlineedit.css';
 @import './components/pulsestrip.css';
+@import './components/panel.css';
+@import './components/statcard.css';
+@import './components/statuschip.css';
+@import './components/sparkline.css';
+@import './components/auditentry.css';
+@import './components/queuetile.css';
+@import './components/workerrow.css';
+@import './components/metricrow.css';
+@import './components/checklistrow.css';
+@import './components/statistic.css';
+@import './components/minibar.css';
 @import './components/funnel.css';
 @import './components/pushpreview.css';
 @import './components/permissionmatrix.css';

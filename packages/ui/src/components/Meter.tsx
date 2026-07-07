@@ -1,8 +1,8 @@
 import { type CSSProperties, type HTMLAttributes } from 'react';
 import { cn } from '../cn';
 
-/** Zone tone — colors the fill (and segments). 'accent' is the gradient default. */
-export type MeterTone = 'high' | 'mid' | 'low' | 'accent';
+/** Zone tone — colors the fill (and segments). 'accent'/'mint' are gradients. */
+export type MeterTone = 'high' | 'mid' | 'low' | 'accent' | 'mint';
 
 export interface MeterProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   /** the scalar value to read out, in [min, max] */
@@ -28,6 +28,7 @@ export interface MeterProps extends Omit<HTMLAttributes<HTMLDivElement>, 'childr
 /** Convert a tone to its fill background (accent → gradient, zones → solid). */
 const TONE_FILL: Record<MeterTone, string> = {
   accent: 'var(--grad-cta)',
+  mint: 'var(--grad-mint)',
   high: 'var(--zone-high)',
   mid: 'var(--zone-mid)',
   low: 'var(--zone-low)',
@@ -36,6 +37,7 @@ const TONE_FILL: Record<MeterTone, string> = {
 /** Convert a tone to its glow color. */
 const TONE_GLOW: Record<MeterTone, string> = {
   accent: 'var(--accent)',
+  mint: 'var(--mint)',
   high: 'var(--zone-high)',
   mid: 'var(--zone-mid)',
   low: 'var(--zone-low)',

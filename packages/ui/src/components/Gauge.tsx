@@ -29,6 +29,9 @@ export interface GaugeProps extends HTMLAttributes<HTMLDivElement> {
   thickness?: number;
   /** total sweep in degrees, opening at bottom-center (default 270) */
   sweep?: number;
+  /** rotate the arc's start point clockwise by this many degrees (0 = default:
+   *  opening centered at the bottom). e.g. 200 starts just right of 12 o'clock. */
+  startOffset?: number;
   /** colored zone bands up to each `to` on the [min,max] scale. When omitted a
    *  single accent→mint progress arc to `value` is drawn over the track. */
   zones?: GaugeZone[];
@@ -40,12 +43,18 @@ export interface GaugeProps extends HTMLAttributes<HTMLDivElement> {
    *  'var(--zone-mid)', 'var(--zone-high)']` is the DN-13 red→amber→green
    *  strain gauge; a single string is treated like a solid `color`. */
   gradient?: string | string[];
+  /** orient the multi-stop `gradient` along the value arc — first stop at the
+   *  arc start, last stop at the value point — instead of a flat L→R sweep. */
+  followArc?: boolean;
   /** color the value arc + readout by the value's zone verdict on the
    *  [min,max] scale (≥62% → high, ≥38% → mid, else low). */
   zone?: boolean;
   /** glow underlay — a wider, blurred faint duplicate of the value arc
    *  (the catalog's shine modifier; off by default) */
   shine?: boolean;
+  /** soft colored drop-shadow around the value arc + end cap (on by default;
+   *  set `false` for a flat arc with no glow) */
+  glow?: boolean;
   /** number of tick marks along the arc (default 0 = off) */
   ticks?: number;
   /** tick placement: `span` straddles the arc (default, legacy) · `out` sits
@@ -91,11 +100,14 @@ export function Gauge({
   size = 140,
   thickness = 12,
   sweep = 270,
+  startOffset = 0,
   zones,
   color,
   gradient,
+  followArc = false,
   zone = false,
   shine = false,
+  glow = true,
   ticks = 0,
   tickPosition = 'span',
   cap = true,
@@ -111,6 +123,9 @@ export function Gauge({
 
   const span = max - min || 1;
   const sw = Math.max(0, Math.min(360, sweep));
+  // At a full 360° sweep the arc's start and end points coincide, so an SVG
+  // `A` path degenerates (renders nothing). Draw a real <circle> instead.
+  const isFull = sw >= 360;
   const v = Math.max(min, Math.min(max, value));
 
   const cx = size / 2;
@@ -133,7 +148,7 @@ export function Gauge({
 
   // The gap is centered at the bottom (screen-angle 90°). The arc starts to the
   // left of bottom and sweeps clockwise over the top to the right of bottom.
-  const startDeg = 90 + (360 - sw) / 2;
+  const startDeg = 90 + (360 - sw) / 2 + startOffset;
   const endDeg = startDeg + sw;
   /** map a [min,max] value to its screen-angle along the sweep */
   const toAngle = (val: number) => startDeg + ((val - min) / span) * sw;
@@ -167,6 +182,11 @@ export function Gauge({
 
   const valueAngle = toAngle(v);
 
+  // When `followArc`, the value-arc gradient runs along the arc — first stop at
+  // the arc start, last stop at the value point — instead of a flat L→R sweep.
+  const gStart = polar(cx, cy, r, startDeg);
+  const gEnd = polar(cx, cy, r, valueAngle);
+
   return (
     <div
       className={cn('lk-gauge', className)}
@@ -178,7 +198,18 @@ export function Gauge({
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
         {useGradient ? (
           <defs>
-            <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
+            <linearGradient
+              id={gradId}
+              {...(followArc
+                ? {
+                    gradientUnits: 'userSpaceOnUse' as const,
+                    x1: gStart.x,
+                    y1: gStart.y,
+                    x2: gEnd.x,
+                    y2: gEnd.y,
+                  }
+                : { x1: '0', y1: '0', x2: '1', y2: '0' })}
+            >
               {gradient.map((stopColor, i) => (
                 <stop
                   key={i}
@@ -190,12 +221,16 @@ export function Gauge({
           </defs>
         ) : null}
 
-        {/* track — the full sweep, faint */}
-        <path
-          className="lk-gauge-track"
-          d={arcPath(cx, cy, r, startDeg, endDeg)}
-          strokeWidth={thickness}
-        />
+        {/* track — the full sweep, faint (a real circle when the sweep is 360°) */}
+        {isFull ? (
+          <circle className="lk-gauge-track" cx={cx} cy={cy} r={r} strokeWidth={thickness} />
+        ) : (
+          <path
+            className="lk-gauge-track"
+            d={arcPath(cx, cy, r, startDeg, endDeg)}
+            strokeWidth={thickness}
+          />
+        )}
 
         {/* zone bands (when provided) */}
         {bands.map((b, i) => (
@@ -222,19 +257,36 @@ export function Gauge({
         ) : null}
 
         {/* progress arc to value — only when there are no zones (zones already
-            color the scale up to the value's band) */}
+            color the scale up to the value's band). A full circle at max would
+            also degenerate as a path, so draw a <circle> there too. */}
         {!hasZones && v > min ? (
-          <path
-            className="lk-gauge-arc"
-            d={arcPath(cx, cy, r, startDeg, valueAngle)}
-            strokeWidth={thickness}
-            style={
-              {
-                ...(arcStroke ? { stroke: arcStroke } : {}),
-                ['--lk-gauge-glow']: glowColor,
-              } as CSSProperties
-            }
-          />
+          isFull && v >= max ? (
+            <circle
+              className="lk-gauge-arc"
+              cx={cx}
+              cy={cy}
+              r={r}
+              strokeWidth={thickness}
+              style={
+                {
+                  ...(arcStroke ? { stroke: arcStroke } : {}),
+                  ['--lk-gauge-glow']: glow ? glowColor : 'transparent',
+                } as CSSProperties
+              }
+            />
+          ) : (
+            <path
+              className="lk-gauge-arc"
+              d={arcPath(cx, cy, r, startDeg, valueAngle)}
+              strokeWidth={thickness}
+              style={
+                {
+                  ...(arcStroke ? { stroke: arcStroke } : {}),
+                  ['--lk-gauge-glow']: glow ? glowColor : 'transparent',
+                } as CSSProperties
+              }
+            />
+          )
         ) : null}
 
         {/* ticks */}
@@ -266,7 +318,7 @@ export function Gauge({
                 style={
                   {
                     stroke: capColor,
-                    filter: `drop-shadow(0 0 6px ${capColor})`,
+                    filter: glow ? `drop-shadow(0 0 6px ${capColor})` : 'none',
                   } as CSSProperties
                 }
               />

@@ -36,6 +36,19 @@
   border-color: var(--border-2);
 }
 
+/* ---- bare variant — trigger is already a complete visual element (e.g. an
+   avatar + name row). Drops border, hover bg, and the open-state ring so the
+   surrounding chrome doesn't compete with the trigger content. ---- */
+.lk-menu--bare .lk-menu-trigger,
+.lk-menu--bare .lk-menu-trigger:hover,
+.lk-menu--bare .lk-menu-trigger[aria-expanded='true'] {
+  min-width: 0;
+  height: auto;
+  padding: 0;
+  border-color: transparent;
+  background: transparent;
+}
+
 /* ---- floating panel (portaled to <body>, positioned by the component) ---- */
 .lk-menu-panel {
   position: fixed;

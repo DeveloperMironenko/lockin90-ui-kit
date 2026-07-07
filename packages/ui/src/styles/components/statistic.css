@@ -1,0 +1,44 @@
+/* ============================================================================
+   Statistic — borderless big-number block for inside a Panel. Tokens from
+   @lockin90/tokens. Namespaced `lk-statistic*`.
+   ========================================================================== */
+
+.lk-statistic {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.lk-statistic-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.lk-statistic-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text);
+}
+.lk-statistic-value--lg { font-size: 28px; }
+
+.lk-statistic-value--gradient {
+  background: linear-gradient(135deg, #7C5CFF, #22D3EE, #7C5CFF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.lk-statistic-value--mint { color: var(--mint); }
+
+.lk-statistic-sub {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-faint);
+}

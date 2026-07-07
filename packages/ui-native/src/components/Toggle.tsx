@@ -44,7 +44,10 @@ export function Toggle({
           width: dims.knob,
           height: dims.knob,
           borderRadius: dims.knob / 2,
-          top: dims.pad,
+          // Vertically center regardless of track height/border (plain `top: pad`
+          // left the knob a hair high). Horizontal inset stays `pad`.
+          top: '50%',
+          marginTop: -dims.knob / 2,
           left: dims.pad,
           transform: [{ translateX: checked ? knobOffset : 0 }],
         },

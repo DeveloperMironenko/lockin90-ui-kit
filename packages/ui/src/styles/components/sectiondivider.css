@@ -1,0 +1,18 @@
+/* ============================================================================
+   SectionDivider — an eyebrow label + a hairline that fades to the right, for
+   separating page sections. Key: .lk-section-divider
+   ========================================================================== */
+.lk-section-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.lk-section-divider-label {
+  white-space: nowrap;
+}
+.lk-section-divider-line {
+  flex: 1;
+  height: 1px;
+  min-width: 24px;
+  background: linear-gradient(90deg, var(--border-2), transparent);
+}
