@@ -104,7 +104,7 @@ No hover/focus/disabled — presentational.
 
 - **Classic `gradient`:** web CSS string ↔ native `[top, bottom]` tuple (pre-existing, unchanged).
 - **BC-17 pulse:** web ring animates via CSS keyframes; native renders a **static** ring + faint halo (no SMIL/Animated SVG radius without new deps). Same dot, same colors.
-- **Shine:** web = blurred duplicate; native = wider faint duplicate (SVG filters are unreliable on device — same rule as Ring's glow).
+- **Shine:** web = blurred duplicate; native = Gaussian-blurred duplicate too, via `FeGaussianBlur stdDeviation 2.5` in a padded `userSpaceOnUse` region (real RN-SVG Fabric filters — see CONVENTIONS.md).
 - Color literals: web `var(--x)` ↔ native `colors.x` hex — the kit-wide convention.
 
 ## 6. Composition & usage

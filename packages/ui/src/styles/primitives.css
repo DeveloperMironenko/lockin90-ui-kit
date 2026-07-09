@@ -95,10 +95,31 @@
   border-radius: var(--r-sm); font-size: 13.5px; gap: 10px;
 }
 .lk-btn-sso svg { width: 18px; height: 18px; }
+/* danger tone — destructive actions (delete / remove / revoke). Composes with
+   `variant`: solid `--bad` fill on the default button, red-tinted transparent
+   on `.lk-btn-ghost`. */
+.lk-btn--tone-danger {
+  border: none; color: #0A0A12; background: var(--bad);
+  box-shadow: 0 0 24px -6px color-mix(in srgb, var(--bad) 55%, transparent);
+}
+.lk-btn--tone-danger:hover { box-shadow: 0 0 34px -4px color-mix(in srgb, var(--bad) 70%, transparent); }
+.lk-btn-ghost.lk-btn--tone-danger {
+  background: color-mix(in srgb, var(--bad) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--bad) 42%, transparent);
+  color: var(--bad); box-shadow: none;
+}
+.lk-btn-ghost.lk-btn--tone-danger:hover {
+  background: color-mix(in srgb, var(--bad) 16%, transparent);
+  border-color: color-mix(in srgb, var(--bad) 60%, transparent);
+  color: var(--bad);
+}
 
 /* ---- chips / badges / pills ---- */
+/* Canonical tone pill. `.lk-chip-sm` is the compact count/status badge size (the
+   retired `Badge`); the marketing `Pill` and admin `StatusChip` are thin wrappers
+   that emit these same classes. */
 .lk-chip {
-  display: inline-flex; align-items: center; gap: 7px;
+  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
   font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
   padding: 5px 11px; border-radius: var(--r-pill);
   border: 1px solid var(--border); background: var(--glass); color: var(--text-dim);
@@ -108,7 +129,35 @@
 .lk-chip.lk-low { color: var(--zone-low); border-color: rgba(255, 77, 109, 0.35); background: rgba(255, 77, 109, 0.08); }
 .lk-chip.lk-accent { color: #cbbcff; border-color: rgba(124, 92, 255, 0.4); background: rgba(124, 92, 255, 0.10); }
 .lk-chip.lk-neutral { color: var(--text-faint); border-color: var(--border-2); background: var(--glass-2); }
-.lk-chip.lk-dot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+.lk-chip.lk-dot::before { content: ""; flex: none; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+
+/* ---- chip size: sm — the compact count/status badge (formerly `Badge`) ---- */
+/* Tighter box + 10px tabular mono. Tone treatments differ from the md pill: the
+   accent tone is a FILLED gradient count pill and the neutral tone reads dim on
+   glass-2 (this preserves the retired Badge's look exactly). */
+.lk-chip.lk-chip-sm {
+  gap: 4px; justify-content: center;
+  min-width: 16px; min-height: 16px;
+  padding: 2px 6px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.lk-chip.lk-chip-sm.lk-high { background: rgba(52, 245, 197, 0.10); }
+.lk-chip.lk-chip-sm.lk-mid { background: rgba(255, 176, 32, 0.10); }
+.lk-chip.lk-chip-sm.lk-low { background: rgba(255, 77, 109, 0.10); }
+.lk-chip.lk-chip-sm.lk-neutral { color: var(--text-dim); border-color: var(--border); background: var(--glass-2); }
+.lk-chip.lk-chip-sm.lk-accent { color: #0A0A12; background: var(--grad-cta); border-color: transparent; }
+/* sm bare dot — the whole chip collapses to an 8px glowing circle, no text
+   (Badge's `dot` mode). These rules come last so the dot background wins over
+   the tone background. */
+.lk-chip.lk-chip-sm.lk-dot {
+  gap: 0; min-width: 0; min-height: 0; width: 8px; height: 8px;
+  padding: 0; border: 0; border-radius: 50%;
+  background: currentColor; box-shadow: 0 0 8px currentColor;
+}
+.lk-chip.lk-chip-sm.lk-dot::before { content: none; }
+.lk-chip.lk-chip-sm.lk-dot.lk-accent { color: var(--accent); background: currentColor; }
+.lk-chip.lk-chip-sm.lk-dot.lk-neutral { color: var(--text-faint); box-shadow: none; }
 
 /* ---- live pulse dot ---- */
 .lk-pulse { position: relative; width: 9px; height: 9px; border-radius: 50%; background: var(--ok); display: inline-block; }
@@ -127,6 +176,33 @@
 /* empty / zero-data placeholder: faint em-dash value + a faint mono hint line */
 .lk-stat-empty .lk-stat-empty-value { color: var(--text-faint); }
 .lk-stat .lk-stat-hint { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.02em; color: var(--text-faint); }
+/* optional caption below the value (admin Statistic's `sub`) */
+.lk-stat .lk-stat-sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); }
+
+/* value tone — gradient or mint, mirroring admin Statistic / marketing Stat.
+   The non-hero gradient is the static flux (violet→cyan→violet); the hero size
+   uses the animated full-spectrum gradient (matches the marketing Stat). */
+.lk-stat .lk-stat-v-grad {
+  background-image: linear-gradient(135deg, #7C5CFF, #22D3EE, #7C5CFF);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.lk-stat .lk-stat-v-mint { color: var(--mint); }
+
+/* size scale — md (default 30px) · sm/lg mirror admin Statistic (20/28px) ·
+   hero is the marketing Stat (huge flux number with the label BELOW). */
+.lk-stat-sm, .lk-stat-lg { gap: 3px; min-width: 0; }
+.lk-stat-sm .lk-label, .lk-stat-lg .lk-label { font-size: 10px; letter-spacing: 0.12em; }
+.lk-stat-sm .lk-value { font-size: 20px; line-height: 1.1; }
+.lk-stat-lg .lk-value { font-size: 28px; line-height: 1.1; }
+.lk-stat-hero { gap: 8px; flex-direction: column-reverse; }
+.lk-stat-hero .lk-label { font-size: 11px; font-weight: 500; letter-spacing: 0.18em; color: var(--text-dim); }
+.lk-stat-hero .lk-value { font-size: clamp(40px, 6vw, 60px); letter-spacing: -0.03em; line-height: 1; }
+.lk-stat-hero .lk-stat-v-grad {
+  background-image: linear-gradient(100deg, #A8FF35, #34F5C5, #22D3EE, #7C5CFF, #FF3D81, #7C5CFF, #22D3EE, #34F5C5, #A8FF35);
+  background-size: 200% 100%;
+  animation: lk-flow-text 9s linear infinite;
+}
 
 /* ---- bar fill (fills to --v on .is-visible) ---- */
 .lk-barfill { height: 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); overflow: hidden; }

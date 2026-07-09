@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/ZonePyramid.tsx` · `packages/ui-native/src/components/ZonePyramid.tsx` ·
 > web CSS `packages/ui/src/styles/components/pyramid.css` (`.lk-pyr*`).
 > **Exports:** `ZonePyramid`, types `ZonePyramidProps`, `ZonePyramidVariant`, `PyramidZone`.
-> **Status:** Shipped. **Parity:** 🟡 same API & look; `shine` blurs the duplicate bar on web (`filter: blur(4px)`) vs a wider faint duplicate on native.
+> **Status:** Shipped. **Parity:** 🟡 same API & look; `shine` blurs the duplicate bar on both — web `filter: blur(4px)`, native `FeGaussianBlur stdDeviation 2` (real RN-SVG filters).
 > **Stories:** `packages/ui/src/stories/ZonePyramid.stories.tsx` (`Charts/ZonePyramid`) · `packages/ui-native/src/stories/ZonePyramid.stories.tsx` (`Native/ZonePyramid`).
 
 ---
@@ -60,7 +60,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | OVER pill (PY-02) | catalog `tag()` chip: `--bg-0` at 78% + amber (`--zone-mid`) hairline + 8px mono, right-anchored at `CX+MAXW/2+24`, at the overage row's top |
 | Delta pill (PY-03) | same chip at (`CX+80`, 140) in the changed zone's color |
 | Caption | mono 8.5 `--text-faint`, centered at (`CX`, 144) |
-| Shine | duplicate bar at opacity 0.55 — web `.lk-pyr-shine` (`blur(4px)`); native a 2px-inflated duplicate at opacity 0.3 — never SVG filters |
+| Shine | duplicate bar at opacity 0.55 — web `.lk-pyr-shine` (`blur(4px)`); native the same duplicate at 0.55, Gaussian-blurred (`FeGaussianBlur stdDeviation 2`) |
 | Sizing | web `.lk-pyr-svg`: `width 100%; height auto; overflow visible`; native root: `width '100%', aspectRatio 320/150` |
 
 ## 4. States
@@ -82,7 +82,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks.
 
 **🟡 same API, platform-shaped implementation.** Identical geometry, normalization, derivations (`pct`, `h:mm`, total, OVER/delta pills) and label layout — both compute from the same catalog constants. The real differences:
 
-- **Shine substrate** — web blurs the duplicate bar (`.lk-pyr-shine`, `filter: blur(4px)`, opacity 0.55); native draws a **2px-inflated unblurred duplicate** at opacity 0.3 (the `Ring` glow precedent) because RN SVG filters are unreliable on device.
+- **Shine substrate** — web blurs the duplicate bar (`.lk-pyr-shine`, `filter: blur(4px)`, opacity 0.55); native Gaussian-blurs the same duplicate at 0.55 via `FeGaussianBlur stdDeviation 2` in a padded `userSpaceOnUse` region (see CONVENTIONS.md).
 - **Label styling channel** — web styles `<text>` via `.lk-pyr-label` / `.lk-pyr-zone` / `.lk-pyr-tag`; native passes `fontSize/fontFamily/fontWeight/letterSpacing` props on `Svg.Text`.
 - **Container** — web `div[role=img]` + `className`/rest; native `View accessibilityRole="image"` + `style`.
 

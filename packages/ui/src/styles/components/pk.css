@@ -109,3 +109,44 @@
   display: flex; justify-content: space-between; padding: 0 1px;
   font-family: var(--font-mono); font-size: 9.5px; color: var(--text-faint);
 }
+
+/* ── heartbeat (live raw-`samples` trace only) ──────────────────────────────
+   Paced by the `bpm` prop: the component sets --lk-pk-beat inline to the beat
+   period (60000/bpm ms; the fallback below is 64bpm). Each beat = a lub-dub
+   scale pulse of the peak dot + a sonar ring expanding off it (same language
+   as .lk-pulse's lk-ping) + a brief glow flash of the trace. The `still` prop
+   renders none of it; reduced motion holds it static here. */
+.lk-pk { --lk-pk-beat: 937.5ms; }
+
+/* lub-dub: two quick pulses in the first ~1/3 of the period, then rest */
+@keyframes lk-pk-beat {
+  0%, 38%, 100% { transform: scale(1); }
+  8% { transform: scale(1.35); }
+  18% { transform: scale(1.05); }
+  26% { transform: scale(1.22); }
+}
+.lk-pk-dot--beat { animation: lk-pk-beat var(--lk-pk-beat) linear infinite; }
+
+/* sonar ring expanding off the dot (borderColor set inline to the curve color) */
+@keyframes lk-pk-ripple {
+  0% { transform: scale(0.5); opacity: 0.55; }
+  70%, 100% { transform: scale(2.8); opacity: 0; }
+}
+.lk-pk-beat-ring {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 2px solid currentColor;
+  animation: lk-pk-ripple var(--lk-pk-beat) ease-out infinite;
+  pointer-events: none;
+}
+
+/* wide under-stroke of the trace flashing at the start of each beat */
+@keyframes lk-pk-flash {
+  0%, 45%, 100% { opacity: 0; }
+  8% { opacity: 0.5; }
+}
+.lk-pk-beat-glow { opacity: 0; animation: lk-pk-flash var(--lk-pk-beat) linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lk-pk-dot--beat, .lk-pk-beat-ring, .lk-pk-beat-glow { animation: none; }
+  .lk-pk-beat-ring, .lk-pk-beat-glow { opacity: 0; }
+}

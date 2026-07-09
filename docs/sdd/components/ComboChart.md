@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/ComboChart.tsx` · `packages/ui-native/src/components/ComboChart.tsx` ·
 > web CSS `packages/ui/src/styles/components/combo.css` (`.lk-combo*`).
 > **Exports:** `ComboChart`, types `ComboChartProps`, `ComboChartVariant`, `ComboMetric`.
-> **Status:** Shipped. **Parity:** 🟡 same API & look; `shine` blurs the wide line underlay on web (`filter: blur(5px)`) vs a wider faint duplicate stroke on native.
+> **Status:** Shipped. **Parity:** 🟡 same API & look; `shine` blurs the wide line underlay on web (`filter: blur(5px)`) vs a Gaussian-blurred duplicate stroke on native (`FeGaussianBlur`).
 > **Stories:** `packages/ui/src/stories/ComboChart.stories.tsx` (`Charts/ComboChart`) · `packages/ui-native/src/stories/ComboChart.stories.tsx` (`Native/ComboChart`).
 
 ---
@@ -66,7 +66,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | Grid | 3 interior rows at plot 25/50/75%, `--border` at strokeOpacity 0.55 (catalog white-5%); baseline `--border` full |
 | Labels | `--font-mono` / `fonts.mono`, **8.5** viewBox px, letter-spacing `.06em` (native `0.5`), `--text-faint` |
 | Note pill | chip at (`P.l+66`, `H−22`) in `--text-dim` |
-| Shine | 7px round-cap duplicate of the companion line at opacity 0.45 — **blurred 5px on web** (`.lk-combo-shine`), plain wider duplicate at 0.3 on native |
+| Shine | 7px round-cap duplicate of the companion line at opacity 0.45 — **blurred 5px on web** (`.lk-combo-shine`), `FeGaussianBlur stdDeviation 2.5` at 0.45 on native |
 | Sizing | web `.lk-combo-svg`: `width 100%; height auto; overflow visible`; native root: `width '100%', aspectRatio 320/150` |
 
 ## 4. States
@@ -86,7 +86,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks.
 
 **🟡 same API, platform-shaped implementation.** Identical geometry, normalization, monotone smoothing, steps port, legend/goal/note layout — both compute from the same catalog constants. The real differences:
 
-- **Shine substrate** — web blurs the 7px underlay (`.lk-combo-shine`, `filter: blur(5px)`, opacity 0.45); native draws the same stroke **unblurred** at 0.3 (the `Ring` glow precedent) because RN SVG filters are unreliable on device.
+- **Shine substrate** — web blurs the 7px underlay (`.lk-combo-shine`, `filter: blur(5px)`, opacity 0.45); native draws the same stroke at 0.45 under **`FeGaussianBlur stdDeviation 2.5`** (see CONVENTIONS.md).
 - **Label styling channel** — web styles `<text>` via `.lk-combo-label` / `.lk-combo-tag`; native passes `fontSize/fontFamily/letterSpacing` props on `Svg.Text`.
 - **Container** — web `div[role=img]` + `className`/rest; native `View accessibilityRole="image"` + `style`.
 

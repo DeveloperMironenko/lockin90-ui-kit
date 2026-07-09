@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/EnvironmentChart.tsx` · `packages/ui-native/src/components/EnvironmentChart.tsx` ·
 > no web CSS partner — all styling is inline SVG attributes (`.lk-envchart` on the root is a bare hook class, like `.lk-daywheel`).
 > **Exports:** `EnvironmentChart`, types `EnvironmentChartProps`, `EnvironmentChartVariant` — **not yet re-exported from either `src/index.ts`** (the charts-program export wave lands separately).
-> **Status:** Built. **Parity:** 🟡 same API & geometry; the NOW pulse is a SMIL-animated expanding ring + `drop-shadow` on web vs a static dot + faint halo ring on native, and the sun-arc `shine` is `blur()` vs a wider faint duplicate stroke (RN SVG filters are patchy).
+> **Status:** Built. **Parity:** 🟡 same API & geometry; the NOW pulse is a SMIL-animated expanding ring + `drop-shadow` on web vs a static dot + faint halo ring on native, and the sun-arc `shine` is `blur()` vs a Gaussian-blurred duplicate stroke (`FeGaussianBlur`, real RN-SVG Fabric filters).
 > **Stories:** `packages/ui/src/stories/EnvironmentChart.stories.tsx` (`Charts/EnvironmentChart`) · `packages/ui-native/src/stories/EnvironmentChart.stories.tsx` (`Native/EnvironmentChart`).
 
 ---
@@ -65,7 +65,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | Hour captions | `'{h}:00'` at `startHour + 0/4/8/12/16`, x = x0 + k·cw — y 124 (EN-02) / 130 (EN-04) / 147 (EN-03) |
 | Labels / pills | labels `--font-mono` / `fonts.mono` 8.5 viewBox px, tracking `.06em` (native `0.5`), `--text-faint`; heading at (12, 11) start-anchored; chip-pills (catalog `tag()`): rect w `len·5.35+12`, h 13, rx 6.5, fill `--bg-0` @ 78% (native `${colors.bg0}C7`), stroke = pill color @ 0.35 w 0.8, 8px mono text, x clamped into the padded box |
 | NOW pulse | dot r 3.6 + web `drop-shadow(0 0 5px c)` + SMIL ring r 3.6→11 / opacity .8→0, 1.8s ∞ — native static halo ring r 7 stroke 1.4 @ 0.4 (the `Ring`/`DayWheel` precedent) |
-| Shine (EN-01) | web: duplicate segments w 8 @ 0.4 `blur(5px)` under the arc; native: the same duplicates @ 0.2 without blur |
+| Shine (EN-01) | web: duplicate segments w 8 @ 0.4 `blur(5px)` under the arc; native: the same duplicates @ 0.4, blurred with `FeGaussianBlur stdDeviation 2.5` |
 | Sizing | both roots render at `width`/`height` (default 320×150) — explicit px like `DayWheel` |
 
 ## 4. States
@@ -85,7 +85,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks.
 **🟡 same API, platform-shaped implementation.** Identical geometry, data model, color scales, computed pills, defaults and draw order (both port the same catalog `draw()`). The real differences:
 
 - **NOW pulse** — web animates an expanding SMIL ring + `drop-shadow` glow; native draws a **static dot + faint halo ring** (no SMIL/JS animation on native — the `Ring`/`DayWheel` rule). Motion-only diff; does not block use.
-- **Shine substrate** — web `blur(5px)` duplicate segments @ 0.4; native the same duplicates @ 0.2 without blur (RN SVG filters are unreliable on device).
+- **Shine substrate** — web `blur(5px)` duplicate segments @ 0.4; native the same duplicates @ 0.4 blurred with a real `FeGaussianBlur` (`stdDeviation 2.5`; see CONVENTIONS.md).
 - **Container** — web `svg[role=img]` root + `className`/SVGProps rest; native `View accessibilityRole="image"` wrapping `Svg` + `style`.
 - **Label styling channel** — web inline `style={{ fontFamily, letterSpacing }}` on `<text>`; native `fontFamily/letterSpacing` props on `Svg.Text` (`0.5`/`0.4` ≈ `.06em`/`.05em`).
 

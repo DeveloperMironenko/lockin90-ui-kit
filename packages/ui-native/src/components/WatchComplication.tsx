@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { View, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Path, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /** Catalog variant names (`lockin90-design/charts/watch-charts.html`, WC-01…WC-07). */
@@ -63,8 +63,8 @@ export interface WatchComplicationProps {
    *  Default 108 = the catalog's 2× display scale (a real graphic-circular
    *  slot is ~size 54). */
   size?: number;
-  /** glow underlay behind the featured colored mark — a wider faint duplicate
-   *  shape on native, never SVG filters */
+  /** glow underlay behind the featured colored mark — a Gaussian-blurred
+   *  duplicate shape on native */
   shine?: boolean;
   /** optional wrapper style */
   style?: StyleProp<ViewStyle>;
@@ -222,7 +222,8 @@ function Face() {
 }
 
 /** faint full track + round-cap progress arc (+ optional shine underlay —
- *  a wider faint duplicate arc, the `Ring` glow recipe, never SVG filters) */
+ *  a Gaussian-blurred duplicate arc, the native twin of the web `blur(5px)`
+ *  underlay; wide un-blurred copies read as hard outlines on device) */
 function RingArc({
   r,
   value,
@@ -238,8 +239,18 @@ function RingArc({
   track?: string;
   shine?: boolean;
 }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-wc-ring-blur-${uid}`;
   return (
     <G>
+      {shine ? (
+        /* region in user space over the full face so flat arcs never clip */
+        <Defs>
+          <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={VB + 20} height={VB + 20}>
+            <FeGaussianBlur stdDeviation={2.5} />
+          </Filter>
+        </Defs>
+      ) : null}
       <Circle cx={C} cy={C} r={r} fill="none" stroke={track} strokeWidth={strokeWidth} />
       {shine ? (
         <Path
@@ -248,7 +259,8 @@ function RingArc({
           stroke={color}
           strokeWidth={strokeWidth + 5}
           strokeLinecap="round"
-          opacity={0.2}
+          opacity={0.45}
+          filter={`url(#${blurId})`}
         />
       ) : null}
       <Path
@@ -266,8 +278,9 @@ function RingArc({
  * WatchComplication — the catalog watch family (`watch-charts`, WC-01…WC-07):
  * tiny canvases for `lockin90-watch` — rings, gauges, sparks at complication
  * scale. Native twin of `@lockin90/ui` WatchComplication — same prop API +
- * geometry; every glow is a wider faint duplicate shape (never SVG filters),
- * like `Ring`. Unlike the 320×150 charts the face IS the canvas:
+ * geometry; every glow is a real Gaussian-blurred duplicate shape
+ * (Fabric-native SVG filters in react-native-svg 15). Unlike the 320×150
+ * charts the face IS the canvas:
  * square/circular variants render `size`×`size` (default 108 = the catalog's
  * 2× display scale), `inline-pill` renders `size` wide.
  *
@@ -300,6 +313,10 @@ export function WatchComplication({
   shine = false,
   style,
 }: WatchComplicationProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  /* variant-level glows mirror the web `blur(5px)` / `blur(4px)` underlays */
+  const blur5Id = `lk-wc-blur5-${uid}`;
+  const blur4Id = `lk-wc-blur4-${uid}`;
   const v = clamp100(value ?? DEFAULT_VALUE[variant]);
   const cap = label ?? DEFAULT_LABEL[variant];
 
@@ -307,6 +324,8 @@ export function WatchComplication({
   const width = size;
   const height = inline ? (size * PILL_H) / PILL_W : size;
   const viewBox = inline ? `0 0 ${PILL_W} ${PILL_H}` : `0 0 ${VB} ${VB}`;
+  const vbW = inline ? PILL_W : VB;
+  const vbH = inline ? PILL_H : VB;
 
   let accessibilityLabel: string;
   let content: ReactNode;
@@ -334,6 +353,7 @@ export function WatchComplication({
       <>
         <Face />
         <Path d={arcPath(C, C, 38, -135, 135)} fill="none" stroke={TRACK} strokeWidth={7} />
+        {/* shine — a Gaussian-blurred duplicate arc (the web `blur(5px)`) */}
         {shine ? (
           <Path
             d={arcPath(C, C, 38, -135, end)}
@@ -341,7 +361,8 @@ export function WatchComplication({
             stroke={c}
             strokeWidth={12}
             strokeLinecap="round"
-            opacity={0.2}
+            opacity={0.45}
+            filter={`url(#${blur5Id})`}
           />
         ) : null}
         <Path d={arcPath(C, C, 38, -135, end)} fill="none" stroke={c} strokeWidth={7} strokeLinecap="round" />
@@ -366,6 +387,7 @@ export function WatchComplication({
         <Face />
         {pts.length > 0 ? (
           <>
+            {/* shine — a Gaussian-blurred duplicate spark (the web `blur(4px)`) */}
             {shine ? (
               <Path
                 d={monotonePath(pts)}
@@ -373,7 +395,8 @@ export function WatchComplication({
                 stroke={c}
                 strokeWidth={6.8}
                 strokeLinecap="round"
-                opacity={0.2}
+                opacity={0.4}
+                filter={`url(#${blur4Id})`}
               />
             ) : null}
             <Path d={monotonePath(pts)} fill="none" stroke={c} strokeWidth={1.8} strokeLinecap="round" />
@@ -399,6 +422,7 @@ export function WatchComplication({
         <Rect x={2} y={2} width={108} height={108} rx={28} fill={FACE_FILL} stroke={FACE_STROKE} strokeWidth={1} />
         {/* TL — the featured half-arc gauge in its dashed slot ring */}
         <Path d={arcPath(26, 26, 16, -90, 90)} fill="none" stroke={TRACK_CORNER} strokeWidth={4.5} />
+        {/* shine — a Gaussian-blurred duplicate gauge arc (the web `blur(4px)`) */}
         {shine ? (
           <Path
             d={arcPath(26, 26, 16, -90, -90 + (180 * cv) / 100)}
@@ -406,7 +430,8 @@ export function WatchComplication({
             stroke={cc}
             strokeWidth={9.5}
             strokeLinecap="round"
-            opacity={0.2}
+            opacity={0.45}
+            filter={`url(#${blur4Id})`}
           />
         ) : null}
         <Path
@@ -449,6 +474,7 @@ export function WatchComplication({
     content = (
       <>
         <Rect x={1} y={1} width={150} height={34} rx={17} fill={PILL_FILL} stroke={FACE_STROKE} strokeWidth={1} />
+        {/* shine — a Gaussian-blurred duplicate mini ring (the web `blur(4px)`) */}
         {shine ? (
           <Path
             d={arcPath(21, 18, 8, 0, sweep(v))}
@@ -456,7 +482,8 @@ export function WatchComplication({
             stroke={c}
             strokeWidth={8}
             strokeLinecap="round"
-            opacity={0.2}
+            opacity={0.45}
+            filter={`url(#${blur4Id})`}
           />
         ) : null}
         <Path d={arcPath(21, 18, 8, 0, sweep(v))} fill="none" stroke={c} strokeWidth={3} strokeLinecap="round" />
@@ -488,6 +515,20 @@ export function WatchComplication({
   return (
     <View accessibilityRole="image" accessibilityLabel={accessibilityLabel} style={[{ width, height }, style]}>
       <Svg width={width} height={height} viewBox={viewBox}>
+        {shine ? (
+          /* real Gaussian blurs for the variant glows (Fabric-native in
+             react-native-svg 15) — the native twins of the web `blur(5px)` /
+             `blur(4px)` underlays. Regions in user space over the full face so
+             flat arcs/sparks never clip. */
+          <Defs>
+            <Filter id={blur5Id} filterUnits="userSpaceOnUse" x={-10} y={-10} width={vbW + 20} height={vbH + 20}>
+              <FeGaussianBlur stdDeviation={2.5} />
+            </Filter>
+            <Filter id={blur4Id} filterUnits="userSpaceOnUse" x={-10} y={-10} width={vbW + 20} height={vbH + 20}>
+              <FeGaussianBlur stdDeviation={2} />
+            </Filter>
+          </Defs>
+        ) : null}
         {content}
       </Svg>
     </View>

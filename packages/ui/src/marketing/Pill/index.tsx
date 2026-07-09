@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { cn } from '../../cn';
+import { Chip } from '../../components/Chip';
 
 export interface PillProps {
   children: ReactNode;
@@ -10,13 +10,13 @@ export interface PillProps {
   className?: string;
 }
 
-/** Small Aurora label pill for eyebrows / tags on the marketing surface. */
+/** Small Aurora label pill for eyebrows / tags on the marketing surface.
+ *  A thin wrapper over the canonical cross-platform `Chip` (byte-identical
+ *  `.lk-pill` ≡ `.lk-chip`); export + props kept for the marketing app. */
 export function Pill({ children, variant = 'default', dot = false, className }: PillProps) {
   return (
-    <span
-      className={cn('lk-pill', variant === 'accent' && 'lk-accent', dot && 'lk-dot', className)}
-    >
+    <Chip tone={variant === 'accent' ? 'accent' : 'default'} dot={dot} className={className}>
       {children}
-    </span>
+    </Chip>
   );
 }

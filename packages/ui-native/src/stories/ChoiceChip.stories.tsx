@@ -10,15 +10,43 @@ type Story = StoryObj;
 
 export const Default: Story = {
   render: () => (
-    <View style={{ flexDirection: 'row', gap: 8 }}>
+    <View style={{ alignItems: 'flex-start' }}>
       <ChoiceChip>Instagram</ChoiceChip>
+    </View>
+  ),
+};
+
+export const Selected: Story = {
+  render: () => (
+    <View style={{ alignItems: 'flex-start' }}>
       <ChoiceChip selected>Instagram</ChoiceChip>
+    </View>
+  ),
+};
+
+export const WithDot: Story = {
+  render: () => (
+    <View style={{ alignItems: 'flex-start' }}>
       <ChoiceChip selected leadingDot>
         LinkedIn
       </ChoiceChip>
+    </View>
+  ),
+};
+
+export const Small: Story = {
+  render: () => (
+    <View style={{ alignItems: 'flex-start' }}>
       <ChoiceChip size="sm" selected>
         Photo
       </ChoiceChip>
+    </View>
+  ),
+};
+
+export const Disabled: Story = {
+  render: () => (
+    <View style={{ alignItems: 'flex-start' }}>
       <ChoiceChip disabled>TikTok</ChoiceChip>
     </View>
   ),

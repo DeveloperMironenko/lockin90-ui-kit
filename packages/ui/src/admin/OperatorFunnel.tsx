@@ -2,14 +2,18 @@ import { type HTMLAttributes } from 'react';
 import { cn } from '../cn';
 import { Icon, type IconName } from '../components/Icon';
 
-/* FunnelChart — operator conversion-funnel primitive. A vertical stack of
-   proportional horizontal bars (bar width ∝ count relative to the first/max
-   step), each tier-coloured from the Aurora spectrum, with the step icon +
-   label + sublabel and the count + conversion% rendered INSIDE the bar; a
-   small drop-off pill sits between steps in a warn/bad tone. Mirrors the
+/* OperatorFunnel — operator conversion-funnel primitive (admin). A vertical
+   stack of proportional horizontal bars (bar width ∝ count relative to the
+   first/max step), each tier-coloured from the Aurora spectrum, with the step
+   icon + label + sublabel and the count + conversion% rendered INSIDE the bar;
+   a small drop-off pill sits between steps in a warn/bad tone. Mirrors the
    `.funnel` block from lockin90-design/admin/growth.html (onboarding funnel)
    and content.html (engagement). Web-only (admin has no native surface);
-   pure render — no client hooks. */
+   pure render — no client hooks.
+
+   Renamed from `FunnelChart` to avoid a name/type clash with the root
+   `@lockin90/ui` chart `FunnelChart`; `admin/index.ts` keeps a deprecated
+   `FunnelChart`/`FunnelChartProps` alias for back-compat. */
 
 /** A single stage in the funnel (signup → verify → … → activated). */
 export interface FunnelStep {
@@ -31,7 +35,7 @@ export interface FunnelStep {
   tier?: number;
 }
 
-export interface FunnelChartProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface OperatorFunnelProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   /** Ordered stages, widest (first) → narrowest (last). */
   steps: FunnelStep[];
   /** Render the tier/threshold legend row below the funnel. @default false */
@@ -57,7 +61,7 @@ const fmt = (n: number): string => n.toLocaleString('en-US');
 /** Round to one decimal for percentage display. */
 const pct = (n: number): string => `${n.toFixed(1)}%`;
 
-export function FunnelChart({ steps, legend = false, className, ...rest }: FunnelChartProps) {
+export function OperatorFunnel({ steps, legend = false, className, ...rest }: OperatorFunnelProps) {
   // Bar width is proportional to count relative to the widest (first/max) step.
   const maxCount = steps.reduce((m, s) => Math.max(m, s.count), 0) || 1;
 

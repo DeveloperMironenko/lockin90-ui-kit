@@ -1,5 +1,8 @@
-import { useId, type HTMLAttributes } from 'react';
+import { useId, type CSSProperties, type HTMLAttributes } from 'react';
 import { cn } from '../cn';
+
+/** root style + the beat-period custom property driving the heartbeat pace */
+type PkChartStyle = CSSProperties & { '--lk-pk-beat'?: string };
 
 /** A single dose taken at `at` hours from t0, of `mg` of substance. */
 export interface PkDose {
@@ -42,6 +45,11 @@ export interface PkChartProps extends HTMLAttributes<HTMLDivElement> {
   axis?: string[];
   /** vertical line + mg tag at each dose.at */
   showDoseMarkers?: boolean;
+  /** heart rate (beats/min) pacing the live-trace heartbeat; beat period =
+   *  60000/bpm ms. Only the raw-`samples` (live/ECG) variant beats. */
+  bpm?: number;
+  /** disable the heartbeat animation; static render (kit `still` convention) */
+  still?: boolean;
   /** accessible description of the chart shape */
   ariaLabel?: string;
 }
@@ -143,7 +151,10 @@ function smoothPath(pts: Array<[number, number]>): string {
  *  per-dose Bateman curves), with a dashed threshold reference line, vertical
  *  dose markers, a peak callout dot, a right y-axis and an x-axis row. Built on
  *  LineChart's conventions: VB_W viewBox + preserveAspectRatio="none", round
- *  HTML overlay dots/tags positioned by % so they stay crisp. */
+ *  HTML overlay dots/tags positioned by % so they stay crisp. The live
+ *  raw-`samples` (ECG-style) variant carries a heartbeat paced by `bpm`: a
+ *  lub-dub pulse + sonar ring on the peak dot and a glow flash of the trace
+ *  each beat; `still` (or reduced motion) holds it static. */
 export function PkChart({
   samples,
   doses = DEFAULT_DOSES,
@@ -156,8 +167,11 @@ export function PkChart({
   height = 180,
   axis = DEFAULT_AXIS,
   showDoseMarkers = true,
+  bpm = 64,
+  still = false,
   ariaLabel,
   className,
+  style,
   ...rest
 }: PkChartProps) {
   const uid = useId();
@@ -196,8 +210,17 @@ export function PkChart({
   const markerDoses = showDoseMarkers && !samples ? doses : [];
   const doseX = (at: number) => (hours > 0 ? (at / hours) * VB_W : 0);
 
+  // heartbeat: only the live (raw `samples`) trace beats, paced by `bpm` via
+  // the --lk-pk-beat period; `still` (and reduced motion, in CSS) disables it.
+  const live = Boolean(samples && samples.length > 0);
+  const beatMs = Number.isFinite(bpm) && bpm > 0 ? 60000 / bpm : 0;
+  const beating = live && !still && beatMs > 0;
+  const rootStyle: PkChartStyle | undefined = beating
+    ? { ...style, '--lk-pk-beat': `${r(beatMs)}ms` }
+    : style;
+
   return (
-    <div className={cn('lk-pk', className)} {...rest}>
+    <div className={cn('lk-pk', className)} style={rootStyle} {...rest}>
       <div className="lk-pk-plot" style={{ height }}>
         <div className="lk-pk-canvas">
           <svg
@@ -256,6 +279,20 @@ export function PkChart({
               <line className="lk-pk-threshold" x1="0" y1={r(thY)} x2={VB_W} y2={r(thY)} />
             )}
 
+            {/* heartbeat glow: a wide stroke under the live trace that flashes
+                once per beat (duration = --lk-pk-beat) */}
+            {beating && line && (
+              <path
+                className="lk-pk-beat-glow"
+                d={line}
+                fill="none"
+                stroke={color}
+                strokeWidth="7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            )}
+
             {/* the concentration curve (glowing) */}
             {line && (
               <path
@@ -294,7 +331,9 @@ export function PkChart({
               <span className="lk-pk-tag" style={{ color, borderColor: color }}>
                 {`${tickLabel(peakVal)}${unit}`}
               </span>
-              <span className="lk-pk-dot" style={{ background: color }} />
+              {/* heartbeat sonar ring, expanding off the dot once per beat */}
+              {beating && <span className="lk-pk-beat-ring" style={{ borderColor: color }} />}
+              <span className={cn('lk-pk-dot', beating && 'lk-pk-dot--beat')} style={{ background: color }} />
             </div>
           )}
 

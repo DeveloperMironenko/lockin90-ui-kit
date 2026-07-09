@@ -49,6 +49,21 @@
   font-size: 12px;
 }
 
+/* stacked — icon-over-label grid cell (quick-action grids): rounded rect, centred,
+   fills its grid/flex cell. Mirrors the native ChoiceChip `stacked` variant. */
+.lk-choicechip-stacked {
+  flex-direction: column;
+  gap: 6px;
+  padding: 11px 4px;
+  border-radius: var(--r-md);
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.3;
+  letter-spacing: 0.03em;
+}
+
 .lk-choicechip-dot {
   width: 6px;
   height: 6px;

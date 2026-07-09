@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/Sheet.tsx` · `packages/ui-native/src/components/Sheet.tsx` ·
 > web CSS `packages/ui/src/styles/components/sheet.css` (`.lk-sheet*`).
 > **Exports:** `Sheet`, type `SheetProps`.
-> **Status:** Shipped. **Parity:** 🟡 same API & panels; web slides via CSS `transform` over a **blurred** scrim, native uses RN `Modal` `animationType="slide"` over a **dimmed** scrim.
+> **Status:** Shipped. **Parity:** 🟡 same API & panels incl. **drag-to-dismiss on the bottom sheet** (same thresholds both sides); web slides via CSS `transform` over a **blurred** scrim, native uses RN `Modal` `animationType="slide"` over a **dimmed** scrim.
 > **Stories:** `packages/ui/src/stories/Sheet.stories.tsx` · `packages/ui-native/src/stories/Sheet.stories.tsx`.
 
 ---
@@ -13,7 +13,9 @@
 
 The kit's **edge-anchored overlay**: a bottom sheet or a side drawer over a scrim. Three sides:
 
-- `bottom` — full-width sheet pinned to the bottom edge, rounded top corners, a centered **drag-handle** pill. The default; the mobile-shaped surface for actions/forms.
+- `bottom` — full-width sheet pinned to the bottom edge, rounded top corners, a centered **drag-handle** pill
+  that is a real gesture: dragging the handle/title strip down **dismisses** past the threshold (see §2), else
+  springs back. The default; the mobile-shaped surface for actions/forms.
 - `right` / `left` — full-height ~360px edge **drawers** (nav, filters, detail panels).
 
 Use `Sheet` when content is list/form-shaped and should rise from an edge; use `Modal` for a centered confirmation, `Menu` for a small anchored action list.
@@ -32,6 +34,14 @@ Use `Sheet` when content is list/form-shaped and should rise from an edge; use `
 
 - **Web:** renders a fixed scrim (`.lk-sheet-scrim.is-open`) + the panel; the panel carries `role="dialog"` + `aria-modal="true"` and `stopPropagation`s clicks. **Not portaled** (unlike Modal) — it relies on `position: fixed` + a high `z-index`. The `is-open` class drives the slide-in transform.
 - **Native:** RN `Modal` (`transparent`, `animationType="slide"`, `statusBarTranslucent`, `onRequestClose`). Scrim alignment + panel shape are picked by `side`; the card `Pressable` swallows taps and is `accessibilityViewIsModal`.
+- **Drag-to-dismiss (bottom side only, both platforms):** the **handle + title strip** is the draggable surface
+  (drawers aren't draggable). Shared constants: dismiss when `dy > height × 0.25` (`DISMISS_FRACTION`) **or** the
+  downward fling velocity exceeds `0.5` px/ms (`DISMISS_VELOCITY`); otherwise it **springs back** to open. Web
+  wires pointer events (`setPointerCapture`, live `translateY(dy)`, velocity tracked per move; dismiss animates
+  `translateY(100%)` then `transitionend`/420ms-fallback → `onClose`). Native uses a `PanResponder` on the
+  header strip driving an `Animated` `dragY` (dismiss = 180ms timing to the measured height → `onClose`; else
+  `Animated.spring` back, gesture-terminate also springs back). **Reduced motion (web only): jump cut** — the
+  spring-back snaps and dismiss calls `onClose()` with no exit animation; native has no reduced-motion branch.
 
 ## 3. Visual spec (tokens — never hardcode)
 
@@ -57,15 +67,18 @@ Use `Sheet` when content is list/form-shaped and should rise from an edge; use `
 | Open | `.lk-sheet-scrim.is-open` (opacity 1) + panel `is-open` (transform 0) | `RNModal visible` slide-in |
 | Closed | returns `null` | `RNModal visible={false}` |
 | Slide-in | `transform` over `0.36s var(--ease)` (`cubic-bezier(.22,1,.36,1)`) | RN `animationType="slide"` |
-| Dismiss | scrim click / ESC | scrim tap / Android back |
+| Dismiss | scrim click / ESC / handle drag past threshold | scrim tap / Android back / handle drag past threshold |
+| Dragging (bottom) | live `translateY(dy)` (transition off) | `Animated` `dragY` follows the finger |
+| Released under threshold | transition re-enabled, settles back (reduced-motion: snaps) | `Animated.spring` back (bounciness 4) |
 | Body scroll | `overflow-y:auto` past `86vh` | host scroll (`flexShrink:1`) |
 
 ## 5. Web ↔ native parity
 
-**Verdict: 🟡 same API & panel design, platform-shaped overlay.** Identical prop names/defaults, identical three-side model, identical drag-handle + title + body tokens, identical 360px drawer width and 86% bottom cap. Differences are substrate + the scrim-blur gap:
+**Verdict: 🟡 same API & panel design, platform-shaped overlay.** Identical prop names/defaults, identical three-side model, identical drag-handle + title + body tokens, identical 360px drawer width and 86% bottom cap, and **identical drag-to-dismiss thresholds** (>25% height or velocity >0.5 on the handle/title strip; spring-back otherwise). Differences are substrate + the scrim-blur gap:
 
 - **Scrim blur (capability gap):** web frosts the scrim (`backdrop-filter: blur(6px)`); native dims with the same `rgba(0,0,0,.55)` only. Ambient.
 - **Slide engine:** web animates a CSS `transform` (`is-open` class, `--ease`); native uses RN `Modal`'s built-in `slide`. Same visual result; native doesn't expose the easing curve.
+- **Drag engine:** web pointer events + inline transform; native `PanResponder` + `Animated`. Same thresholds and feel; web adds the reduced-motion jump cut, native always springs.
 - **Dismiss key:** ESC (web) vs Android back (native); both also tap-dismiss.
 - **Substrate:** web is `position: fixed` (not portaled) + `className`/rest; native is an RN `Modal` with no DOM props.
 
@@ -93,7 +106,9 @@ No gap blocks use — the sheet/drawer is fully usable and visually equivalent (
 
 - **Web:** panel is `role="dialog"` + `aria-modal="true"`; scrim is `role="presentation"`. ESC + scrim click dismiss. The drag handle is `aria-hidden` (decorative). Manage initial focus for long forms.
 - **Native:** `accessibilityViewIsModal` traps assistive focus; the handle is `pointerEvents="none"` decoration. Android back dismisses via `onRequestClose`.
-- **Touch:** bottom sheet's handle signals draggability (visual only — there's no gesture-to-dismiss built in; dismissal is scrim/back). Body scrolls when content exceeds the cap.
+- **Touch:** the bottom sheet's handle/title strip is a real drag surface — drag down past 25% (or fling) to
+  dismiss; scrim tap, ESC (web) and Android back (native) remain as non-gesture dismissals for AT users. Body
+  scrolls when content exceeds the cap (the body itself is not a drag surface, so scrolling never fights the gesture).
 
 ## 8. Usage rules — Do / Don't
 
@@ -106,7 +121,8 @@ No gap blocks use — the sheet/drawer is fully usable and visually equivalent (
 **Don't**
 - ✗ Don't hand-roll an edge-anchored panel + scrim — use `Sheet`.
 - ✗ Don't hardcode the radius, handle, scrim, or slide distance — tokens.
-- ✗ Don't expect the drag handle to dismiss by gesture (it's a visual affordance).
+- ✗ Don't expect drawers (`right`/`left`) to drag-dismiss — the gesture is bottom-sheet-only.
+- ✗ Don't rely on the drag gesture as the only dismissal — keep `onClose` wired for scrim/ESC/back.
 - ✗ Don't pass `className`/rest on native (web-only).
 - ✗ Don't stack a `Sheet` over an open `Modal`/`Sheet`.
 

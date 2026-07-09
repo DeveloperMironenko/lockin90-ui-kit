@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/BeeswarmChart.tsx` · `packages/ui-native/src/components/BeeswarmChart.tsx` ·
 > web CSS `packages/ui/src/styles/components/beeswarm.css` (`.lk-swarm*`).
 > **Exports:** `BeeswarmChart`, types `BeeswarmChartProps`, `BeeswarmChartVariant`, `BeeswarmPoint`, `BeeswarmGroup`, `BeeswarmTick`.
-> **Status:** Shipped. **Parity:** 🟡 same API & look; the BW-02 TODAY pulse animates on web (CSS ring) but is a static duplicate halo on native, and glows blur on web vs wider faint duplicates on native.
+> **Status:** Shipped. **Parity:** 🟡 same API & look; the BW-02 TODAY pulse animates on web (CSS ring) but is a static duplicate halo on native; glows blur on both (native Gaussian-blurred duplicates via `FeGaussianBlur`).
 > **Stories:** `packages/ui/src/stories/BeeswarmChart.stories.tsx` (`Charts/BeeswarmChart`) · `packages/ui-native/src/stories/BeeswarmChart.stories.tsx` (`Native/BeeswarmChart`).
 
 ---
@@ -58,14 +58,14 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | Swarm packing | pack radius **R 3.1**, step `2R+0.6`, min distance `2R+0.4`, ≤24 vertical offsets; deterministic — same data → same swarm. BW-04 packs with R 3.1 but **draws r 2.8** |
 | Dots | BW-01: r 3.1 in `palette[series]` at opacity 0.85; ring = `--text` stroke 1.2 at 0.95. BW-02: zone tokens (`--zone-high/mid/low` at ≥62 / ≥38 / else, 0–100 scale) at 0.8. BW-03: `--text` at 0.35. BW-04: first row `--mint` 0.85, second `--text` 50% fill at 0.7 |
 | Hero (BW-02) | pulse dot r 3.6 in `--text` + expanding ring; mint pill 16 above |
-| Hero (BW-03) | mint glow r 7 (blur 4px web / faint duplicate native) under a mint r 4.2 core; mint pill at (x−2, y−18) |
+| Hero (BW-03) | mint glow r 7 (blur 4px web / `FeGaussianBlur` duplicate native) under a mint r 4.2 core; mint pill at (x−2, y−18) |
 | Mean ticks (BW-04) | vertical 1.6px line ±15 around the row center in the row color (second row effectively 45%) |
 | Axis | hairline `--text` at strokeOpacity 0.12; ticks ±2px at 0.2; labels 11 below in `--text-faint` |
 | Legend (BW-01) | dots r 3.5 at x 246, rows 18 apart from y 46; labels at x 254 in `--text-dim`; caption at (246, 106) |
 | Labels | `--font-mono` / `fonts.mono`, **8.5** viewBox px, letter-spacing `.06em` (native `0.5`) |
 | Chip pills | catalog `tag()`: rect w `len·5.35+12`, h 13, rx 6.5, fill `--bg-0` at 78%, tinted hairline 0.35/0.8px, centered 8px mono text; x clamped to `[P.l−4, W−P.r−w+4]` |
 | Pulse (BW-02) | web `.lk-swarm-pulsecore` (drop-shadow 5px currentColor) + `.lk-swarm-pulsering` (scale ×3.05, fade 0.8→0 over 1.8s, reduced-motion → hidden); native static core r 3.6 + halo ring r 7 at strokeOpacity 0.4 |
-| Shine | duplicate circle r `R+2.5` behind each dot — web `blur(4px)` at opacity 0.4, native unblurred at 0.3 |
+| Shine | duplicate circle r `R+2.5` behind each dot — web `blur(4px)` at opacity 0.4, native `FeGaussianBlur stdDeviation 2` at 0.4 |
 | Sizing | web `.lk-swarm-svg`: `width 100%; height auto; overflow visible`; native root: `width '100%', aspectRatio 320/150` |
 
 ## 4. States
@@ -86,7 +86,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks.
 **🟡 same API, platform-shaped implementation.** Identical placement (`swarm()` is the same verbatim port on both sides), geometry, zone thresholds, default seeds and label layout. The real differences:
 
 - **TODAY pulse (BW-02)** — web animates the expanding ring via `.lk-swarm-pulsering` CSS (reduced-motion safe); native draws a **static duplicate halo** (r 7 ring at 0.4). Motion differs; the read does not.
-- **Glow substrate** — the BW-03 PR glow and the `shine` underlays blur on web (`filter: blur(4px)`, opacity 0.4–0.6); native draws the same shapes **unblurred and fainter** (0.3–0.35) — the `Ring` glow precedent; RN SVG filters are unreliable on device.
+- **Glow substrate** — the BW-03 PR glow and the `shine` underlays blur on web (`filter: blur(4px)`, opacity 0.4–0.6); native draws the same shapes **Gaussian-blurred** at 0.4–0.6 via `FeGaussianBlur stdDeviation 2` (see CONVENTIONS.md).
 - **Label styling channel** — web styles `<text>` via `.lk-swarm-label` / `.lk-swarm-tag`; native passes `fontSize/fontFamily/letterSpacing` props on `Svg.Text`.
 - **Pill fill** — web `fill="var(--bg-0)" fillOpacity={0.78}`; native `fill={colors.bg0} fillOpacity={0.78}` — same value, same channel.
 - **Container** — web `div[role=img]` + `className`/rest; native `View accessibilityRole="image"` + `style`.

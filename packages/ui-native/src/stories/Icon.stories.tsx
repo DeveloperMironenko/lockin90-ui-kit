@@ -14,6 +14,7 @@ const ALL: IconName[] = [
   // core
   'back',
   'chevron',
+  'chevronLeft',
   'share',
   'more',
   'lock',
@@ -137,6 +138,8 @@ const ALL: IconName[] = [
   'flask',
   'syringe',
   'camera',
+  // session
+  'logout',
 ];
 
 export const AllIcons: StoryObj = {

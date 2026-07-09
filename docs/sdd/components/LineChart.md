@@ -9,7 +9,7 @@
 > **Status:** Shipped + extended with the **32 catalog line-chart variants** (charts program W1,
 > spec = `lockin90-design/charts/line-charts.html` CFG + `docs/sdd/CHART-MAP.md` §line-charts).
 > **Parity:** 🟡 same API & geometry math; web stretch-SVG + CSS glow/blur vs native measured SVG +
-> wider-duplicate glow (no SVG filters); web has `ariaLabel`, native adds a `PAD_X` x-inset.
+> Gaussian-blurred duplicate glow (real RN-SVG Fabric filters); web has `ariaLabel`, native adds a `PAD_X` x-inset.
 > **Stories:** `packages/ui/src/stories/LineChart.stories.tsx` · `packages/ui-native/src/stories/LineChart.stories.tsx`
 > — one story per catalog ID (`LC01Solid` … `LC56CoachForecast`), reproducing the catalog cards
 > (same ported `genData` seeds, `yDomain={[0,1]}`, `height=150`).
@@ -141,8 +141,8 @@ main-data x slot. **`LineLabel`:** `{ index, text, color?, dy?=-12 }`. **`Gradie
 | --- | --- | --- |
 | Main line | preset color/gradient/zone-url, weight per preset, round caps | same |
 | Legacy line glow | `.lk-lc-line` `drop-shadow(0 0 8px rgba(52,245,197,.35))` — legacy only; variants use `.lk-lc-stroke` (no glow) | — |
-| Neon / halo (LC-28/30) | inline `drop-shadow(0 0 7/12px color-mix(color 80/55%, transparent))` | **wider faint duplicate path** `w + r`, opacity .35 — no SVG filters |
-| Shine | `.lk-lc-shine` dup `w+5`, blur 5px, opacity .45 | dup `w+5`, opacity .3 (no blur) |
+| Neon / halo (LC-28/30) | inline `drop-shadow(0 0 7/12px color-mix(color 80/55%, transparent))` | **Gaussian-blurred duplicate path** `w+2` @ preset alpha, `FeGaussianBlur` stdDev `r/2` (`userSpaceOnUse` region) |
+| Shine | `.lk-lc-shine` dup `w+5`, blur 5px, opacity .45 | dup `w+5`, `FeGaussianBlur` stdDev 2.5, opacity .45 |
 | Zone stroke | `userSpaceOnUse` v-gradient `--zone-high` 0% / `--zone-mid` 52% / `--zone-low` 100% | same, `colors.zone*` |
 | Veil fill (LC-15) | v-fade `color` .26 → .02 (legacy: .26 → 0) | same |
 | Glass fill (LC-20) | flat `var(--glass-2)` | `colors.glass2` |
@@ -159,6 +159,12 @@ main-data x slot. **`LineLabel`:** `{ index, text, color?, dy?=-12 }`. **`Gradie
 | Notes | `.lk-lc-note` `--font-mono` 8.5px | `fonts.mono` 8.5 |
 | Chips | `.lk-lc-chip` mono 8px, pill, `color-mix(var(--bg-0) 78%)` bg + currentColor-35% border | `colors.bg0` bg + 1px tinted border |
 | Grid / axis / y-ticks / marker dot+tag / gutter | unchanged from base spec | unchanged |
+
+- **Chip labels edge-clamp (both platforms, identical helper):** `chipAlign(x, text)` estimates the pill width
+  (`text.length × 5.35 + 12`) and returns `'end'` when the right half would cross `VB_W = 560`, `'start'` when
+  the left half would cross `0`, else `'center'` — so chips near the viewBox edges hug inward instead of
+  clipping. Web maps the align to a CSS transform (`translate(-100%/0/-50%)`); native to a zero-size anchor
+  `View` with `alignItems: 'flex-end' / 'flex-start' / 'center'`.
 
 ## 4. States
 
@@ -182,9 +188,9 @@ both sides, the same monotone/Catmull/step math, split/band/fan/ribbon construct
 
 - **SVG sizing:** web fixed `viewBox 0 0 560 h` + `preserveAspectRatio="none"`; native measures via
   `onLayout`. Native insets x by `PAD_X = 14` (round caps/dots don't clip) — cosmetic x-shift.
-- **Glow/shine:** web = CSS `drop-shadow` / `blur(5px)` duplicate; native = **wider faint duplicate
-  path** (RN SVG filters are patchy on device — same rule as Ring). Halo/neon read slightly softer
-  on web; intentional.
+- **Glow/shine:** web = CSS `drop-shadow` / `blur(5px)` duplicate; native = a **Gaussian-blurred duplicate
+  path** via real RN-SVG Fabric filters (`<Filter filterUnits="userSpaceOnUse"><FeGaussianBlur>`, padded
+  user-space regions so thin strokes don't clip — see CONVENTIONS.md). Visually equivalent halos.
 - **Pulse:** CSS keyframes + `prefers-reduced-motion` (web) vs `Animated.loop` (native, no OS
   reduce-motion hook — kit-wide precedent, see DotsLoader).
 - **Text/chips:** HTML spans vs zero-size anchor Views centering absolute children (Yoga static
@@ -239,7 +245,7 @@ both sides, the same monotone/Catmull/step math, split/band/fan/ribbon construct
 **Don't**
 - ✗ Don't hand-roll a line/area SVG or a lookalike variant — extend THIS component on both platforms.
 - ✗ Don't hardcode colors — presets are tokens; overrides must be tokens (`var(--x)` / `colors.x`).
-- ✗ Don't use SVG filters on native — glow/shine are wider duplicate paths by design.
+- ✗ Don't hand-tune the native glow filters — the blurred-duplicate pattern (region padding + stdDev) is the kit-wide contract (CONVENTIONS.md).
 - ✗ Don't put demo/synthetic data in app code — real data via props (synthetic generators live in
   the stories only).
 - ✗ Don't rely on auto-scale for zone-gradient variants — the zone mapping needs `yDomain`.

@@ -13,6 +13,12 @@
       "react-native": "./src/index.ts",
       "import": "./lib/module/index.js",
       "require": "./lib/commonjs/index.js"
+    },
+    "./stories": {
+      "types": "./lib/typescript/stories/index.d.ts",
+      "react-native": "./src/stories/index.ts",
+      "import": "./lib/module/stories/index.js",
+      "require": "./lib/commonjs/stories/index.js"
     }
   },
   "files": [
@@ -20,21 +26,22 @@
     "lib"
   ],
   "scripts": {
-    "build": "bob build",
+    "build": "node scripts/gen-stories-index.mjs && bob build",
+    "gen:stories": "node scripts/gen-stories-index.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
     "storybook": "storybook dev -p 6007 --no-open",
     "build-storybook": "storybook build"
   },
   "peerDependencies": {
+    "@react-native-community/datetimepicker": ">=7",
+    "expo-blur": ">=12",
+    "expo-clipboard": ">=6",
+    "expo-document-picker": ">=12",
+    "expo-linear-gradient": ">=13",
     "react": ">=18",
     "react-native": ">=0.74",
-    "react-native-svg": ">=15",
-    "expo-linear-gradient": ">=13",
-    "expo-clipboard": ">=6",
-    "expo-blur": ">=12",
-    "expo-document-picker": ">=12",
-    "@react-native-community/datetimepicker": ">=7"
+    "react-native-svg": ">=15"
   },
   "peerDependenciesMeta": {
     "expo-clipboard": {
@@ -51,19 +58,20 @@
     }
   },
   "dependencies": {
-    "@lockin90/tokens": "workspace:*"
+    "@lockin90/tokens": "workspace:*",
+    "lucide-react-native": "^1.24.0"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
     "@storybook/addon-docs": "^9.1.0",
     "@storybook/react-native-web-vite": "^9.1.0",
+    "@types/react": "^19.0.0",
+    "expo-linear-gradient": "^14.0.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-builder-bob": "^0.40.0",
     "react-native-svg": "^15.8.0",
     "react-native-web": "^0.21.0",
-    "expo-linear-gradient": "^14.0.0",
     "storybook": "^9.1.0",
     "typescript": "^5.7.0",
     "vitest": "^2.1.0"
@@ -74,7 +82,12 @@
     "targets": [
       "commonjs",
       "module",
-      "typescript"
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
     ]
   }
 }

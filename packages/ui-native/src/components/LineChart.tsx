@@ -10,7 +10,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { ClipPath, Defs, Line, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
+import Svg, { ClipPath, Defs, FeGaussianBlur, Filter, Line, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /** A round overlay dot pinned over a data point (kept circular by rendering it as
@@ -129,7 +129,7 @@ export interface LineChartProps {
   pattern?: LinePattern;
   /** main-line stroke width (LC-26; default 2.5 with a variant, 3 legacy) */
   weight?: number;
-  /** hue-matched glow underlay — a wider faint duplicate of the stroke (no SVG filters) */
+  /** hue-matched glow underlay — a Gaussian-blurred duplicate of the stroke */
   shine?: boolean;
   /** pin the y-scale to [min, max] instead of auto-scaling to the data */
   yDomain?: [number, number];
@@ -358,6 +358,20 @@ function patternDash(p: LinePattern | undefined): string | undefined {
   return undefined;
 }
 
+/** estimated chip-pill width (px): ~5.35px per 8px-mono glyph + padding — the
+ *  same `tag()` estimate the SVG chart families use for their pills. */
+const chipWidth = (text: string) => text.length * 5.35 + 12;
+
+/** chip x-anchoring: centered on the point, flipped to 'end'/'start' when the
+ *  pill's half-width would cross the plot edge (e.g. a series label anchored
+ *  on the last point), so edge-hugging pills stay fully inside the plot. */
+function chipAlign(x: number, text: string): 'start' | 'center' | 'end' {
+  const half = chipWidth(text) / 2;
+  if (x + half > VB_W) return 'end';
+  if (x - half < 0) return 'start';
+  return 'center';
+}
+
 const isUrlRef = (s: string) => s.startsWith('url(');
 
 /* ---------------- variant presets (the catalog CFG, tokens only) ---------------- */
@@ -391,7 +405,7 @@ interface Preset {
   fill?: 'off' | 'veil' | 'glass' | 'split';
   pattern?: LinePattern;
   shine?: boolean;
-  /** neon/halo glow — rendered as a wider faint duplicate path (no SVG filters) */
+  /** neon/halo glow — rendered as a Gaussian-blurred duplicate path */
   glow?: { r: number; alpha: number; color?: string };
   echo?: number;
   dots?: 'all' | 'end';
@@ -533,6 +547,7 @@ interface OChip {
   y: number;
   text: string;
   color: string;
+  align: 'start' | 'center' | 'end';
 }
 interface OPulse {
   x: number;
@@ -578,8 +593,8 @@ function PulseRing({ color }: { color: string }) {
  *  series, CI/range bands, forecast fans and zone-gradient strokes. The Svg
  *  stretches to the measured container width via a fixed viewBox + non-uniform
  *  scaling; dots and text are absolutely-positioned Views placed by percentage
- *  so they stay perfectly round/legible. Glow/shine render as wider faint
- *  duplicate paths — never SVG filters (patchy on device). */
+ *  so they stay perfectly round/legible. Glow/shine render as Gaussian-blurred
+ *  duplicate paths (Fabric-native SVG filters — Ring precedent). */
 export function LineChart({
   variant,
   data = DEFAULT_DATA,
@@ -633,6 +648,8 @@ export function LineChart({
   const bandId = `lk-lc-band-${uid}`;
   const fanId = `lk-lc-fan-${uid}`;
   const splitId = `lk-lc-split-${uid}`;
+  const glowBlurId = `lk-lc-glowblur-${uid}`;
+  const shineBlurId = `lk-lc-shineblur-${uid}`;
 
   const preset = variant ? PRESETS[variant] : undefined;
 
@@ -776,7 +793,7 @@ export function LineChart({
   /* ---- raw-vs-avg (LC-48) ---- */
   const avgPts = wantRawAvg ? mapPoints(movAvg(data, 5), data.length, height, dMin, dSpan) : [];
 
-  /* ---- glow (neon/halo): wider faint duplicate path — NO SVG filters ---- */
+  /* ---- glow (neon/halo): Gaussian-blurred duplicate path ---- */
   const glowColor = glowCfg
     ? (glowCfg.color ?? (isUrlRef(stroke) ? colors.accent : strokeColor))
     : null;
@@ -850,7 +867,13 @@ export function LineChart({
   labels?.forEach((L) => {
     const q = pts[clampIdx(L.index)];
     if (!q) return;
-    oChips.push({ x: q[0], y: q[1] + (L.dy ?? -12), text: L.text, color: L.color ?? colors.textDim });
+    oChips.push({
+      x: q[0],
+      y: q[1] + (L.dy ?? -12),
+      text: L.text,
+      color: L.color ?? colors.textDim,
+      align: chipAlign(q[0], L.text),
+    });
   });
 
   /* ---- overlay series (LC-39/41/42/44/56) ---- */
@@ -864,7 +887,13 @@ export function LineChart({
     const d = pathFor(sPts, s.curve ?? curveKind);
     if (s.label && sPts.length > 0) {
       const li = Math.max(0, Math.min(sPts.length - 1, s.labelIndex ?? sPts.length - 1));
-      oChips.push({ x: sPts[li][0], y: sPts[li][1] + (s.labelDy ?? -12), text: s.label, color: sColor });
+      oChips.push({
+        x: sPts[li][0],
+        y: sPts[li][1] + (s.labelDy ?? -12),
+        text: s.label,
+        color: sColor,
+        align: chipAlign(sPts[li][0], s.label),
+      });
     }
     return { d, sColor, sW, sDash, sOpacity, sPts, key: i };
   });
@@ -973,6 +1002,34 @@ export function LineChart({
                   <Stop offset="1" stopColor={fanColor} stopOpacity={0.02} />
                 </LinearGradient>
               ) : null}
+              {/* real Gaussian blurs for the neon/halo glow + shine underlays
+                  (Fabric-native in react-native-svg 15) — the native twins of the
+                  web line's `drop-shadow(0 0 {r}px …)` / `blur(5px)`. Regions in
+                  user space so a flat line never clips the blur to its bbox. */}
+              {glowCfg ? (
+                <Filter
+                  id={glowBlurId}
+                  filterUnits="userSpaceOnUse"
+                  x={-24}
+                  y={-24}
+                  width={VB_W + 48}
+                  height={height + 48}
+                >
+                  <FeGaussianBlur stdDeviation={glowCfg.r / 2} />
+                </Filter>
+              ) : null}
+              {wantShine ? (
+                <Filter
+                  id={shineBlurId}
+                  filterUnits="userSpaceOnUse"
+                  x={-16}
+                  y={-16}
+                  width={VB_W + 32}
+                  height={height + 32}
+                >
+                  <FeGaussianBlur stdDeviation={2.5} />
+                </Filter>
+              ) : null}
             </Defs>
 
             {/* faint horizontal gridlines */}
@@ -1076,19 +1133,24 @@ export function LineChart({
                 ))
               : null}
 
-            {/* neon/halo glow — a wider faint duplicate path (no SVG filters) */}
+            {/* neon/halo glow — a Gaussian-blurred duplicate of the line behind it:
+                the same soft halo the web line gets from
+                `drop-shadow(0 0 {glowCfg.r}px color-mix(glow {alpha}%))`. */}
             {drawMain && glowCfg && solidLine ? (
               <Path
                 d={solidLine}
                 fill="none"
                 stroke={glowColor!}
-                strokeWidth={w + glowCfg.r}
+                strokeWidth={w + 2}
                 strokeLinecap="round"
-                strokeOpacity={0.35}
+                strokeOpacity={glowCfg.alpha}
+                filter={`url(#${glowBlurId})`}
               />
             ) : null}
 
-            {/* shine — wider faint hue-matched underlay (gradient/zone-safe) */}
+            {/* shine — a Gaussian-blurred hue-matched duplicate under the line:
+                the same underlay the web line blurs with `blur(5px)`
+                (gradient/zone-safe, unlike a single-color drop-shadow). */}
             {drawMain && wantShine && solidLine ? (
               <Path
                 d={solidLine}
@@ -1097,7 +1159,8 @@ export function LineChart({
                 strokeWidth={w + 5}
                 strokeLinecap="round"
                 strokeDasharray={headEnd == null ? mainDash : undefined}
-                strokeOpacity={0.3}
+                strokeOpacity={0.45}
+                filter={`url(#${shineBlurId})`}
               />
             ) : null}
             {drawMain && wantShine && dashLine ? (
@@ -1108,7 +1171,8 @@ export function LineChart({
                 strokeWidth={w + 5}
                 strokeLinecap="round"
                 strokeDasharray="5 5"
-                strokeOpacity={0.3}
+                strokeOpacity={0.45}
+                filter={`url(#${shineBlurId})`}
               />
             ) : null}
 
@@ -1289,7 +1353,16 @@ export function LineChart({
           ),
         )}
         {oChips.map((c, i) => (
-          <View key={`vc-${i}`} style={[styles.anchor, { left: ox(c.x), top: oy(c.y) }]} pointerEvents="none">
+          <View
+            key={`vc-${i}`}
+            // edge-anchored pills hang inward from their point instead of
+            // centering on it (the default anchor), so they never clip
+            style={[
+              c.align === 'end' ? styles.anchorEnd : c.align === 'start' ? styles.anchorStart : styles.anchor,
+              { left: ox(c.x), top: oy(c.y) },
+            ]}
+            pointerEvents="none"
+          >
             <View style={[styles.chip, { borderColor: c.color }]}>
               <Text style={[styles.chipText, { color: c.color }]} numberOfLines={1}>
                 {c.text}
@@ -1387,6 +1460,22 @@ const styles = StyleSheet.create({
     width: 0,
     height: 0,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  // edge-anchored chip variants: the pill hangs inward from its anchor point
+  // (left edge at the point / right edge at the point) instead of centering
+  anchorStart: {
+    position: 'absolute',
+    width: 0,
+    height: 0,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
+  anchorEnd: {
+    position: 'absolute',
+    width: 0,
+    height: 0,
+    alignItems: 'flex-end',
     justifyContent: 'center',
   },
   // same anchor pinned to the plot top (NOW / CALIBRATING captions)

@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/BulletChart.tsx` · `packages/ui-native/src/components/BulletChart.tsx` ·
 > web CSS `packages/ui/src/styles/components/bullet.css` (`.lk-bullet*`).
 > **Exports:** `BulletChart`, types `BulletChartProps`, `BulletChartVariant`, `BulletRow`.
-> **Status:** Shipped. **Parity:** 🟡 same API & look; `shine` blurs the duplicate bar on web (`filter: blur(4px)`) vs a wider faint duplicate on native.
+> **Status:** Shipped. **Parity:** 🟡 same API & look; `shine` blurs the duplicate bar on both — web `filter: blur(4px)`, native `FeGaussianBlur stdDeviation 2` (real RN-SVG filters).
 > **Stories:** `packages/ui/src/stories/BulletChart.stories.tsx` (`Charts/BulletChart`) · `packages/ui-native/src/stories/BulletChart.stories.tsx` (`Native/BulletChart`).
 
 ---
@@ -62,7 +62,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | Anatomy (BL-02) | band words centered under each band's midpoint at y 92; TARGET pill above the tick at y 34 in `--text-dim`; caption at y 118 |
 | OVER pills (BL-05) | catalog `tag()` chips in `--magenta` at `BX+BW−10`, alternating above (−26) / below (+26) the row |
 | Chip pills | rect w `len·5.35+12`, h 13, rx 6.5, fill `--bg-0` at 78%, tinted hairline 0.35/0.8px, centered 8px mono text; x clamped to `[P.l−4, W−P.r−w+4]` |
-| Shine | duplicate bar inflated 2px each way at opacity 0.5 — web `.lk-bullet-shine` (`blur(4px)`); native the same rect unblurred at 0.3 — never SVG filters |
+| Shine | duplicate bar inflated 2px each way at opacity 0.5 — web `.lk-bullet-shine` (`blur(4px)`); native the same rect at 0.5, Gaussian-blurred (`FeGaussianBlur stdDeviation 2`) |
 | Sizing | web `.lk-bullet-svg`: `width 100%; height auto; overflow visible`; native root: `width '100%', aspectRatio 320/150` |
 
 ## 4. States
@@ -84,7 +84,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks.
 
 **🟡 same API, platform-shaped implementation.** Identical geometry, band math, attainment thresholds, overflow behavior and label layout — both compute from the same catalog constants and share the private `Bullet` row renderer shape. The real differences:
 
-- **Shine substrate** — web blurs the duplicate bar (`.lk-bullet-shine`, `filter: blur(4px)`, opacity 0.5); native draws the same duplicate **unblurred** at 0.3 (the `Ring` glow precedent) because RN SVG filters are unreliable on device.
+- **Shine substrate** — web blurs the duplicate bar (`.lk-bullet-shine`, `filter: blur(4px)`, opacity 0.5); native Gaussian-blurs the same duplicate at 0.5 via `FeGaussianBlur stdDeviation 2` in a padded `userSpaceOnUse` region (see CONVENTIONS.md).
 - **Label styling channel** — web styles `<text>` via `.lk-bullet-label` / `.lk-bullet-tag`; native passes `fontSize/fontFamily/letterSpacing` props on `Svg.Text`.
 - **Container** — web `div[role=img]` + `className`/rest; native `View accessibilityRole="image"` + `style`.
 

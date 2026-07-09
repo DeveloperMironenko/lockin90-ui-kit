@@ -23,11 +23,25 @@ export const WithThreshold: Story = {
   ),
 };
 
-export const Tones: Story = {
+export const ToneHigh: Story = {
   render: () => (
-    <View style={{ width: 320, gap: 18 }}>
+    <View style={{ width: 320 }}>
       <Meter value={88} label="Recovery" showValue unit="%" tone="high" />
+    </View>
+  ),
+};
+
+export const ToneMid: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
       <Meter value={52} label="Strain" showValue unit="%" tone="mid" />
+    </View>
+  ),
+};
+
+export const ToneLow: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
       <Meter value={21} label="Sleep debt" showValue unit="%" tone="low" />
     </View>
   ),

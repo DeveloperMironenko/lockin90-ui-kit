@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/DonutChart.tsx` · `packages/ui-native/src/components/DonutChart.tsx` ·
 > web CSS `packages/ui/src/styles/components/donut.css` (`.lk-donut*`).
 > **Exports:** `DonutChart`, type `DonutSegment`, type `DonutChartProps`.
-> **Status:** Shipped (extended with the catalog **share arcs**, pie-charts PC-01…PC-13). **Parity:** 🟡 same API & math; web shine is a `blur()` duplicate + web-only arc transition; native shine is a wider faint duplicate arc; color is `var()` (web) vs hex (native).
+> **Status:** Shipped (extended with the catalog **share arcs**, pie-charts PC-01…PC-13). **Parity:** 🟡 same API & math; web shine is a `blur()` duplicate + web-only arc transition; native shine is a Gaussian-blurred duplicate arc (`FeGaussianBlur`); color is `var()` (web) vs hex (native).
 > **Stories:** `packages/ui/src/stories/DonutChart.stories.tsx` · `packages/ui-native/src/stories/DonutChart.stories.tsx` (catalog stories `PC01DuoSplit` … `PC13NestedArcs`).
 
 ---
@@ -60,7 +60,7 @@ Proportional composition as a ring — **two renderers behind one API**:
 | --- | --- | --- |
 | Share arcs | `<path>` round caps, `stroke = segment.color`, per-arc `opacity` | `react-native-svg` `<Path>` |
 | Dots (tiny segments) | `<circle r=swi/2>` at the mid angle | `<Circle>` |
-| Shine | wider (+5) duplicate, `blur(5px)`, 45% — only on `opacity === 1` segments | wider (+6) duplicate at 30%, no blur |
+| Shine | wider (+5) duplicate, `blur(5px)`, 45% — only on `opacity === 1` segments | same wider (+5) duplicate at 45%, `FeGaussianBlur stdDeviation 2.5` |
 | Callout line | `.lk-donut-callout line` — `color-mix(var(--text) 30%)` 1px | `colors.text` at 30% |
 | Callout chip | rect `color-mix(var(--bg-0) 78%)` bg + segment-color hairline 35% / text 8px `var(--font-mono)` | `${colors.bg0}C7` bg + `strokeOpacity 0.35` / `fonts.mono` 8 |
 | Legacy track/arcs | as before (`rotate(-90)` group, round caps, `.lk-donut-seg` 0.7s dasharray transition) | as before |
@@ -86,7 +86,7 @@ No hover/focus/disabled — presentational.
 
 **Verdict: 🟡 same API & math, platform-shaped shine.** The `shareArcs()` function is byte-for-byte identical on both sides (cap compensation, dots, hero, opacity), same variant defaults, same callout geometry and chip sizing. Differences:
 
-- **Shine:** web blurred duplicate (`filter: blur(5px)`); native wider faint duplicate (RN filter rule). Slightly tighter halo on native.
+- **Shine:** web blurred duplicate (`filter: blur(5px)`); native Gaussian-blurred duplicate via `FeGaussianBlur stdDeviation 2.5` (see CONVENTIONS.md). Slightly tighter halo on native.
 - **Legacy arc transition + SVG drop-shadow:** web-only polish.
 - **Color literal:** web `var()`; native hex (`bg0`+alpha for chips). App code reads 1:1.
 - **Text substrate:** web SVG `<text>` styled by `.lk-donut-callout`; native `SvgText` with `fonts.mono` — same size/anchor.

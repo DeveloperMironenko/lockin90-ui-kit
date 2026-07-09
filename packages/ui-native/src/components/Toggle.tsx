@@ -30,7 +30,10 @@ export function Toggle({
   style,
 }: ToggleProps) {
   const dims = size === 'sm' ? SIZE.sm : SIZE.md;
-  const knobOffset = dims.track - dims.knob - dims.pad * 2;
+  // The track has a 1px border and `left`/`width` are border-box, but the absolute
+  // knob is positioned inside the border — so the travel must subtract BOTH borders,
+  // else the "on" knob overshoots by 2px and sits flush against the right edge.
+  const knobOffset = dims.track - TRACK_BORDER * 2 - dims.knob - dims.pad * 2;
 
   // the knob is ALWAYS the cta gradient (matches web `.lk-toggle-knob`)
   const knob = (
@@ -94,6 +97,9 @@ const SIZE = {
   md: { track: 58, height: 32, knob: 24, pad: 3 },
   sm: { track: 44, height: 26, knob: 20, pad: 3 },
 } as const;
+
+/** Track border width (must match `trackOff`/`trackOn` borderWidth below). */
+const TRACK_BORDER = 1;
 
 const styles = StyleSheet.create({
   track: {

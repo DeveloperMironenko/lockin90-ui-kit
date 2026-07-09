@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/Card.tsx` · `packages/ui-native/src/components/Card.tsx` ·
 > web CSS `packages/ui/src/styles/primitives.css` (`.lk-card*`).
 > **Exports:** `Card`, type `CardProps`.
-> **Status:** Shipped. **Parity:** 🟡 same core surface; web adds `hover`/`tone`/`variant` + real `backdrop-filter`, native adds an optional `blur` peer.
+> **Status:** Shipped. **Parity:** 🟡 same core surface incl. `tone`/`variant`; web adds `hover`/`as` + real `backdrop-filter`, native adds an optional `blur` peer.
 > **Stories:** `packages/ui/src/stories/Card.stories.tsx` · `packages/ui-native/src/stories/Card.stories.tsx`.
 
 ---
@@ -19,8 +19,9 @@ Modifiers, all additive:
 - `lit` — a gradient hairline (violet→cyan) on the top edge; marks a "live"/primary card.
 - `hover` (web only) — lift + glow on pointer hover.
 - `flat` — drops the elevation shadow.
-- `tone` (web only) — `warn` (amber) / `danger` (red) tinted border + subtle bg for status panels.
-- `variant` (web only) — `dashed` (an add/connect action card) / `ghost` (borderless transparent surface).
+- `tone` — `warn` (amber) / `danger` (red) tinted border + subtle bg for status panels.
+- `variant` — `dashed` (an add/connect action card) / `ghost` (borderless transparent surface).
+- `as` (web only) — **polymorphic element**: render the same glass surface as an `article` / `li` / `section` / etc. instead of the default `<div>` (for correct semantics without a wrapper). The marketing `Card` is a thin wrapper of this and forwards `as`.
 
 It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parity violation (see §9).
 
@@ -33,14 +34,15 @@ It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parit
 | `lit` | `boolean` | `false` | ✓ | ✓ | gradient hairline on the top edge |
 | `flat` | `boolean` | `false` | ✓ | ✓ | drop the elevation shadow |
 | `hover` | `boolean` | `false` | ✓ | — | **web only** — lift + glow on hover (no pointer on native) |
-| `tone` | `'warn' \| 'danger'` | — | ✓ | — | **web only** — tinted status surface |
-| `variant` | `'ghost' \| 'dashed'` | — | ✓ | — | **web only** — borderless / dashed action card |
+| `tone` | `'warn' \| 'danger'` | — | ✓ | ✓ | tinted status surface (same values both platforms) |
+| `variant` | `'ghost' \| 'dashed'` | — | ✓ | ✓ | borderless / dashed action card; dashed **hover** accent is web-only |
+| `as` | `ElementType` | `'div'` | ✓ | — | **web only** — render as a different element (`article`/`li`/`section`/…); still `forwardRef` |
 | `blur` | `boolean` | `false` | — | ✓ | **native only** — real frosted blur via the optional `expo-blur` peer |
 | `className` | `string` | — | ✓ | — | web only |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |
 | _rest_ | `HTMLAttributes<HTMLDivElement>` (web) / `ViewProps` (native) | — | ✓ | ✓ | `onClick`/`onPress`, `id`, `children`, etc. |
 
-- **Web:** `forwardRef<HTMLDivElement>`; renders a `<div>` that spreads all HTML attrs.
+- **Web:** `forwardRef<HTMLDivElement>`; renders `as ?? 'div'` (polymorphic) and spreads all HTML attrs.
 - **Native:** renders a `<View>` (or `OptionalBlurView` when `blur` is set and the `expo-blur` peer resolves); `children` rendered after the optional `lit` overlay.
 
 ## 3. Visual spec (tokens — never hardcode)
@@ -56,8 +58,8 @@ It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parit
 | Transition | `transform/border-color/box-shadow .4s --ease` | n/a |
 
 - **`lit` hairline:** web `::before` inset by `--r`, `linear-gradient(90deg, transparent, rgba(124,92,255,.7), rgba(34,211,238,.7), transparent)`, 1px. Native renders an absolute 1px bar, `colors.accent` at opacity 0.6, clipped to the top corners — a solid accent line (no gradient).
-- **`tone` (web):** `warn` = `color-mix(--warn 42%, transparent)` border + `color-mix(--warn 7%, --glass)` bg; `danger` uses `--bad` at 42% / 8%.
-- **`variant` (web):** `dashed` = transparent, `2px dashed --border-2`, no shadow, centered column, `--text-dim` (hover → `--accent`); `ghost` = transparent bg + border, no blur, no shadow.
+- **`tone`:** web `warn` = `color-mix(--warn 42%, transparent)` border + `color-mix(--warn 7%, --glass)` bg; `danger` uses `--bad` at 42% / 8%. Native paints the **flattened rgba equivalents** of the same mixes (`warn` border `rgba(255,176,32,.42)` / bg `rgba(255,206,115,.11)`; `danger` border `rgba(255,77,109,.42)` / bg `rgba(255,138,159,.12)`) — values match.
+- **`variant`:** `dashed` = transparent, `2px dashed --border-2`/`colors.border2`, no shadow, centered column + 8px gap (hover → `--accent` border + tinted bg, **web only**; native is static and children set their own `colors.textDim`); `ghost` = transparent bg + border, no blur, no shadow — both platforms.
 
 ## 4. States
 
@@ -67,7 +69,7 @@ It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parit
 | Hover | `hover` → `translateY(-4px)`, `border-color --border-2`, `box-shadow --elev-2` | n/a (no hover) |
 | Flat | `.lk-flat` → `box-shadow: none` | `flat` → `shadowOpacity 0, elevation 0` |
 | Lit | `.lk-lit::before` gradient hairline | absolute accent bar @ 0.6 |
-| Dashed (action) | `:hover` → accent border + tinted bg | n/a |
+| Dashed (action) | `:hover` → accent border + tinted bg | static (no hover) |
 | Pressed | n/a (use a `Pressable` wrapper) | n/a (use a `Pressable` wrapper) |
 
 `Card` is not interactive by itself — wrap it (web `onClick`, native `Pressable`) for actions.
@@ -76,14 +78,15 @@ It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parit
 
 **Verdict: 🟡 same core surface, platform-shaped extras.** The base contract — glass fill, hairline border, `--r` radius, `--elev-1` shadow, the `pad`/`padLg`/`lit`/`flat` props — is identical on both platforms. The divergences are platform-shaped enhancements, none of which blocks use:
 
-- **`hover` (web only):** pointer-driven lift+glow; native has no hover. Express touch feedback via a wrapping `Pressable` instead.
-- **`tone` + `variant` (web only):** status-tinted (`warn`/`danger`) and `dashed`/`ghost` action surfaces are not yet on native. If a native screen needs them, **add the props to the native `Card` first** (same names/tokens) — don't fork a local panel.
+- **`hover` (web only):** pointer-driven lift+glow; native has no hover. Express touch feedback via a wrapping `Pressable` instead. The `dashed` variant's hover accent (border → `--accent`, tinted bg) is likewise web-only — native dashed is static.
+- **`tone` + `variant` (both platforms):** `warn`/`danger` tints and `dashed`/`ghost` surfaces now ship on native too, with the web `color-mix` values flattened to matching rgba literals.
+- **`as` (web only):** polymorphic element; native is always a `View`.
 - **Blur:** web has real `backdrop-filter` glass; native genuinely **cannot** do `backdrop-filter` (RN limitation) and approximates glass with the translucent `--glass`/`colors.glass` fill, optionally upgrading to a true frosted `OptionalBlurView` when the `blur` prop is set and the `expo-blur` peer is installed.
 
 ## 6. Composition & usage
 
 - **Composes:** `OptionalBlurView` (native, optional `expo-blur`).
-- **Composed by:** `InsightCard`, `PricingTierCard`, `PendingPatternCard`, `EmptyState`, modal bodies, KPI grids, settings rows — anywhere a panel is needed.
+- **Composed by:** `InsightCard`, `PricingTierCard`, `PendingPatternCard`, `EmptyState`, modal bodies, KPI grids, settings rows — anywhere a panel is needed. The marketing **`Card`** (`@lockin90/ui/marketing`) is a thin wrapper that renders this root `Card` with `as`/`hover` + the roomier `.lk-mk-card` padding.
 - **Used by:** nearly every screen surface across `lockin90-frontend` / `lockin90-mobile` / `lockin90-admin`.
 
 ```tsx
@@ -92,6 +95,7 @@ It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parit
 <Card hover onClick={open}>…</Card>
 <Card tone="danger">Account flagged</Card>
 <Card variant="dashed" onClick={connect}>+ Connect a source</Card>
+<Card as="article">…</Card>          {/* polymorphic semantic element */}
 
 // native
 <Card lit pad="lg">…</Card>
@@ -110,13 +114,13 @@ It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parit
 **Do**
 - Use `Card` for every glass panel; pick `pad` over ad-hoc margins.
 - Use `lit` to mark the one primary/live card on a surface.
-- Use `tone="warn"|"danger"` (web) for status panels instead of hand-tinting.
+- Use `tone="warn"|"danger"` for status panels instead of hand-tinting.
 - Wrap in a real button/`Pressable` when the whole card is clickable.
 
 **Don't**
 - ✗ Don't hand-roll a glass panel (`background: rgba(...)` + border + blur) — import `Card`.
 - ✗ Don't hardcode the padding, radius, border, or shadow — they come from tokens.
-- ✗ Don't rely on `hover`/`tone`/`variant` on native (web-only today) — add them to native first if needed.
+- ✗ Don't rely on `hover` (or the dashed hover accent) on native — hover is web-only; use a `Pressable` wrapper for feedback.
 - ✗ Don't nest a `Card` inside a `Card` for visual weight — use `pad`/`lit`/`flat` modifiers.
 
 ## 9. Anti-patterns & lookalike ban

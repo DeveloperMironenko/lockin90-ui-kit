@@ -1,14 +1,15 @@
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { View, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* StatTile — the catalog stat-tile (chartlet) family (ST-01/06/07/10,
    lockin90-design/charts/stat-tiles.html): KPI chartlets — big number + delta
    + micro-chart, drawn in the fixed 320×150 catalog viewBox. Native twin of
    `@lockin90/ui` StatTile — same prop API + geometry; the hero `shine` blur
-   and the verdict-dot drop-shadow are wider faint duplicate shapes here
-   (never SVG filters), like `Ring`. */
+   is a real Gaussian-blurred duplicate number (Fabric-native SVG filters in
+   react-native-svg 15); the verdict-dot drop-shadow stays a faint halo
+   circle. */
 
 /** Catalog variant names (`lockin90-design/charts/stat-tiles.html`). */
 export type StatTileVariant =
@@ -81,7 +82,7 @@ export interface StatTileProps {
   stats?: [StatTileStat, StatTileStat];
   /** `stat-list` — the rows (default: the catalog's 3) */
   rows?: StatTileRow[];
-  /** hero glow — a wider faint duplicate number behind (no blur on native) */
+  /** hero glow — a Gaussian-blurred duplicate number behind the crisp one */
   shine?: boolean;
   /** rendered width in px — the 320×150 viewBox scales to fit */
   width?: number;
@@ -377,8 +378,9 @@ function MicroSpark({
  * StatTile — the kit's KPI chartlet (catalog family `stat-tiles`,
  * ST-01/06/07/10): the big-number widgets that carry every dashboard.
  * Native twin of `@lockin90/ui` StatTile — same prop API + geometry; the
- * hero `shine` blur becomes a wider faint duplicate number and the verdict
- * dot's drop-shadow a faint halo circle (RN SVG filters are unreliable).
+ * hero `shine` blur is a real Gaussian-blurred duplicate number
+ * (Fabric-native SVG filters) and the verdict dot's drop-shadow a faint
+ * halo circle.
  *
  * - `stat-tile` (ST-01, default) — big 34px number + delta chevron + dim
  *   caption; SELECT `accessory`: none / spark / bars / ring / progress,
@@ -410,6 +412,11 @@ export function StatTile({
   height = H,
   style,
 }: StatTileProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  /* hero number mirrors the web text copy's blur(8px); the ring-accessory
+     shine mirrors its arc's blur(3px) */
+  const blur8Id = `lk-stat-blur8-${uid}`;
+  const blur3Id = `lk-stat-blur3-${uid}`;
   const heading = title ?? DEFAULT_TITLES[variant];
   const head = <Label x={P.l + 8} y={26} text={heading} anchor="start" />;
 
@@ -424,8 +431,14 @@ export function StatTile({
     accessibilityLabel = `${heading}: ${val}${deltaText ? `, ${deltaText}` : ''}`;
     content = (
       <>
-        {/* glow — a wider faint duplicate number (web: blurred copy) */}
-        {shine ? <BigNum x={W / 2} y={83} text={val} size={56} color={colors.mint} anchor="middle" opacity={0.28} /> : null}
+        {/* glow — a Gaussian-blurred duplicate number behind the crisp one (the
+            web text copy's `blur(8px)`); the filter sits on a wrapping G since
+            react-native-svg's Text props don't type `filter` */}
+        {shine ? (
+          <G filter={`url(#${blur8Id})`}>
+            <BigNum x={W / 2} y={82} text={val} size={52} color={colors.mint} anchor="middle" opacity={0.5} />
+          </G>
+        ) : null}
         <BigNum x={W / 2} y={82} text={val} size={52} color={col} anchor="middle" />
         {deltaText ? <Delta x={W / 2 + 40} y={60} text={deltaText} up={deltaUp} /> : null}
         <Label x={W / 2} y={102} text={label ?? 'ENERGY · PEAK IN 40 MIN'} color={colors.textDim} />
@@ -512,8 +525,17 @@ export function StatTile({
         {accessory === 'ring' ? (
           <G>
             <Path d={arcPath(236, 70, 26, 0, 359.99)} fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth={5} />
+            {/* shine — a Gaussian-blurred duplicate arc (the web `blur(3px)`) */}
             {shine ? (
-              <Path d={arcPath(236, 70, 26, 0, frac * 360)} fill="none" stroke={aColor} strokeWidth={9} strokeLinecap="round" opacity={0.3} />
+              <Path
+                d={arcPath(236, 70, 26, 0, frac * 360)}
+                fill="none"
+                stroke={aColor}
+                strokeWidth={9}
+                strokeLinecap="round"
+                opacity={0.3}
+                filter={`url(#${blur3Id})`}
+              />
             ) : null}
             <Path d={arcPath(236, 70, 26, 0, frac * 360)} fill="none" stroke={aColor} strokeWidth={5} strokeLinecap="round" />
             <SvgText x={236} y={74} fill={colors.text} fontSize={13} fontWeight="700" textAnchor="middle" fontFamily={fonts.display}>
@@ -537,6 +559,20 @@ export function StatTile({
   return (
     <View accessibilityRole="image" accessibilityLabel={accessibilityLabel} style={[{ width, height }, style]}>
       <Svg width={width} height={height} viewBox={`0 0 ${W} ${H}`}>
+        {shine ? (
+          /* real Gaussian blurs for the glows (Fabric-native in react-native-svg
+             15) — the native twins of the web `blur(8px)` hero copy and the
+             ring accessory's `blur(3px)`. Regions in user space over the full
+             canvas so text/arcs never clip the blur. */
+          <Defs>
+            <Filter id={blur8Id} filterUnits="userSpaceOnUse" x={-16} y={-16} width={W + 32} height={H + 32}>
+              <FeGaussianBlur stdDeviation={4} />
+            </Filter>
+            <Filter id={blur3Id} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+              <FeGaussianBlur stdDeviation={1.5} />
+            </Filter>
+          </Defs>
+        ) : null}
         {head}
         {content}
       </Svg>

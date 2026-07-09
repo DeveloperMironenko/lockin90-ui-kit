@@ -29,3 +29,9 @@ export const Dashed: StoryObj<typeof meta> = {
 export const Ghost: StoryObj<typeof meta> = {
   args: { variant: 'ghost', children: 'Borderless transparent surface' },
 };
+
+/** Polymorphic `as` — render the same glass surface as a semantic element
+ *  (`article` / `li` / `section`). The marketing `Card` is a thin wrapper of this. */
+export const AsArticle: StoryObj<typeof meta> = {
+  args: { as: 'article', hover: true, children: 'Rendered as an <article> element' },
+};

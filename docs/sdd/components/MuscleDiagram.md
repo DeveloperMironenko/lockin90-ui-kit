@@ -76,7 +76,7 @@ There is no hover/press/disabled affordance — `MuscleDiagram` is a non-interac
 
 Real differences (neither blocks use):
 
-- **Region glow:** web adds `filter: drop-shadow(0 0 5px currentColor)` to each highlighted region. `react-native-svg` can't cheaply apply a CSS-style drop-shadow to a `<Path>`, so native renders the region fill+stroke without the soft glow. The legend dot glow exists on both (native via `shadowColor`/`shadowRadius`).
+- **Region glow:** web adds `filter: drop-shadow(0 0 5px currentColor)` to each highlighted region; native renders the region fill+stroke without the soft glow — the kit's Fabric `FeGaussianBlur` pattern hasn't been applied to this component. The legend dot glow exists on both (native via `shadowColor`/`shadowRadius`).
 - **Props surface:** web extends `HTMLAttributes<HTMLDivElement>` (`className` + spread); native exposes only `style`.
 
 No capability gap blocks the component — the body map is fully usable and geometrically identical on both platforms.

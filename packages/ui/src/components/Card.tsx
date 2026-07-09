@@ -1,4 +1,4 @@
-import { forwardRef, type HTMLAttributes } from 'react';
+import { forwardRef, type ElementType, type HTMLAttributes } from 'react';
 import { cn } from '../cn';
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
@@ -16,15 +16,18 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   tone?: 'warn' | 'danger';
   /** surface style — `dashed` = an add/connect action card, `ghost` = borderless transparent */
   variant?: 'ghost' | 'dashed';
+  /** render as a different element (e.g. `article` / `li` / `section`); defaults to `div`. */
+  as?: ElementType;
 }
 
-/** Glassmorphism panel — the base surface for everything. */
+/** Glassmorphism panel — the base surface for everything. Polymorphic via `as`. */
 export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
-  { hover, lit, padLg, pad, flat, tone, variant, className, ...rest },
+  { as, hover, lit, padLg, pad, flat, tone, variant, className, ...rest },
   ref,
 ) {
+  const Tag = (as ?? 'div') as ElementType;
   return (
-    <div
+    <Tag
       ref={ref}
       className={cn(
         'lk-card',

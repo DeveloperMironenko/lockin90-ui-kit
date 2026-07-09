@@ -272,7 +272,10 @@ export function NumberStepper({
 const styles = StyleSheet.create({
   /* ── Stepper ──────────────────────────────────────────────────────────── */
   step: { flexDirection: 'row', alignItems: 'flex-start', width: '100%' },
-  item: { flexDirection: 'column', alignItems: 'center', gap: 8, flexShrink: 0 },
+  // Cells may SHRINK to node width (labels ellipsize via numberOfLines) so the
+  // rail always fits its container — web parity: `.lk-step-item` is a fixed
+  // 30px track and `.lk-step-line` flexes, so the web rail never overflows.
+  item: { flexDirection: 'column', alignItems: 'center', gap: 8, flexShrink: 1, minWidth: 30 },
   node: {
     width: 30,
     height: 30,

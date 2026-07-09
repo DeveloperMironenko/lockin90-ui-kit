@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/CompareChart.tsx` · `packages/ui-native/src/components/CompareChart.tsx` ·
 > web CSS `packages/ui/src/styles/components/compare.css` (`.lk-cmp*`).
 > **Exports:** `CompareChart`, types `CompareChartProps`, `CompareChartVariant`, `CompareMetric`, `RankSeries`, `LadderStep`.
-> **Status:** Shipped. **Parity:** 🟡 same API & geometry; `shine` is a CSS `blur(5px)` underlay and the ladder NOW pulse is a CSS-animated expanding ring on web vs a wider faint duplicate stroke + static halo ring on native (RN SVG filters/SMIL are unreliable on device).
+> **Status:** Shipped. **Parity:** 🟡 same API & geometry; `shine` is a CSS `blur(5px)` underlay and the ladder NOW pulse is a CSS-animated expanding ring on web vs a Gaussian-blurred duplicate stroke (`FeGaussianBlur`, real RN-SVG filters) + static halo ring on native (no SMIL).
 > **Stories:** `packages/ui/src/stories/CompareChart.stories.tsx` (`Charts/CompareChart`) · `packages/ui-native/src/stories/CompareChart.stories.tsx` (`Native/CompareChart`).
 
 ---
@@ -69,7 +69,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | Arrows (CP-04) | zero-line at `colX(0.5)` `--text` @ 0.14, 1px; arrow bar 5px round cap @ 0.85, length `dv·206`; 7px triangle head; `%` label 14px beyond the head — mint/`--zone-low` |
 | Mirror (CP-05) | spine at x 160 `--text` @ 0.18, 1.4px; left rect `w = before·118` `--text` @ fillOpacity 0.22, right rect `w = after·118` metric hue @ 0.9 — h 11, rx 5.5; name centered above the row (`--text-faint`) |
 | Ladder (CP-07) | steps at `x = 34 + si·238 / max(1, n−1)`, `y = Y(value)`; connectors 2px — mint solid, or `--text` @ 0.2 dashed `4 4` toward/from an `ahead` step; dots: now → mint r 6 + pulse, done → mint @ fillOpacity 0.6 r 4.5, ahead → `--text` @ fillOpacity 0.25 r 4.5; chip at `y − 15` (`ahead` chips `--text-faint`, others `--mint`) |
-| Shine | web: `.lk-cmp-shine` → `filter: blur(5px)` on a `w + 5` round-cap duplicate line @ 0.45; native: duplicate line `strokeWidth + 5`, `strokeOpacity 0.45` (no filters) |
+| Shine | web: `.lk-cmp-shine` → `filter: blur(5px)` on a `w + 5` round-cap duplicate line @ 0.45; native: the same duplicate line (`strokeWidth + 5` @ 0.45) Gaussian-blurred via `FeGaussianBlur` stdDev 2.5 |
 | NOW pulse | core dot r 3.6 mint (web + `drop-shadow(0 0 5px var(--mint))`); web ring r 3.6 stroke 1.4 animated by `.lk-cmp-pulse` (scale 1→3, fade .8→0, 1.8s infinite, `transform-box: fill-box`; reduced-motion → static @ 0.35); native static halo ring r 7, stroke 1.4 @ 0.4 (Ring precedent) |
 | Sizing | web `.lk-cmp-svg`: `width 100%; height auto; overflow visible`; native root: `width '100%', aspectRatio 320/150` |
 
@@ -91,7 +91,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks.
 
 **🟡 same API, platform-shaped implementation.** Identical geometry, data model, colors, and label layout (both compute from the same catalog constants; `monotonePath` is the same Fritsch–Carlson port on both sides). The real differences:
 
-- **Shine substrate** — web blurs a wider duplicate line (`filter: blur(5px)`, catalog `C.blur`); native draws the same duplicate **without** the blur (`strokeWidth + 5`, `strokeOpacity 0.45`) because RN SVG filters are unreliable on device. Halo softness differs marginally; does not block use.
+- **Shine substrate** — web blurs a wider duplicate line (`filter: blur(5px)`, catalog `C.blur`); native Gaussian-blurs the same duplicate (`strokeWidth + 5`, `strokeOpacity 0.45`, `FeGaussianBlur stdDeviation 2.5` — see CONVENTIONS.md). Halo softness differs marginally; does not block use.
 - **NOW pulse substrate** — web animates the ring (CSS scale 1→3 / fade, reduced-motion safe); native shows a **static halo ring** (r 7, stroke 1.4 @ 0.4 — the `Ring` pulse precedent; no SMIL/JS animation). The web core dot also carries a `drop-shadow` glow that native omits.
 - **Label styling channel** — web styles `<text>` via `.lk-cmp-label`/`.lk-cmp-tag` (CSS); native passes `fontSize/fontFamily/letterSpacing` props on `Svg.Text` (`0.5`/`0.4` ≈ `.06em`/`.05em`).
 - **Container** — web `div[role=img]` + `className`/rest; native `View accessibilityRole="image"` + `style`.
@@ -154,5 +154,5 @@ Standalone chart — composes nothing from the kit; typically placed inside a `C
 - **No hand-rolled compares.** Any before/after slope, dumbbell, bump-rank, delta-arrow, mirror-bar or milestone-ladder chart on a product surface is this component — never a local SVG lookalike.
 - **New variant → both platforms.** A new compare form is added here, web + native in the same unit of work, with the same prop names — never a one-off in an app.
 - **Tokens only** — spectrum/zone/text tokens throughout; the catalog's raw white opacities are expressed as `--text` + opacity inside the component, never re-derived in app code.
-- **Substrate diffs stay documented, not widened** — don't "fix" the native static pulse with a JS animation loop or bolt SVG filters onto native shine; the diffs in §5 are the accepted contract.
+- **Substrate diffs stay documented, not widened** — don't "fix" the native static pulse with a JS animation loop or hand-tune the kit's `FeGaussianBlur` shine pattern per app; the diffs in §5 are the accepted contract.
 - **Parity gate:** any change ships only after the web story and the native story are compared side-by-side against `compare-charts.html`.

@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, Defs, G, Line, LinearGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, LinearGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* AreaChart — the shared catalog stacked-area family (AR-01/03/04/05/06/07,
@@ -9,7 +9,8 @@ import { colors, fonts } from '@lockin90/tokens';
    chip-labeled effect stack with a NOW rule, per-band fade gradients and
    three mini duo-stack multiples — with mono labels and a top-right dot
    legend. Native twin of `@lockin90/ui` AreaChart — same prop API; shine is a
-   wider faint duplicate stroke (never SVG filters). (AR-02 does not exist —
+   real Gaussian-blurred duplicate stroke (Fabric-native SVG filters in
+   react-native-svg 15). (AR-02 does not exist —
    a numbering gap in the catalog.) */
 
 export type AreaChartVariant =
@@ -477,10 +478,24 @@ export function AreaChart({
               </G>
             ))}
 
-        {/* shine — a wider faint mint duplicate under a crisp mint edge line
-            (no SVG filters on native; the web blurs the underlay instead) */}
+        {/* shine — a Gaussian-blurred mint duplicate under a crisp mint edge
+            line: the native twin of the web `.lk-area-shine` blur(5px) underlay */}
         {shineD ? (
           <>
+            <Defs>
+              {/* region in user space over the full canvas so the flat edge
+                  never clips the blur to its bounding box */}
+              <Filter
+                id={`lk-area-blur-${uid}`}
+                filterUnits="userSpaceOnUse"
+                x={-10}
+                y={-10}
+                width={W + 20}
+                height={H + 20}
+              >
+                <FeGaussianBlur stdDeviation={2.5} />
+              </Filter>
+            </Defs>
             <Path
               d={shineD}
               fill="none"
@@ -488,6 +503,7 @@ export function AreaChart({
               strokeWidth={7.5}
               strokeLinecap="round"
               strokeOpacity={0.45}
+              filter={`url(#lk-area-blur-${uid})`}
             />
             <Path d={shineD} fill="none" stroke={colors.mint} strokeWidth={2.2} strokeLinecap="round" />
           </>

@@ -18,8 +18,14 @@ export interface OptionalBlurViewProps extends ViewProps {
 
 let resolved: ComponentType<OptionalBlurViewProps> | null = null;
 try {
+  // JS-requireable is NOT enough: in a pnpm workspace expo-blur's JS gets hoisted so
+  // `require('expo-blur')` succeeds even when the app never installed/built its NATIVE
+  // module — and BlurView then renders "Unimplemented component: ExpoBlurView".
+  // Gate on the native module (`Name("ExpoBlur")`) actually being registered.
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  resolved = require('expo-blur').BlurView ?? null;
+  const nativeReady = require('expo-modules-core').requireOptionalNativeModule?.('ExpoBlur') != null;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  resolved = nativeReady ? (require('expo-blur').BlurView ?? null) : null;
 } catch {
   resolved = null;
 }

@@ -26,6 +26,10 @@ The **DM / chat input bar**: a glassy pill row holding (left→right) an optiona
 - **State:** both own a `value` string via `useState`; `canSend = !disabled && value.trim().length > 0`.
 - **Web only:** internal `taRef` (textarea) drives `autoGrow()` — sets height to `min(scrollHeight, 120)`; resets to `auto` after send via `requestAnimationFrame`. No `className`/rest passthrough.
 - **Native only:** no auto-grow logic — relies on RN `<TextInput multiline>` with `minHeight: 42`, `maxHeight: 120`.
+  The resting **placeholder is a single-line truncating overlay** — the `TextInput` gets no `placeholder` prop;
+  while `value` is empty an absolute `pointerEvents="none"` `<Text numberOfLines={1}>` (`colors.textFaint`) sits
+  over the field instead. RN's own multiline placeholder would wrap a long string (e.g. "Encrypted message…")
+  onto 2 lines and make the resting pill taller than the 42px buttons; the overlay keeps it exactly one line.
 
 ## 3. Visual spec (tokens — never hardcode)
 
@@ -61,6 +65,7 @@ The **DM / chat input bar**: a glassy pill row holding (left→right) an optiona
 - **Auto-grow:** web measures `scrollHeight` and sets `height = min(scrollHeight, 120)` for a 1→~5-line grow, then resets after send; native leans on RN `<TextInput multiline>` with `minHeight 42` / `maxHeight 120`. Same visible 42px-at-rest / 120px-cap behavior, different mechanism.
 - **Send-on-Enter:** web sends on `Enter` (no Shift = newline) via `onKeyDown`; native has no hardware-Enter convention, so send is button-only. App code calls `onSend` the same way.
 - **Send button:** web `--grad-cta` CSS gradient; native `expo-linear-gradient` `gradients.cta.stops` start `{0,0}`→end `{1,1}`. No gradient animation either side.
+- **Placeholder:** web uses the textarea's native placeholder; native overlays a truncating one-line `Text` (§2) — same look at rest, long placeholders ellipsize on native instead of wrapping.
 
 No capability gap — the composer is fully usable on both; the Enter-to-send is a web affordance only.
 

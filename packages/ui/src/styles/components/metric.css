@@ -5,7 +5,7 @@
 
    ProgressDots — a flex row of segment dots showing progress, e.g. the
    onboarding "calibration" day-dot rows: filled dots glow, the rest stay
-   faint, the current dot reads slightly larger.   (.lk-dots / .lk-pdot)
+   faint, the current dot reads slightly larger.   (.lk-pdots / .lk-pdot)
    ========================================================================== */
 
 /* ── MetricTile ──────────────────────────────────────────────────────────── */
@@ -96,6 +96,23 @@
   background: var(--glass-2);
 }
 
+/* bottom spark-fill bar (0..1 fraction via --v) — the accessory admin StatCard uses */
+.lk-metric-spark {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  margin-top: 3px;
+}
+.lk-metric-spark > i {
+  display: block;
+  height: 100%;
+  width: calc(var(--v, 0) * 100%);
+  border-radius: 999px;
+  background: var(--grad-cta);
+  transition: width 1.1s var(--ease);
+}
+
 /* empty / zero-data placeholder: faint em-dash value + a faint mono hint line */
 .lk-metric-value-empty {
   color: var(--text-faint);
@@ -110,7 +127,9 @@
 
 /* ── ProgressDots ────────────────────────────────────────────────────────── */
 
-.lk-dots {
+/* namespaced `.lk-pdots` (not `.lk-dots`) so it never collides with DotsLoader,
+   which owns the canonical `.lk-dots` bouncing-dots loader class. */
+.lk-pdots {
   --lk-dot-color: var(--accent);
   display: flex;
   flex-wrap: wrap;

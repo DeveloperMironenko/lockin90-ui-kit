@@ -32,6 +32,18 @@ export const WithLanguage: Story = {
   ),
 };
 
+export const Wrapped: Story = {
+  render: () => (
+    <View style={{ width: 360 }}>
+      <Controlled
+        language="json"
+        wrap
+        value={'{ "id": "evt_01HXYZ", "type": "session.completed", "data": { "score": 87, "streak": 12 } }'}
+      />
+    </View>
+  ),
+};
+
 export const Invalid: Story = {
   render: () => (
     <View style={{ width: 360 }}>

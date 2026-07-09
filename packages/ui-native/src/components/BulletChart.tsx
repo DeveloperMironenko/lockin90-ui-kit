@@ -1,12 +1,14 @@
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { G, Line, Rect, Text as SvgText } from 'react-native-svg';
+import { useId } from 'react';
+import Svg, { Defs, FeGaussianBlur, Filter, G, Line, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* BulletChart — the shared catalog bullet family (BL-01/02/05,
    lockin90-design/charts/bullet-charts.html): actual vs target vs range in
    one compact bar — the KPI-row workhorse — drawn in a fixed 320×150 viewBox
    with mono catalog labels. Native twin of `@lockin90/ui` BulletChart — same
-   prop API; shine is a wider faint duplicate bar (never SVG filters). */
+   prop API; shine is a real Gaussian-blurred duplicate bar (Fabric-native
+   SVG filters in react-native-svg 15). */
 
 export type BulletChartVariant =
   | 'bullets' /* BL-01 — bullet rows · SELECT: rows, density, zone coloring */
@@ -219,6 +221,8 @@ function Bullet({
   color: string;
   shine: boolean;
 }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-bullet-blur-${uid}`;
   const max = row.max != null && row.max > 0 ? row.max : 1;
   const frac = Math.max(0, row.value / max);
   const [r1, r2] = (row.ranges ? row.ranges.map((r) => r / max) : DEFAULT_RANGES) as [number, number];
@@ -229,6 +233,16 @@ function Bullet({
   const vx = BX + BW + 8 + (frac > 1 ? over + 2 : 0);
   return (
     <G>
+      {shine ? (
+        /* real Gaussian blur for the shine (Fabric-native in react-native-svg
+           15) — the native twin of the web `.lk-bullet-shine` blur(4px). Region
+           in user space over the full canvas so flat bars never clip. */
+        <Defs>
+          <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+            <FeGaussianBlur stdDeviation={2} />
+          </Filter>
+        </Defs>
+      ) : null}
       {/* stacked range bands: full scale + [0..ok] + [0..low], each a touch brighter */}
       {[
         [1, 0.045],
@@ -246,6 +260,8 @@ function Bullet({
           fillOpacity={op}
         />
       ))}
+      {/* shine — a Gaussian-blurred duplicate bar behind the value bar (the web
+          `.lk-bullet-shine` blur(4px) underlay) */}
       {shine ? (
         <Rect
           x={BX}
@@ -254,7 +270,8 @@ function Bullet({
           height={rd(bh + 4)}
           rx={(bh + 4) / 2}
           fill={color}
-          opacity={0.3}
+          opacity={0.5}
+          filter={`url(#${blurId})`}
         />
       ) : null}
       <Rect x={BX} y={rd(y - bh / 2)} width={rd(vw)} height={rd(bh)} rx={bh / 2} fill={color} />

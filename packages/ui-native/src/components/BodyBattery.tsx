@@ -1,6 +1,6 @@
 import { useId, type ReactNode } from 'react';
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, Defs, G, Line, LinearGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, LinearGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* BodyBattery — the catalog body-battery family (BB-01/02/05/06/07,
@@ -10,8 +10,9 @@ import { colors, fonts } from '@lockin90/tokens';
    pulse), the glanceable battery glyph (level / charging / low SELECT
    states), drain-event attribution pills, the 7-battery week row and the
    today-vs-yesterday compare. Native twin of `@lockin90/ui` BodyBattery —
-   same prop API; glows are wider faint duplicate shapes (never SVG
-   filters). (BB-03/04 do not exist — numbering gaps.) */
+   same prop API; the shine glow is a real Gaussian-blurred duplicate
+   (Fabric-native SVG filters in react-native-svg 15). (BB-03/04 do not
+   exist — numbering gaps.) */
 
 export type BodyBatteryVariant =
   | 'battery-day' /* BB-01 — zone-stroked % curve over 24h + NOW pulse */
@@ -300,6 +301,7 @@ export function BodyBattery({
 }: BodyBatteryProps) {
   const uid = useId().replace(/[^a-zA-Z0-9-]/g, '');
   const gradId = `lk-bb-z-${uid}`;
+  const blurId = `lk-bb-blur-${uid}`;
 
   const isCurve = variant === 'battery-day' || variant === 'drain-events' || variant === 'battery-vs';
   const showBolt = charging ?? isCurve; // the catalog day curve always shows it
@@ -336,9 +338,19 @@ export function BodyBattery({
             strokeDasharray={[4, 4]}
           />
         ) : null}
-        {/* zone-gradient % curve (+ wider faint glow underlay — no filters) */}
+        {/* zone-gradient % curve. shine — a Gaussian-blurred duplicate behind the
+            crisp curve: the native twin of the web `.lk-bb-shine` blur(5px)
+            underlay. (Wide un-blurred copies read as hard outlines on device.) */}
         {shine ? (
-          <Path d={d} fill="none" stroke={`url(#${gradId})`} strokeWidth={7.5} strokeLinecap="round" opacity={0.45} />
+          <Path
+            d={d}
+            fill="none"
+            stroke={`url(#${gradId})`}
+            strokeWidth={7.5}
+            strokeLinecap="round"
+            opacity={0.45}
+            filter={`url(#${blurId})`}
+          />
         ) : null}
         <Path d={d} fill="none" stroke={`url(#${gradId})`} strokeWidth={2.5} strokeLinecap="round" />
         {showBolt ? (
@@ -403,6 +415,8 @@ export function BodyBattery({
           strokeWidth={1.5}
         />
         <Rect x={bx + bw} y={rd(by + bh * 0.3)} width={4} height={rd(bh * 0.4)} rx={2} fill={colors.text} opacity={0.25} />
+        {/* shine — a Gaussian-blurred duplicate of the fill behind it: the native
+            twin of the web `.lk-bb-shine` blur(5px) glyph underlay. */}
         {shine ? (
           <Rect
             x={bx + 1}
@@ -412,10 +426,12 @@ export function BodyBattery({
             rx={rd(bh * 0.2)}
             fill={col}
             opacity={0.3}
+            filter={`url(#${blurId})`}
           />
         ) : null}
         <Rect x={bx + 3} y={by + 3} width={rd(fillW)} height={bh - 6} rx={rd(bh * 0.16)} fill={col} opacity={0.9} />
-        {isCharging ? <Bolt x={bx + bw / 2 - 3} y={rd(by + bh * 0.16)} s={bh / 16} color={colors.bg0} /> : null}
+        {/* charging is conveyed by the ETA caption alone — the in-glyph bolt was
+            dropped (too large at this scale, and black-on-black below ~50% fill). */}
         <SvgText x={206} y={84} fill={col} fontSize={30} fontFamily={fonts.display} fontWeight="700" letterSpacing={-0.6}>
           {`${Math.round(lv * 100)}%`}
         </SvgText>
@@ -483,6 +499,16 @@ export function BodyBattery({
               <Stop offset="55%" stopColor={colors.zoneMid} />
               <Stop offset="100%" stopColor={colors.zoneLow} />
             </LinearGradient>
+          </Defs>
+        ) : null}
+        {shine ? (
+          /* real Gaussian blur for the shine (Fabric-native in react-native-svg 15)
+             — the native twin of the web `.lk-bb-shine` blur(5px). Region in user
+             space over the full canvas so flat curves never clip the blur. */
+          <Defs>
+            <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+              <FeGaussianBlur stdDeviation={2.5} />
+            </Filter>
           </Defs>
         ) : null}
         {/* catalog grid: 3 interior rows + solid baseline (day curves only) */}

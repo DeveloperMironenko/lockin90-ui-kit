@@ -14,8 +14,12 @@ export type { PanelProps } from './Panel';
 // --- Overview / dashboard ---
 export { StatCard } from './StatCard';
 export type { StatCardProps, StatDeltaDir, StatValueTone } from './StatCard';
-export { Sparkline } from './Sparkline';
-export type { SparklineProps, SparkDeltaDir } from './Sparkline';
+export { TrendCard, type TrendCardProps, type SparkDeltaDir } from './TrendCard';
+/** @deprecated Renamed to `TrendCard` — it is a titled stat+area-chart card, not a
+ *  bare sparkline, and clashed with the root cross-platform `Sparkline`. Use `TrendCard`. */
+export { TrendCard as Sparkline } from './TrendCard';
+/** @deprecated Renamed to `TrendCardProps`. Use `TrendCardProps`. */
+export type { TrendCardProps as SparklineProps } from './TrendCard';
 export { StatusChip } from './StatusChip';
 export type { StatusChipProps, StatusChipTone } from './StatusChip';
 export { AuditEntry } from './AuditEntry';
@@ -41,7 +45,12 @@ export { InlineEdit, type InlineEditProps } from './InlineEdit';
 export { PulseStrip, type PulseStripProps, type PulseStripItem } from './PulseStrip';
 
 // --- Charts / widgets ---
-export { FunnelChart, type FunnelChartProps, type FunnelStep } from './FunnelChart';
+export { OperatorFunnel, type OperatorFunnelProps, type FunnelStep } from './OperatorFunnel';
+/** @deprecated Renamed to `OperatorFunnel` to avoid clashing with the root
+ *  `@lockin90/ui` chart `FunnelChart`. Import `OperatorFunnel` instead. */
+export { OperatorFunnel as FunnelChart } from './OperatorFunnel';
+/** @deprecated Renamed to `OperatorFunnelProps`. Use `OperatorFunnelProps`. */
+export type { OperatorFunnelProps as FunnelChartProps } from './OperatorFunnel';
 export { ReferenceRangeBar, type ReferenceRangeBarProps } from './ReferenceRangeBar';
 export { PushPreview, type PushPreviewProps } from './PushPreview';
 

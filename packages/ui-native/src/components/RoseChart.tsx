@@ -1,5 +1,6 @@
 import { View, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Path, Rect, Text as SvgText } from 'react-native-svg';
+import { useId } from 'react';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /** Catalog variant names (`lockin90-design/charts/rose-charts.html`, RS-01…RS-03). */
@@ -38,8 +39,8 @@ export interface RoseChartProps {
   compareLabel?: string;
   /** faint mono caption at the top-left (per-variant catalog default) */
   title?: string;
-  /** glow underlay behind the petals — a faint duplicate petal with a soft
-   *  wide edge (no SVG blur filters on native) */
+  /** glow underlay behind the petals — a Gaussian-blurred duplicate petal
+   *  on native */
   shine?: boolean;
   /** rendered width in px — the 320×150 viewBox scales to fit */
   width?: number;
@@ -215,21 +216,24 @@ function Petal({
   color: string;
   opts?: PetalOpts;
 }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-rose-blur-${uid}`;
   const { d } = petalGeom(i, n, v);
   return (
     <G>
-      {/* glow = duplicate petal, faint fill + soft wide edge (web blurs a clone) */}
+      {/* glow — a Gaussian-blurred duplicate petal behind the crisp one: the
+          native twin of the web clone's `blur(5px)`. (Un-blurred wide-edge
+          copies read as hard outlines on device.) */}
       {opts.shine ? (
-        <Path
-          d={d}
-          fill={color}
-          fillOpacity={0.25}
-          stroke={color}
-          strokeWidth={5}
-          strokeOpacity={0.18}
-          strokeLinejoin="round"
-        />
+        <Defs>
+          {/* region in user space over the full canvas so thin petals never
+              clip the blur to their bounding box */}
+          <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+            <FeGaussianBlur stdDeviation={2.5} />
+          </Filter>
+        </Defs>
       ) : null}
+      {opts.shine ? <Path d={d} fill={color} opacity={0.5} filter={`url(#${blurId})`} /> : null}
       <Path
         d={d}
         fill={color}
@@ -246,8 +250,8 @@ function Petal({
  * RoseChart — the kit's Nightingale rose (catalog family `rose-charts`,
  * RS-01…RS-03). Same prop API + geometry as the web twin: petals fan
  * clockwise from 12 o'clock over three faint ring guides, length = value.
- * Native glow = a faint duplicate petal with a soft wide edge — never SVG
- * blur filters (patchy on device; see the Ring SDD).
+ * Native glow = a real Gaussian-blurred duplicate petal (Fabric-native SVG
+ * filters in react-native-svg 15), the twin of the web clone's blur(5px).
  */
 export function RoseChart({
   variant = 'balance-rose',

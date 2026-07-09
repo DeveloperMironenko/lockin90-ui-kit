@@ -23,11 +23,27 @@ export const Seeded: Story = {
   ),
 };
 
+export const Invalid: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <TagInput invalid tags={['sleep', 'recovery']} />
+    </View>
+  ),
+};
+
 export const Code: Story = {
   render: () => (
     <View style={{ width: 320, gap: 12 }}>
       <CodeInput />
       <CodeInput length={4} value="12" />
+    </View>
+  ),
+};
+
+export const CodeInvalid: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <CodeInput value="123456" invalid />
     </View>
   ),
 };

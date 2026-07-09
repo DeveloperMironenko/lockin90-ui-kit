@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/DistributionChart.tsx` · `packages/ui-native/src/components/DistributionChart.tsx` ·
 > web CSS `packages/ui/src/styles/components/dist.css` (`.lk-dst*`).
 > **Exports:** `DistributionChart`, types `DistributionChartProps`, `DistributionChartVariant`, `DistributionBell`, `BoxRow`, `RidgeRow`.
-> **Status:** Shipped. **Parity:** 🟡 same API & geometry; web `shine` is a CSS `blur(5px)` underlay + CSS-animated YOU pulse ring, native draws a wider faint duplicate stroke + static dot/halo ring (RN SVG filters/SMIL are unreliable on device).
+> **Status:** Shipped. **Parity:** 🟡 same API & geometry; web `shine` is a CSS `blur(5px)` underlay + CSS-animated YOU pulse ring, native draws a Gaussian-blurred duplicate stroke via `FeGaussianBlur` (real RN-SVG Fabric filters) + static dot/halo ring (no SMIL on native).
 > **Stories:** `packages/ui/src/stories/DistributionChart.stories.tsx` (`Charts/DistributionChart`) · `packages/ui-native/src/stories/DistributionChart.stories.tsx` (`Native/DistributionChart`).
 
 ---
@@ -76,7 +76,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | Box rows (DS-04) | row pitch `120/n`; whisker line `--text` @ 0.25, caps @ 0.35 (±4px); IQR rect h 14, rx 4, fill @ 0.3 + 1.2px stroke; median 2px, ±7px |
 | Violin (DS-05) | KDE at 41 samples, peak-normalized to `plotH/2 − 8`; outline 1.4px in the main hue; MEDIAN rule `--text` 1.6px ±26px; pill `--text-dim` at `cy − 36` |
 | Ridgeline (DS-07) | rows at `base = 16 + 26 + ri·28`, curve height 30px, x from `l+30` to `plot−6`; per-row vertical fill color 0.02→0.2; stroke 1.5px `opacity = 0.5 + ri·0.16`; W-labels end-anchored `--text-faint` |
-| Shine | web `.lk-dst-shine` → `filter: blur(5px)` on a 7.5px round-cap duplicate @ 0.45; native duplicate 7.5px @ `strokeOpacity 0.45`, no blur |
+| Shine | web `.lk-dst-shine` → `filter: blur(5px)` on a 7.5px round-cap duplicate @ 0.45; native the same duplicate 7.5px @ `strokeOpacity 0.45`, blurred with `FeGaussianBlur stdDeviation 2.5` |
 | YOU pulse (shine) | core dot r 3.6 `--mint` (+ web `drop-shadow(0 0 5px var(--mint))`); web ring animated by `.lk-dst-pulse` (scale 1→3, fade .8→0, 1.8s, `transform-box: fill-box`; reduced-motion → static @ 0.35); native static halo ring r 7 @ 0.4 |
 | Sizing | web `.lk-dst-svg`: `width 100%; height auto; overflow visible`; native root `width '100%', aspectRatio 320/150` |
 
@@ -98,7 +98,7 @@ Pure render — no hover/press/focus/disabled states; the only client behavior i
 
 **🟡 same API, platform-shaped implementation.** Identical geometry, data derivation (same mulberry32/KDE/monotone ports), colors and pill layout. The real differences:
 
-- **Shine substrate** — web blurs the wide duplicate (`.lk-dst-shine`, catalog `C.blur`); native draws it un-blurred at the same width/opacity (RN SVG filters unreliable). Halo softness differs marginally.
+- **Shine substrate** — web blurs the wide duplicate (`.lk-dst-shine`, catalog `C.blur`); native blurs the same-width duplicate with a real `FeGaussianBlur` (`stdDeviation 2.5`; see CONVENTIONS.md). Halo softness differs marginally.
 - **YOU pulse substrate** — web ring animates via CSS (reduced-motion safe); native shows a **static dot + halo ring** (r 7 @ 0.4 — the `Ring` precedent, documented in-file). No SMIL/JS loop on native by design.
 - **Label styling channel** — web styles `<text>` via `.lk-dst-label`/`.lk-dst-tag` (dist.css); native passes `fontSize/fontFamily/letterSpacing` props on `Svg.Text` (`0.5`/`0.4` ≈ `.06em`/`.05em`).
 - **Pill fill** — web `color-mix(in srgb, var(--bg-0) 78%, transparent)` vs native `` `${colors.bg0}C7` `` (same 78%).
@@ -161,5 +161,5 @@ Standalone chart — composes nothing from the kit; typically placed inside a `C
 - **No hand-rolled distributions.** Any histogram, percentile bell, cohort overlay, box plot, violin or ridgeline on a product surface is this component — never a local SVG lookalike.
 - **New variant → both platforms.** A new distribution form is added here, web + native in the same unit of work, with the same prop names — never a one-off in an app.
 - **Tokens only** — spectrum/zone/text/border tokens throughout; the catalog's raw whites are `--text`/`--border` + opacity inside the component, never re-derived in app code.
-- **Substrate diffs stay documented, not widened** — don't bolt SVG filters or a JS pulse loop onto native; the diffs in §5 are the accepted contract.
+- **Substrate diffs stay documented, not widened** — don't bolt a JS pulse loop onto native (the shine already uses the kit `FeGaussianBlur` pattern); the diffs in §5 are the accepted contract.
 - **Parity gate:** any change ships only after the web story and the native story are compared side-by-side against `distribution-charts.html`.

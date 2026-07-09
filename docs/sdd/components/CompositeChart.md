@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/CompositeChart.tsx` · `packages/ui-native/src/components/CompositeChart.tsx` ·
 > no web CSS partner — all styling is inline SVG attributes (`.lk-composite` on the root is a bare hook class, like `.lk-daywheel`).
 > **Exports:** `CompositeChart`, types `CompositeChartProps`, `CompositeChartVariant`, `CompositeTreemapItem`, `CompositeHorizonRow`, `CompositeGoalNode` — **not yet re-exported from either `src/index.ts`** (the charts-program export wave lands separately).
-> **Status:** Built. **Parity:** 🟡 same API & geometry; every `shine` glow is `blur()` on web vs a wider faint duplicate shape on native.
+> **Status:** Built. **Parity:** 🟡 same API & geometry; every `shine` glow is `blur()` on web vs a Gaussian-blurred duplicate shape on native (`FeGaussianBlur`).
 > **Stories:** `packages/ui/src/stories/CompositeChart.stories.tsx` (`Charts/CompositeChart`) · `packages/ui-native/src/stories/CompositeChart.stories.tsx` (`Native/CompositeChart`).
 
 ---
@@ -61,7 +61,7 @@ Geometry is the catalog's, in viewBox units (`W 320 · H 150 · pad l10 r12 t16 
 | Calendar grid | 7 columns × `ceil(n/7)` rows, 4px gaps, cells rx5 `white-3%` + stroke `white-10%`; day numeral top-left `white-40%`; weekday letters at the bottom |
 | Calendar cells | spark: monotone smooth 1.4 round, stroke `zoneOf(last)` · bars: width 60% of slot, rx1, fill `zoneOf(v)` @ 0.85; `zoneOf`: ≥ 0.62 high / ≥ 0.38 mid / low |
 | Goal tree | root ring r14 w4.5 at (160, 38) — track `white-10%` + round-cap arc `root.color`; center `round(value)` 10px display 700; child rings r12 w4 at y 92, centers 8.5px mono; bezier connectors `white-18%` 1.4 (`C x 68, kx 62`); chips above root (y 14) / below children (y 116) |
-| Shine | web `blur(6px)` duplicates — hero tiles @ 0.5, root circle r15 @ 0.5; native wider duplicates without blur — tiles +3px rx8 @ 0.22, root circle r19 @ 0.25 |
+| Shine | web `blur(6px)` duplicates — hero tiles @ 0.5, root circle r15 @ 0.5; native the same duplicates under `FeGaussianBlur stdDeviation 3` — same-size tiles rx6 @ 0.5, root circle r15 @ 0.5 |
 
 ## 4. States
 
@@ -80,7 +80,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks.
 
 **🟡 same API, platform-shaped implementation.** Identical geometry, layout algorithms (template + fallback), zone thresholds, defaults and the same seeded default data (both port the catalog PRNG). The real differences:
 
-- **Shine substrate** — web `blur(6px)` glow duplicates; native **wider faint duplicates** (tiles inflated 3px, root ring r19) because RN SVG filters are unreliable on device.
+- **Shine substrate** — web `blur(6px)` glow duplicates; native **Gaussian-blurred duplicates** via `FeGaussianBlur stdDeviation 3` (same-size tiles @ 0.5, root circle r15 @ 0.5 — see CONVENTIONS.md).
 - **Container** — web `svg[role=img]` + `className`/SVGProps rest; native `View accessibilityRole="image"` wrapping `Svg` + `style`.
 - **Label styling channel** — web inline `style={{ fontFamily, letterSpacing }}`; native `fontFamily/letterSpacing` props on `Svg.Text`.
 

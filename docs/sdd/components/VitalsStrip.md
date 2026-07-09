@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/VitalsStrip.tsx` · `packages/ui-native/src/components/VitalsStrip.tsx` ·
 > web CSS `packages/ui/src/styles/components/vitals.css` (`.lk-vitals*`).
 > **Exports:** `VitalsStrip`, types `VitalsStripProps`, `VitalsStripVariant`.
-> **Status:** Shipped. **Parity:** 🟡 same API & look; web blurs the glow underlay + animates the R-peak pulse (SMIL), native draws wider faint duplicates + a static halo (RN SVG filters/SMIL are unreliable).
+> **Status:** Shipped. **Parity:** 🟡 same API & look; web blurs the glow underlay + animates the R-peak pulse (SMIL), native draws Gaussian-blurred duplicates (`FeGaussianBlur`) + a static halo (no SMIL on native).
 > **Stories:** `packages/ui/src/stories/VitalsStrip.stories.tsx` (`Charts/VitalsStrip`) · `packages/ui-native/src/stories/VitalsStrip.stories.tsx` (`Native/VitalsStrip`).
 
 ---
@@ -87,7 +87,7 @@ Pure render — no hover/press/focus/disabled; hooks: web `useMotionOK` only.
 
 **🟡 same API, platform-shaped implementation.** Identical beat template, ms→px scale, frames and label layout. Real differences:
 
-- **Glow substrate** — web blurs the 6px trace underlay (`.lk-vitals-shine`) and drop-shadows the pulse dot (`.lk-vitals-glowdot`); native draws unblurred wider faint duplicates (no RN SVG filters).
+- **Glow substrate** — web blurs the 6px trace underlay (`.lk-vitals-shine`) and drop-shadows the pulse dot (`.lk-vitals-glowdot`); native Gaussian-blurs the trace duplicate via `FeGaussianBlur stdDeviation 2.5` (see CONVENTIONS.md); the pulse dot keeps an unblurred faint duplicate.
 - **Pulse** — web SMIL expanding ring on the last R peak (reduced-motion safe); native static halo ring (the Ring precedent).
 - **Label styling channel** — web CSS classes vs native `Svg.Text` font props; pill fill `color-mix` vs `#RRGGBBAA` (`C7`).
 - **Container** — web `div[role=img]` + `className`/rest; native `View accessibilityRole="image"` + `style`.

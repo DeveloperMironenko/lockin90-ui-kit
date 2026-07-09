@@ -22,6 +22,26 @@ export const Free: Story = {
   ),
 };
 
+export const WithExcludedFeatures: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <PricingTierCard
+        name="Free"
+        price="Free"
+        description="The essentials — upgrade for the full attribution engine."
+        features={[
+          'Daily energy score',
+          '100 events / day',
+          { label: 'Unlimited AI insights', included: false },
+          { label: '72h energy forecast', included: false },
+          { label: 'CGM & cohort comparison', included: false },
+        ]}
+        cta={<Button title="Get started" style={{ width: '100%' }} />}
+      />
+    </View>
+  ),
+};
+
 export const ProFeatured: Story = {
   render: () => (
     <View style={{ width: 320, padding: 12 }}>
@@ -61,6 +81,28 @@ export const Elite: Story = {
           'Priority support & API',
         ]}
         cta={<Button title="Upgrade to Elite" style={{ width: '100%' }} />}
+      />
+    </View>
+  ),
+};
+
+export const Disabled: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <PricingTierCard
+        name="Elite"
+        price="$29"
+        period="/mo"
+        disabled
+        description="For coaches managing athletes — everything in Pro, plus a roster."
+        features={[
+          'Manage up to 25 athletes',
+          'Athlete readiness dashboard',
+          'Encrypted coach DMs',
+          '14-day forecast horizon',
+          'Priority support & API',
+        ]}
+        cta={<Button disabled title="Coming soon" style={{ width: '100%' }} />}
       />
     </View>
   ),

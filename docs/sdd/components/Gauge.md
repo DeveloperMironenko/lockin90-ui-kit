@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/Gauge.tsx` · `packages/ui-native/src/components/Gauge.tsx` ·
 > web CSS `packages/ui/src/styles/components/gauge.css` (`.lk-gauge*`).
 > **Exports:** `Gauge`, type `GaugeZone`, type `GaugeProps`.
-> **Status:** Shipped (extended with the catalog gauges DN-13/DN-14: `gradient`, `zone`, `shine`, `tickPosition`, `cap`). **Parity:** 🟡 same API & arc math; web glow/shine use `drop-shadow`/`blur` filters vs native's wider faint duplicate arc; `tickPosition="out"` shrinks the native radius by 8px (RN SVG clips at the viewBox).
+> **Status:** Shipped (extended with the catalog gauges DN-13/DN-14: `gradient`, `zone`, `shine`, `tickPosition`, `cap`). **Parity:** 🟡 same API & arc math; web glow/shine use `drop-shadow`/`blur` filters vs native's Gaussian-blurred duplicate arc (`FeGaussianBlur`); `tickPosition="out"` shrinks the native radius by 8px (RN SVG clips at the viewBox).
 > **Stories:** `packages/ui/src/stories/Gauge.stories.tsx` · `packages/ui-native/src/stories/Gauge.stories.tsx` (catalog stories `DN13Gauge270`, `DN14HalfGauge`, `ZoneVerdict`).
 
 ---
@@ -60,7 +60,7 @@ Distinct from `Ring` (full-circle 0–100 progress) and `DonutChart` (proportion
 | Track arc | `.lk-gauge-track` `var(--border)`, round caps | `colors.border` |
 | Zone band | `.lk-gauge-zone` `stroke = zone.color` | same |
 | Value arc | `.lk-gauge-arc` CSS `var(--accent)` default; custom paint via inline `stroke`; glow `drop-shadow(0 0 8px var(--lk-gauge-glow))` | inline stroke; no drop-shadow |
-| Shine | wider (+5) blurred (`blur(6px)`) duplicate at 50% under the arc | wider (+8) duplicate at 35%, no blur |
+| Shine | wider (+5) blurred (`blur(6px)`) duplicate at 50% under the arc | wider (+5) duplicate at 50%, blurred with `FeGaussianBlur stdDeviation 3` |
 | Gradient | `<linearGradient x1=0 y1=0 x2=1 y2=0>` — horizontal across the dial | same via `react-native-svg` `Defs` |
 | End cap | `.lk-gauge-cap` `fill var(--text)`; stroke + `drop-shadow` tinted to the arc (inline) | `fill colors.text`, stroke tinted, no glow |
 | Ticks | `.lk-gauge-tick` `var(--text-faint)` 1.5px | `colors.textFaint` 1.5px round |
@@ -85,7 +85,7 @@ No hover/focus/disabled — presentational.
 
 **Verdict: 🟡 same API & geometry, platform-shaped glow.** The arc/tick/cap math is identical; same defaults; same paint-resolution order. Differences:
 
-- **Glow/shine:** web `drop-shadow` + `blur()` filters; native wider faint duplicate arc (kit-wide RN rule — no SVG filters).
+- **Glow/shine:** web `drop-shadow` + `blur()` filters; native a Gaussian-blurred duplicate arc — `strokeWidth thickness+5` @ `strokeOpacity 0.5`, `FeGaussianBlur stdDeviation 3`, filter region padded `x/y −12, +24` (see CONVENTIONS.md).
 - **Outside ticks:** web lets them spill (`overflow: visible`); native shrinks `r` by 8px so they fit the viewBox — the dial is marginally smaller with `tickPosition="out"`.
 - **Color literal:** web `var()`; native hex/rgb. App code reads 1:1.
 

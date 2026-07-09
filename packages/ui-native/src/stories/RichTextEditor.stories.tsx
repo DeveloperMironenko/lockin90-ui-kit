@@ -51,3 +51,22 @@ export const Invalid: Story = {
     return <Demo />;
   },
 };
+
+export const LimitedToolbar: Story = {
+  render: () => {
+    function Demo() {
+      const [text, setText] = useState('');
+      return (
+        <View style={{ width: 320 }}>
+          <RichTextEditor
+            value={text}
+            onChange={setText}
+            toolbar={['bold', 'italic', 'link', 'clear']}
+            minRows={3}
+          />
+        </View>
+      );
+    }
+    return <Demo />;
+  },
+};

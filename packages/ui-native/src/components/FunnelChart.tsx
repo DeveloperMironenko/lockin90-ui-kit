@@ -1,13 +1,14 @@
+import { useId } from 'react';
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { G, Path, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Defs, FeGaussianBlur, Filter, G, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* FunnelChart — the shared catalog conversion-funnel family (FN-01/03/04/05,
    lockin90-design/charts/funnel-charts.html): centered trapezoid bands or
    left-aligned stage bars drawn in a fixed 320×150 viewBox, mono labels,
    coral per-stage drop-off, optional previous-period ghost bars. Native twin
-   of `@lockin90/ui` FunnelChart — same prop API; shine is a wider faint
-   duplicate shape (never SVG filters). The web-only ADMIN operator funnel
+   of `@lockin90/ui` FunnelChart — same prop API; shine is a Gaussian-blurred
+   duplicate shape (Fabric-native SVG filters). The web-only ADMIN operator funnel
    (`@lockin90/ui/admin`) is a different component and has no native twin. */
 
 export type FunnelChartVariant =
@@ -133,6 +134,8 @@ export function FunnelChart({
   ariaLabel = 'Conversion funnel',
   style,
 }: FunnelChartProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-fnl-blur-${uid}`;
   const isZone = variant === 'zone-funnel';
   const isCompare = variant === 'compare-funnel';
   const isBars = variant !== 'band-funnel';
@@ -153,6 +156,23 @@ export function FunnelChart({
       style={[styles.root, style]}
     >
       <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`}>
+        {shine ? (
+          /* real Gaussian blur for the shine (Fabric-native in react-native-svg
+             15) — the native twin of the web `drop-shadow(0 0 6px glow)`. Region
+             in user space so thin bars/bands never clip the blur to their bbox. */
+          <Defs>
+            <Filter
+              id={blurId}
+              filterUnits="userSpaceOnUse"
+              x={-10}
+              y={-10}
+              width={W + 20}
+              height={H + 20}
+            >
+              <FeGaussianBlur stdDeviation={3} />
+            </Filter>
+          </Defs>
+        ) : null}
         {title ? (
           <Label x={PAD.l + 2} y={11} fill={colors.textFaint} anchor="start">
             {title}
@@ -194,8 +214,9 @@ export function FunnelChart({
                       fill={GHOST_FILL}
                     />
                   ) : null}
-                  {/* shine — a wider faint stroked duplicate behind the bar,
-                      so the halo hugs the shape (no SVG filters on native) */}
+                  {/* shine — a Gaussian-blurred duplicate of the bar behind it: the
+                      same soft glow the web bar gets from `drop-shadow(0 0 6px col)`.
+                      (Feather copies read as banded outlines on device.) */}
                   {shine ? (
                     <Rect
                       x={BAR_X}
@@ -203,10 +224,9 @@ export function FunnelChart({
                       width={rd(barW)}
                       height={barH}
                       rx={barR}
-                      fill="none"
-                      stroke={col}
-                      strokeWidth={8}
-                      strokeOpacity={0.35}
+                      fill={col}
+                      opacity={0.55}
+                      filter={`url(#${blurId})`}
                     />
                   ) : null}
                   <Rect
@@ -245,14 +265,18 @@ export function FunnelChart({
 
               return (
                 <G key={i}>
-                  {/* shine — wider faint duplicate band behind (never filters) */}
+                  {/* shine — a Gaussian-blurred duplicate of the band behind it
+                      (same fill + edge silhouette): the soft glow the web band gets
+                      from `drop-shadow(0 0 6px col)` on its fill+stroke. */}
                   {shine ? (
                     <Path
                       d={d}
-                      fill="none"
+                      fill={col}
+                      fillOpacity={glass ? 0.14 : 0.4}
                       stroke={col}
-                      strokeWidth={strokeW + 8}
-                      strokeOpacity={0.35}
+                      strokeWidth={strokeW}
+                      strokeOpacity={0.8}
+                      filter={`url(#${blurId})`}
                     />
                   ) : null}
                   <Path

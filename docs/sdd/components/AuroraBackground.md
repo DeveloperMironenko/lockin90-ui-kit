@@ -1,10 +1,11 @@
 # SDD — `AuroraBackground`
 
-> **Package:** `@lockin90/ui` (web) — **web-only** primitive. No `@lockin90/ui-native` counterpart.
-> **Source:** `packages/ui/src/components/AuroraBackground.tsx` · web CSS `packages/ui/src/styles/components/aurora.css` (`.lk-aurora*`).
+> **Package:** `@lockin90/ui` (web) · `@lockin90/ui-native` (native) — root cross-platform primitive.
+> **Source:** `packages/ui/src/components/AuroraBackground.tsx` · `packages/ui-native/src/components/AuroraBackground.tsx` ·
+> web CSS `packages/ui/src/styles/components/aurora.css` (`.lk-aurora*`).
 > **Exports:** `AuroraBackground`, type `AuroraBackgroundProps`.
-> **Status:** Shipped (web only). **Parity:** 🔵 web-only — no native build; see §5 for what native does instead.
-> **Stories:** `packages/ui/src/stories/AuroraBackground.stories.tsx` · native: none.
+> **Status:** Shipped — the **native twin now exists**. **Parity:** 🟡 same `variant`/`grid` API & drifting-blob look; native swaps CSS `blur`/`mix-blend-mode` for SVG radial-gradient falloff, adds a `still` prop, and drops `className`/rest.
+> **Stories:** `packages/ui/src/stories/AuroraBackground.stories.tsx` · native equivalent.
 
 ---
 
@@ -12,21 +13,23 @@
 
 The **Aurora Flux backdrop** — three drifting, blurred, screen-blended energy-spectrum blobs (indigo → cyan → magenta) over a static four-anchor radial wash, with an optional faint masked grid veil. An `aria-hidden`, `pointer-events: none`, low-z layer that sits **behind** app content.
 
-Drop it in as the first child of the app/page shell (the shell establishes its own stacking context — `position: relative; z-index: 1` for content). It honors `prefers-reduced-motion` (blobs go static, colors stay).
+Drop it in as the first child of the app/page shell (the shell establishes its own stacking context — `position: relative; z-index: 1` for content). Web honors `prefers-reduced-motion` (blobs go static, colors stay); native exposes a `still` prop instead.
 
-It is **web-only**: there is no `AuroraBackground` in `@lockin90/ui-native` (verified — absent from `packages/ui-native/src/index.ts` and `packages/ui-native/src/components/`).
+The **native twin** renders the same idea without CSS filters: an absolute-fill `View` (`colors.void` base) holding a static SVG radial **wash** (violet → cyan → transparent), three drifting SVG **radial-gradient blob** circles (soft edges from gradient falloff, not blur) animated via `Animated` translate loops, and an optional SVG **grid veil** with a radial fade.
 
 ## 2. API contract
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `variant` | `'default' \| 'subtle' \| 'vivid'` | `'default'` | ✓ | — | blob/grid intensity multiplier |
-| `grid` | `boolean` | `true` | ✓ | — | overlay the faint masked grid veil |
-| `className` | `string` | — | ✓ | — | merged after the variant classes |
-| _rest_ | `HTMLAttributes<HTMLDivElement>` | — | ✓ | — | spread onto root `<div>` |
+| `variant` | `'default' \| 'subtle' \| 'vivid'` | `'default'` | ✓ | ✓ | blob/grid intensity multiplier |
+| `grid` | `boolean` | `true` | ✓ | ✓ | overlay the faint grid veil |
+| `still` | `boolean` | `false` | ✗ | ✓ | **native only** — disable blob drift (web uses `prefers-reduced-motion` instead) |
+| `className` | `string` | — | ✓ | — | web only — merged after the variant classes |
+| `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |
+| _rest_ | `HTMLAttributes<HTMLDivElement>` | — | ✓ | — | web only — spread onto root `<div>` |
 
-- The root `<div>` is always `aria-hidden="true"`. `variant` toggles `.lk-aurora-subtle` / `.lk-aurora-vivid`; `default` adds no modifier class.
-- Renders exactly three `<span class="lk-aurora-blob">` plus, when `grid`, one `<div class="lk-aurora-grid">`.
+- The web root `<div>` is always `aria-hidden="true"`. `variant` toggles `.lk-aurora-subtle` / `.lk-aurora-vivid`; `default` adds no modifier class. Renders exactly three `<span class="lk-aurora-blob">` plus, when `grid`, one `<div class="lk-aurora-grid">`.
+- The native root is an absolute-fill `View` (`pointerEvents="none"`, accessibility-hidden, `backgroundColor: colors.void`), measured via `onLayout`; `variant` resolves to an intensity scalar (`subtle 0.55` / `default 0.78` / `vivid 1`).
 
 ## 3. Visual spec (tokens — never hardcode)
 
@@ -51,27 +54,32 @@ It is **web-only**: there is no `AuroraBackground` in `@lockin90/ui-native` (ver
 
 - Blob colors fall back to literals via `var(--accent, #7c5cff)` etc. so the layer renders even without the token sheet loaded.
 
+**Native values** (same palette, SVG substrate): wash = `RadialGradient` violet `#7C5CFF` → cyan `#22D3EE` → transparent (2-color vs web's 4-anchor wash); blobs = `Circle`s filled with radial gradients — `#7C5CFF` (r 0.62, 17s), `#22D3EE` (r 0.54, 21s), `#FF3D81` (r 0.66, 25s) — drifting via `Animated` translate loops (`Easing.inOut(sin)`, `useNativeDriver: true`; web loops are 26/30/34s); grid veil = SVG lines at 40px step, `rgba(255,255,255,0.03×intensity)` with a radial fade (web: 56px CSS cells + mask). **No blur filter** — soft edges come from the gradient falloff.
+
 ## 4. States
 
-| State | Web |
-| --- | --- |
-| Default | base `.lk-aurora` — blobs drift on their 26/30/34s loops |
-| Subtle / vivid | `.lk-aurora-subtle` / `.lk-aurora-vivid` adjust both intensity vars |
-| No grid | `grid={false}` → grid `<div>` omitted |
-| Reduced motion | `@media (prefers-reduced-motion: reduce)` → `.lk-aurora-blob { animation: none }` (static, colors kept) |
+| State | Web | Native |
+| --- | --- | --- |
+| Default | base `.lk-aurora` — blobs drift on their 26/30/34s loops | blobs drift on 17/21/25s `Animated` loops |
+| Subtle / vivid | `.lk-aurora-subtle` / `.lk-aurora-vivid` adjust both intensity vars | intensity scalar 0.55 / 1 |
+| No grid | `grid={false}` → grid `<div>` omitted | `grid={false}` → `GridVeil` omitted |
+| Still / reduced motion | `@media (prefers-reduced-motion: reduce)` → `.lk-aurora-blob { animation: none }` (static, colors kept) | `still` → blobs render static (no OS hook) |
 
 No hover/focus/disabled — it's a non-interactive decorative layer.
 
 ## 5. Web ↔ native parity
 
-**Verdict: 🔵 web-only — genuine capability gap.** There is no native implementation, by design. The effect leans on web-only capabilities that have no cheap React Native equivalent:
+**Verdict: 🟡 — same API & drifting-blob mood, platform-shaped substrate.** The native twin exists and shares
+`variant`/`grid`, the three-blob + wash + grid composition, and the same spectrum palette. By-necessity deltas:
 
-- **`mix-blend-mode: screen`** on the blobs (additive light) — RN has no general blend-mode for additive layering.
-- **`filter: blur(70px)`** large-radius blurs over the whole viewport — RN's blur is expensive/limited and would tank scroll perf.
-- **CSS `-webkit-mask-image` radial mask** on the grid veil — no direct RN analogue.
-- **`vw`-sized drifting keyframes** across the viewport.
+- **Soft edges:** web `filter: blur(70px)` + `mix-blend-mode: screen`; native has neither, so blobs are SVG
+  **radial-gradient circles** whose falloff supplies the softness (no blur pass — scroll-perf safe).
+- **Motion opt-out:** web honors `prefers-reduced-motion`; native exposes **`still`** (no OS hook).
+- **Timings/values:** blob loops 17/21/25s (native) vs 26/30/34s (web); wash 2-color vs 4-anchor; grid 40px SVG
+  lines vs 56px masked CSS cells; intensity is a scalar (0.55/0.78/1) vs the `--lk-aurora-i`/`--lk-aurora-g` var pairs.
+- **Props:** native adds `style`, drops `className`/rest.
 
-On native, the Aurora look is achieved at the **app-shell** level with static gradient surfaces / `expo-linear-gradient` washes from `@lockin90/tokens` rather than a drifting-blob layer. Treat `AuroraBackground` as a web-shell decoration; do **not** add a hand-rolled blurred-blob lookalike to native.
+Ambient-decoration deltas only; the two shells read as one design.
 
 ## 6. Composition & usage
 
@@ -89,10 +97,18 @@ On native, the Aurora look is achieved at the **app-shell** level with static gr
 <AuroraBackground variant="vivid" grid={false} />
 ```
 
+```tsx
+// native — first child of the screen; freeze for screenshots/reduced motion
+<View style={{ flex: 1 }}>
+  <AuroraBackground variant="subtle" still={reduceMotion} />
+  <View style={{ flex: 1 }}>{children}</View>
+</View>
+```
+
 ## 7. Accessibility
 
-- Always `aria-hidden="true"` and `pointer-events: none` — invisible to AT and untouchable, so it never steals focus or pointer events.
-- Honors `prefers-reduced-motion` automatically (blobs stop animating) — no extra consumer work.
+- Always hidden from AT and untouchable (web `aria-hidden` + `pointer-events: none`; native accessibility-hidden + `pointerEvents="none"`) — it never steals focus or pointer events.
+- Web honors `prefers-reduced-motion` automatically; **native needs `still`** wired to the app's reduced-motion setting.
 - Purely decorative: it must never be the only carrier of meaning, and content contrast must be verified against the busiest blob position.
 
 ## 8. Usage rules — Do / Don't
@@ -104,14 +120,14 @@ On native, the Aurora look is achieved at the **app-shell** level with static gr
 - Set `grid={false}` where the grid veil competes with content.
 
 **Don't**
-- ✗ Don't add an `AuroraBackground` lookalike to native — it's intentionally web-only.
+- ✗ Don't hand-roll a blob backdrop on either platform — import the kit component (the native twin exists now).
 - ✗ Don't hardcode the blob colors/opacities — they're driven by `--accent`/`--cyan`/`--magenta` + intensity vars.
 - ✗ Don't put interactive content inside it (it's `pointer-events: none`).
 - ✗ Don't stack multiple instances — one backdrop per shell.
 
 ## 9. Anti-patterns & lookalike ban
 
-- **No lookalikes.** A hand-rolled blurred-blob/gradient backdrop is a parity & maintenance violation — import `AuroraBackground` on web; on native use the shell's tokenized gradient surfaces.
-- **Web-only is intentional.** Do **not** "achieve parity" by porting blurred blobs to native — the native shell expresses Aurora Flux through static gradients (capability gap is documented, not a bug).
+- **No lookalikes.** A hand-rolled blurred-blob/gradient backdrop is a parity & maintenance violation — import `AuroraBackground` on **both** platforms.
+- **Don't force blur onto native.** The native twin's gradient-falloff blobs are the sanctioned substrate — don't bolt an `expo-blur` pass onto it "for parity"; the documented deltas in §5 are the contract.
 - **Tokens only.** Blob/wash colors and intensities trace to `@lockin90/tokens` (`--accent`/`--cyan`/`--magenta`) — hardcoding breaks Aurora-Flux renames.
-- **Parity gate.** When a screen uses Aurora on web, confirm the native counterpart's shell carries the equivalent gradient mood (not the same component) so the two platforms still read as one design.
+- **Parity gate.** When a screen uses Aurora on web, confirm the native counterpart mounts the native twin with the same `variant`/`grid` so the two platforms read as one design (accepting the §5 substrate deltas).

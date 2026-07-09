@@ -13,6 +13,9 @@ export interface ChoiceChipProps {
   leadingDot?: boolean;
   /** Leading glyph (overrides `leadingDot`). */
   icon?: ReactNode;
+  /** Stacked grid-cell layout — icon ABOVE a small centred label, rounded-rect,
+   *  fills its flex cell (vs the default inline pill). For quick-action grids. */
+  stacked?: boolean;
   /** Disable the pill. */
   disabled?: boolean;
   /** Fired on press. */
@@ -33,6 +36,7 @@ export function ChoiceChip({
   size = 'md',
   leadingDot,
   icon,
+  stacked = false,
   disabled = false,
   onPress,
   children,
@@ -47,6 +51,7 @@ export function ChoiceChip({
       style={({ pressed }) => [
         styles.chip,
         size === 'sm' && styles.chipSm,
+        stacked && styles.chipStacked,
         selected ? styles.chipOn : styles.chipOff,
         pressed && !disabled && styles.chipPressed,
         disabled && styles.chipDisabled,
@@ -59,7 +64,12 @@ export function ChoiceChip({
         <View style={[styles.dot, selected ? styles.dotOn : styles.dotOff]} />
       ) : null}
       <Text
-        style={[styles.label, size === 'sm' && styles.labelSm, selected ? styles.labelOn : styles.labelOff]}
+        style={[
+          styles.label,
+          size === 'sm' && styles.labelSm,
+          stacked && styles.labelStacked,
+          selected ? styles.labelOn : styles.labelOff,
+        ]}
         numberOfLines={1}
       >
         {children}
@@ -80,6 +90,19 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   chipSm: { paddingVertical: 5, paddingHorizontal: 10 },
+  // stacked grid cell — icon over label, rounded rect, fills the flex column.
+  // alignItems:'center' overrides the base row alignment so the icon+label centre
+  // horizontally; extra vertical padding keeps the top icon off the rounded edge.
+  chipStacked: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 13,
+    paddingHorizontal: 4,
+    borderRadius: radii.md,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+  },
   chipOff: { borderColor: colors.border, backgroundColor: colors.glass },
   chipOn: { borderColor: 'rgba(124,92,255,0.5)', backgroundColor: 'rgba(124,92,255,0.12)' },
   chipPressed: { opacity: 0.85 },
@@ -90,6 +113,7 @@ const styles = StyleSheet.create({
   dotOn: { backgroundColor: colors.accent, shadowColor: colors.accent },
   label: { fontFamily: fonts.ui, fontSize: 13, lineHeight: 16 },
   labelSm: { fontSize: 12 },
+  labelStacked: { fontFamily: fonts.mono, fontSize: 10, lineHeight: 13, letterSpacing: 0.3, textAlign: 'center' },
   labelOff: { color: colors.textDim },
   labelOn: { color: colors.text },
 });

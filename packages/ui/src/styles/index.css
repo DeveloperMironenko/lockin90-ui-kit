@@ -31,6 +31,7 @@
 @import './components/highlight.css';
 @import './components/hypnogram.css';
 @import './components/sectiondivider.css';
+@import './components/sectionheader.css';
 @import './components/icon.css';
 @import './components/input.css';
 @import './components/pwinput.css';
@@ -46,8 +47,10 @@
 @import './components/pager.css';
 @import './components/phasewheel.css';
 @import './components/pk.css';
+@import './components/notification.css';
 @import './components/popover.css';
 @import './components/pro.css';
+@import './components/sso.css';
 @import './components/progressbar.css';
 @import './components/rangebar.css';
 @import './components/ring.css';
@@ -102,14 +105,12 @@
 @import './components/pulsestrip.css';
 @import './components/panel.css';
 @import './components/statcard.css';
-@import './components/statuschip.css';
-@import './components/sparkline.css';
+@import './components/trendcard.css';
 @import './components/auditentry.css';
 @import './components/queuetile.css';
 @import './components/workerrow.css';
 @import './components/metricrow.css';
 @import './components/checklistrow.css';
-@import './components/statistic.css';
 @import './components/minibar.css';
 @import './components/funnel.css';
 @import './components/pushpreview.css';

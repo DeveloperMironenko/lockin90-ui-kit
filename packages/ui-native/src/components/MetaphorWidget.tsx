@@ -3,6 +3,8 @@ import { View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, {
   Circle,
   ClipPath,
+  FeGaussianBlur,
+  Filter,
   Defs,
   G,
   Line,
@@ -19,8 +21,9 @@ import { colors, fonts } from '@lockin90/tokens';
    thermometers, hourglasses, gardens, mountains, bottles, plates and breath
    orbs, all drawn in the fixed 320×150 catalog viewBox. Native twin of
    `@lockin90/ui` MetaphorWidget — same prop API + geometry; SMIL loops (YOU
-   pulse, breath orb) render static mid-states here and every glow is a wider
-   faint duplicate shape (never SVG filters), like `Ring`. */
+   pulse, breath orb) render static mid-states here and every `shine` glow is
+   a real Gaussian-blurred duplicate shape (Fabric-native SVG filters in
+   react-native-svg 15). */
 
 /** Catalog variant names (`lockin90-design/charts/metaphor-charts.html`). */
 export type MetaphorWidgetVariant =
@@ -122,7 +125,7 @@ export interface MetaphorWidgetProps {
   caption?: string;
   /** faint mono caption at the top-left (per-variant catalog default) */
   title?: string;
-  /** glow underlay — wider faint duplicate shapes on native, never SVG filters */
+  /** glow underlay — Gaussian-blurred duplicate shapes on native */
   shine?: boolean;
   /** rendered width in px — the 320×150 viewBox scales to fit */
   width?: number;
@@ -444,6 +447,7 @@ export function MetaphorWidget({
   style,
 }: MetaphorWidgetProps) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-metaphor-blur-${uid}`;
   let heading = title ?? DEFAULT_TITLES[variant];
 
   let accessibilityLabel: string;
@@ -475,8 +479,9 @@ export function MetaphorWidget({
           strokeWidth={1.4}
         />
         <Circle cx={x} cy={bulbY} r={11} fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.25)" strokeWidth={1.4} />
-        {/* bulb glow — wider faint duplicate (web: blurred circle) */}
-        {shine ? <Circle cx={x} cy={bulbY} r={12} fill={col} opacity={0.3} /> : null}
+        {/* bulb glow — a Gaussian-blurred duplicate circle (the web bulb's
+            `blur(5px)` underlay) */}
+        {shine ? <Circle cx={x} cy={bulbY} r={9} fill={col} opacity={0.6} filter={`url(#${blurId})`} /> : null}
         <Circle cx={x} cy={bulbY} r={8} fill={col} opacity={0.95} />
         <Rect
           x={x - 3.5}
@@ -623,8 +628,19 @@ export function MetaphorWidget({
           </LinearGradient>
         </Defs>
         <Path d={`${d}L${W - P.r} ${H - P.b}L${P.l} ${H - P.b}Z`} fill={`url(#${gradId})`} />
-        {/* line glow — wider faint duplicate stroke (web: blurred) */}
-        {shine ? <Path d={d} fill="none" stroke={colors.indigo} strokeWidth={7} strokeLinecap="round" opacity={0.25} /> : null}
+        {/* line glow — a Gaussian-blurred duplicate stroke (the web route's
+            `blur(5px)` underlay) */}
+        {shine ? (
+          <Path
+            d={d}
+            fill="none"
+            stroke={colors.indigo}
+            strokeWidth={7}
+            strokeLinecap="round"
+            opacity={0.45}
+            filter={`url(#${blurId})`}
+          />
+        ) : null}
         <Path d={d} fill="none" stroke={colors.indigo} strokeWidth={2.2} strokeLinecap="round" />
         {camps.map((cp, i) => {
           const q = { x: P.l + 6 + (plotW - 12) * cp.at, y: Yv(routeY(route, cp.at)) };
@@ -814,6 +830,16 @@ export function MetaphorWidget({
   return (
     <View accessibilityRole="image" accessibilityLabel={accessibilityLabel} style={[{ width, height }, style]}>
       <Svg width={width} height={height} viewBox={`0 0 ${W} ${H}`}>
+        {shine ? (
+          /* real Gaussian blur for the glows (Fabric-native in react-native-svg
+             15) — the native twin of the web `blur(5px)` underlays. Region in
+             user space over the full canvas so flat shapes never clip. */
+          <Defs>
+            <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+              <FeGaussianBlur stdDeviation={2.5} />
+            </Filter>
+          </Defs>
+        ) : null}
         <Label x={P.l + 2} y={11} text={heading} anchor="start" />
         {content}
       </Svg>

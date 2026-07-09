@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   View,
+  Text,
   TextInput,
   Pressable,
   StyleSheet,
@@ -63,16 +64,23 @@ export function MessageComposer({
         <Icon name="plus" size={18} color={colors.textDim} />
       </Pressable>
 
-      <TextInput
-        style={styles.input}
-        value={value}
-        onChangeText={setValue}
-        placeholder={placeholder}
-        placeholderTextColor={colors.textFaint}
-        editable={!disabled}
-        multiline
-        accessibilityLabel="Message text"
-      />
+      <View style={styles.inputWrap}>
+        <TextInput
+          style={styles.input}
+          value={value}
+          onChangeText={setValue}
+          editable={!disabled}
+          multiline
+          accessibilityLabel="Message text"
+        />
+        {value.length === 0 ? (
+          <View style={styles.placeholderWrap} pointerEvents="none">
+            <Text style={styles.placeholderText} numberOfLines={1}>
+              {placeholder}
+            </Text>
+          </View>
+        ) : null}
+      </View>
 
       <Pressable
         style={({ pressed }) => [styles.btn, pressed && !disabled && styles.btnPressed]}
@@ -137,10 +145,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.glass,
   },
   btnPressed: { opacity: 0.7, borderColor: colors.border2 },
-  input: {
+  inputWrap: {
     flex: 1,
     minWidth: 0,
     alignSelf: 'center',
+    position: 'relative',
+    justifyContent: 'center',
+  },
+  input: {
+    width: '100%',
+    minWidth: 0,
     // match the send button's height at rest; grow only on multiline
     minHeight: 42,
     maxHeight: 120,
@@ -156,6 +170,23 @@ const styles = StyleSheet.create({
     fontFamily: fonts.ui,
     fontSize: 13.5,
     lineHeight: 18,
+  },
+  // single-line, truncating placeholder overlay — the multiline TextInput's own
+  // placeholder wraps a long string (e.g. "Encrypted message…") onto 2 lines, making
+  // the pill taller than the buttons. Overlaying our own numberOfLines={1} text keeps
+  // the resting field exactly one line high; it's hidden the moment the user types.
+  placeholderWrap: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+  },
+  placeholderText: {
+    color: colors.textFaint,
+    fontFamily: fonts.ui,
+    fontSize: 13.5,
   },
   send: {
     flexShrink: 0,

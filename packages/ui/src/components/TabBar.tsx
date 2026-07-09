@@ -26,6 +26,9 @@ export interface TabBarProps extends Omit<HTMLAttributes<HTMLElement>, 'onChange
   fabIndex?: number;
   /** Press handler for the FAB item (falls back to `onChange(fabIndex)`). */
   onFabPress?: () => void;
+  /** Floating rounded glass-pill bar (the mockups' `.tabbar`) instead of the
+   *  default solid pinned bar with a top border. Position it yourself. */
+  floating?: boolean;
 }
 
 const DEFAULT_ITEMS: TabBarItem[] = [
@@ -45,11 +48,12 @@ export function TabBar({
   onChange,
   fabIndex,
   onFabPress,
+  floating = false,
   className,
   ...rest
 }: TabBarProps) {
   return (
-    <nav className={cn('lk-tabbar', className)} aria-label="Primary" {...rest}>
+    <nav className={cn('lk-tabbar', floating && 'lk-tabbar--floating', className)} aria-label="Primary" {...rest}>
       {items.map((item, i) => {
         const isFab = i === fabIndex;
         const glyph =

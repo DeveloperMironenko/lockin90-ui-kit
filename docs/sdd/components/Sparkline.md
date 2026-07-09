@@ -63,7 +63,7 @@ Static, decorative — no hover/focus/disabled/loading.
 
 **Verdict: 🟡 same API, platform-shaped clipping + glow.** Identical props, normalization (min→bottom / max→top, `PAD=3`), and area-gradient stops (0.28→0). Differences are substrate-only:
 
-- **Trailing-dot glow:** web adds `drop-shadow(0 0 4px currentColor)` on the dot; native renders a plain filled `<Circle>` (no cheap RN-SVG filter). Cosmetic — line + dot still read identically.
+- **Trailing-dot glow:** web adds `drop-shadow(0 0 4px currentColor)` on the dot; native renders a plain filled `<Circle>` — the kit's Fabric blur-filter pattern hasn't been applied here. Cosmetic — line + dot still read identically.
 - **Clipping vs padding:** web's `<svg>` is `overflow:visible` so the dot/ends spill freely; native's wrapper `<View>` clips, so native pre-pads horizontally (`padX`) to keep them inside. The line shape is the same; native loses a few px of horizontal spread to the padding.
 - **Stretch:** web stretches via `preserveAspectRatio="none"` + `non-scaling-stroke`; native sizes its viewBox to the box, so no stretch is needed.
 - **className ↔ style:** universal substrate; callers read 1:1.

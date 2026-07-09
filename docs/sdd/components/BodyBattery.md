@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/BodyBattery.tsx` · `packages/ui-native/src/components/BodyBattery.tsx` ·
 > web CSS `packages/ui/src/styles/components/bodybattery.css` (`.lk-bb*`).
 > **Exports:** `BodyBattery`, types `BodyBatteryProps`, `BodyBatteryVariant`, `BatteryDrainEvent`.
-> **Status:** Shipped. **Parity:** 🟡 same API & look; web blurs glow underlays + drop-shadows the bolt + animates the pulse (SMIL), native draws wider faint duplicates + a static halo (RN SVG filters/SMIL are unreliable).
+> **Status:** Shipped. **Parity:** 🟡 same API & look; web blurs glow underlays + drop-shadows the bolt + animates the pulse (SMIL), native Gaussian-blurs duplicate underlays (`FeGaussianBlur`, real RN-SVG Fabric filters) + a static halo (no SMIL on native).
 > **Stories:** `packages/ui/src/stories/BodyBattery.stories.tsx` (`Charts/BodyBattery`) · `packages/ui-native/src/stories/BodyBattery.stories.tsx` (`Native/BodyBattery`).
 
 ---
@@ -58,7 +58,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 
 | Element | Spec (both platforms) |
 | --- | --- |
-| Zone stroke | `linearGradient` `userSpaceOnUse` from `y=P.t` to `y=H−P.b`: `0% --zone-high · 55% --zone-mid · 100% --zone-low`; curve 2.5px round cap, monotone-smooth (catalog `smoothPath` port); `shine` = 7.5px `opacity 0.45` duplicate (blurred 5px on web) |
+| Zone stroke | `linearGradient` `userSpaceOnUse` from `y=P.t` to `y=H−P.b`: `0% --zone-high · 55% --zone-mid · 100% --zone-low`; curve 2.5px round cap, monotone-smooth (catalog `smoothPath` port); `shine` = 7.5px `opacity 0.45` duplicate (blurred — web 5px, native `FeGaussianBlur stdDeviation 2.5`) |
 | Sleep shading | `--violet` `opacity 0.08` rects: midnight→`sleepUntilH` and `sleepFromH`→midnight |
 | CHARGING bolt | catalog bolt path at `(P.l+plotW·0.06, P.t+14)` scale 1.6, `--lime`; web glow `drop-shadow(0 0 4px)` (`.lk-bb-bolt`), native = 3px stroke duplicate `opacity 0.35`; `--lime` caption at +12/+26 |
 | NOW pulse (BB-01) | glowing r3.6 dot + expanding ring in `--zone-high` at the sample nearest `now·(n−1)` + `n% NOW` pill above (−15) |
@@ -90,7 +90,7 @@ Pure render — no hover/press/focus/disabled; hooks: `useId` (+ web `useMotionO
 
 **🟡 same API, platform-shaped implementation.** Identical geometry, gradient stops, zone thresholds and label layout. Real differences:
 
-- **Glow substrate** — web blurs the 7.5px curve underlay / glyph-fill duplicate (`.lk-bb-shine`, the catalog `blur(5)`) and drop-shadows the bolt + pulse dot; native draws wider faint duplicates (bolt: 3px stroke copy; glyph shine: a slightly larger op-0.3 rect; dot: r6.6 op-0.35 disc) — no RN SVG filters.
+- **Glow substrate** — web blurs the 7.5px curve underlay / glyph-fill duplicate (`.lk-bb-shine`, the catalog `blur(5)`) and drop-shadows the bolt + pulse dot; native Gaussian-blurs the same curve underlay + glyph-shine rect (`FeGaussianBlur stdDeviation 2.5`; see CONVENTIONS.md), while the bolt (3px stroke copy) and pulse dot (r6.6 op-0.35 disc) stay plain wider faint duplicates.
 - **Pulse** — web SMIL expanding ring (reduced-motion safe); native static halo ring (the Ring precedent).
 - **Label styling channel** — web CSS classes vs native `Svg.Text` font props; tag pill fill `color-mix` vs `#RRGGBBAA`.
 - **Container** — web `div[role=img]` + `className`/rest; native `View accessibilityRole="image"` + `style`.

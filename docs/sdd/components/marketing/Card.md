@@ -11,12 +11,11 @@
 
 ## 1. Overview
 
-The **Aurora glass surface** for the marketing site — the base panel under feature blocks, pricing tiers, testimonials, and stat cards. It deliberately **reuses the kit's base `.lk-card`** (same glass bg, hairline border, radius, blur, elevation) and adds only two marketing-specific affordances:
+The **Aurora glass surface** for the marketing site — the base panel under feature blocks, pricing tiers, testimonials, and stat cards. It is now a **thin wrapper over the root `Card`** (`@lockin90/ui`): it renders `<Card as={as} hover={hover} className={cn('lk-mk-card', className)}>`, so it inherits the one canonical glass surface and adds only the marketing-specific affordance:
 
-- a **roomier padding scale** (`24px`, → `28px` ≥640px) vs the base card's `22px`;
-- a **polymorphic tag** (`as`) so the card can be a `<div>`, `<article>` (a self-contained feature/testimonial), or `<li>` (an item in a card grid/list).
+- a **roomier padding scale** (`24px`, → `28px` ≥640px) vs the base card's `22px`, via `.lk-mk-card`.
 
-It exists so marketing panels share one glass treatment with the app kit while carrying the slightly more generous marketing rhythm — without forking the surface visuals.
+The **polymorphic tag** (`as` — `div`/`article`/`li`) it forwards now lives on the root `Card` (it gained a general `as?: ElementType`); marketing keeps the narrowed `'div' | 'article' | 'li'` union in its own props. It exists so marketing panels share one glass treatment with the app kit while carrying the slightly more generous marketing rhythm — without forking the surface visuals.
 
 ## 2. API contract
 
@@ -27,8 +26,8 @@ It exists so marketing panels share one glass treatment with the app kit while c
 | `as` | `'div' \| 'article' \| 'li'` | `'div'` | ✓ | polymorphic element; use `article` for standalone blocks, `li` inside a list grid |
 | `className` | `string` | — | ✓ | appended via `cn(...)` |
 
-- Plain function component; renders `<Tag className={cn('lk-card', 'lk-mk-card', hover && 'lk-hover', className)}>` where `Tag = as`.
-- No `forwardRef`, no `...rest` spread — only the listed props are forwarded (no `onClick`, `id`, etc. — pass them via a wrapper or extend the component if needed; see §9).
+- Plain function component; renders `<Card as={as} hover={hover} className={cn('lk-mk-card', className)}>{children}</Card>` (the root `@lockin90/ui` `Card`), which emits `.lk-card` (+ `.lk-hover`) — so the final DOM classes are `lk-card lk-mk-card [lk-hover]`.
+- Its own props expose only `children`/`className`/`hover`/`as` (no arbitrary `...rest` — pass `onClick`/`id` by extending the component; see §9). The underlying root `Card` is `forwardRef` and rest-spreading, but marketing `Card` does not forward those today.
 
 ## 3. Visual spec (tokens — never hardcode)
 
@@ -63,12 +62,12 @@ Without `hover`, the card is fully static.
 
 **🖥️ web-only (marketing).** Marketing is web-only — no native counterpart, no parity obligation.
 
-**Relationship to root `Card` (`@lockin90/ui`, `packages/ui/src/components/Card.tsx`) — SEPARATE component, same base surface.** Do not confuse them:
+**Relationship to root `Card` (`@lockin90/ui`, `packages/ui/src/components/Card.tsx`) — now a THIN WRAPPER of it.** It renders the root `Card`, so there is one source of truth for the glass surface AND the polymorphic `as`:
 
-- **Same** underlying CSS surface — both emit `.lk-card` and the `hover` → `.lk-hover` lift, so they look like one family.
-- **Root `Card`** is the richer app primitive: `forwardRef`, spreads full `HTMLAttributes` (`onClick`, `id`, …), and exposes `lit` (gradient hairline), `pad` (`none/sm/md/lg`), `padLg`, `flat`, `tone` (`warn/danger`), `variant` (`ghost/dashed`).
-- **Marketing `Card`** is intentionally thinner: no ref/rest-spread, no tone/variant/lit/flat, but adds the `as` polymorphic tag and the roomier `24/28px` marketing padding via `.lk-mk-card`.
-- **Rule of thumb:** inside app screens use the root `@lockin90/ui` `Card`; on the marketing site use this one. They are not interchangeable imports.
+- **Same** surface — it renders the root `Card`, which emits `.lk-card` and the `hover` → `.lk-hover` lift; marketing only adds `.lk-mk-card` padding on top.
+- **Root `Card`** is the richer app primitive: `forwardRef`, spreads full `HTMLAttributes` (`onClick`, `id`, …), the polymorphic `as`, and exposes `lit`, `pad` (`none/sm/md/lg`), `padLg`, `flat`, `tone` (`warn/danger`), `variant` (`ghost/dashed`).
+- **Marketing `Card`** is intentionally thinner: it surfaces only `children`/`className`/`hover`/`as` and pins the roomier `24/28px` marketing padding via `.lk-mk-card`.
+- **Rule of thumb:** inside app screens use the root `@lockin90/ui` `Card`; on the marketing site use this one (same surface, marketing padding). Their export names/props are unchanged.
 
 ## 6. Composition & usage
 

@@ -1,4 +1,4 @@
-import { useEffect, useState, type HTMLAttributes, type ReactNode } from 'react';
+import { useEffect, useId, useState, type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
 
 /* VitalsStrip — the catalog vitals family (VT-01…VT-05,
@@ -50,6 +50,8 @@ export interface VitalsStripProps extends Omit<HTMLAttributes<HTMLDivElement>, '
   title?: string;
   /** Glow underlay along the trace (the catalog `cfg.shine`). */
   shine?: boolean;
+  /** Disable the R-peak pulse animation (static halo ring instead). */
+  still?: boolean;
   /** Accessible description of the chart. */
   ariaLabel?: string;
 }
@@ -87,23 +89,80 @@ const rd = (n: number) => Math.round(n * 100) / 100;
 interface EcgRun {
   d: string;
   peaks: Array<{ x: number; y: number }>;
+  /** every polyline waypoint — drives the live-sweep write head. */
+  pts: Array<{ x: number; y: number }>;
 }
 
 /** A run of PQRST beats: polyline path + the R-peak positions (BEAT index 6). */
 function ecgRun(x0: number, y0: number, amp: number, widths: number[]): EcgRun {
   let d = '';
   const peaks: EcgRun['peaks'] = [];
+  const pts: EcgRun['pts'] = [];
   let x = x0;
   for (const w of widths) {
     BEAT.forEach((q, i) => {
       const px = x + q[0] * w;
       const py = y0 - q[1] * amp;
       d += `${d ? 'L' : 'M'}${rd(px)} ${rd(py)}`;
+      pts.push({ x: px, y: py });
       if (i === 6) peaks.push({ x: px, y: py });
     });
     x += w;
   }
-  return { d, peaks };
+  return { d, peaks, pts };
+}
+
+/** Live monitor sweep (VT-01, motion allowed) — the trace is revealed left→right
+ *  by a SMIL-animated clip rect at constant x speed, and the active point rides
+ *  the tip of the line like a bedside monitor's write head. Clip width and dot
+ *  keyTimes are both linear in x, so the dot always sits on the reveal edge.
+ *  Native twin: the Animated `LiveEcgTrace` in `@lockin90/ui-native`. */
+const SWEEP_S = 4.2;
+function LiveEcgTrace({
+  run,
+  color,
+  shine,
+  uid,
+}: {
+  run: EcgRun;
+  color: string;
+  shine: boolean;
+  uid: string;
+}) {
+  const clipId = `lk-vt-clip-${uid}`;
+  const xs = run.pts.map((p) => p.x);
+  const ys = run.pts.map((p) => p.y);
+  const first = xs[0];
+  const span = Math.max(1, xs[xs.length - 1] - first);
+  // keyTimes must be non-decreasing, start at 0 and end at 1
+  const fr = xs.map((x, i) => (i === xs.length - 1 ? 1 : rd((x - first) / span)));
+  const keyTimes = fr.join(';');
+  const dur = `${SWEEP_S}s`;
+
+  return (
+    <g>
+      <defs>
+        <clipPath id={clipId}>
+          <rect x={rd(first - 4)} y={0} width={0} height={H}>
+            <animate attributeName="width" from="0" to={rd(span + 8)} dur={dur} repeatCount="indefinite" />
+          </rect>
+        </clipPath>
+      </defs>
+      <g clipPath={`url(#${clipId})`}>
+        <Trace d={run.d} color={color} shine={shine} />
+      </g>
+      {/* the write head — halo + core riding the tip of the line */}
+      {[
+        { r: 6.6, opacity: 0.35 },
+        { r: 3.6, opacity: 1 },
+      ].map((c) => (
+        <circle key={c.r} r={c.r} fill={color} opacity={c.opacity}>
+          <animate attributeName="cx" values={xs.map(rd).join(';')} keyTimes={keyTimes} dur={dur} repeatCount="indefinite" />
+          <animate attributeName="cy" values={ys.map(rd).join(';')} keyTimes={keyTimes} dur={dur} repeatCount="indefinite" />
+        </circle>
+      ))}
+    </g>
+  );
 }
 
 /** track `prefers-reduced-motion` — pulses stay static until motion is allowed */
@@ -302,11 +361,13 @@ export function VitalsStrip({
   color,
   title,
   shine = false,
+  still = false,
   ariaLabel = 'Vitals rhythm strip',
   className,
   ...rest
 }: VitalsStripProps) {
   const motionOK = useMotionOK();
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
 
   let body: ReactNode = null;
 
@@ -401,8 +462,14 @@ export function VitalsStrip({
       body = (
         <g>
           <Paper y0={frame.paper[0]} y1={frame.paper[1]} />
-          <Trace d={run.d} color={traceColor} shine={shine} />
-          {last ? <PulseDot x={last.x} y={last.y} color={traceColor} motionOK={motionOK} /> : null}
+          {motionOK && !still ? (
+            <LiveEcgTrace run={run} color={traceColor} shine={shine} uid={uid} />
+          ) : (
+            <>
+              <Trace d={run.d} color={traceColor} shine={shine} />
+              {last ? <PulseDot x={last.x} y={last.y} color={traceColor} motionOK={false} /> : null}
+            </>
+          )}
           <text className="lk-vitals-big" x={W - PAD.r - 4} y={46} fill={traceColor} textAnchor="end">
             {String(bpm ?? 62)}
           </text>

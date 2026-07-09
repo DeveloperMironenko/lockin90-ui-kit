@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/DayWheel.tsx` · `packages/ui-native/src/components/DayWheel.tsx` ·
 > no web CSS partner — all styling is inline SVG attributes (`.lk-daywheel` on the root is a bare hook class, like `.lk-sankey`).
 > **Exports:** `DayWheel`, types `DayWheelProps`, `DayWheelEvent`, `DayWheelVariant` — **not yet re-exported from either `src/index.ts`** (the charts-program export wave lands separately).
-> **Status:** Built. **Parity:** 🟡 same API & geometry; the NOW pulse is a SMIL-animated expanding ring + `drop-shadow` on web vs a static dot + faint halo ring on native, and every glow (event dots, `shine`) is `drop-shadow`/`blur` vs a wider faint duplicate shape (RN SVG filters are patchy).
+> **Status:** Built. **Parity:** 🟡 same API & geometry; the NOW pulse is a SMIL-animated expanding ring + `drop-shadow` on web vs a static dot + faint halo ring on native, and every glow (event dots, `shine`) is `drop-shadow`/`blur` vs a Gaussian-blurred duplicate shape (`FeGaussianBlur`, real RN-SVG Fabric filters).
 > **Stories:** `packages/ui/src/stories/DayWheel.stories.tsx` (`Charts/DayWheel`) · `packages/ui-native/src/stories/DayWheel.stories.tsx` (`Native/DayWheel`).
 
 ---
@@ -62,7 +62,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | Heat rings (RA-06) | ring d at r `18 + d·5` (18…48), 24 arcs each, 15° minus 2° gaps, stroke `color` (default `--mint`), w 3.4, **opacity 0.06 + 0.85·v**; cardinals at 58; `legend` chip at (304, 26) in `--text-dim`, end-anchored |
 | Zones | catalog `zoneOf(v)`: `≥ 0.62` → `--zone-high`, `≥ 0.38` → `--zone-mid`, else `--zone-low` |
 | Chips (catalog `tag()`) | rect w `len·5.35+12`, h 13, rx 6.5, fill `--bg-0` @ 78% (web `color-mix`, native `${colors.bg0}C7` — the catalog's `rgba(8,10,18,0.78)`), stroke = chip color @ 0.35, w 0.8; centered 8px mono text (tracking `.05em` / native `0.4`); x clamps into the padded box |
-| Shine | web blurred duplicates — events circle r 7 @ 0.35 `blur(3px)`, bars line w 9 @ 0.3 `blur(3px)`, wheel arc w 15 @ 0.25 `blur(4px)`; native the same duplicates **without blur** (events add r 10 @ 0.18 over the always-on r 7 glow) |
+| Shine | web blurred duplicates — events circle r 7 @ 0.35 `blur(3px)`, bars line w 9 @ 0.3 `blur(3px)`, wheel arc w 15 @ 0.25 `blur(4px)`; native the same duplicates blurred with `FeGaussianBlur` (dots/bars `stdDeviation 1.5`, wheel `stdDeviation 2`; events add a blurred r 7 @ 0.35 over the always-on r 7 glow) |
 | Sizing | both roots render at the `width`/`height` props (default 320×150) — explicit px like `SankeyChart`, not fluid like `ScatterChart` |
 
 ## 4. States
@@ -82,8 +82,8 @@ Pure render — no hover/press/focus/disabled states, no client hooks.
 **🟡 same API, platform-shaped implementation.** Identical geometry, data model, colors, zone thresholds, defaults and draw order (both port the same catalog `draw()`). The real differences:
 
 - **NOW pulse** — web animates an expanding SMIL ring (`<animate>` r 3.6→11 / opacity .8→0, 1.8s ∞) and glows the dot with `drop-shadow`; native draws a **static dot + faint halo ring** (r 7, stroke 1.4 @ 0.4) per the `Ring`/`ScatterChart` pulse precedent — no SMIL/JS animation. Motion-only diff; does not block use.
-- **Event-dot glow** — web `drop-shadow(0 0 4px c)` per dot; native an always-on **wider faint duplicate circle** (r 7 @ 0.35) because RN SVG filters are unreliable on device.
-- **Shine substrate** — web CSS `blur(3–4px)` underlays; native the same wider duplicates without blur (events add r 10 @ 0.18).
+- **Event-dot glow** — web `drop-shadow(0 0 4px c)` per dot; native an always-on **wider faint duplicate circle** (r 7 @ 0.35); `shine` layers a Gaussian-blurred r 7 @ 0.35 duplicate behind it (`FeGaussianBlur stdDeviation 1.5`; see CONVENTIONS.md).
+- **Shine substrate** — web CSS `blur(3–4px)` underlays; native the same wider duplicates blurred via `FeGaussianBlur` (`stdDeviation 1.5`/`2`; events add a blurred r 7 @ 0.35).
 - **`DayWheelEvent.label`** — web renders it as the dot's `<title>` tooltip; native has no tooltip substrate — the prop is accepted but not rendered (the container label carries the meaning).
 - **Container** — web `svg[role=img]` root + `className`/SVGProps rest; native `View accessibilityRole="image"` wrapping `Svg` + `style`.
 - **Label styling channel** — web inline `style={{ fontFamily, letterSpacing }}` on `<text>`; native `fontSize/fontFamily/letterSpacing` props on `Svg.Text` (`0.5`/`0.4` ≈ `.06em`/`.05em`).

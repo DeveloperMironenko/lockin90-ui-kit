@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/GradientText.tsx` · `packages/ui-native/src/components/GradientText.tsx` ·
 > web CSS `packages/ui/src/styles/base.css` (`.lk-gradient-text`, `.lk-cta`, `.lk-violet`, `@keyframes lk-flow-text`).
 > **Exports:** `GradientText`, type `GradientTextProps`.
-> **Status:** Shipped. **Parity:** 🟡 same `gradient` API & look; **web** clips a CSS gradient to live text (`background-clip` + 9s flow animation), **native** does a 2-pass SVG measure-then-fill (static).
+> **Status:** Shipped. **Parity:** 🟡 same `gradient` API & look, **both animate the 9s flow**; web clips a CSS gradient to live text (`background-clip`), native does a 2-pass SVG measure-then-fill with an `Animated` gradient scroll + a native-only `still` prop.
 > **Stories:** `packages/ui/src/stories/GradientText.stories.tsx` · native equivalent.
 
 ---
@@ -20,13 +20,15 @@ flowing spectrum gradient instead of a flat color. Three gradients via the `grad
 
 On **web** it's a polymorphic element (`as`, default `<span>`) whose CSS gradient is clipped to the glyphs and
 slowly drifts. On **native** there is no `background-clip`, so it measures the laid-out text and paints the same
-gradient into a `react-native-svg` `<Text>` of exactly that size.
+gradient into a `react-native-svg` `<Text>` of exactly that size — and now **flows too**: a mirrored-spectrum
+`userSpaceOnUse` gradient scrolls across the glyphs on the same 9s linear loop as web (freeze it with `still`).
 
 ## 2. API contract
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
 | `gradient` | `'flux' \| 'cta' \| 'violet'` | `'flux'` | ✓ | ✓ | identical union both sides |
+| `still` | `boolean` | `false` | ✗ | ✓ | **native only** — skip the flow loop and render a static gradient (web relies on `prefers-reduced-motion` instead) |
 | `as` | `ElementType` | `'span'` | ✓ | ✗ | **web only** — render as `'h1'`, `'p'`, etc. |
 | `children` | text | — | ✓ | ✓ | web: any node (CSS clips text); native: **must be `string`/`number`** to measure |
 | `style` | `StyleProp<TextStyle>` | — | — | ✓ | native reads `fontSize`/`fontWeight`/`fontFamily`/`letterSpacing` from it |
@@ -51,19 +53,27 @@ gradient into a `react-native-svg` `<Text>` of exactly that size.
 
 **Native** (`react-native-svg`):
 
-- Builds a `<LinearGradient>` (`x1=0,y1=0 → x2=1,y2=0`, horizontal) from `gradients[gradient].stops` (falls back
-  to `gradients.flux`), with evenly-spaced offsets `i/(stops.length-1)`.
-- Draws `<SvgText fill="url(#lk-gt-…)">` at `x=0, y=size.h*0.78` using the resolved font; **no animation**.
+- Builds a `<LinearGradient gradientUnits="userSpaceOnUse">` with **explicit px coords** from
+  `gradients[gradient].stops` (falls back to `gradients.flux`). `userSpaceOnUse` is the **Fabric bbox
+  workaround**: react-native-svg computes a degenerate bounding box for `<Text>` on the New Architecture, so a
+  default `objectBoundingBox` gradient never paints — spanning the measured pixel width fixes it.
+- **Flow animation:** the stop list is **mirrored** (`[...stops, ...stops.slice(0,-1).reverse()]`) across 2×
+  the text width, and an `Animated.loop` (`duration: 9000`, linear, `useNativeDriver: false` — SVG gradient
+  coords aren't native-drivable) scrolls `x1`/`x2` left by one text-width per loop, so the return leg passes
+  back through the same hues (seamless). `still` skips the loop and renders static `x1=0 → x2=width` with the
+  un-mirrored stops.
+- Draws `<SvgText fill="url(#lk-gt-…)">` using the resolved font.
 
 ## 4. States
 
 | State | Web | Native |
 | --- | --- | --- |
-| Default | clipped CSS gradient, flowing | static SVG gradient fill |
+| Default | clipped CSS gradient, flowing (9s) | SVG gradient fill, flowing (9s `Animated` loop) |
+| `still` (native) | n/a (no web prop) | static gradient, no loop |
 | Measuring (pass 1) | n/a | hidden `<Text opacity:0>` with `onLayout` to capture width/height |
 | Drawn (pass 2) | n/a | `<Svg>` of the measured size with the gradient `<SvgText>` |
 | Non-string child | renders normally (CSS clips any node) | renders transparent (no SVG path) — avoid |
-| Reduced motion | animation continues (CSS, no media guard here) | static (no motion) |
+| Reduced motion | global `base.css` reduced-motion rule kills the flow | no OS hook — pass `still` explicitly |
 
 ## 5. Web ↔ native parity
 
@@ -73,14 +83,15 @@ gradient into a `react-native-svg` `<Text>` of exactly that size.
 - **Clip vs measure:** web uses `-webkit-background-clip: text` to paint a CSS gradient onto live, selectable,
   reflowing text; RN has no equivalent, so native does a **2-pass measure** (lay out hidden text → read its size
   → draw a same-size SVG `<Text>` with a real `<LinearGradient>` fill).
-- **Animation:** web's gradient **flows** (`lk-flow-text`, 9s); native is **static** (no cheap per-frame
-  gradient drift). Acceptable, documented.
+- **Animation — now on both:** web flows via `lk-flow-text` (9s CSS); native flows via an `Animated` 9s linear
+  loop scrolling a mirrored-spectrum `userSpaceOnUse` gradient. Motion opt-out differs: web honors
+  `prefers-reduced-motion` (global rule), native exposes the **`still` prop** (no OS reduced-motion hook).
 - **`children` must be a string on native:** the SVG path can only render measured string/number content — a
   `ReactNode` child renders transparent. Web clips any node. **Pass plain text to `GradientText` for parity.**
 - **`as` is web-only:** native is always an SVG `<Text>`; control native type via `style` (`fontSize`, weight,
   family, `letterSpacing`), web via `as` + CSS.
 
-No blocking gap — the gradient look matches; only the flow animation is web-only and native requires string text.
+No blocking gap — the gradient look and 9s flow match; native requires string text.
 
 ## 6. Composition & usage
 
@@ -104,8 +115,9 @@ No blocking gap — the gradient look matches; only the flow animation is web-on
   display/accent text, not body copy.
 - **Native:** the SVG sets `accessibilityLabel={text}` so the string is announced even though it's drawn as a
   graphic. Still prefer it for short headline/accent strings, not long passages.
-- **Motion:** the web flow animation is decorative; if a reduced-motion guard is required, gate it at the app
-  level (the component's keyframe has no `prefers-reduced-motion` rule of its own).
+- **Motion:** the flow is decorative on both platforms. Web is stilled by the global `prefers-reduced-motion`
+  rule in `base.css`; native has no OS hook — pass `still` when the surface must be motion-free (screenshots,
+  reduced-motion app setting).
 
 ## 8. Usage rules — Do / Don't
 
@@ -117,9 +129,9 @@ No blocking gap — the gradient look matches; only the flow animation is web-on
 
 **Don't**
 - ✗ Don't pass non-string children on native — they render transparent.
-- ✗ Don't use it for body/long text (perf on native: every string re-measures; legibility suffers).
+- ✗ Don't use it for body/long text (perf on native: every string re-measures + animates; legibility suffers).
 - ✗ Don't hardcode the spectrum hex in app code — use `gradient` (the stops live in tokens/CSS).
-- ✗ Don't rely on the flow animation being present on native (it's static).
+- ✗ Don't leave the native flow running where motion must stop — pass `still` (there's no OS reduced-motion hook).
 
 ## 9. Anti-patterns & lookalike ban
 

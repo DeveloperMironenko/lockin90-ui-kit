@@ -10,7 +10,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Defs, Line, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
+import Svg, { Defs, FeGaussianBlur, Filter, Line, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /** Catalog variant names — one per timeline form in
@@ -135,8 +135,8 @@ export interface TimelineChartProps {
   title?: string;
   /** x-axis captions; catalog defaults per variant (6AM/NOON/11PM …) */
   axisLabels?: TimelineAxisLabel[];
-  /** glow underlay — wider faint rail duplicate on `journey-line` (no SVG blur
-   *  on native), glow shadow behind colored dots on the event variants */
+  /** glow underlay — a Gaussian-blurred rail duplicate on `journey-line`,
+   *  glow shadow behind colored dots on the event variants */
   shine?: boolean;
   /** plot height in px (also the viewBox height); default 150
    *  (`feed` auto-grows to fit its rows) */
@@ -353,6 +353,8 @@ type SvgMark =
       opacity?: number;
       dash?: string;
       cap?: boolean;
+      /** SVG filter reference (`url(#…)`) — the journey-line shine blur */
+      filter?: string;
     }
   | { k: 'rect'; x: number; y: number; w: number; h: number; rx: number; fill: string; opacity?: number }
   | { k: 'path'; d: string; stroke: string; w: number; opacity?: number; dash?: string; cap?: boolean };
@@ -472,6 +474,7 @@ export function TimelineChart({
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
   const zoneId = `lk-tlc-zone-${uid}`;
   const railId = `lk-tlc-rail-${uid}`;
+  const blurId = `lk-tlc-blur-${uid}`;
   const [width, setWidth] = useState(0);
   const onLayout = (e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width);
 
@@ -519,6 +522,7 @@ export function TimelineChart({
   const oMilestones: OMilestone[] = [];
   let needZoneGrad = false;
   let needRailGrad = false;
+  let needBlur = false;
 
   if (resolvedTitle)
     oNotes.push({ x: P.l + 2, y: 11, text: resolvedTitle, color: colors.textFaint, anchor: 'start' });
@@ -734,9 +738,23 @@ export function TimelineChart({
     const jy = y + 6;
     const prog = Math.max(0, Math.min(1, progress));
     marks.push({ k: 'line', x1: AX, y1: jy, x2: AX + AW, y2: jy, stroke: colors.text, w: 6, opacity: 0.1, cap: true });
-    if (shine)
-      // native has no SVG blur — the glow is a wider faint duplicate (Ring precedent)
-      marks.push({ k: 'line', x1: AX, y1: jy, x2: ax(prog), y2: jy, stroke: MINT, w: 11, opacity: 0.3, cap: true });
+    if (shine) {
+      // shine — a Gaussian-blurred duplicate rail behind the crisp one: the
+      // native twin of the web mark's `blur(6px)` underlay
+      needBlur = true;
+      marks.push({
+        k: 'line',
+        x1: AX,
+        y1: jy,
+        x2: ax(prog),
+        y2: jy,
+        stroke: MINT,
+        w: 11,
+        opacity: 0.5,
+        cap: true,
+        filter: `url(#${blurId})`,
+      });
+    }
     needRailGrad = true;
     marks.push({ k: 'line', x1: AX, y1: jy, x2: ax(prog), y2: jy, stroke: `url(#${railId})`, w: 6, cap: true });
     milestones.forEach((m) => {
@@ -779,6 +797,15 @@ export function TimelineChart({
                   <Stop offset="1" stopColor={colors.mint} />
                 </LinearGradient>
               ) : null}
+              {needBlur ? (
+                /* real Gaussian blur for the journey-line shine (Fabric-native in
+                   react-native-svg 15) — the native twin of the web `blur(6px)`.
+                   Region in user space over the full canvas so the flat rail
+                   never clips the blur to its bounding box. */
+                <Filter id={blurId} filterUnits="userSpaceOnUse" x={-12} y={-12} width={W + 24} height={h + 24}>
+                  <FeGaussianBlur stdDeviation={3} />
+                </Filter>
+              ) : null}
             </Defs>
             {marks.map((mk, i) =>
               mk.k === 'rect' ? (
@@ -804,6 +831,7 @@ export function TimelineChart({
                   strokeOpacity={mk.opacity}
                   strokeDasharray={mk.dash}
                   strokeLinecap={mk.cap ? 'round' : undefined}
+                  filter={mk.filter}
                 />
               ) : (
                 <Path

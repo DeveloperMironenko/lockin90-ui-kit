@@ -1,0 +1,54 @@
+/* ============================================================================
+   SsoButton — brand-icon SSO sign-in button (Google / Apple). Brand glyph +
+   label, stretches to fill its grid cell (auth screens lay two side by side).
+   Mirrors the `.sso` design CSS. Themeable surfaces are token-driven; only the
+   brand glyphs carry fixed brand colors (set inline on the SVG).
+   Key: .lk-sso
+   ========================================================================== */
+.lk-sso {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition:
+    background 0.18s var(--ease),
+    border-color 0.18s var(--ease);
+}
+
+.lk-sso:hover,
+.lk-sso:focus-visible {
+  background: var(--glass-2);
+  border-color: var(--border-2);
+  outline: none;
+}
+
+.lk-sso:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lk-sso-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  line-height: 0;
+}
+
+.lk-sso-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  color: var(--text);
+}

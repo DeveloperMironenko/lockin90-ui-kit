@@ -1,13 +1,15 @@
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Path, Rect, Text as SvgText } from 'react-native-svg';
+import { useId } from 'react';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* UnitChart — the shared catalog unit/waffle family (UN-01…UN-05,
    lockin90-design/charts/unit-charts.html): every unit is a day, a dose, a
    session — waffles and pictograms drawn in a fixed 320×150 viewBox with mono
    catalog labels. Native twin of `@lockin90/ui` UnitChart — same prop API;
-   shine is a wider faint duplicate shape and the UN-01 TODAY pulse is a static
-   duplicate halo (never SVG filters / CSS animation on native). */
+   shine is a real Gaussian-blurred duplicate shape (Fabric-native SVG filters
+   in react-native-svg 15) and the UN-01 TODAY pulse is a static duplicate
+   halo (no CSS animation on native). */
 
 export type UnitChartVariant =
   | 'waffle-90' /* UN-01 — 90 dots (15×6) · filled ramps toward today · lime TODAY pulse + caption */
@@ -247,6 +249,9 @@ export function UnitChart({
   ariaLabel = 'Unit chart',
   style,
 }: UnitChartProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blur4Id = `lk-unit-blur4-${uid}`;
+  const blur5Id = `lk-unit-blur5-${uid}`;
   const resolvedStat =
     stat ?? (variant === 'waffle-90' && total > 0 ? `${Math.round((done / total) * 100)}%` : undefined);
   const resolvedCaption =
@@ -255,6 +260,20 @@ export function UnitChart({
   return (
     <View accessibilityRole="image" accessibilityLabel={ariaLabel} style={[styles.root, style]}>
       <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`}>
+        {shine ? (
+          /* real Gaussian blurs for the shine (Fabric-native in react-native-svg
+             15) — the native twins of the web `blur(4px)` / `blur(5px)`
+             underlays. Regions in user space over the full canvas so small
+             units never clip the blur. */
+          <Defs>
+            <Filter id={blur4Id} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+              <FeGaussianBlur stdDeviation={2} />
+            </Filter>
+            <Filter id={blur5Id} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+              <FeGaussianBlur stdDeviation={2.5} />
+            </Filter>
+          </Defs>
+        ) : null}
         {title ? (
           <Label x={PAD.l + 2} y={11} fill={colors.textFaint} anchor="start">
             {title}
@@ -290,8 +309,17 @@ export function UnitChart({
                   const filled = i < done;
                   return (
                     <G key={i}>
+                      {/* shine — a Gaussian-blurred duplicate unit (the web
+                          `blur(4px)` underlay) */}
                       {shine && filled && i % 7 === 0 ? (
-                        <Circle cx={rd(x + cw / 2)} cy={rd(y + cw / 2)} r={rd(cw / 2 + 2)} fill={color} opacity={0.35} />
+                        <Circle
+                          cx={rd(x + cw / 2)}
+                          cy={rd(y + cw / 2)}
+                          r={rd(cw / 2 + 2)}
+                          fill={color}
+                          opacity={0.5}
+                          filter={`url(#${blur4Id})`}
+                        />
                       ) : null}
                       <Circle
                         cx={rd(x + cw / 2)}
@@ -318,7 +346,9 @@ export function UnitChart({
             const n = 10;
             const gap = 3;
             const cell = Math.min(PLOT_H - 22, 110) / n - gap + 3; // 9.8
-            const gx = W / 2 - (n * (cell + gap)) / 2 + 20;
+            // grid sits LEFT of center — the +20 right-shift made its last columns
+            // (right edge ≈244) run under the dot legend at x=226; -34 keeps ≥36px clear.
+            const gx = W / 2 - (n * (cell + gap)) / 2 - 34;
             const cells = [];
             for (let r = 0; r < n; r++) {
               for (let c = 0; c < n; c++) {
@@ -405,7 +435,11 @@ export function UnitChart({
                   const x = PAD.l + 34 + u * 38;
                   return (
                     <G key={u}>
-                      {on && shine ? <Circle cx={x} cy={y} r={13} fill={color} opacity={0.35} /> : null}
+                      {/* shine — a Gaussian-blurred duplicate dot (the web
+                          `blur(5px)` underlay) */}
+                      {on && shine ? (
+                        <Circle cx={x} cy={y} r={12} fill={color} opacity={0.5} filter={`url(#${blur5Id})`} />
+                      ) : null}
                       <Circle
                         cx={x}
                         cy={y}

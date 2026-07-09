@@ -42,6 +42,14 @@ export const NoOverflow: Story = {
   ),
 };
 
+export const Large: Story = {
+  render: () => (
+    <View style={{ padding: 16 }}>
+      <AvatarStack avatars={ROSTER} max={4} size={48} />
+    </View>
+  ),
+};
+
 export const Sizes: Story = {
   render: () => (
     <View style={{ padding: 16, gap: 24 }}>

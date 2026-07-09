@@ -3,6 +3,8 @@ import { View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, {
   Circle,
   Defs,
+  FeGaussianBlur,
+  Filter,
   G,
   LinearGradient,
   Path,
@@ -97,8 +99,8 @@ export interface SankeyChartProps {
   title?: string;
   /** chip-pill node labels on the left/right columns (default true) */
   showLabels?: boolean;
-  /** glow underlay behind the ribbons / chords — a wider faint duplicate shape
-   *  (no SVG blur filters on native) */
+  /** glow underlay behind the ribbons / chords — a Gaussian-blurred duplicate
+   *  shape (Fabric-native SVG filters — Ring precedent) */
   shine?: boolean;
   /** rendered width in px — the 320×150 viewBox scales to fit */
   width?: number;
@@ -399,8 +401,8 @@ function Tag({
  * SankeyChart — the kit's flow-diagram chart (catalog family `sankey-charts`,
  * SK-01…SK-13). Same prop API + geometry as the web twin: node columns joined
  * by cubic-bezier ribbons (or the SK-13 factor-chord circle). Native glow =
- * a wider faint duplicate shape behind each mark — never SVG blur filters
- * (patchy on device; see the Ring SDD).
+ * a Gaussian-blurred duplicate shape behind each mark (Fabric-native SVG
+ * filters — Ring precedent).
  */
 export function SankeyChart({
   variant = 'duo-flow',
@@ -440,6 +442,34 @@ export function SankeyChart({
         style={[{ width, height }, style]}
       >
         <Svg width={width} height={height} viewBox={`0 0 ${W} ${H}`}>
+          {/* real Gaussian blurs (Fabric-native in react-native-svg 15) — the
+              native twins of the web chords' `blur(5px)` underlay and the node
+              dots' `drop-shadow(0 0 4px col)`. Regions in user space so flat
+              chords through the center never clip the blur to their bbox. */}
+          <Defs>
+            {shine ? (
+              <Filter
+                id={`lk-sk-${uid}-blur`}
+                filterUnits="userSpaceOnUse"
+                x={-10}
+                y={-10}
+                width={W + 20}
+                height={H + 20}
+              >
+                <FeGaussianBlur stdDeviation={2.5} />
+              </Filter>
+            ) : null}
+            <Filter
+              id={`lk-sk-${uid}-dotblur`}
+              filterUnits="userSpaceOnUse"
+              x={-10}
+              y={-10}
+              width={W + 20}
+              height={H + 20}
+            >
+              <FeGaussianBlur stdDeviation={2} />
+            </Filter>
+          </Defs>
           <Label x={P.l + 2} y={11} text={title ?? 'FACTOR LINKS · 30D'} anchor="start" />
           <Circle cx={cx} cy={cy} r={R} fill="none" stroke={CHORD_RING} strokeWidth={1} />
           {chords.map((c, i) => {
@@ -449,14 +479,18 @@ export function SankeyChart({
             const col = colorOf(c.from);
             return (
               <G key={i}>
+                {/* glow — a Gaussian-blurred duplicate of the chord behind it:
+                    the same soft glow the web chord gets from its `blur(5px)`
+                    underlay. Kept faint — chords overlap densely. */}
                 {shine ? (
                   <Path
                     d={d}
                     fill="none"
                     stroke={col}
-                    strokeWidth={c.strength * 0.9 + 5}
+                    strokeWidth={c.strength * 0.9 + 4}
                     strokeLinecap="round"
-                    opacity={0.12}
+                    opacity={0.3}
+                    filter={`url(#lk-sk-${uid}-blur)`}
                   />
                 ) : null}
                 <Path
@@ -476,8 +510,16 @@ export function SankeyChart({
             const col = colorOf(i);
             return (
               <G key={f.label}>
-                {/* glow = wider faint duplicate dot (web uses drop-shadow) */}
-                <Circle cx={pn.x.toFixed(1)} cy={pn.y.toFixed(1)} r={8} fill={col} opacity={0.3} />
+                {/* glow — a Gaussian-blurred duplicate dot behind the crisp one
+                    (web: `drop-shadow(0 0 4px col)`) */}
+                <Circle
+                  cx={pn.x.toFixed(1)}
+                  cy={pn.y.toFixed(1)}
+                  r={5}
+                  fill={col}
+                  opacity={0.55}
+                  filter={`url(#lk-sk-${uid}-dotblur)`}
+                />
                 <Circle cx={pn.x.toFixed(1)} cy={pn.y.toFixed(1)} r={5} fill={col} />
                 {showLabels ? <Tag x={pl.x} y={pl.y} text={f.label} color={col} /> : null}
               </G>
@@ -563,6 +605,24 @@ export function SankeyChart({
             )}
           </Defs>
         ) : null}
+        {shine ? (
+          /* real Gaussian blur for the ribbon glow (Fabric-native in
+             react-native-svg 15) — the native twin of the web ribbon's
+             `blur(6px)` fill duplicate. Region in user space so near-flat
+             ribbons never clip the blur to their bounding box. */
+          <Defs>
+            <Filter
+              id={`lk-sk-${uid}-ribblur`}
+              filterUnits="userSpaceOnUse"
+              x={-12}
+              y={-12}
+              width={W + 24}
+              height={H + 24}
+            >
+              <FeGaussianBlur stdDeviation={3} />
+            </Filter>
+          </Defs>
+        ) : null}
 
         <Label x={P.l + 2} y={11} text={title ?? 'ENERGY FLOW · TODAY'} anchor="start" />
 
@@ -574,18 +634,11 @@ export function SankeyChart({
           const fill = r.gradient ? `url(#lk-sk-${uid}-f${i})` : r.color;
           return (
             <G key={`f-${i}`}>
-              {/* glow = the same ribbon re-drawn faint with a soft wide stroke
-                  (web blurs a clone; no blur filters on native) */}
+              {/* glow — a Gaussian-blurred duplicate of the ribbon behind it:
+                  the same soft glow the web ribbon gets from its `blur(6px)`
+                  fill clone. */}
               {shine && !r.dimmed ? (
-                <Path
-                  d={r.d}
-                  fill={fill}
-                  fillOpacity={0.22}
-                  stroke={r.gradient ? r.gradient.from : r.color}
-                  strokeWidth={6}
-                  strokeOpacity={0.18}
-                  strokeLinejoin="round"
-                />
+                <Path d={r.d} fill={fill} opacity={0.35} filter={`url(#lk-sk-${uid}-ribblur)`} />
               ) : null}
               <Path d={r.d} fill={fill} opacity={r.opacity} />
             </G>

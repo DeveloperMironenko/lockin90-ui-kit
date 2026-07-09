@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/MetaphorWidget.tsx` · `packages/ui-native/src/components/MetaphorWidget.tsx` ·
 > no web CSS partner — all styling is inline SVG attributes (`.lk-metaphor` on the root is a bare hook class, like `.lk-daywheel`).
 > **Exports:** `MetaphorWidget`, types `MetaphorWidgetProps`, `MetaphorWidgetVariant`, `MetaphorHabit`, `MetaphorMeal`, `MetaphorCamp` — **not yet re-exported from either `src/index.ts`** (the charts-program export wave lands separately).
-> **Status:** Built. **Parity:** 🟡 same API & geometry; the breath-pacer orb is a 19s SMIL grow/shrink loop on web vs a **static mid-size orb** on native, the mountain YOU pulse is SMIL vs a static dot + halo ring, and every glow (`shine`, bloom `drop-shadow`) is `blur`/`drop-shadow` vs a wider faint duplicate shape.
+> **Status:** Built. **Parity:** 🟡 same API & geometry; the breath-pacer orb is a 19s SMIL grow/shrink loop on web vs a **static mid-size orb** on native, the mountain YOU pulse is SMIL vs a static dot + halo ring, and every `shine` glow is `blur` on web vs a Gaussian-blurred duplicate shape on native (`FeGaussianBlur`; the bloom `drop-shadow` stays an unblurred faint duplicate).
 > **Stories:** `packages/ui/src/stories/MetaphorWidget.stories.tsx` (`Charts/MetaphorWidget`) · `packages/ui-native/src/stories/MetaphorWidget.stories.tsx` (`Native/MetaphorWidget`).
 
 ---
@@ -83,7 +83,7 @@ Geometry is the catalog's, in viewBox units (`W 320 · H 150 · pad l10 r12 t16 
 | Meal plates | rail `white-14%` 1.5 round at y 85; plates r13 glass + macro arcs r9 w5 butt with 2° gaps — **[PRO mint · CARB cyan · FAT violet]**; stem + `--text` dot on the rail; kcal above (`--text-dim`), time under (`--text-faint`) |
 | Breath pacer | guide rings r24/34/44 `white-7%`; orb fill `--cyan` @ 0.22 + ring stroke 2 — web SMIL r `18;44;44;18;18`, keyTimes `0; in/T; (in+hold)/T; 0.95; 1`, dur `T = in+hold+out`; native static r **31**; phase labels IN `--cyan` / HOLD `--text-dim` / OUT `--violet` at x 236 |
 | Breath session | grid (3 faint rules + baseline); calm zone rect `--cyan` @ 0.07 below `calmThreshold`; monotone smooth curve `--cyan` 2.2 round; marker dot r3.4 + cyan chip |
-| Shine | web: bulb `blur(5px)` r9 @ 0.6 · mountain line stroke w7 @ 0.45 `blur(5px)`; native: bulb duplicate r12 @ 0.3 · line duplicate w7 @ 0.25 (no blur) |
+| Shine | web: bulb `blur(5px)` r9 @ 0.6 · mountain line stroke w7 @ 0.45 `blur(5px)`; native: same duplicates (bulb r9 @ 0.6 · line w7 @ 0.45) under `FeGaussianBlur stdDeviation 2.5` |
 
 ## 4. States
 
@@ -103,7 +103,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks (only `use
 
 - **Breath-pacer orb** — web runs the 19s SMIL grow/shrink loop timed by `pattern`; native renders a **static mid-size orb (r 31)** — no SMIL/JS animation substrate. Motion-only diff; the phase labels and copy are identical.
 - **Mountain YOU pulse** — web SMIL expanding ring + `drop-shadow`; native static dot + faint halo ring (r 7 @ 0.4), the `Ring` precedent.
-- **Glows** — web `blur()`/`drop-shadow()` (bulb shine, line halo, bloom); native **wider faint duplicate shapes** (bulb r12 @ 0.3, line w7 @ 0.25, bloom r5 @ 0.35) because RN SVG filters are unreliable on device.
+- **Glows** — web `blur()`/`drop-shadow()` (bulb shine, line halo, bloom); native **Gaussian-blurred duplicate shapes** via `FeGaussianBlur stdDeviation 2.5` (bulb r9 @ 0.6, line w7 @ 0.45 — see CONVENTIONS.md); the bloom halo stays an unblurred faint duplicate (r5 @ 0.35).
 - **Stage alphas** — web `rgba(52,245,197,α)` literal vs native `#34F5C5` + computed alpha hex — same rendered color.
 - **Container** — web `svg[role=img]` + `className`/SVGProps rest; native `View accessibilityRole="image"` wrapping `Svg` + `style`.
 

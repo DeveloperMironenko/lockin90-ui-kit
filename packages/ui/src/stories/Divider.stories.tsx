@@ -17,3 +17,8 @@ const meta: Meta<typeof Divider> = {
 export default meta;
 
 export const Default: StoryObj<typeof Divider> = { args: {} };
+
+export const Gradient: StoryObj<typeof Divider> = { args: { gradient: true } };
+
+/** Labeled divider — hairline · centered label · hairline (the "or continue with" pattern). */
+export const Labeled: StoryObj<typeof Divider> = { args: { label: 'or continue with' } };

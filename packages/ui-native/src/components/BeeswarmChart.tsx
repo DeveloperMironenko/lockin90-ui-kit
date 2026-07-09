@@ -1,5 +1,6 @@
+import { useId } from 'react';
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Line, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* BeeswarmChart — the shared catalog beeswarm family (BW-01…BW-04,
@@ -7,9 +8,10 @@ import { colors, fonts } from '@lockin90/tokens';
    whole history in one swarm along a value axis, drawn in a fixed 320×150
    viewBox. Placement is the catalog's greedy collision-free algorithm ported
    verbatim (sort by x, first non-colliding vertical offset wins). Native twin
-   of `@lockin90/ui` BeeswarmChart — same prop API; glows are wider faint
-   duplicate shapes and the BW-02 TODAY pulse is a static duplicate halo
-   (never SVG filters / CSS animation on native). */
+   of `@lockin90/ui` BeeswarmChart — same prop API; glows are real
+   Gaussian-blurred duplicates (Fabric-native SVG filters in react-native-svg
+   15) and the BW-02 TODAY pulse is a static duplicate halo (no CSS animation
+   on native). */
 
 export type BeeswarmChartVariant =
   | 'history-swarm' /* BW-01 — sessions swarmed on the duration axis · colored by type · this week ringed */
@@ -356,6 +358,8 @@ export function BeeswarmChart({
   ariaLabel = 'Beeswarm chart',
   style,
 }: BeeswarmChartProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-swarm-blur-${uid}`;
   const L = LAYOUT[variant];
   const dom = domain ?? DEFAULT_DOMAINS[variant];
   const axisTicks = ticks ?? DEFAULT_TICKS[variant];
@@ -367,9 +371,11 @@ export function BeeswarmChart({
     variant === 'month-swarm' ? [] : (points ?? DEFAULT_POINTS[variant as Exclude<BeeswarmChartVariant, 'month-swarm'>]);
   const rows = variant === 'month-swarm' ? (groups ?? DEFAULT_GROUPS).slice(0, 2) : [];
 
-  /* shine underlay — a wider faint duplicate behind a dot (no blur on native) */
+  /* shine underlay — a Gaussian-blurred faint duplicate behind a dot: the
+     native twin of the web helper's `blur(4px)` underlay. (Un-blurred wide
+     copies read as hard outlines on device.) */
   const glow = (x: number, y: number, r: number, fill: string, key: string) => (
-    <Circle key={key} cx={rd(x)} cy={rd(y)} r={rd(r)} fill={fill} opacity={0.3} />
+    <Circle key={key} cx={rd(x)} cy={rd(y)} r={rd(r)} fill={fill} opacity={0.4} filter={`url(#${blurId})`} />
   );
 
   let body = null;
@@ -441,7 +447,7 @@ export function BeeswarmChart({
       </>
     );
   } else if (variant === 'pr-swarm') {
-    /* ---- BW-03 · one hero dot (the PR glows — wider faint duplicate) ---- */
+    /* ---- BW-03 · one hero dot (the PR glows — Gaussian-blurred duplicate) ---- */
     const heroIdx = (() => {
       const h = pts.findIndex((p) => p.hero);
       if (h >= 0) return h;
@@ -464,7 +470,7 @@ export function BeeswarmChart({
         )}
         {hero ? (
           <>
-            <Circle cx={rd(hero.x)} cy={rd(hero.y)} r={7} fill={colors.mint} opacity={0.35} />
+            <Circle cx={rd(hero.x)} cy={rd(hero.y)} r={7} fill={colors.mint} opacity={0.6} filter={`url(#${blurId})`} />
             <Circle cx={rd(hero.x)} cy={rd(hero.y)} r={4.2} fill={colors.mint} />
             {resolvedNote ? (
               <Tag x={hero.x - 2} y={hero.y - 18} color={colors.mint}>
@@ -536,6 +542,14 @@ export function BeeswarmChart({
   return (
     <View accessibilityRole="image" accessibilityLabel={ariaLabel} style={[styles.root, style]}>
       <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`}>
+        {/* real Gaussian blur for the dot glows (Fabric-native in react-native-svg
+            15) — the native twin of the web `blur(4px)` underlays. Region in user
+            space over the full canvas so tiny dots never clip the blur. */}
+        <Defs>
+          <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+            <FeGaussianBlur stdDeviation={2} />
+          </Filter>
+        </Defs>
         {title ? (
           <Label x={PAD.l + 2} y={11} fill={colors.textFaint} anchor="start">
             {title}

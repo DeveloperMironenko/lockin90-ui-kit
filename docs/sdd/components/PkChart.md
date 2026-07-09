@@ -5,7 +5,7 @@
 > web CSS `packages/ui/src/styles/components/pk.css` (`.lk-pk*`).
 > **Exports:** `PkChart`, type `PkDose`, type `PkThreshold`, type `PkChartProps`.
 > _(The model helpers `batemanShapeNorm` / `buildPkSamples` are `export`ed from the file but **not** re-exported by `index.ts` — they are internal, not public API.)_
-> **Status:** Shipped. **Parity:** 🟡 same API & model, platform-shaped chrome — native measures width via `onLayout` (web uses CSS `%`), and the curve's drop-shadow glow is web-only.
+> **Status:** Shipped. **Parity:** 🟡 same API & model incl. the **`bpm` heartbeat on the live `samples` mode** (CSS keyframes vs `Animated` interpolations, same period/shape); native measures width via `onLayout` (web uses CSS `%`), and the curve's static drop-shadow glow is web-only.
 > **Stories:** `packages/ui/src/stories/PkChart.stories.tsx` · `packages/ui-native/src/stories/PkChart.stories.tsx`.
 
 ---
@@ -31,6 +31,8 @@ The Bateman model (`batemanShapeNorm`, `buildPkSamples`) is **byte-identical** o
 | `height` | `number` | `180` | ✓ | ✓ | plot height + viewBox height |
 | `axis` | `string[]` | `['6a','10a','2p','6p','10p']` | ✓ | ✓ | x-axis labels |
 | `showDoseMarkers` | `boolean` | `true` | ✓ | ✓ | vertical line + mg tag per dose (ignored when `samples` given) |
+| `bpm` | `number` | `64` | ✓ | ✓ | heartbeat rate for the live `samples` mode — beat period `60000/bpm` ms (64 → 937.5ms); `≤0` disables |
+| `still` | `boolean` | `false` | ✓ | ✓ | freeze the heartbeat (screenshots / motion-free surfaces) |
 | `ariaLabel` | `string` | — | ✓ | — | **web only** — SVG `aria-label` |
 | `className` | `string` | — | ✓ | — | web only |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |
@@ -57,13 +59,24 @@ The Bateman model (`batemanShapeNorm`, `buildPkSamples`) is **byte-identical** o
 
 - **Geometry constants (shared):** `VB_W=560`, `PAD_Y=14`, `Y_TICKS=4`, `SAMPLE_N=121`. The SVG uses a fixed viewBox + `preserveAspectRatio="none"` so it stretches to any width; overlays are positioned by `%`.
 - **Right gutter:** web `--lk-pk-gutter: 40px` (CSS var); native `Y_GUTTER = 36` (constant). One small platform value difference.
+- **Heartbeat (live `samples` mode only — `beating = samples && !still && beatMs > 0`):** three things animate
+  per beat, all keyed to `beatMs = 60000/bpm`:
+  1. **peak-dot lub-dub** — two quick scale pulses (1 → 1.35 @8% → 1.05 @18% → 1.22 @26% → rest by 38%);
+  2. **sonar ring** expanding off the dot (scale 0.5 → 2.8, opacity .55 → 0);
+  3. **trace glow flash** — a 7px under-stroke of the line flashing at beat start (opacity 0 → .5 @8% → 0).
+  Web: the root sets `--lk-pk-beat: {beatMs}ms` and CSS keyframes consume it (`lk-pk-beat`/`lk-pk-ripple`/
+  `lk-pk-flash`; classes `.lk-pk-dot--beat`, `.lk-pk-beat-ring`, `.lk-pk-beat-glow`). Native: one looped
+  `Animated.Value` per beat (linear, `useNativeDriver: true`) interpolated into the same shapes — only View
+  opacity/transform animate (no animated SVG props on Fabric); the glow flash is a separate 7px-stroke `<Svg>`
+  inside an `Animated.View`. Dose-built curves never beat.
 
 ## 4. States
 
 | State | Web | Native |
 | --- | --- | --- |
 | Default (doses) | summed Bateman curve + dose markers | same |
-| Raw `samples` | curve from samples, **dose markers suppressed** | same |
+| Raw `samples` | curve from samples, **dose markers suppressed**; heartbeat runs (dot lub-dub + sonar ring + glow flash at `60000/bpm`) | same (`Animated` loop) |
+| `still` / reduced motion | `still` freezes; `prefers-reduced-motion` disables all three beat animations | `still` freezes (no OS reduced-motion hook) |
 | Threshold present | dashed line + clipped danger tint + right tag | same |
 | Peak | callout dot+tag at the max sample (only when `peakVal > 0`) | same |
 | Empty (`samples=[]`, no positive curve) | `yMax` floors to 1; no line/peak | same |
@@ -76,7 +89,12 @@ No hover/focus/disabled — `PkChart` is a static read-only visualization.
 **Verdict: 🟡 same API & model, platform-shaped chrome.** The Bateman math, geometry constants, viewBox, tick/marker/threshold logic, and tag copy are identical. Differences are substrate-only:
 
 - **Sizing:** web stretches via CSS (`width:100%`, `preserveAspectRatio="none"`); native must `useState`+`onLayout` to learn its width before drawing (`canvasW = width − Y_GUTTER`). Reads 1:1 for callers.
-- **Curve glow:** web adds a violet `drop-shadow` filter on the line (`.lk-pk-line`); native omits it (no cheap RN-SVG filter). Cosmetic — does not block use. The peak **dot** glow exists on both.
+- **Static curve glow:** web adds a violet `drop-shadow` filter on the line (`.lk-pk-line`); native omits this
+  always-on glow (the Fabric blur-filter port hasn't reached PkChart's static line). Cosmetic — does not block
+  use. The peak **dot** glow exists on both, and the **beat glow flash** is on both.
+- **Heartbeat:** same `bpm`/`still` props, same period, same three animated shapes; web = CSS keyframes driven
+  by the `--lk-pk-beat` custom prop (disabled under `prefers-reduced-motion`), native = one `Animated` loop
+  interpolated into View opacity/transform (no reduced-motion hook — pass `still`).
 - **`ariaLabel`:** web-only prop (SVG `aria-label`); native has no equivalent SVG a11y label here.
 - **Gutter width:** web 40px vs native 36px — a minor value drift, not a contract difference.
 
@@ -121,7 +139,8 @@ No capability gap blocks use; the chart is fully usable and visually equivalent 
 - ✗ Don't pass both `samples` and `doses` expecting markers — `samples` suppresses dose markers.
 - ✗ Don't hardcode the curve/threshold/tint colors — they come from tokens (`color` defaults to the accent token).
 - ✗ Don't hand-roll a PK/decay chart — extend `PkChart` on both platforms.
-- ✗ Don't rely on the curve glow on native — it's a web-only cosmetic.
+- ✗ Don't rely on the static curve glow on native — it's a web-only cosmetic (the beat flash is on both).
+- ✗ Don't expect the heartbeat on dose-built curves — it's the live `samples` mode only; pass `still` where motion must stop (native has no reduced-motion hook).
 
 ## 9. Anti-patterns & lookalike ban
 

@@ -3,6 +3,8 @@ import { View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, {
   Circle,
   Defs,
+  FeGaussianBlur,
+  Filter,
   G,
   Line,
   LinearGradient,
@@ -61,8 +63,8 @@ export interface RadarChartProps {
   compareLabel?: string;
   /** faint mono caption at the top-left (per-variant catalog default) */
   title?: string;
-  /** glow underlay behind the shape edge — a wider faint duplicate stroke
-   *  (no SVG blur filters on native) */
+  /** glow underlay behind the shape edge — a Gaussian-blurred duplicate
+   *  stroke */
   shine?: boolean;
   /** rendered width in px — the 320×150 viewBox scales to fit */
   width?: number;
@@ -285,13 +287,32 @@ function Shape({
   vs: number[];
   opts: ShapeOpts;
 }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-radar-blur-${uid}`;
   const pts = poly(cx, cy, r, vs);
   const d = polyPath(pts);
   const w = opts.w ?? 2;
   const opacity = opts.opacity ?? 1;
   return (
     <G>
-      {/* glow = a wider faint duplicate edge (web blurs; no filters on native) */}
+      {/* glow — a Gaussian-blurred duplicate of the shape edge behind it: the
+          same soft glow the web edge gets from its `blur(5px)` underlay.
+          (Feather copies read as banded outlines on device.) Region in user
+          space so small/flat shapes never clip the blur to their bbox. */}
+      {opts.shine ? (
+        <Defs>
+          <Filter
+            id={blurId}
+            filterUnits="userSpaceOnUse"
+            x={cx - r - 14}
+            y={cy - r - 14}
+            width={2 * (r + 14)}
+            height={2 * (r + 14)}
+          >
+            <FeGaussianBlur stdDeviation={2.5} />
+          </Filter>
+        </Defs>
+      ) : null}
       {opts.shine ? (
         <Path
           d={d}
@@ -299,7 +320,8 @@ function Shape({
           stroke={opts.glowColor ?? opts.stroke}
           strokeWidth={w + 5}
           strokeLinejoin="round"
-          opacity={0.2}
+          opacity={0.45}
+          filter={`url(#${blurId})`}
         />
       ) : null}
       {opts.fill !== false ? (
@@ -334,8 +356,8 @@ function Shape({
  * RadarChart — the kit's balance-wheel / spider chart (catalog family
  * `radar-charts`, RD-01…RD-07). Same prop API + geometry as the web twin:
  * a pentagon grid (3 rings + spokes + axis labels) with one or more value
- * shapes on top. Native glow = a wider faint duplicate edge — never SVG blur
- * filters (patchy on device; see the Ring SDD).
+ * shapes on top. Native glow = a Gaussian-blurred duplicate edge behind the
+ * crisp one (Fabric-native SVG filters — Ring precedent).
  */
 export function RadarChart({
   variant = 'balance-radar',

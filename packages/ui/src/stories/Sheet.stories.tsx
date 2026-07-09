@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Sheet } from '../components/Sheet';
 
@@ -18,15 +18,33 @@ const rowStyle: CSSProperties = {
   color: 'var(--text)',
 };
 
+function BottomDemo() {
+  const [open, setOpen] = useState(true);
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)}>
+        Open sheet
+      </button>
+      <Sheet open={open} onClose={() => setOpen(false)} side="bottom" title="Choose set type">
+        <div style={rowStyle}>Working set</div>
+        <div style={rowStyle}>Warm-up</div>
+        <div style={rowStyle}>Drop set</div>
+        <div style={{ ...rowStyle, borderBottom: 'none' }}>Failure</div>
+      </Sheet>
+    </>
+  );
+}
+
 export const Bottom: StoryObj<typeof meta> = {
-  render: () => (
-    <Sheet open side="bottom" title="Choose set type">
-      <div style={rowStyle}>Working set</div>
-      <div style={rowStyle}>Warm-up</div>
-      <div style={rowStyle}>Drop set</div>
-      <div style={{ ...rowStyle, borderBottom: 'none' }}>Failure</div>
-    </Sheet>
-  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Drag the handle (or the title strip) down to dismiss — past ~25% of the sheet height, or with a quick downward fling. A shorter drag snaps back.',
+      },
+    },
+  },
+  render: () => <BottomDemo />,
 };
 
 export const Right: StoryObj<typeof meta> = {

@@ -4,6 +4,13 @@ import { Card } from './Card';
 import { Icon } from './Icon';
 import { Badge } from './Toast';
 
+/**
+ * A single feature row. A plain `string` (or `{ included: true }`) renders a
+ * mint check ✓; `{ included: false }` renders a muted cross ✗ (feature not in
+ * this tier). Lets one component express both included and excluded features.
+ */
+export type PricingFeature = string | { label: string; included?: boolean };
+
 export interface PricingTierCardProps {
   /** tier name, e.g. 'Free' | 'Pro' | 'Elite' */
   name: string;
@@ -12,8 +19,11 @@ export interface PricingTierCardProps {
   /** billing period, e.g. '/mo' */
   period?: string;
   description?: string;
-  /** feature list — each rendered with a leading check Icon */
-  features: string[];
+  /**
+   * Feature list. A plain string → mint check ✓; an object with
+   * `included: false` → a muted cross ✗ (excluded from this tier).
+   */
+  features: PricingFeature[];
   /** accent/cta-gradient border + glow + a ribbon */
   featured?: boolean;
   /** ribbon copy (only when `featured`) @default 'Most popular' */
@@ -75,14 +85,18 @@ export function PricingTierCard({
       </div>
 
       <ul className="lk-tier-feat">
-        {features.map((f, i) => (
-          <li key={`${f}-${i}`}>
-            <span className="lk-tier-check">
-              <Icon name="check" size={16} />
-            </span>
-            <span>{f}</span>
-          </li>
-        ))}
+        {features.map((f, i) => {
+          const label = typeof f === 'string' ? f : f.label;
+          const included = typeof f === 'string' ? true : f.included !== false;
+          return (
+            <li key={`${label}-${i}`} className={cn(!included && 'lk-tier-feat--off')}>
+              <span className={cn('lk-tier-check', !included && 'lk-tier-cross')}>
+                <Icon name={included ? 'check' : 'close'} size={16} />
+              </span>
+              <span>{label}</span>
+            </li>
+          );
+        })}
       </ul>
 
       {cta && <div className="lk-tier-cta">{cta}</div>}

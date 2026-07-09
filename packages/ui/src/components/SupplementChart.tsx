@@ -302,8 +302,10 @@ function PulseDot({ x, y, color, motionOK }: { x: number; y: number; color: stri
   );
 }
 
-/** SATURATED / LOW zone level bands (5% washes + right-edge band labels). */
-function LevelBands() {
+/** SATURATED / LOW zone level bands (5% washes + edge band labels — right by
+ *  default; `labelsLeft` moves them to the band's left edge when the right
+ *  edge is occupied, e.g. by SP-07's end-of-line series pills). */
+function LevelBands({ labelsLeft = false }: { labelsLeft?: boolean }) {
   const bands: Array<[number, number, string, string]> = [
     [0.72, 1, 'var(--zone-high)', 'SATURATED'],
     [0.35, 0.72, 'var(--zone-mid)', ''],
@@ -322,7 +324,12 @@ function LevelBands() {
             opacity={0.05}
           />
           {text ? (
-            <Label x={W - PAD.r - 2} y={lvlY(hi) + 9} fill={color} anchor="end">
+            <Label
+              x={labelsLeft ? PAD.l + 2 : W - PAD.r - 2}
+              y={lvlY(hi) + 9}
+              fill={color}
+              anchor={labelsLeft ? 'start' : 'end'}
+            >
               {text}
             </Label>
           ) : null}
@@ -390,7 +397,10 @@ function VesselGlyph({
     `Q${rd(xw + ww * 0.25)} ${rd(lt - amp)} ${rd(xw + ww * 0.5)} ${rd(lt)}` +
     `Q${rd(xw + ww * 0.75)} ${rd(lt + amp)} ${rd(xw + ww)} ${rd(lt)}`;
   const wave = `${surface}L${rd(xw + ww)} ${rd(y + h)}L${rd(xw)} ${rd(y + h)}Z`;
-  const inLiquid = lt < y + h / 2;
+  // % readout placement: centered in the liquid when the fill is tall enough
+  // to hold it (≥ 30%), else riding just above the wavy surface
+  const inLiquid = lv >= 0.3;
+  const pctY = inLiquid ? (lt + y + h) / 2 + 3 : lt - amp - 4;
   const bubbleSpec: Array<[number, number, number]> = [
     [0.3, 0.35, 2],
     [0.62, 0.55, 1.4],
@@ -459,11 +469,12 @@ function VesselGlyph({
             />
           ))
         : null}
-      {/* % centered in the vessel — inverts when the liquid covers it */}
+      {/* % readout — centered in the liquid (inverted) when the fill can hold
+          it, else just above the liquid surface */}
       <text
         className="lk-supp-vpct"
         x={rd(x + w / 2)}
-        y={rd(y + h / 2 + 3)}
+        y={rd(pctY)}
         fill={inLiquid ? 'var(--bg-0)' : 'var(--text)'}
         textAnchor="middle"
       >
@@ -594,6 +605,7 @@ export function SupplementChart({
 
   let body: ReactNode = null;
   let showBands = false;
+  let bandLabelsLeft = false;
   let axis: [string, string] | null = null;
 
   if (variant === 'saturation-story') {
@@ -839,12 +851,28 @@ export function SupplementChart({
       </g>
     );
   } else if (variant === 'stack-levels') {
-    /* SP-07 — 3 level curves with different kinetics + right pills */
+    /* SP-07 — 3 level curves with different kinetics + end-of-line pills */
     const trio = (series ?? DEFAULT_STACK_SERIES).slice(0, 3);
     const widths = [2.5, 2, 1.8];
     const opacities = [1, 0.85, 0.8];
     const colorsBy = ['var(--mint)', 'var(--cyan)', 'var(--zone-mid)'];
     showBands = bands ?? true;
+    bandLabelsLeft = true; // the right edge belongs to the series pills
+    // pill y from each series' FINAL level; overlapping pills are pushed apart
+    // (min gap = pill height + 2) top-down, then clamped inside the plot
+    const pillH = 13;
+    const pillYs = trio.map((s) => lvlY(s.levels[s.levels.length - 1] ?? 0));
+    const order = pillYs.map((y, si) => ({ si, y })).sort((a, b) => a.y - b.y);
+    const yMin = PAD.t + pillH / 2;
+    const yMax = H - PAD.b - pillH / 2;
+    order.forEach((p, i) => {
+      p.y = Math.max(yMin, Math.min(p.y, yMax));
+      if (i > 0) p.y = Math.max(p.y, order[i - 1].y + pillH + 2);
+    });
+    // if the pushed chain ran past the plot bottom, shift it back up whole
+    const over = order.length > 0 ? order[order.length - 1].y - yMax : 0;
+    if (over > 0) order.forEach((p) => (p.y -= over));
+    order.forEach((p) => (pillYs[p.si] = p.y));
     body = (
       <g>
         {trio.map((s, si) => {
@@ -863,7 +891,7 @@ export function SupplementChart({
           );
         })}
         {trio.map((s, si) => (
-          <Tag key={si} x={W - PAD.r - 4} y={26 + si * 16} color={s.color ?? colorsBy[si]} anchor="end">
+          <Tag key={si} x={W - PAD.r - 4} y={pillYs[si]} color={s.color ?? colorsBy[si]} anchor="end">
             {s.name}
           </Tag>
         ))}
@@ -973,7 +1001,7 @@ export function SupplementChart({
             {stat}
           </text>
         ) : null}
-        {showBands ? <LevelBands /> : null}
+        {showBands ? <LevelBands labelsLeft={bandLabelsLeft} /> : null}
         {body}
         {axis ? (
           <g>

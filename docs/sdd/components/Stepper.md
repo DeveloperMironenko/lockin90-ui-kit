@@ -63,6 +63,7 @@ Both are the *only* sanctioned forms of their pattern (§9).
 - **Node number font:** `--font-mono` / `fonts.mono`, `12px`, weight `600`. Done node shows `Icon name="check" size={14}`.
 - **Label** (`.lk-step-label`): `--font-ui` / `fonts.ui`, `11px`; future `--text-faint`, done `--text-dim`, current `--text` weight `600`.
 - **Connecting line** (`.lk-step-line`): `2px`, `min-width 18px`, `margin-top 14px`; faint `--border` / `colors.border`; filled `linear-gradient(90deg, --accent, --accent-2)` / native `[colors.accent, colors.accent2]` for `i <= current`.
+- **Overflow (native):** each step cell is `flexShrink: 1` / `minWidth: 30` and the label ellipsizes (`numberOfLines={1}`), while the flexing connectors absorb remaining space — a width-constrained rail shrinks + truncates instead of overflowing (the native twin of web's fixed 30px node track + flexing `.lk-step-line`).
 
 **NumberStepper** (`.lk-numstep` / native `styles.numstep`):
 

@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
+  Easing,
   View,
   Text,
   StyleSheet,
@@ -52,6 +54,11 @@ export interface PkChartProps {
   axis?: string[];
   /** vertical line + mg tag at each dose.at */
   showDoseMarkers?: boolean;
+  /** heart rate (beats/min) pacing the live-trace heartbeat; beat period =
+   *  60000/bpm ms. Only the raw-`samples` (live/ECG) variant beats. */
+  bpm?: number;
+  /** disable the heartbeat animation; static render (kit `still` convention) */
+  still?: boolean;
   /** optional container style */
   style?: StyleProp<ViewStyle>;
 }
@@ -107,6 +114,13 @@ export function buildPkSamples(
   return out;
 }
 
+/** Heartbeat period in ms for a heart rate: `60000 / bpm`; `0` (no beat) for a
+ *  non-positive or non-finite bpm.
+ *  (Pure — extracted from the component so the pacing math is unit-testable.) */
+export function beatPeriodMs(bpm: number): number {
+  return Number.isFinite(bpm) && bpm > 0 ? 60000 / bpm : 0;
+}
+
 /** Derive ~`Y_TICKS` evenly-spaced tick values across [0, max]. */
 function deriveTicks(max: number): number[] {
   if (max <= 0) return [0];
@@ -156,7 +170,9 @@ function smoothPath(pts: Array<[number, number]>): string {
  *  dose markers, a peak callout dot, a right y-axis and an x-axis row. The Svg
  *  stretches to the measured container width via a fixed viewBox + non-uniform
  *  scaling; overlay dots/tags are absolutely-positioned Views placed by % so
- *  they stay crisp/round. */
+ *  they stay crisp/round. The live raw-`samples` (ECG-style) variant carries a
+ *  heartbeat paced by `bpm`: a lub-dub pulse + sonar ring on the peak dot and
+ *  a glow flash of the trace each beat; `still` holds it static. */
 export function PkChart({
   samples,
   doses = DEFAULT_DOSES,
@@ -169,10 +185,47 @@ export function PkChart({
   height = 180,
   axis = DEFAULT_AXIS,
   showDoseMarkers = true,
+  bpm = 64,
+  still = false,
   style,
 }: PkChartProps) {
   const [width, setWidth] = useState(0);
   const onLayout = (e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width);
+
+  // heartbeat: only the live (raw `samples`) trace beats, paced by `bpm`.
+  // One linear 0→1 loop per beat period; the lub-dub / ring / glow shapes are
+  // keyframed via interpolate (matches the web CSS keyframes 1:1). Only View
+  // opacity/transform are driven, so useNativeDriver stays true (cheap on
+  // Fabric — no animated SVG props needed).
+  const beat = useRef(new Animated.Value(0)).current;
+  const live = Boolean(samples && samples.length > 0);
+  const beatMs = beatPeriodMs(bpm);
+  const beating = live && !still && beatMs > 0;
+
+  useEffect(() => {
+    if (!beating) return;
+    beat.setValue(0);
+    const loop = Animated.loop(
+      Animated.timing(beat, { toValue: 1, duration: beatMs, easing: Easing.linear, useNativeDriver: true }),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [beating, beatMs, beat]);
+
+  const beatAnim = beating
+    ? {
+        // lub-dub: two quick pulses in the first ~1/3 of the period, then rest
+        dotScale: beat.interpolate({
+          inputRange: [0, 0.08, 0.18, 0.26, 0.38, 1],
+          outputRange: [1, 1.35, 1.05, 1.22, 1, 1],
+        }),
+        // sonar ring expanding off the dot
+        ringScale: beat.interpolate({ inputRange: [0, 0.7, 1], outputRange: [0.5, 2.8, 2.8] }),
+        ringOpacity: beat.interpolate({ inputRange: [0, 0.7, 1], outputRange: [0.55, 0, 0] }),
+        // wide stroke of the trace flashing at the start of each beat
+        glowOpacity: beat.interpolate({ inputRange: [0, 0.08, 0.45, 1], outputRange: [0, 0.5, 0, 0] }),
+      }
+    : null;
 
   const data = samples && samples.length > 0 ? samples : buildPkSamples(doses, hours, halfLifeH, tMaxH);
   const n = data.length;
@@ -267,6 +320,20 @@ export function PkChart({
             </Svg>
           )}
 
+          {/* heartbeat glow: a wide stroke of the live trace flashing once per
+              beat. Drawn in its own Svg inside an Animated.View so only View
+              opacity animates (native driver; no animated SVG props). */}
+          {beatAnim && line && canvasW > 0 ? (
+            <Animated.View
+              pointerEvents="none"
+              style={[StyleSheet.absoluteFillObject, { opacity: beatAnim.glowOpacity }]}
+            >
+              <Svg width={canvasW} height={height} viewBox={`0 0 ${VB_W} ${height}`} preserveAspectRatio="none">
+                <Path d={line} fill="none" stroke={color} strokeWidth={7} strokeLinecap="round" strokeLinejoin="round" />
+              </Svg>
+            </Animated.View>
+          ) : null}
+
           {/* dose marker tags — %-positioned overlays so they stay crisp.
               Alternate two rows so closely-spaced doses don't overlap. */}
           {markerDoses.map((d, i) => (
@@ -301,7 +368,22 @@ export function PkChart({
               <View style={[styles.tag, { borderColor: color }]}>
                 <Text style={[styles.tagText, { color }]}>{`${tickLabel(peakVal)}${unit}`}</Text>
               </View>
-              <View style={[styles.dot, { backgroundColor: color }]} />
+              {/* heartbeat sonar ring, expanding off the dot once per beat */}
+              {beatAnim ? (
+                <Animated.View
+                  style={[
+                    styles.beatRing,
+                    { borderColor: color, opacity: beatAnim.ringOpacity, transform: [{ scale: beatAnim.ringScale }] },
+                  ]}
+                />
+              ) : null}
+              <Animated.View
+                style={[
+                  styles.dot,
+                  { backgroundColor: color },
+                  beatAnim ? { transform: [{ scale: beatAnim.dotScale }] } : null,
+                ]}
+              />
             </View>
           ) : null}
 
@@ -375,6 +457,16 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 0 },
     elevation: 4,
+  },
+  // heartbeat sonar ring, sized/centered on the dot (scales outward each beat)
+  beatRing: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 11,
+    height: 11,
+    borderRadius: 5.5,
+    borderWidth: 2,
   },
   tag: {
     position: 'absolute',

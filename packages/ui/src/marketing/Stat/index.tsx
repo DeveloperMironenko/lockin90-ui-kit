@@ -1,4 +1,4 @@
-import { cn } from '../../cn';
+import { Stat as RootStat } from '../../components/Stat';
 
 export interface StatProps {
   /** The headline figure, e.g. "90", "2.4×", "12k". */
@@ -8,12 +8,9 @@ export interface StatProps {
   className?: string;
 }
 
-/** A figure block — a big Aurora display number over a mono eyebrow label. */
+/** A figure block — a big Aurora display number over a mono eyebrow label.
+ *  A thin wrapper over the canonical root `Stat` at its `hero` size with the flux
+ *  gradient value; export + props kept for the marketing app. */
 export function Stat({ value, label, className }: StatProps) {
-  return (
-    <div className={cn('lk-mkt-stat', className)}>
-      <div className="lk-mkt-stat-value lk-gradient-text">{value}</div>
-      <div className="lk-mkt-stat-label">{label}</div>
-    </div>
-  );
+  return <RootStat className={className} value={value} label={label} size="hero" tone="gradient" />;
 }

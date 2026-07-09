@@ -38,3 +38,19 @@ export const Trailing: StoryObj<typeof meta> = {
     </div>
   ),
 };
+
+/** `tone="danger"` — destructive actions. Composes with `variant`: a solid `--bad`
+ *  fill on the default button, a red-tinted transparent button on `ghost` (the
+ *  account "danger zone" delete). */
+export const Danger: StoryObj<typeof meta> = {
+  render: () => (
+    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+      <Button tone="danger" leading={<Icon name="trash" />}>
+        Delete account
+      </Button>
+      <Button variant="ghost" tone="danger" leading={<Icon name="trash" />}>
+        Delete account
+      </Button>
+    </div>
+  ),
+};

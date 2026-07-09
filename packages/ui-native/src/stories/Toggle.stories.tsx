@@ -18,6 +18,10 @@ export const On: Story = {
   args: { checked: true },
 };
 
+export const WithLabel: Story = {
+  args: { checked: true, label: 'Email notifications' },
+};
+
 export const States: Story = {
   render: () => (
     <View style={{ gap: 14 }}>

@@ -1,7 +1,10 @@
-import { type ReactNode } from 'react';
-import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { Animated, Easing, View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import Svg, { Circle, ClipPath, Defs, FeGaussianBlur, Filter, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+const AnimatedRect = Animated.createAnimatedComponent(Rect);
 
 /* VitalsStrip — the catalog vitals family (VT-01…VT-05,
    lockin90-design/charts/vitals-charts.html): ECG-style rhythm strips —
@@ -10,8 +13,9 @@ import { colors, fonts } from '@lockin90/tokens';
    big mono BPM readout, the uneven-RR HRV explainer with a ms bracket
    ruler, the bedside monitor (ECG + respiration + stat column), the
    compressed overnight HR curve, and the one-premature-beat anomaly flag.
-   Native twin of `@lockin90/ui` VitalsStrip — same prop API; glows are
-   wider faint duplicate strokes (never SVG filters). */
+   Native twin of `@lockin90/ui` VitalsStrip — same prop API; glows are real
+   Gaussian-blurred duplicate strokes (Fabric-native SVG filters in
+   react-native-svg 15). */
 
 export type VitalsStripVariant =
   | 'ecg-strip' /* VT-01 — PQRST beats + big BPM + pulse on the last R peak */
@@ -54,6 +58,8 @@ export interface VitalsStripProps {
   title?: string;
   /** Glow underlay along the trace (the catalog `cfg.shine`). */
   shine?: boolean;
+  /** Disable the R-peak pulse animation (static halo ring instead). */
+  still?: boolean;
   /** Accessible description of the chart. */
   ariaLabel?: string;
   /** Optional container style. */
@@ -93,23 +99,27 @@ const rd = (n: number) => Math.round(n * 100) / 100;
 interface EcgRun {
   d: string;
   peaks: Array<{ x: number; y: number }>;
+  /** every polyline waypoint — drives the live-sweep write head. */
+  pts: Array<{ x: number; y: number }>;
 }
 
 /** A run of PQRST beats: polyline path + the R-peak positions (BEAT index 6). */
 function ecgRun(x0: number, y0: number, amp: number, widths: number[]): EcgRun {
   let d = '';
   const peaks: EcgRun['peaks'] = [];
+  const pts: EcgRun['pts'] = [];
   let x = x0;
   for (const w of widths) {
     BEAT.forEach((q, i) => {
       const px = x + q[0] * w;
       const py = y0 - q[1] * amp;
       d += `${d ? 'L' : 'M'}${rd(px)} ${rd(py)}`;
+      pts.push({ x: px, y: py });
       if (i === 6) peaks.push({ x: px, y: py });
     });
     x += w;
   }
-  return { d, peaks };
+  return { d, peaks, pts };
 }
 
 /** Mono catalog label (8.5px JetBrains Mono, ~.06em tracking). */
@@ -178,14 +188,86 @@ function Tag({
   );
 }
 
-/** Glowing dot + static halo ring — the catalog `pulseDot`. Native draws a
- *  wider faint duplicate for the glow and a static ring for the pulse. */
-function PulseDot({ x, y, color }: { x: number; y: number; color: string }) {
+/** Glowing dot + expanding pulse ring — the catalog `pulseDot`. The ring
+ *  animates r 3.6→11 / opacity 0.8→0 over 1.8s (the web SMIL `<animate>`
+ *  twin; SVG props aren't native-drivable so useNativeDriver is false — one
+ *  circle at this rate is cheap). `still` renders the static halo instead. */
+function PulseDot({ x, y, color, still = false }: { x: number; y: number; color: string; still?: boolean }) {
+  const anim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (still) return;
+    const loop = Animated.loop(
+      Animated.timing(anim, { toValue: 1, duration: 1800, easing: Easing.linear, useNativeDriver: false }),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [still, anim]);
+
+  const r = anim.interpolate({ inputRange: [0, 1], outputRange: [3.6, 11] });
+  const ringOpacity = anim.interpolate({ inputRange: [0, 1], outputRange: [0.8, 0] });
+
   return (
     <G>
       <Circle cx={rd(x)} cy={rd(y)} r={6.6} fill={color} opacity={0.35} />
       <Circle cx={rd(x)} cy={rd(y)} r={3.6} fill={color} />
-      <Circle cx={rd(x)} cy={rd(y)} r={7} fill="none" stroke={color} strokeWidth={1.4} opacity={0.4} />
+      {still ? (
+        <Circle cx={rd(x)} cy={rd(y)} r={7} fill="none" stroke={color} strokeWidth={1.4} opacity={0.4} />
+      ) : (
+        <AnimatedCircle cx={rd(x)} cy={rd(y)} r={r} fill="none" stroke={color} strokeWidth={1.4} opacity={ringOpacity} />
+      )}
+    </G>
+  );
+}
+
+/** Live monitor sweep (VT-01, `still` off) — the trace is revealed left→right
+ *  by a clip rect animated at constant x speed, and the active point rides the
+ *  tip of the line like a bedside monitor's write head. Both the clip width and
+ *  the dot position derive linearly from the same progress value, so the dot
+ *  always sits exactly on the reveal edge. Loops every SWEEP_MS. */
+const SWEEP_MS = 4200;
+function LiveEcgTrace({ run, color, shine }: { run: EcgRun; color: string; shine: boolean }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const clipId = `lk-vt-clip-${uid}`;
+  const progress = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.timing(progress, { toValue: 1, duration: SWEEP_MS, easing: Easing.linear, useNativeDriver: false }),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [progress]);
+
+  const xs = run.pts.map((p) => p.x);
+  const ys = run.pts.map((p) => p.y);
+  const first = xs[0];
+  const span = Math.max(1, xs[xs.length - 1] - first);
+  // strictly-increasing progress fractions — the vertical QRS segments repeat an
+  // x position, and interpolate() rejects a non-increasing inputRange, so equal
+  // fractions get nudged forward by an invisible epsilon.
+  const fr: number[] = [];
+  for (let i = 0; i < xs.length; i++) {
+    const f = (xs[i] - first) / span;
+    fr.push(i > 0 && f <= fr[i - 1] ? fr[i - 1] + 1e-4 : f);
+  }
+  const cx = progress.interpolate({ inputRange: fr, outputRange: xs });
+  const cy = progress.interpolate({ inputRange: fr, outputRange: ys });
+  const clipW = progress.interpolate({ inputRange: [0, 1], outputRange: [0.01, span + 8] });
+
+  return (
+    <G>
+      <Defs>
+        <ClipPath id={clipId}>
+          <AnimatedRect x={rd(first - 4)} y={0} width={clipW} height={H} />
+        </ClipPath>
+      </Defs>
+      <G clipPath={`url(#${clipId})`}>
+        <Trace d={run.d} color={color} shine={shine} />
+      </G>
+      {/* the write head — halo + core riding the tip of the line */}
+      <AnimatedCircle cx={cx} cy={cy} r={6.6} fill={color} opacity={0.35} />
+      <AnimatedCircle cx={cx} cy={cy} r={3.6} fill={color} />
     </G>
   );
 }
@@ -203,11 +285,34 @@ function Paper({ y0, y1 }: { y0: number; y1: number }) {
   );
 }
 
-/** ECG trace + optional glow — a wider faint duplicate stroke (no filters). */
+/** ECG trace + optional glow — a Gaussian-blurred duplicate stroke behind the
+ *  crisp trace: the native twin of the web `.lk-vitals-shine` blur(5px)
+ *  underlay. (Wide un-blurred copies read as hard outlines on device.) */
 function Trace({ d, color, shine }: { d: string; color: string; shine: boolean }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-vt-blur-${uid}`;
   return (
     <G>
-      {shine ? <Path d={d} fill="none" stroke={color} strokeWidth={6} opacity={0.45} strokeLinecap="round" /> : null}
+      {shine ? (
+        /* region in user space over the full canvas so the flat trace never
+           clips the blur to its bounding box */
+        <Defs>
+          <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+            <FeGaussianBlur stdDeviation={2.5} />
+          </Filter>
+        </Defs>
+      ) : null}
+      {shine ? (
+        <Path
+          d={d}
+          fill="none"
+          stroke={color}
+          strokeWidth={6}
+          opacity={0.45}
+          strokeLinecap="round"
+          filter={`url(#${blurId})`}
+        />
+      ) : null}
       <Path d={d} fill="none" stroke={color} strokeWidth={1.8} strokeLinejoin="round" strokeLinecap="round" />
     </G>
   );
@@ -292,9 +397,12 @@ export function VitalsStrip({
   color,
   title,
   shine = false,
+  still = false,
   ariaLabel = 'Vitals rhythm strip',
   style,
 }: VitalsStripProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-vt-night-blur-${uid}`;
   let body: ReactNode = null;
 
   if (variant === 'night-hr') {
@@ -330,8 +438,25 @@ export function VitalsStrip({
         <Line x1={PAD.l} x2={W - PAD.r} y1={H - PAD.b} y2={H - PAD.b} stroke={colors.border} strokeWidth={1} />
         {/* shaded sleep window */}
         <Rect x={x0} y={PAD.t + 4} width={x1 - x0} height={108} fill={c} opacity={0.07} />
+        {/* shine — a Gaussian-blurred duplicate of the curve behind it (the web
+            `.lk-vitals-shine` blur(5px) underlay) */}
         {shine ? (
-          <Path d={monotonePath(pts)} fill="none" stroke={c} strokeWidth={7} strokeLinecap="round" opacity={0.45} />
+          <G>
+            <Defs>
+              <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+                <FeGaussianBlur stdDeviation={2.5} />
+              </Filter>
+            </Defs>
+            <Path
+              d={monotonePath(pts)}
+              fill="none"
+              stroke={c}
+              strokeWidth={7}
+              strokeLinecap="round"
+              opacity={0.45}
+              filter={`url(#${blurId})`}
+            />
+          </G>
         ) : null}
         <Path d={monotonePath(pts)} fill="none" stroke={c} strokeWidth={2.2} strokeLinecap="round" />
         {/* LOW dip */}
@@ -376,8 +501,14 @@ export function VitalsStrip({
       body = (
         <G>
           <Paper y0={frame.paper[0]} y1={frame.paper[1]} />
-          <Trace d={run.d} color={traceColor} shine={shine} />
-          {last ? <PulseDot x={last.x} y={last.y} color={traceColor} /> : null}
+          {still ? (
+            <>
+              <Trace d={run.d} color={traceColor} shine={shine} />
+              {last ? <PulseDot x={last.x} y={last.y} color={traceColor} still /> : null}
+            </>
+          ) : (
+            <LiveEcgTrace run={run} color={traceColor} shine={shine} />
+          )}
           <SvgText x={W - PAD.r - 4} y={46} fill={traceColor} textAnchor="end" fontSize={24} fontFamily={fonts.display} fontWeight="700">
             {String(bpm ?? 62)}
           </SvgText>

@@ -20,6 +20,18 @@
   box-shadow: 0 -8px 30px -12px rgba(0, 0, 0, 0.6);
 }
 
+/* floating — rounded glass pill (the mockups' `.tabbar`) instead of the pinned
+   bar: rounded, hairline all round, semi-opaque dark fill (= bg-1 @ 82%; tokens
+   have no alpha-bg), stronger float shadow. Position it yourself. */
+.lk-tabbar--floating {
+  width: auto;
+  border-top: none;
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  background: rgba(12, 15, 26, 0.82);
+  box-shadow: 0 -8px 30px -10px rgba(0, 0, 0, 0.7);
+}
+
 .lk-tabbar-item {
   flex: 1;
   min-width: 0;

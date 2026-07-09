@@ -20,7 +20,7 @@ SVG reference implementation: the `CFG` array + renderer in the page source **is
   (axes/markers/bands), `BarChart`/`StackedBar` (bars), `Gauge`/`PhaseWheel` (sweeps).
 - Tokens only. Web `var(--x)`, native `colors.x` from `@lockin90/tokens`. Zone logic: value ≥0.62 →
   `zone-high`, ≥0.38 → `zone-mid`, else `zone-low` (same as catalog `zoneOf`).
-- Native glow: **wider faint duplicate shape**, never SVG filters (RN limitation, documented in Ring SDD).
+- Native glow: a **Gaussian-blurred duplicate shape** via real `<Filter><FeGaussianBlur>` (react-native-svg 15, Fabric) — see the "Native glow/shadow substrate" rule in `components/CONVENTIONS.md`. (Supersedes the old "wider faint duplicate, never SVG filters" rule.)
 - `shine` is a boolean prop on every chart (the catalog's glow-underlay modifier).
 - Deliverables per component: web tsx (+css if needed), native tsx, both `src/index.ts` exports,
   story per platform, 9-section SDD (`docs/sdd/components/<X>.md` per TEMPLATE.md),

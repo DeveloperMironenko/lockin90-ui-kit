@@ -62,7 +62,8 @@ export interface ProgressBarProps extends ViewProps {
   ghost?: number;
   /** GOAL tick + pill at this fraction 0..1 (zone-mid). */
   target?: number;
-  /** Glow underlay behind the fill (wider faint duplicate — no blur on native). */
+  /** Glow underlay behind the fill — a real `boxShadow` halo on native (RN
+   *  New-Architecture box shadows), the twin of the web blurred duplicate. */
   shine?: boolean;
 }
 
@@ -75,6 +76,8 @@ const zoneOf = (f: number) => (f >= 0.62 ? colors.zoneHigh : f >= 0.38 ? colors.
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 /** tint a #rrggbb token to ~35% alpha (chip-pill hairline) */
 const tint35 = (c: string) => (c.startsWith('#') && c.length === 7 ? `${c}59` : c);
+/** tint a #rrggbb token to 50% alpha (the shine halo — web blur(6) @ 0.5) */
+const tint50 = (c: string) => (c.startsWith('#') && c.length === 7 ? `${c}80` : c);
 
 /** chip-pill (catalog C.tag): dark rounded rect + tinted hairline + mono text */
 function Pill({ color, children }: { color: string; children: string }) {
@@ -187,11 +190,19 @@ function VariantBar({
           ]}
         >
           {shine && (
-            /* glow = a wider faint duplicate behind the track (no blur on native) */
+            /* glow — a real `boxShadow` halo around the fill's footprint (RN
+               New-Architecture box shadows): the native twin of the web
+               `.lk-pbv-shine` blurred duplicate (blur(6px) @ 0.5). An
+               un-blurred duplicate View reads as a hard outline on device. */
             <View
               style={[
                 styles.vshine,
-                { width: fillWidth, height: height + 5, borderRadius: radius, backgroundColor: useGradient ? gradient![0] : solidFill },
+                {
+                  width: fillWidth,
+                  height: height + 5,
+                  borderRadius: radius,
+                  boxShadow: `0 0 12px 1px ${tint50(useGradient ? gradient![0] : solidFill)}`,
+                },
               ]}
             />
           )}
@@ -397,8 +408,10 @@ const styles = StyleSheet.create({
     left: 0,
     backgroundColor: 'rgba(255,255,255,0.16)',
   },
-  // glow = wider faint duplicate behind the track (no blur filters on native)
-  vshine: { position: 'absolute', left: 0, top: -2.5, opacity: 0.35 },
+  // glow — transparent box that carries the shine boxShadow halo (the shadow
+  // spills past the track like the web blurred duplicate; the crisp track +
+  // fill draw on top)
+  vshine: { position: 'absolute', left: 0, top: -2.5 },
   // PL-08 step cells
   cells: { flexDirection: 'row', gap: 3 },
   cell: { flex: 1, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.07)' },

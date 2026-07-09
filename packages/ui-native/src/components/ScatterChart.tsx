@@ -1,5 +1,6 @@
+import { useId } from 'react';
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Line, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* ScatterChart — the shared catalog scatter/bubble family (SC-01…SC-07,
@@ -9,8 +10,8 @@ import { colors, fonts } from '@lockin90/tokens';
    key, the quadrant decision map, zone-verdict dots, the TODAY lime marker
    and the density-cloud centroid ring. Native twin of `@lockin90/ui`
    ScatterChart — same prop API; the TODAY pulse is a static dot + faint halo
-   ring and `shine` is a wider faint duplicate circle (never SVG filters),
-   like `Ring`. */
+   ring and `shine` is a real Gaussian-blurred duplicate circle (Fabric-native
+   SVG filters in react-native-svg 15). */
 
 export type ScatterChartVariant =
   | 'mint-scatter' /* SC-01 — 3px mint dots · the basic correlation view */
@@ -253,6 +254,8 @@ export function ScatterChart({
   ariaLabel = 'Correlation scatter plot',
   style,
 }: ScatterChartProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-sct-blur-${uid}`;
   const isFit = variant === 'trend-fit';
   const isBubble = variant === 'bubble-dose';
   const isQuadrant = variant === 'quadrant-map';
@@ -299,6 +302,17 @@ export function ScatterChart({
   return (
     <View accessibilityRole="image" accessibilityLabel={ariaLabel} style={[styles.root, style]}>
       <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`}>
+        {shine ? (
+          /* real Gaussian blur for the dot glows (Fabric-native in
+             react-native-svg 15) — the native twin of the web `.lk-sct-shine`
+             drop-shadow(0 0 4px). Region in user space over the full canvas so
+             tiny dots never clip the blur. */
+          <Defs>
+            <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+              <FeGaussianBlur stdDeviation={2} />
+            </Filter>
+          </Defs>
+        ) : null}
         {/* ---- grid: 3 interior lines at 25/50/75% + baseline (catalog grid()) ---- */}
         {grid ? (
           <G>
@@ -405,10 +419,18 @@ export function ScatterChart({
           const op = isToday ? 0.28 : isCloud ? 0.4 : 0.85;
           return (
             <G key={i}>
-              {/* shine — a wider faint duplicate circle behind the dot, so the
-                  halo hugs the shape (no SVG filters on native) */}
+              {/* shine — a Gaussian-blurred duplicate circle behind the dot:
+                  the native twin of the web `.lk-sct-shine` drop-shadow(0 0 4px).
+                  (Un-blurred wide copies read as hard outlines on device.) */}
               {shine ? (
-                <Circle cx={rd(q.x)} cy={rd(q.y)} r={rd(r + 3)} fill={col} fillOpacity={0.35} />
+                <Circle
+                  cx={rd(q.x)}
+                  cy={rd(q.y)}
+                  r={rd(r + 1.5)}
+                  fill={col}
+                  fillOpacity={0.8}
+                  filter={`url(#${blurId})`}
+                />
               ) : null}
               <Circle
                 cx={rd(q.x)}

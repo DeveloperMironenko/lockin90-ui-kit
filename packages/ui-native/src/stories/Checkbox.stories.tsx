@@ -7,6 +7,14 @@ export default meta;
 
 type Story = StoryObj;
 
+export const Default: Story = {
+  render: () => <Checkbox label="Remember me" checked />,
+};
+
+export const Indeterminate: Story = {
+  render: () => <Checkbox label="Select all" indeterminate />,
+};
+
 export const Checkboxes: Story = {
   render: () => (
     <View style={{ gap: 12 }}>

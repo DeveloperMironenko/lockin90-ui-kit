@@ -1,13 +1,14 @@
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
+import { useId } from 'react';
+import Svg, { Defs, FeGaussianBlur, Filter, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* ComboChart — the shared catalog combo family (CB-01/04/05,
    lockin90-design/charts/combo-charts.html): two metrics on one canvas —
    bars for one, a line for the other — drawn in a fixed 320×150 viewBox with
    mono catalog labels and stacked legend pills. Native twin of `@lockin90/ui`
-   ComboChart — same prop API; shine is a wider faint duplicate stroke
-   (never SVG filters on native). */
+   ComboChart — same prop API; shine is a real Gaussian-blurred duplicate
+   stroke (Fabric-native SVG filters in react-native-svg 15). */
 
 export type ComboChartVariant =
   | 'bars-line' /* CB-01 — bars metric + smooth line metric + stacked legend pills */
@@ -301,6 +302,8 @@ export function ComboChart({
   ariaLabel = 'Combo chart',
   style,
 }: ComboChartProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-combo-blur-${uid}`;
   const usingDefaults = bars === undefined && line === undefined;
   const barsM = bars ?? DEFAULT_BARS[variant];
   const lineM = line ?? DEFAULT_LINE[variant];
@@ -353,6 +356,16 @@ export function ComboChart({
   return (
     <View accessibilityRole="image" accessibilityLabel={ariaLabel} style={[styles.root, style]}>
       <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`}>
+        {shine ? (
+          /* real Gaussian blur for the shine (Fabric-native in react-native-svg
+             15) — the native twin of the web `.lk-combo-shine` blur(5px). Region
+             in user space over the full canvas so the flat line never clips. */
+          <Defs>
+            <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+              <FeGaussianBlur stdDeviation={2.5} />
+            </Filter>
+          </Defs>
+        ) : null}
         {/* catalog grid: 3 interior rows + solid baseline */}
         {grid ? (
           <G>
@@ -395,8 +408,18 @@ export function ComboChart({
           />
         ) : lineD ? (
           <>
+            {/* shine — a Gaussian-blurred duplicate stroke behind the crisp line
+                (the web `.lk-combo-shine` blur(5px) underlay) */}
             {shine ? (
-              <Path d={lineD} fill="none" stroke={lineColor} strokeWidth={7} opacity={0.3} strokeLinecap="round" />
+              <Path
+                d={lineD}
+                fill="none"
+                stroke={lineColor}
+                strokeWidth={7}
+                opacity={0.45}
+                strokeLinecap="round"
+                filter={`url(#${blurId})`}
+              />
             ) : null}
             <Path d={lineD} fill="none" stroke={lineColor} strokeWidth={2.2} strokeLinecap="round" />
           </>

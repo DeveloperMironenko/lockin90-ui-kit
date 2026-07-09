@@ -3,7 +3,7 @@
 > **Package:** `@lockin90/ui` (web) · `@lockin90/ui-native` (native) — root cross-platform primitive.
 > **Source:** `packages/ui/src/components/Button.tsx` · `packages/ui-native/src/components/Button.tsx` ·
 > web CSS `packages/ui/src/styles/primitives.css` (`.lk-btn*`).
-> **Exports:** `Button`, type `ButtonVariant`, type `ButtonProps`.
+> **Exports:** `Button`, type `ButtonVariant`, type `ButtonTone`, type `ButtonProps`.
 > **Status:** Shipped. **Parity:** 🟡 same API & visuals; one platform-shaped prop (web `children` ↔ native `title`).
 > **Stories:** `packages/ui/src/stories/Button.stories.tsx` · `packages/ui-native/src/stories/Button.stories.tsx`.
 
@@ -16,8 +16,14 @@ The primary **pill action button** of the kit. Three variants:
 - `default` — glass surface, hairline border. The neutral/secondary action.
 - `primary` — the **animated energy-gradient CTA** (`grad-cta`, violet→cyan), glow shadow, slow 6s gradient drift on web. The single most-important action on a surface.
 - `ghost` — transparent, dimmed label. Tertiary / inline action.
+- `sso` (web only) — full-width rounded-square social sign-in button (see §3).
 
-It is intentionally the *only* sanctioned way to render a button-shaped action in any LockIn90 app; the `primary` variant is the *only* sanctioned gradient CTA. Hand-rolling either is a parity/maintenance violation (see §9).
+An orthogonal **`tone="danger"`** flag composes with any variant for **destructive actions** (delete / remove / revoke), using the `--bad` status token:
+
+- `tone="danger"` on the `default` variant → a **solid `--bad` fill** (the primary destructive action, dark-on-bright label like `primary`).
+- `tone="danger"` on `ghost` → a **red-tinted transparent** button (the account "danger zone" delete): `--bad` @10% fill, `--bad` @42% border, `--bad` label.
+
+It is intentionally the *only* sanctioned way to render a button-shaped action in any LockIn90 app; the `primary` variant is the *only* sanctioned gradient CTA, and `tone="danger"` the *only* sanctioned destructive treatment. Hand-rolling any of these is a parity/maintenance violation (see §9).
 
 `leading` renders an optional node before the label (e.g. an SSO brand logo, a `+` icon); `trailing` renders one after the label (e.g. a trailing-arrow CTA) — both auto-spaced by the row's `gap: 9` and symmetric in behavior.
 
@@ -25,7 +31,8 @@ It is intentionally the *only* sanctioned way to render a button-shaped action i
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `variant` | `'default' \| 'primary' \| 'ghost'` | `'default'` | ✓ | ✓ | identical union both sides |
+| `variant` | web `'default' \| 'primary' \| 'ghost' \| 'sso'` · native `'default' \| 'primary' \| 'ghost'` | `'default'` | ✓ | ✓ | `sso` is web-only (2-up social grid) |
+| `tone` | `'danger'` | — | ✓ | ✓ | destructive; **composes with `variant`** — solid `--bad` on `default`, red-tinted on `ghost`. Emits `.lk-btn--tone-danger` |
 | `size` | `'sm' \| 'md'` | `'md'` | ✓ | ✓ | `sm` = tighter padding + 13px label |
 | `leading` | `ReactNode` | — | ✓ | ✓ | icon/node before the label |
 | `trailing` | `ReactNode` | — | ✓ | ✓ | icon/node after the label — symmetric with `leading` (e.g. a trailing arrow) |
@@ -51,6 +58,16 @@ It is intentionally the *only* sanctioned way to render a button-shaped action i
 - **Padding:** `md` = `12px / 20px`; `sm` = `8px / 14px` (web `.lk-btn-sm`, native `padSm`). Label: `md` 14px, `sm` 13px.
 - **Gap (leading/trailing↔label):** `9px` both platforms. Web auto-sizes any slot `svg` (leading or trailing) to 16px (17px on primary, 14px on sm) via the shared `.lk-btn svg` rule — no per-slot class needed.
 - **Web-only motion:** `primary` runs `@keyframes lk-btn-flow` (6s gradient-position drift); hover `translateY(-2px)`; active `scale(.98)`. Native mirrors press feedback via `pressed` (opacity .85 + `scale .98`).
+- **`tone="danger"`** (composes with variant; token `--bad` / `colors.bad`):
+
+  | Aspect | solid danger (`default` + tone) | ghost danger (`ghost` + tone) |
+  | --- | --- | --- |
+  | Background | `--bad` / `colors.bad` | `--bad` @10% (`color-mix …10% transparent` web · `rgba(255,77,109,.10)` native) |
+  | Border | none | `1px` `--bad` @42% (web `color-mix` · native `rgba(255,77,109,.42)`) |
+  | Text | `#0A0A12` (dark-on-bright, like `primary`) | `--bad` / `colors.bad` |
+  | Shadow | web `0 0 24px -6px` `--bad` @55% · native `shadowColor: colors.bad` | none |
+
+  The `rgba(255,77,109,…)` alpha tints are the sanctioned paired literal for `--bad` on native (same pattern as `Alert`/`Badge`/`Chip` danger).
 
 ## 4. States
 
@@ -70,6 +87,8 @@ It is intentionally the *only* sanctioned way to render a button-shaped action i
 - **Label prop:** web `children` vs native `title` — the one intentional API difference (RN can't cleanly forward arbitrary children into a styled gradient row while keeping the `Text` typography contract). App code still reads 1:1 (`<Button variant="primary">Save</Button>` ↔ `<Button variant="primary" title="Save" />`).
 - **Gradient:** web CSS `--grad-cta` + animated `background-position`; native `expo-linear-gradient` `gradients.cta.stops`, `start {0,0}` → `end {1,1}`. No animation on native (no perf-cheap equivalent) — acceptable, documented.
 - **Hover:** web-only (pointer); native has no hover state. Press feedback exists on both.
+- **`tone="danger"`:** identical prop + identical intent both sides (solid `--bad` fill vs red-tinted transparent). Web tints via `color-mix(in srgb, var(--bad) …%, transparent)`; native uses the equivalent `rgba(255,77,109,…)` `--bad` alpha literal — reads 1:1.
+- **`sso` variant:** web-only (native uses the dedicated `SsoButton`) — a pre-existing, documented asymmetry, unrelated to `tone`.
 
 There is **no capability gap** that blocks use — the button is fully usable and visually equivalent on both platforms.
 
@@ -82,16 +101,22 @@ There is **no capability gap** that blocks use — the button is fully usable an
 - **Used by:** `ReauthDialog` (password + Google SSO step-up), auth screens, `PricingTierCard` CTA, `EmptyState` action, modals' footer actions.
 - **Composition with Spinner:** for an async action, put `<Spinner size="sm" />` in `leading` and set `disabled` while pending.
 
+- **Destructive action:** `<Button tone="danger">Delete</Button>` for the solid destructive CTA; `<Button variant="ghost" tone="danger">` for the low-emphasis "danger zone" delete (account settings).
+
 ```tsx
 // web
 <Button variant="primary" onClick={save}>Save changes</Button>
 <Button variant="ghost" onClick={cancel}>Cancel</Button>
 <Button leading={<Icon name="google" />} onClick={sso}>Continue with Google</Button>
+<Button tone="danger" onClick={del}>Delete account</Button>
+<Button variant="ghost" tone="danger" onClick={del}>Delete account</Button>
 
 // native
 <Button variant="primary" title="Save changes" onPress={save} />
 <Button variant="ghost" title="Cancel" onPress={cancel} />
 <Button leading={<Icon name="google" />} title="Continue with Google" onPress={sso} />
+<Button tone="danger" title="Delete account" onPress={del} />
+<Button variant="ghost" tone="danger" title="Delete account" onPress={del} />
 ```
 
 ## 7. Accessibility
@@ -108,10 +133,12 @@ There is **no capability gap** that blocks use — the button is fully usable an
 - Use `default` for secondary, `ghost` for tertiary/inline.
 - Put exactly **one** `primary` per visual group/screen.
 - Use `leading`/`trailing` for icons; let the `gap` space them (don't add manual margins). Use `trailing` for forward/arrow CTAs.
+- Use `tone="danger"` for destructive actions — solid (`default`) for the primary destructive CTA, `ghost` for the low-emphasis settings "danger zone" delete.
 - Set `type="submit"` (web) only when the button submits a form.
 
 **Don't**
 - ✗ Don't hand-roll a gradient/pill button — use `variant="primary"`.
+- ✗ Don't hardcode a red delete button or convey "destructive" with a raw red — use `tone="danger"` (`--bad`).
 - ✗ Don't place more than one `primary` in the same decision context.
 - ✗ Don't hardcode the gradient, radius, padding, or shadow — they come from `@lockin90/tokens`.
 - ✗ Don't pass `children` on native or `title` on web (wrong-platform prop).

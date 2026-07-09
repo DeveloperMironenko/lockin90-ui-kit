@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/CaffeineClock.tsx` · `packages/ui-native/src/components/CaffeineClock.tsx` ·
 > web CSS `packages/ui/src/styles/components/caffeineclock.css` (`.lk-caff*`).
 > **Exports:** `CaffeineClock`, types `CaffeineClockProps`, `CaffeineClockVariant`, `CaffeineDose`.
-> **Status:** Shipped. **Parity:** 🟡 same API & look; web blurs the glow underlay + animates the NOW pulse (SMIL), native draws wider faint duplicates + a static halo (RN SVG filters/SMIL are unreliable).
+> **Status:** Shipped. **Parity:** 🟡 same API & look; web blurs the glow underlay + animates the NOW pulse (SMIL), native Gaussian-blurs the same underlay via `FeGaussianBlur` (real RN-SVG filters) + draws a static halo (no SMIL).
 > **Stories:** `packages/ui/src/stories/CaffeineClock.stories.tsx` (`Charts/CaffeineClock`) · `packages/ui-native/src/stories/CaffeineClock.stories.tsx` (`Native/CaffeineClock`).
 
 ---
@@ -86,7 +86,7 @@ Pure render — no hover/press/focus/disabled; hooks: `useId` (+ web `useMotionO
 
 **🟡 same API, platform-shaped implementation.** Identical model math (half-life sum, crossing scan, cut = `bedH − halfLifeH`), geometry and label layout. Real differences:
 
-- **Glow substrate** — web blurs the 7px underlay (`.lk-caff-shine`, catalog `blur(5)`) and drop-shadows the pulse dot; native draws unblurred wider faint duplicates (no RN SVG filters).
+- **Glow substrate** — web blurs the 7px underlay (`.lk-caff-shine`, catalog `blur(5)`) and drop-shadows the pulse dot; native Gaussian-blurs the same 7px duplicate @ 0.45 via `FeGaussianBlur stdDeviation 2.5` (see CONVENTIONS.md); the pulse-dot glow stays a static faint duplicate circle.
 - **Pulse** — web SMIL expanding ring (reduced-motion safe); native static halo ring.
 - **Label styling channel** — web CSS classes vs native `Svg.Text` font props; pill fills `color-mix` vs `#RRGGBBAA` (`C7`/`CC`).
 - **Container** — web `div[role=img]` + `className`/rest; native `View accessibilityRole="image"` + `style`.

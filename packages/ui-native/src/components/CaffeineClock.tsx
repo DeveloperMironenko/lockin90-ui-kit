@@ -1,6 +1,6 @@
 import { useId, type ReactNode } from 'react';
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, Defs, G, Line, LinearGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, LinearGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* CaffeineClock — the catalog caffeine family (CF-01…CF-03,
@@ -10,8 +10,9 @@ import { colors, fonts } from '@lockin90/tokens';
    threshold and the violet bedtime rule + verdict pill, stacked per-dose
    curves under a bold total, and the actionable mint→amber→magenta safe
    window strip with the computed LAST SAFE COFFEE tick. Native twin of
-   `@lockin90/ui` CaffeineClock — same prop API; glows are wider faint
-   duplicate strokes (never SVG filters). */
+   `@lockin90/ui` CaffeineClock — same prop API; the shine glow is a real
+   Gaussian-blurred duplicate stroke (Fabric-native SVG filters in
+   react-native-svg 15). */
 
 export type CaffeineClockVariant =
   | 'decay-curve' /* CF-01 — decay + 50MG threshold crossing + bed verdict */
@@ -381,8 +382,26 @@ export function CaffeineClock({
     }
     body = (
       <G>
-        {/* glow — a wider faint duplicate stroke (no blur filters on native) */}
-        {shine ? <Path d={d} fill="none" stroke={color} strokeWidth={7} opacity={0.45} /> : null}
+        {/* shine — a Gaussian-blurred duplicate of the curve behind it: the native
+            twin of the web `.lk-caff-shine` blur(5px) underlay. (Wide un-blurred
+            copies read as hard outlines on device.) */}
+        {shine ? (
+          <G>
+            <Defs>
+              <Filter
+                id={`lk-caff-blur-${uid}`}
+                filterUnits="userSpaceOnUse"
+                x={-10}
+                y={-10}
+                width={W + 20}
+                height={H + 20}
+              >
+                <FeGaussianBlur stdDeviation={2.5} />
+              </Filter>
+            </Defs>
+            <Path d={d} fill="none" stroke={color} strokeWidth={7} opacity={0.45} filter={`url(#lk-caff-blur-${uid})`} />
+          </G>
+        ) : null}
         <Line
           x1={X0}
           x2={X1}

@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, Defs, G, Line, LinearGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, LinearGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* DistributionChart — the shared catalog distribution family (DS-01/02/03/04/
@@ -8,9 +8,10 @@ import { colors, fonts } from '@lockin90/tokens';
    percentile bells, cohort overlays, box-whisker rows, a KDE violin and a
    ridgeline drawn in a fixed 320×150 viewBox with mono labels + chip pills.
    Native twin of `@lockin90/ui` DistributionChart — same prop API; shine is a
-   wider faint duplicate stroke and the YOU pulse is a static dot + halo ring
-   (never SVG filters / SMIL on native). The page's dead `candles` renderer
-   has no CFG card (no DS-06) — unported. */
+   real Gaussian-blurred duplicate stroke (Fabric-native SVG filters in
+   react-native-svg 15) and the YOU pulse is a static dot + halo ring (no
+   SMIL on native). The page's dead `candles` renderer has no CFG card (no
+   DS-06) — unported. */
 
 export type DistributionChartVariant =
   | 'histogram' /* DS-01 — binned bars, opacity scales with count */
@@ -388,6 +389,7 @@ export function DistributionChart({
   style,
 }: DistributionChartProps) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-dst-${uid}-blur`;
 
   /* sample + domain: explicit values > per-variant catalog default sample;
      xRange > data min…max > the default sample's 40…100 energy domain */
@@ -488,7 +490,8 @@ export function DistributionChart({
           </Defs>
           {/* veil — the area under the curve, closed to the baseline */}
           <Path d={`${d}L${W - PAD.r} ${H - PAD.b}L${PAD.l} ${H - PAD.b}Z`} fill={`url(#${gradId})`} />
-          {/* shine — wider faint duplicate stroke behind (never SVG filters) */}
+          {/* shine — a Gaussian-blurred duplicate stroke behind the crisp bell
+              (the web `.lk-dst-shine` blur(5px) underlay) */}
           {shine ? (
             <Path
               d={d}
@@ -497,12 +500,15 @@ export function DistributionChart({
               strokeWidth={7.5}
               strokeLinecap="round"
               strokeOpacity={0.45}
+              filter={`url(#${blurId})`}
             />
           ) : null}
           <Path d={d} fill="none" stroke={col} strokeWidth={2.5} strokeLinecap="round" />
           <Line x1={px} x2={px} y1={PAD.t + 6} y2={H - PAD.b} stroke={colors.mint} strokeWidth={1.6} />
           {/* pulse marker — static dot + faint halo ring (no animation on
-              native; the web pulse tween is a documented substrate diff) */}
+              native; the web pulse tween is a documented substrate diff). The
+              dot's glow is a Gaussian-blurred duplicate — the native twin of
+              the web dot's drop-shadow(0 0 5px). */}
           {shine ? (
             <>
               <Circle
@@ -514,6 +520,7 @@ export function DistributionChart({
                 strokeWidth={1.4}
                 strokeOpacity={0.4}
               />
+              <Circle cx={px} cy={PAD.t + 30} r={3.6} fill={colors.mint} opacity={0.85} filter={`url(#${blurId})`} />
               <Circle cx={px} cy={PAD.t + 30} r={3.6} fill={colors.mint} />
             </>
           ) : null}
@@ -543,6 +550,8 @@ export function DistributionChart({
             strokeWidth={1.8}
             strokeDasharray="5 4"
           />
+          {/* shine — a Gaussian-blurred duplicate stroke behind your bell
+              (the web `.lk-dst-shine` blur(5px) underlay) */}
           {shine ? (
             <Path
               d={d2}
@@ -551,6 +560,7 @@ export function DistributionChart({
               strokeWidth={7.5}
               strokeLinecap="round"
               strokeOpacity={0.45}
+              filter={`url(#${blurId})`}
             />
           ) : null}
           <Path d={d2} fill="none" stroke={col} strokeWidth={2.5} strokeLinecap="round" />
@@ -701,6 +711,16 @@ export function DistributionChart({
   return (
     <View accessibilityRole="image" accessibilityLabel={ariaLabel} style={[styles.root, style]}>
       <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`}>
+        {shine ? (
+          /* real Gaussian blur for the shine (Fabric-native in react-native-svg
+             15) — the native twin of the web `.lk-dst-shine` blur(5px). Region
+             in user space over the full canvas so flat bells never clip. */
+          <Defs>
+            <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+              <FeGaussianBlur stdDeviation={2.5} />
+            </Filter>
+          </Defs>
+        ) : null}
         {showGrid ? <GridLines /> : null}
         {title ? (
           <Label x={PAD.l + 2} y={11} fill={colors.textFaint} anchor="start">

@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/BiomarkerRange.tsx` · `packages/ui-native/src/components/BiomarkerRange.tsx` ·
 > web CSS `packages/ui/src/styles/components/biomarker.css` (`.lk-bmr-*`).
 > **Exports:** `BiomarkerRange`, types `BiomarkerRangeProps`, `BiomarkerRangeVariant`, `BiomarkerMarker`, `BiomarkerTrend`.
-> **Status:** Shipped. **Parity:** 🟡 same API, platform-shaped glow/pulse — web shine/pulse are CSS `drop-shadow` + keyframes; native uses wider faint duplicate shapes and a static halo (no SVG filters, no animation).
+> **Status:** Shipped. **Parity:** 🟡 same API, platform-shaped glow/pulse — web shine/pulse are CSS `drop-shadow` + keyframes; native draws a Gaussian-blurred duplicate dot via `FeGaussianBlur` (real RN-SVG filters) and a static halo (no animation).
 > **Stories:** `packages/ui/src/stories/BiomarkerRange.stories.tsx` · `packages/ui-native/src/stories/BiomarkerRange.stories.tsx`.
 
 ---
@@ -72,7 +72,7 @@ All geometry in the catalog's fixed viewBox: `W=320 H=150`, `PAD {l:10, r:12, t:
 | BR-05 grid | h-lines `var(--glass)`, baseline `var(--border)` | `colors.glass`/`border` | `.05` / `.09` |
 | BR-05 line | `var(--mint)` w 1.8 | `colors.mint` | same |
 | Tag pill | rect h 13 rx 6.5, fill `var(--bg-0)` op `.78`, stroke = pill color op `.35` w 0.8; text mono 8px | `colors.bg0` + color | `C.tag` |
-| Shine | `.lk-bmr-dot--shine { filter: drop-shadow(0 0 5px currentColor) }` (dot color set via inline `color`) | duplicate circle r+3, same fill, op `.35` | `C.blur` underlay |
+| Shine | `.lk-bmr-dot--shine { filter: drop-shadow(0 0 5px currentColor) }` (dot color set via inline `color`) | Gaussian-blurred duplicate circle r+1.5, same fill, op `.8` (`FeGaussianBlur` stdDev 2.5) | `C.blur` underlay |
 | BR-02 pulse | `.lk-bmr-pulsecore` drop-shadow + `.lk-bmr-pulsering` scaling 1→3.05 / op .8→0, 1.8s infinite | static halos: r 6.5 op `.3` + r 9 op `.12` | `C.pulseDot` (r 3.6→11) |
 
 Row geometry: BR-01 rows `y = 38 + i·27`, track 96→244; BR-03 rows `y = 42 + i·34`, track 84→204, spark x `216 + j·9`, spark y `rowY + 6 − frac·14`; BR-04 tiles `x = 16 + (i%3)·99`, `y = 28 + ⌊i/3⌋·56`; BR-05 plot 40→296, band overhangs ±6.
@@ -83,7 +83,7 @@ Row geometry: BR-01 rows `y = 38 + i·27`, track 96→244; BR-03 rows `y = 42 + 
 | --- | --- | --- |
 | In range | mint dot, dim readout, `OK` verdict (BR-04) | same |
 | Out of range | coral (`--zone-low`) dot + readout, `LOW`/`HIGH` flag above the dot (BR-01), coral tile border + verdict (BR-04) | same |
-| `shine` | dots glow via `drop-shadow` in their state color | wider faint duplicate circle |
+| `shine` | dots glow via `drop-shadow` in their state color | Gaussian-blurred duplicate circle (r+1.5 @ 0.8, `FeGaussianBlur stdDeviation 2.5`) |
 | BR-02 pulse | ring expands r 3.6→11 forever; `prefers-reduced-motion` freezes it (ring hidden) | static duplicate halo (always "reduced motion") |
 | No `history` | BR-03: no spark path (needs ≥2 points), arrow from `trend` override or `→`; BR-05: single centered dot at `value` | same |
 | `markers=[]` | variants render an empty (titled) canvas — no crash | same |
@@ -94,7 +94,7 @@ Static/decorative otherwise — no hover/focus/disabled.
 
 **Verdict: 🟡 same API, platform-shaped glow + motion.** Identical prop API, marker shape, geometry constants, trend derivation, and label text. Differences are substrate-only:
 
-- **Shine:** web = CSS `drop-shadow(0 0 5px currentColor)` on the dot; native = a **wider faint duplicate circle** (r+3, opacity .35) behind it — never `<Filter>`/`FeGaussianBlur`, which is patchy on device (same rule as `Ring`'s glow arc).
+- **Shine:** web = CSS `drop-shadow(0 0 5px currentColor)` on the dot; native = a **Gaussian-blurred duplicate circle** (r+1.5, opacity .8, `FeGaussianBlur` stdDev 2.5, padded `userSpaceOnUse` region) behind it — see CONVENTIONS.md.
 - **BR-02 pulsing dot:** web animates an expanding, fading stroke ring via CSS keyframes (`.lk-bmr-pulsering`, 1.8s, reduced-motion honored). Native has no cheap way to run this without pulling in `Animated`/Reanimated for a decorative dot, so it renders a **static duplicate halo** (r 6.5 op .3 + r 9 op .12) — deliberately the "reduced-motion" rendering. Documented capability trade, not a gap that blocks use.
 - **Sizing:** web root is a block `<div>` whose `<svg>` scales `width:100%; height:auto` (aspect held by the viewBox, `overflow:visible` lets shine spill); native holds `width:'100%'` + `aspectRatio: 320/150` on the container View (clips at the edge).
 - **Text substrate:** web SVG `<text>` styled by `.lk-bmr-*` classes; native `SvgText` with `fonts.mono`/`fonts.display` props and absolute `letterSpacing` (0.5 ≈ .06em at 8.5px).

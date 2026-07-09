@@ -26,6 +26,8 @@ export interface TagInputProps extends ViewProps {
   onChange?: (tags: string[]) => void;
   /** placeholder for the text input */
   placeholder?: string;
+  /** error state — red border + glow (e.g. a duplicate / invalid tag) */
+  invalid?: boolean;
 }
 
 /** Cross/× glyph used to remove a tag. */
@@ -42,6 +44,7 @@ export function TagInput({
   tags: tagsProp = ['sleep', 'recovery'],
   onChange,
   placeholder = 'Add a tag…',
+  invalid = false,
   style,
   ...rest
 }: TagInputProps) {
@@ -74,7 +77,7 @@ export function TagInput({
   };
 
   return (
-    <View style={[styles.taginput, style]} {...rest}>
+    <View style={[styles.taginput, invalid && styles.taginputInvalid, style]} {...rest}>
       {tags.map((tag, i) => (
         <View key={`${tag}-${i}`} style={styles.tag}>
           <Text style={styles.tagText}>{tag}</Text>
@@ -121,10 +124,33 @@ export interface CodeInputProps extends ViewProps {
   value?: string;
   /** called with the joined code whenever it changes */
   onChange?: (code: string) => void;
+  /** error state — red border + tint (e.g. wrong code) */
+  error?: boolean;
+  /** Web-parity alias of `error` — the web `CodeInput` names this `invalid`, so
+   *  the same prop works on both platforms. Either prop turns the boxes red. */
+  invalid?: boolean;
+}
+
+/** Spread a multi-char entry (paste / iOS SMS autofill delivered into one box)
+ *  across the code boxes from `index` on: chars past the last box are dropped,
+ *  and focus lands after the last written char (clamped to the last box).
+ *  (Pure — extracted from `onBoxChange` so the paste math is unit-testable.) */
+export function spreadCodeAcrossBoxes(
+  chars: readonly string[],
+  index: number,
+  digits: string,
+  length: number,
+): { code: string; focusIndex: number } {
+  const next = chars.slice();
+  for (let i = 0; i < digits.length && index + i < length; i++) {
+    next[index + i] = digits[i];
+  }
+  return { code: next.join(''), focusIndex: Math.min(index + digits.length, length - 1) };
 }
 
 /** Segmented N-digit verification code — auto-advance + backspace. */
-export function CodeInput({ length = 6, value = '', onChange, style, ...rest }: CodeInputProps) {
+export function CodeInput({ length = 6, value = '', onChange, error = false, invalid = false, style, ...rest }: CodeInputProps) {
+  const isInvalid = invalid || error;
   const [code, setCode] = useState<string>(value.slice(0, length));
   const [focused, setFocused] = useState<number | null>(null);
   const refs = useRef<Array<TextInput | null>>([]);
@@ -146,12 +172,9 @@ export function CodeInput({ length = 6, value = '', onChange, style, ...rest }: 
     // it across the remaining boxes from here (mirrors the web `onPaste`).
     const digits = raw.replace(/\s/g, '');
     if (digits.length > 1) {
-      const next = chars.slice();
-      for (let i = 0; i < digits.length && index + i < length; i++) {
-        next[index + i] = digits[i];
-      }
-      commit(next.join(''));
-      focusBox(Math.min(index + digits.length, length - 1));
+      const spread = spreadCodeAcrossBoxes(chars, index, digits, length);
+      commit(spread.code);
+      focusBox(spread.focusIndex);
       return;
     }
     const ch = digits.slice(-1);
@@ -182,14 +205,18 @@ export function CodeInput({ length = 6, value = '', onChange, style, ...rest }: 
         const isFocused = focused === i;
         const borderColor = isFocused
           ? colors.accent
-          : filled
-            ? 'rgba(34,211,238,0.45)'
-            : colors.border2;
+          : isInvalid
+            ? colors.zoneLow
+            : filled
+              ? 'rgba(34,211,238,0.45)'
+              : colors.border2;
         const backgroundColor = isFocused
           ? 'rgba(124,92,255,0.06)'
-          : filled
-            ? 'rgba(34,211,238,0.05)'
-            : colors.glass2;
+          : isInvalid
+            ? 'rgba(255,77,109,0.06)'
+            : filled
+              ? 'rgba(34,211,238,0.05)'
+              : colors.glass2;
         return (
           <TextInput
             key={i}
@@ -228,6 +255,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border2,
     backgroundColor: colors.glass2,
+  },
+  // invalid: red border + soft red glow standing in for the web's 3px ring
+  // (`.lk-taginput--invalid`: border var(--bad) + 0 0 0 3px rgba(255,77,109,.16))
+  taginputInvalid: {
+    borderColor: colors.zoneLow,
+    shadowColor: colors.zoneLow,
+    shadowOpacity: 0.16,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 2,
   },
   tag: {
     flexDirection: 'row',
@@ -273,6 +310,10 @@ const styles = StyleSheet.create({
     width: 44,
     height: 52,
     textAlign: 'center',
+    // vertical-center the digit: textAlignVertical (Android) + includeFontPadding:false
+    // (drops Android's extra font padding that pushes the glyph up).
+    textAlignVertical: 'center',
+    includeFontPadding: false,
     fontFamily: fonts.mono,
     fontWeight: '700',
     fontSize: 22,

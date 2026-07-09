@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { View, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /** Catalog variant names (`lockin90-design/charts/radial-charts.html`, RA-01…RA-06). */
@@ -39,8 +39,8 @@ export interface DayWheelProps {
   legend?: string;
   /** faint mono caption at the top-left (per-variant catalog default) */
   title?: string;
-  /** glow underlay behind the marks (dots / bars / segments) — a wider faint
-   *  duplicate shape on native, never SVG filters (no-op on `radial-heat` —
+  /** glow underlay behind the marks (dots / bars / segments) — a
+   *  Gaussian-blurred duplicate shape on native (no-op on `radial-heat` —
    *  168 segments would smear) */
   shine?: boolean;
   /** rendered width in px — the 320×150 viewBox scales to fit */
@@ -248,8 +248,8 @@ function ClockFrame({ labelRadius = R + 10 }: { labelRadius?: number }) {
  * RA-01…RA-06): circadian data wrapped around a clock, midnight at the top,
  * time running clockwise. Native twin of `@lockin90/ui` DayWheel — same prop
  * API + geometry; the web SMIL NOW-pulse is a static dot + faint halo ring
- * here, and every glow is a wider faint duplicate shape (never SVG filters),
- * like `Ring`.
+ * here, and every `shine` glow is a real Gaussian-blurred duplicate shape
+ * (Fabric-native SVG filters in react-native-svg 15).
  *
  * - `clock-events` (RA-01, default) — the tick ring (bold every 6h + 12A/6A/
  *   12P/6P) with glowing event dots on the rim, a NOW hand + pulse dot and the
@@ -281,6 +281,10 @@ export function DayWheel({
   height = H,
   style,
 }: DayWheelProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  /* the dot/bar glows mirror the web `blur(3px)`, the zone-wheel `blur(4px)` */
+  const blur3Id = `lk-dw-blur3-${uid}`;
+  const blur4Id = `lk-dw-blur4-${uid}`;
   const heading = title ?? DEFAULT_TITLES[variant];
 
   let accessibilityLabel: string;
@@ -301,9 +305,17 @@ export function DayWheel({
           const c = ev.color ?? colors.accent;
           return (
             <G key={i}>
-              {/* glow = wider faint duplicates (web: shine blur + drop-shadow) */}
+              {/* shine — a Gaussian-blurred duplicate dot behind the crisp one
+                  (the web shine circle's `blur(3px)`) */}
               {shine ? (
-                <Circle cx={p.x.toFixed(1)} cy={p.y.toFixed(1)} r={10} fill={c} opacity={0.18} />
+                <Circle
+                  cx={p.x.toFixed(1)}
+                  cy={p.y.toFixed(1)}
+                  r={7}
+                  fill={c}
+                  opacity={0.35}
+                  filter={`url(#${blur3Id})`}
+                />
               ) : null}
               <Circle cx={p.x.toFixed(1)} cy={p.y.toFixed(1)} r={7} fill={c} opacity={0.35} />
               <Circle cx={p.x.toFixed(1)} cy={p.y.toFixed(1)} r={4} fill={c} />
@@ -350,6 +362,7 @@ export function DayWheel({
           const c = zoneOf(v);
           return (
             <G key={h}>
+              {/* shine — a Gaussian-blurred duplicate bar (the web `blur(3px)`) */}
               {shine ? (
                 <Line
                   x1={p1.x.toFixed(1)}
@@ -360,6 +373,7 @@ export function DayWheel({
                   strokeWidth={9}
                   strokeLinecap="round"
                   opacity={0.3}
+                  filter={`url(#${blur3Id})`}
                 />
               ) : null}
               <Line
@@ -388,7 +402,10 @@ export function DayWheel({
           const c = zoneOf(v);
           return (
             <G key={h}>
-              {shine ? <Path d={d} fill="none" stroke={c} strokeWidth={15} opacity={0.25} /> : null}
+              {/* shine — a Gaussian-blurred duplicate segment (the web `blur(4px)`) */}
+              {shine ? (
+                <Path d={d} fill="none" stroke={c} strokeWidth={15} opacity={0.25} filter={`url(#${blur4Id})`} />
+              ) : null}
               <Path d={d} fill="none" stroke={c} strokeWidth={11} opacity={0.35 + v * 0.6} />
             </G>
           );
@@ -446,6 +463,19 @@ export function DayWheel({
       style={[{ width, height }, style]}
     >
       <Svg width={width} height={height} viewBox={`0 0 ${W} ${H}`}>
+        {shine ? (
+          /* real Gaussian blurs for the glows (Fabric-native in react-native-svg
+             15) — the native twins of the web `blur(3px)` / `blur(4px)` underlays.
+             Regions in user space over the full canvas so flat marks never clip. */
+          <Defs>
+            <Filter id={blur3Id} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+              <FeGaussianBlur stdDeviation={1.5} />
+            </Filter>
+            <Filter id={blur4Id} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+              <FeGaussianBlur stdDeviation={2} />
+            </Filter>
+          </Defs>
+        ) : null}
         {content}
       </Svg>
     </View>

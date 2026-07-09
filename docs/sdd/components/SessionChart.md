@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/SessionChart.tsx` · `packages/ui-native/src/components/SessionChart.tsx` —
 > fully inline-styled; `.lk-snc` / `.lk-snc--<variant>` are hook classes only (no CSS partner file).
 > **Exports:** `SessionChart`, `DEFAULT_SESSION_ZONES`, types `SessionChartProps`, `SessionChartVariant`, `SessionZone`, `SessionRound`, `SessionTag`, `SessionAxisLabel`, `SessionRecovery`.
-> **Status:** Shipped. **Parity:** 🟡 same API & geometry; web `shine` is a CSS `blur(5px)` underlay and pulses ride SMIL rings, native draws a wider faint duplicate stroke (no filters) and an `Animated` pulse ring.
+> **Status:** Shipped. **Parity:** 🟡 same API & geometry; web `shine` is a CSS `blur(5px)` underlay and pulses ride SMIL rings, native draws a Gaussian-blurred duplicate stroke (`FeGaussianBlur`) and an `Animated` pulse ring.
 > **Stories:** `packages/ui/src/stories/SessionChart.stories.tsx` (`Charts/SessionChart`) · `packages/ui-native/src/stories/SessionChart.stories.tsx` (`Native/SessionChart`).
 
 ---
@@ -91,7 +91,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · pad l10 r12 t16 b14 · pl
 | Glucose (SN-09/10) | baseline band rect rx 4 `--mint` @ 0.07 + mint note at its top edge; curves inset `gx = 18 … W−18`; MEAL rule `--text` @ 0.22, dash `2 3` + lime chip; SN-09 peak dot Ø 6.4 `--zone-mid` + start-anchored chip, mint return chip end-anchored at `Y(0.44)+22`; SN-10 overlay curves `--text` @ 0.18, 1.4px + bold `--cyan` mean 2.5px + end-anchored legend chip |
 | Header | title 8.5px mono `--text-faint` top-left; stat `--font-display` / `fonts.display` **700 · 12px** top-right in `statColor` |
 | Chip pills | `padding 2px 6px`, r 999, bg `--bg-0` @ 78%, border 1px color @ 35% (native `` `${c}59` ``), 8px mono text |
-| Shine | web `blur(5px)` on a `w+5` round-cap duplicate @ 0.45 (the catalog `C.blur`); native the same duplicate un-blurred @ `strokeOpacity 0.45` |
+| Shine | web `blur(5px)` on a `w+5` round-cap duplicate @ 0.45 (the catalog `C.blur`); native the same duplicate @ `strokeOpacity 0.45`, blurred with `FeGaussianBlur stdDeviation 2.5` |
 | Pulse | core dot r 3.6 (+ web `drop-shadow(0 0 5px c)` / native `shadow*` + elevation); web SMIL ring r 3.6→11, fade .8→0, 1.8s (reduced-motion → static r 7 @ 0.4); native `Animated.loop` ring, same choreography |
 | Sizing | web svg `position: absolute; inset: 0; width/height 100%; overflow visible` in an `h`-px box; native Svg sized to the measured width (`onLayout`) |
 
@@ -114,7 +114,7 @@ Pure render — no hover/press/focus/disabled states; the only client behavior i
 
 **🟡 same API, platform-shaped implementation.** Both sides build the *same* mark/overlay lists from the same catalog constants and generators — geometry, gradients (both userSpaceOnUse), data model and label layout are identical. The real differences:
 
-- **Shine substrate** — web blurs the wider duplicate trace (`filter: blur(5px)`); native draws it un-blurred at the same width/opacity (RN SVG filters unreliable — Ring precedent). Halo softness differs marginally.
+- **Shine substrate** — web blurs the wider duplicate trace (`filter: blur(5px)`); native blurs the same `w+5` duplicate @ 0.45 with a real `FeGaussianBlur` (`stdDeviation 2.5`; see CONVENTIONS.md). Halo softness differs marginally.
 - **Pulse substrate** — web SMIL ring gated by `prefers-reduced-motion`; native `Animated.loop` ring with the same 1.8s choreography, no reduced-motion gate (no OS media query hook).
 - **Glow on dots** — web `drop-shadow` filter vs native `shadowColor/shadowRadius/elevation`.
 - **Overlay substrate** — web absolutely-positioned `<span>`s (`%` left + transform anchors); native zero-size anchor `View`s (`alignItems` anchoring). Same visual result.

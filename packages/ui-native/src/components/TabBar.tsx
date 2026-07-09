@@ -29,6 +29,10 @@ export interface TabBarProps {
   fabIndex?: number;
   /** Press handler for the FAB item (falls back to `onChange(fabIndex)`). */
   onFabPress?: () => void;
+  /** Floating rounded glass-pill bar (the mockups' `.tabbar`) instead of the
+   *  default solid pinned bar with a top border. Position it yourself with
+   *  `style` (e.g. `position:'absolute', left/right/bottom`). */
+  floating?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -61,10 +65,11 @@ export function TabBar({
   onChange,
   fabIndex,
   onFabPress,
+  floating = false,
   style,
 }: TabBarProps) {
   return (
-    <View style={[styles.bar, style]} accessibilityRole="tablist">
+    <View style={[styles.bar, floating && styles.barFloating, style]} accessibilityRole="tablist">
       {items.map((item, i) => {
         const isActive = i === active;
         const isFab = i === fabIndex;
@@ -162,6 +167,22 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg1,
     borderTopWidth: 1,
     borderTopColor: colors.border,
+  },
+  // floating glass pill (the mockups' `.tabbar`): rounded, hairline all round, a
+  // semi-opaque dark fill (= bg1 @ 82%; tokens have no alpha-bg), and an upward
+  // ambient float shadow (no token — nativeShadows are elev/glow, not floats).
+  barFloating: {
+    width: undefined,
+    borderTopWidth: 0,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.xl,
+    backgroundColor: 'rgba(12,15,26,0.82)',
+    shadowColor: '#000',
+    shadowOpacity: 0.6,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: -6 },
+    elevation: 16,
   },
   item: {
     flex: 1,

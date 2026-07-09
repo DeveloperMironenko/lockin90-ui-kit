@@ -21,6 +21,25 @@ export const Free: Story = {
   },
 };
 
+/** Mixed feature list — included (✓) and excluded (✗) rows via the
+ *  `{ label, included: false }` object form, so a lower tier can show what it's
+ *  missing next to what it has. */
+export const WithExcludedFeatures: Story = {
+  args: {
+    name: 'Free',
+    price: 'Free',
+    description: 'The essentials — upgrade for the full attribution engine.',
+    features: [
+      'Daily energy score',
+      '100 events / day',
+      { label: 'Unlimited AI insights', included: false },
+      { label: '72h energy forecast', included: false },
+      { label: 'CGM & cohort comparison', included: false },
+    ],
+    cta: <Button style={{ width: '100%' }}>Get started</Button>,
+  },
+};
+
 export const ProFeatured: Story = {
   args: {
     name: 'Pro',

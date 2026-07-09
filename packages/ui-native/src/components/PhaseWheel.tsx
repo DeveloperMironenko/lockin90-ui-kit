@@ -1,6 +1,6 @@
-import { type ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts, radii } from '@lockin90/tokens';
 
 /** A colored phase band on the 24h ring, drawn CLOCKWISE from `from` to `to`
@@ -75,7 +75,7 @@ export interface PhaseWheelProps {
    *  (default: true for `'phase-wheel'`, false otherwise) */
   legend?: boolean;
   /** [phase-wheel · coach-wheel] soft glow behind the phase arcs (default false).
-   *  Rendered as a wider faint duplicate arc — never an SVG filter. */
+   *  Rendered as a Gaussian-blurred duplicate arc. */
   shine?: boolean;
   /** [phase-strip] total strip width in px (default 300) */
   width?: number;
@@ -234,6 +234,8 @@ export function PhaseWheel({
   children,
   style,
 }: PhaseWheelProps) {
+  const uidRaw = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-pw-blur-${uidRaw}`;
   /* ---------------------------------------------------------------- cycle */
   if (variant !== 'circadian') {
     const { ranges, total } = phaseRanges(phases);
@@ -409,9 +411,26 @@ export function PhaseWheel({
         <View style={styles.cycleRow}>
           <View style={[styles.dial, { width: canvas, height: canvas }]}>
             <Svg width={canvas} height={canvas} viewBox={`0 0 ${canvas} ${canvas}`}>
+              {shine ? (
+                /* real Gaussian blur for the arc shine (Fabric-native in
+                   react-native-svg 15) — the native twin of the web arc's
+                   `drop-shadow(0 0 5px) + drop-shadow(0 0 12px)` currentColor
+                   pair. Region in user space so short arcs never clip the blur. */
+                <Defs>
+                  <Filter
+                    id={blurId}
+                    filterUnits="userSpaceOnUse"
+                    x={-10}
+                    y={-10}
+                    width={canvas + 20}
+                    height={canvas + 20}
+                  >
+                    <FeGaussianBlur stdDeviation={5} />
+                  </Filter>
+                </Defs>
+              ) : null}
               {/* phase arcs — round caps, 2.5° gap trimmed off each end.
-                  `shine` = a wider faint duplicate arc behind the real one
-                  (no SVG filters on native — Ring precedent). */}
+                  `shine` = a Gaussian-blurred duplicate arc behind the real one. */}
               {ranges.map((p) => {
                 const a0 = dayAngle(p.start, total) + ARC_GAP_DEG;
                 const a1 = dayAngle(p.end + 1, total) - ARC_GAP_DEG;
@@ -425,9 +444,10 @@ export function PhaseWheel({
                         d={d}
                         fill="none"
                         stroke={p.color}
-                        strokeWidth={thickness + 8}
-                        strokeOpacity={0.35}
+                        strokeWidth={thickness + 2}
+                        strokeOpacity={0.6}
                         strokeLinecap="round"
+                        filter={`url(#${blurId})`}
                       />
                     ) : null}
                     <Path

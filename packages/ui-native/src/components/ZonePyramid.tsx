@@ -1,12 +1,14 @@
+import { useId } from 'react';
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { G, Line, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Defs, FeGaussianBlur, Filter, G, Line, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* ZonePyramid — the shared catalog pyramid family (PY-01…PY-03,
    lockin90-design/charts/pyramid-charts.html): time-in-zone as a training
    pyramid — base easy, tip hard — drawn in a fixed 320×150 viewBox with mono
    catalog labels. Native twin of `@lockin90/ui` ZonePyramid — same prop API;
-   shine is a wider faint duplicate bar (never SVG filters on native). */
+   shine is a real Gaussian-blurred duplicate bar (Fabric-native SVG filters
+   in react-native-svg 15). */
 
 export type ZonePyramidVariant =
   | 'zone-pyramid' /* PY-01 — 5 centered bars Z5→Z1 · % left, h:mm right, zone letter inside */
@@ -189,6 +191,8 @@ export function ZonePyramid({
   ariaLabel = 'Zone pyramid',
   style,
 }: ZonePyramidProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-pyr-blur-${uid}`;
   const maxMin = Math.max(...zones.map((z) => z.minutes), 0);
   const totalMin = zones.reduce((a, z) => a + Math.max(0, z.minutes), 0);
   const frac = (m: number) => (maxMin > 0 ? (Math.max(0, m) / maxMin) * HEAD : 0);
@@ -222,15 +226,18 @@ export function ZonePyramid({
           const col = colorOf(i);
           return (
             <G key={i}>
+              {/* shine — a Gaussian-blurred duplicate bar behind the solid one
+                  (the web `.lk-pyr-shine` blur(4px) underlay) */}
               {shine ? (
                 <Rect
-                  x={CX + SPINE - 2}
-                  y={y - 2}
-                  width={rd(wNow + 4)}
-                  height={RH + 4}
-                  rx={(RH + 4) / 2}
+                  x={CX + SPINE}
+                  y={y}
+                  width={rd(wNow)}
+                  height={RH}
+                  rx={RH / 2}
                   fill={col}
-                  opacity={0.3}
+                  opacity={0.55}
+                  filter={`url(#${blurId})`}
                 />
               ) : null}
               <Rect x={CX + SPINE} y={y} width={rd(wNow)} height={RH} rx={RH / 2} fill={col} opacity={0.88} />
@@ -294,15 +301,18 @@ export function ZonePyramid({
           const col = colorOf(i);
           return (
             <G key={i}>
+              {/* shine — a Gaussian-blurred duplicate bar behind the solid one
+                  (the web `.lk-pyr-shine` blur(4px) underlay) */}
               {shine ? (
                 <Rect
-                  x={rd(x - 2)}
-                  y={y - 2}
-                  width={rd(w + 4)}
-                  height={RH + 4}
-                  rx={(RH + 4) / 2}
+                  x={rd(x)}
+                  y={y}
+                  width={rd(w)}
+                  height={RH}
+                  rx={RH / 2}
                   fill={col}
-                  opacity={0.3}
+                  opacity={0.55}
+                  filter={`url(#${blurId})`}
                 />
               ) : null}
               <Rect x={rd(x)} y={y} width={rd(w)} height={RH} rx={RH / 2} fill={col} opacity={0.88} />
@@ -368,6 +378,16 @@ export function ZonePyramid({
   return (
     <View accessibilityRole="image" accessibilityLabel={ariaLabel} style={[styles.root, style]}>
       <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`}>
+        {shine ? (
+          /* real Gaussian blur for the shine (Fabric-native in react-native-svg
+             15) — the native twin of the web `.lk-pyr-shine` blur(4px). Region in
+             user space over the full canvas so flat bars never clip the blur. */
+          <Defs>
+            <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+              <FeGaussianBlur stdDeviation={2} />
+            </Filter>
+          </Defs>
+        ) : null}
         {title ? (
           <Label x={PAD.l + 2} y={11} fill={colors.textFaint} anchor="start">
             {title}

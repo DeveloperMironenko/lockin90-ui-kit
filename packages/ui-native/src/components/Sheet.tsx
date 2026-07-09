@@ -1,5 +1,13 @@
-import { type ReactNode } from 'react';
-import { Modal as RNModal, View, Text, Pressable, StyleSheet } from 'react-native';
+import { useEffect, useRef, type ReactNode } from 'react';
+import {
+  Modal as RNModal,
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Animated,
+  PanResponder,
+} from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
 
 export interface SheetProps {
@@ -16,25 +24,92 @@ export interface SheetProps {
   children?: ReactNode;
 }
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+/** Fraction of the sheet height the user must drag past to dismiss. */
+const DISMISS_FRACTION = 0.25;
+/** Downward fling velocity (px/ms) that dismisses regardless of distance. */
+const DISMISS_VELOCITY = 0.5;
+
 /** Side drawer + bottom sheet over a dimmed scrim. The bottom variant is
  *  anchored to the bottom edge with rounded top corners and a centered drag
  *  handle; right/left variants are full-height ~360px edge panels. Closes on
- *  scrim tap + Android back; the panel stops propagation. */
+ *  scrim tap + Android back; the panel stops propagation. The bottom variant's
+ *  header strip (handle + title) is draggable: pull down past ~25% of the
+ *  sheet height (or fling) to dismiss, otherwise it springs back. */
 export function Sheet({ open = true, onClose, side = 'bottom', title, children }: SheetProps) {
   const isBottom = side === 'bottom';
   const align = isBottom ? styles.scrimBottom : side === 'right' ? styles.scrimRight : styles.scrimLeft;
   const panel = isBottom ? styles.panelBottom : side === 'right' ? styles.panelRight : styles.panelLeft;
 
+  // ---- drag-to-dismiss (bottom sheet only) ----
+  const dragY = useRef(new Animated.Value(0)).current;
+  const sheetHeightRef = useRef(0);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  useEffect(() => {
+    if (open) dragY.setValue(0);
+  }, [open, dragY]);
+
+  const springBack = useRef(() => {
+    Animated.spring(dragY, { toValue: 0, bounciness: 4, useNativeDriver: true }).start();
+  }).current;
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_e, g) => Math.abs(g.dy) > 2,
+      onPanResponderTerminationRequest: () => false,
+      onPanResponderMove: (_e, g) => {
+        dragY.setValue(Math.max(0, g.dy));
+      },
+      onPanResponderRelease: (_e, g) => {
+        const height = sheetHeightRef.current || 320;
+        const shouldDismiss =
+          onCloseRef.current && (g.dy > height * DISMISS_FRACTION || (g.dy > 0 && g.vy > DISMISS_VELOCITY));
+        if (shouldDismiss) {
+          Animated.timing(dragY, { toValue: height, duration: 180, useNativeDriver: true }).start(
+            () => onCloseRef.current?.(),
+          );
+        } else {
+          springBack();
+        }
+      },
+      onPanResponderTerminate: () => springBack(),
+    }),
+  ).current;
+
   return (
     <RNModal transparent visible={open} animationType="slide" onRequestClose={onClose} statusBarTranslucent>
       <Pressable style={[styles.scrim, align]} onPress={() => onClose?.()}>
-        <Pressable style={[styles.panel, panel]} onPress={() => {}} accessibilityViewIsModal>
-          {isBottom && <View style={styles.handle} pointerEvents="none" />}
-          {title ? <Text style={styles.title}>{title}</Text> : null}
+        <AnimatedPressable
+          style={[styles.panel, panel, isBottom && { transform: [{ translateY: dragY }] }]}
+          onPress={() => {}}
+          accessibilityViewIsModal
+          onLayout={
+            isBottom
+              ? (e) => {
+                  sheetHeightRef.current = e.nativeEvent.layout.height;
+                }
+              : undefined
+          }
+        >
+          {isBottom ? (
+            <View
+              hitSlop={{ top: 8, bottom: 10, left: 16, right: 16 }}
+              {...panResponder.panHandlers}
+            >
+              <View style={styles.handle} pointerEvents="none" />
+              {title ? <Text style={styles.title}>{title}</Text> : null}
+            </View>
+          ) : title ? (
+            <Text style={styles.title}>{title}</Text>
+          ) : null}
           <View style={styles.body}>
             {typeof children === 'string' ? <Text style={styles.bodyText}>{children}</Text> : children}
           </View>
-        </Pressable>
+        </AnimatedPressable>
       </Pressable>
     </RNModal>
   );

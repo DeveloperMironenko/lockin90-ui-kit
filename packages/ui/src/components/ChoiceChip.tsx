@@ -12,6 +12,9 @@ export interface ChoiceChipProps extends ButtonHTMLAttributes<HTMLButtonElement>
   leadingDot?: boolean;
   /** Leading glyph (overrides `leadingDot`). */
   icon?: ReactNode;
+  /** Stacked grid-cell layout — icon above a small centred label, rounded rect,
+   *  fills its grid cell (vs the default inline pill). For quick-action grids. */
+  stacked?: boolean;
 }
 
 /**
@@ -21,7 +24,7 @@ export interface ChoiceChipProps extends ButtonHTMLAttributes<HTMLButtonElement>
  * studio's `.pill` / `.pill.on` pattern; selected tint is the `--accent` token.
  */
 export const ChoiceChip = forwardRef<HTMLButtonElement, ChoiceChipProps>(function ChoiceChip(
-  { selected = false, size = 'md', leadingDot, icon, className, children, type = 'button', ...rest },
+  { selected = false, size = 'md', leadingDot, icon, stacked = false, className, children, type = 'button', ...rest },
   ref,
 ) {
   return (
@@ -34,6 +37,7 @@ export const ChoiceChip = forwardRef<HTMLButtonElement, ChoiceChipProps>(functio
         'lk-choicechip',
         selected && 'lk-choicechip-on',
         size === 'sm' && 'lk-choicechip-sm',
+        stacked && 'lk-choicechip-stacked',
         className,
       )}
       {...rest}

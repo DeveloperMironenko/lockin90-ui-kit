@@ -1,0 +1,19 @@
+/* ============================================================================
+   SectionHeader — the mockups' `.section-head`: an Eyebrow overline above a
+   display title (gradient by default, via GradientText). Mirrors the native
+   SectionHeader. Key: .lk-section-header > (Eyebrow) + .lk-section-title
+   ========================================================================== */
+.lk-section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.lk-section-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text);
+}

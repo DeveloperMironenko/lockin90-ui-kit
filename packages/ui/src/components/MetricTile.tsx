@@ -1,4 +1,4 @@
-import { type HTMLAttributes, type ReactNode } from 'react';
+import { type CSSProperties, type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
 
 /* ── MetricTile ──────────────────────────────────────────────────────────── */
@@ -18,11 +18,25 @@ export interface MetricTileProps extends HTMLAttributes<HTMLDivElement> {
   deltaTone?: MetricDeltaTone;
   /** faint icon in the top-right corner */
   icon?: ReactNode;
+  /** bottom spark-fill bar. A single value in [0,1] fills the bar to that
+   *  fraction; a multi-point series fills to `last / max`. Omit to hide the bar. */
+  spark?: number[];
+  /** override the spark fill colour (any CSS colour/gradient); defaults to the flux gradient. */
+  sparkColor?: string;
   /** placeholder mode: renders an em-dash `—` in place of the value, suppresses
    *  the unit + delta pill, and shows the optional `hint` instead. */
   empty?: boolean;
   /** small helper line shown in empty mode (e.g. "No data yet — connect a wearable"). */
   hint?: string;
+}
+
+/** Fraction (0..1) the spark-fill bar should reach for a given series. */
+function sparkFill(vals: number[]): number {
+  if (vals.length === 0) return 0;
+  if (vals.length === 1) return Math.max(0, Math.min(1, vals[0]!));
+  const max = Math.max(...vals, 0);
+  if (max <= 0) return 0;
+  return Math.max(0, Math.min(1, vals[vals.length - 1]! / max));
 }
 
 /** A small KPI tile — glass card with a mono label, big display value + unit,
@@ -35,6 +49,8 @@ export function MetricTile({
   delta,
   deltaTone = 'flat',
   icon,
+  spark,
+  sparkColor,
   empty,
   hint,
   className,
@@ -67,6 +83,16 @@ export function MetricTile({
       {delta != null && (
         <span className={cn('lk-metric-delta', `lk-metric-delta-${deltaTone}`)}>{delta}</span>
       )}
+      {spark != null && spark.length > 0 && (
+        <div className="lk-metric-spark">
+          <i
+            style={{
+              ['--v']: sparkFill(spark),
+              ...(sparkColor ? { background: sparkColor } : {}),
+            } as CSSProperties}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -98,7 +124,7 @@ export function ProgressDots({
 
   return (
     <div
-      className={cn('lk-dots', className)}
+      className={cn('lk-pdots', className)}
       role="progressbar"
       aria-valuemin={0}
       aria-valuemax={count}

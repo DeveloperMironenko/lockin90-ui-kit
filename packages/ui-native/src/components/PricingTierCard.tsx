@@ -6,6 +6,13 @@ import { Card } from './Card';
 import { Icon } from './Icon';
 import { Badge } from './Badge';
 
+/**
+ * A single feature row. A plain `string` (or `{ included: true }`) renders a
+ * mint check ✓; `{ included: false }` renders a muted cross ✗ (feature not in
+ * this tier). Lets one component express both included and excluded features.
+ */
+export type PricingFeature = string | { label: string; included?: boolean };
+
 export interface PricingTierCardProps {
   /** tier name, e.g. 'Free' | 'Pro' | 'Elite' */
   name: string;
@@ -14,8 +21,11 @@ export interface PricingTierCardProps {
   /** billing period, e.g. '/mo' */
   period?: string;
   description?: string;
-  /** feature list — each rendered with a leading check Icon */
-  features: string[];
+  /**
+   * Feature list. A plain string → mint check ✓; an object with
+   * `included: false` → a muted cross ✗ (excluded from this tier).
+   */
+  features: PricingFeature[];
   /** accent/cta-gradient border + glow + a ribbon */
   featured?: boolean;
   /** ribbon copy (only when `featured`) @default 'Most popular' */
@@ -68,12 +78,20 @@ export function PricingTierCard({
       </View>
 
       <View style={styles.feat}>
-        {features.map((f, i) => (
-          <View key={`${f}-${i}`} style={styles.featRow}>
-            <Icon name="check" size={16} color={colors.zoneHigh} />
-            <Text style={styles.featText}>{f}</Text>
-          </View>
-        ))}
+        {features.map((f, i) => {
+          const label = typeof f === 'string' ? f : f.label;
+          const included = typeof f === 'string' ? true : f.included !== false;
+          return (
+            <View key={`${label}-${i}`} style={styles.featRow}>
+              <Icon
+                name={included ? 'check' : 'close'}
+                size={16}
+                color={included ? colors.zoneHigh : colors.textFaint}
+              />
+              <Text style={[styles.featText, !included && styles.featTextOff]}>{label}</Text>
+            </View>
+          );
+        })}
       </View>
 
       {cta ? <View style={styles.cta}>{cta}</View> : null}
@@ -201,6 +219,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     color: colors.text,
+  },
+  featTextOff: {
+    color: colors.textDim,
   },
   cta: {
     marginTop: 'auto',

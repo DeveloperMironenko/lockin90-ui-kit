@@ -1,6 +1,8 @@
 /* ============================================================================
    MiniBar — labelled proportion row. Tokens from @lockin90/tokens. Namespaced
-   `lk-minibar*`.
+   `lk-minibar*`. The value/max fill track is delegated to `Meter` (track-only);
+   these rules cover only MiniBar's row layout (label · bar · caption) plus the
+   6px track height that keeps the old MiniBar proportions.
    ========================================================================== */
 
 .lk-minibar {
@@ -22,18 +24,10 @@
   white-space: nowrap;
 }
 
-.lk-minibar-track {
+/* the delegated Meter track — thinner (6px) than Meter's default 8px to keep the
+   original MiniBar proportion; the fill colour comes from the piped `--fill`. */
+.lk-minibar-meter .lk-meter-track {
   height: 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  overflow: hidden;
-}
-
-.lk-minibar-fill {
-  display: block;
-  height: 100%;
-  border-radius: 999px;
-  transition: width 0.7s var(--ease);
 }
 
 .lk-minibar-caption {

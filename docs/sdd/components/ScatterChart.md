@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/ScatterChart.tsx` · `packages/ui-native/src/components/ScatterChart.tsx` ·
 > web CSS `packages/ui/src/styles/components/scatter.css` (`.lk-sct*`).
 > **Exports:** `ScatterChart`, types `ScatterChartProps`, `ScatterPoint`, `ScatterChartVariant`.
-> **Status:** Shipped. **Parity:** 🟡 same API & geometry; the TODAY pulse is an animated CSS ring + `drop-shadow` on web vs a static dot + faint halo ring on native, and `shine` is CSS `drop-shadow` vs a wider faint duplicate circle (RN SVG filters are patchy).
+> **Status:** Shipped. **Parity:** 🟡 same API & geometry; the TODAY pulse is an animated CSS ring + `drop-shadow` on web vs a static dot + faint halo ring on native, and `shine` is CSS `drop-shadow` vs a Gaussian-blurred duplicate circle (`FeGaussianBlur`, real RN-SVG Fabric filters).
 > **Stories:** `packages/ui/src/stories/ScatterChart.stories.tsx` (`Charts/ScatterChart`) · `packages/ui-native/src/stories/ScatterChart.stories.tsx` (`Native/ScatterChart`).
 
 ---
@@ -70,7 +70,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | TODAY pulse (SC-06) | lime dot r 3.6 + `drop-shadow(0 0 5px var(--lime))` (`.lk-sct-pulse-dot`) + expanding ring `.lk-sct-pulse` (r 3.6, stroke 1.4, scale 1→3 / opacity .8→0, 1.8s ∞, `transform-box: fill-box`); native: static dot r 3.6 + halo ring r 7, stroke 1.4 @ 0.4 (the `Ring` pulse precedent). Chip at (x, y−16) `--lime` |
 | Centroid (SC-07) | ring at the mean point, r 16, `--cyan`, stroke 1.2, dash `3 3`; chip at (cx, cy−24) `--cyan` |
 | Chips (catalog `tag()`) | rect w `len·5.35+12`, h 13, rx 6.5, fill `--bg-0` @ 78% (native `${colors.bg0}C7`), stroke = chip color @ 0.35, width 0.8; centered **8px** mono text (`.lk-sct-tag`, tracking `.05em` / native `0.4`); x clamps into the padded box |
-| Shine | web `.lk-sct-shine` → `drop-shadow(0 0 4px var(--lk-sct-glow))`, glow color set inline per dot; native: duplicate circle behind, r+3, `fillOpacity 0.35` |
+| Shine | web `.lk-sct-shine` → `drop-shadow(0 0 4px var(--lk-sct-glow))`, glow color set inline per dot; native: Gaussian-blurred duplicate circle behind, r+1.5, `fillOpacity 0.8` (`FeGaussianBlur stdDeviation 2`) |
 | Sizing | web `.lk-sct-svg`: `width 100%; height auto; overflow visible`; native root: `width '100%', aspectRatio 320/150` |
 
 ## 4. States
@@ -90,7 +90,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks.
 **🟡 same API, platform-shaped implementation.** Identical geometry, data model, colors, chip math and draw order (both port the same catalog `draw()`). The real differences:
 
 - **TODAY pulse** — web animates the ring via CSS (`.lk-sct-pulse`, scale 1→3 fade, reduced-motion safe) and glows the dot with `drop-shadow`; native draws a **static dot + faint halo ring** (r 7 @ 0.4) per the `Ring` pulse precedent — no SMIL/JS animation. Motion-only diff; does not block use.
-- **Shine substrate** — web CSS `drop-shadow(0 0 4px …)`; native a **wider faint duplicate circle** (r+3, `fillOpacity 0.35`) because RN SVG filters are unreliable on device.
+- **Shine substrate** — web CSS `drop-shadow(0 0 4px …)`; native a **Gaussian-blurred duplicate circle** (r+1.5, `fillOpacity 0.8`, `FeGaussianBlur stdDeviation 2`; see CONVENTIONS.md).
 - **Label styling channel** — web styles `<text>` via `.lk-sct-label`/`.lk-sct-tag` (CSS); native passes `fontSize/fontFamily/letterSpacing` props on `Svg.Text` (`0.5`/`0.4` ≈ `.06em`/`.05em`).
 - **Container** — web `div[role=img]` + `className`/rest; native `View accessibilityRole="image"` + `style`.
 

@@ -34,3 +34,12 @@ export const BetweenContent: Story = {
     </View>
   ),
 };
+
+/** Labeled divider — hairline · centered label · hairline (the "or continue with" pattern). */
+export const Labeled: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <Divider label="or continue with" />
+    </View>
+  ),
+};

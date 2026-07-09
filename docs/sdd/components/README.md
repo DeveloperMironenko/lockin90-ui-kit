@@ -22,7 +22,8 @@ Parity legend: ✅ identical API · 🟡 same API, platform-shaped impl · 🔵 
 ## Foundations & brand
 [BrandMark](./BrandMark.md) · [GradientText](./GradientText.md) · [Icon](./Icon.md) ·
 [Divider](./Divider.md) · [Pulse](./Pulse.md) · [Skeleton](./Skeleton.md) · [Avatar](./Avatar.md) ·
-[AvatarStack](./AvatarStack.md) · [Eyebrow](./Eyebrow.md) · [AuroraBackground](./AuroraBackground.md) ·
+[AvatarStack](./AvatarStack.md) · [Eyebrow](./Eyebrow.md) · [SectionHeader](./SectionHeader.md) ·
+[StateLabel](./StateLabel.md) · [AuroraBackground](./AuroraBackground.md) ·
 [ScrollProgress](./ScrollProgress.md) · [VersionBadge](./VersionBadge.md) · [QRCode](./QRCode.md) ·
 [ShareCard](./ShareCard.md) · [ZoneBar](./ZoneBar.md)
 
@@ -34,13 +35,13 @@ Parity legend: ✅ identical API · 🟡 same API, platform-shaped impl · 🔵 
 [TagInput](./TagInput.md) (+ CodeInput) · [Stepper](./Stepper.md) (+ NumberStepper) ·
 [Combobox](./Combobox.md) · [CharCounter](./CharCounter.md) ·
 [PasswordStrengthMeter](./PasswordStrengthMeter.md) · [ColorPicker](./ColorPicker.md) ·
-[CodeField](./CodeField.md)
+[CodeField](./CodeField.md) · [SsoButton](./SsoButton.md)
 
 ## Data display & charts
 [Card](./Card.md) · [Stat](./Stat.md) · [MetricTile](./MetricTile.md) (+ ProgressDots) ·
 [KeyValue](./KeyValue.md) (+ StatusDot) · [Chip](./Chip.md) · [ChoiceChip](./ChoiceChip.md) ·
 [Meter](./Meter.md) · [DeltaPill](./DeltaPill.md) · [Highlight](./Highlight.md) ·
-[TagCloud](./TagCloud.md) · [Ring](./Ring.md) · [BarFill](./BarFill.md) ·
+[TagCloud](./TagCloud.md) · [Ring](./Ring.md) · [MiniRing](./MiniRing.md) · [BarFill](./BarFill.md) ·
 [ProgressBar](./ProgressBar.md) · [Sparkline](./Sparkline.md) · [BarChart](./BarChart.md) ·
 [LineChart](./LineChart.md) · [DonutChart](./DonutChart.md) · [Gauge](./Gauge.md) ·
 [StackedBar](./StackedBar.md) · [RangeBar](./RangeBar.md) · [Heatmap](./Heatmap.md) ·
@@ -57,7 +58,8 @@ Parity legend: ✅ identical API · 🟡 same API, platform-shaped impl · 🔵 
 [Modal](./Modal.md) · [Sheet](./Sheet.md) · [Popover](./Popover.md) (+ CopyButton) ·
 [Menu](./Menu.md) · [Tooltip](./Tooltip.md) · [Toast](./Toast.md) (+ Badge) · [Alert](./Alert.md) ·
 [EmptyState](./EmptyState.md) · [ProGate](./ProGate.md) · [LockedRow](./LockedRow.md) ·
-[ReauthDialog](./ReauthDialog.md) · [Spinner](./Spinner.md) · [DotsLoader](./DotsLoader.md)
+[NotificationRow](./NotificationRow.md) · [ReauthDialog](./ReauthDialog.md) ·
+[Spinner](./Spinner.md) · [DotsLoader](./DotsLoader.md)
 
 ## Domain · messaging · AI · social · billing
 [MuscleDiagram](./MuscleDiagram.md) · [MessageBubble](./MessageBubble.md) ·
@@ -74,7 +76,8 @@ Parity legend: ✅ identical API · 🟡 same API, platform-shaped impl · 🔵 
 [SideNav](./admin/SideNav.md) · [MethodChip](./admin/MethodChip.md) ·
 [SecretField](./admin/SecretField.md) · [RedactedField](./admin/RedactedField.md) ·
 [InlineEdit](./admin/InlineEdit.md) · [PulseStrip](./admin/PulseStrip.md) ·
-[FunnelChart](./admin/FunnelChart.md) · [ReferenceRangeBar](./admin/ReferenceRangeBar.md) ·
+[OperatorFunnel](./admin/OperatorFunnel.md) · [TrendCard](./admin/TrendCard.md) ·
+[ReferenceRangeBar](./admin/ReferenceRangeBar.md) ·
 [PushPreview](./admin/PushPreview.md) · [PermissionMatrix](./admin/PermissionMatrix.md)
 (+ MatrixToggle) · [RecoveryCodeGrid](./admin/RecoveryCodeGrid.md)
 
@@ -96,12 +99,12 @@ in the relevant SDD's §5/§9, **not** silently fixed — each is its own scoped
 | Component | Debt |
 | --- | --- |
 | [Select](./Select.md) | Selected option + checkmark use `--accent-2` (cyan) on web vs `colors.accent` (violet) on native — align the token. |
-| [TagInput](./TagInput.md) | Tag-pill text `--mint` (web) vs `colors.accent2` cyan (native); native `TagInput`/`CodeInput` omit the `invalid` prop (no native error state). |
-| [ProGate](./ProGate.md) | **Native-only** — there is no web `ProGate` component (web exports only `LockedRow`); native's "web blurs" doc-comment references a component that doesn't ship. Add a web `ProGate`. |
-| [Table](./Table.md) | `rowTone` + the entire `expandable`/`renderDetail`/`expandedKeys` detail-row system are web-only (not implemented on native). |
-| [Stat](./Stat.md) / [MetricTile](./MetricTile.md) | Native lacks the `empty`/`hint` placeholder mode web has; `Stat` value is `string` (native) vs `ReactNode` (web). |
+| [TagInput](./TagInput.md) | Tag-pill **text** `--mint` (web) vs `colors.accent2` cyan (native) — still open. (`invalid` is **resolved** — now on both platforms; native `CodeInput` keeps `error` as a legacy alias.) |
+| [ProGate](./ProGate.md) | **Resolved** — web `ProGate` now ships (`@lockin90/ui`, `.lk-pro*`, `filter: blur(6px)` + `opacity 0.35`) with the same `ProGateProps` as native; panel gating is cross-platform. (Native frost still needs the optional `expo-blur` peer to render — cosmetic.) |
+| [Table](./Table.md) | **Resolved** — native now ships `rowTone` (+ `_tone` fallback) and the full `expandable`/`renderDetail`/`expandedKeys`/`onExpandedChange` system with matching tint values. |
+| [Stat](./Stat.md) / [MetricTile](./MetricTile.md) | `Stat` value/label/delta are `string` (native) vs `ReactNode` (web) — still open. (`empty`/`hint` is **resolved** — now on both platforms, both components.) |
 | [ReauthDialog](./ReauthDialog.md) | Native Google button is a hand-rolled `Pressable` lookalike — should use `Button` + `leading` (lookalike-ban). |
-| [SegmentedTabs](./SegmentedTabs.md) | Rich item form (`count` badge + `tone` dot) is web-only; native `tabs` is `string[]`. |
+| [SegmentedTabs](./SegmentedTabs.md) | **Resolved** — native now renders the rich item form (`count` pill + `tone` dot); `tabs` accepts `SegmentedTabItem[]` on both platforms. |
 | [marketing/Field](./marketing/Field.md) | The glass control surface for `.lk-input`/`.lk-textarea` isn't shipped in-kit (relies on consuming app CSS); no `...rest` forwarding (a11y gap). |
 
 > These are **observations to triage**, not part of this docs task. Raise each as its own change

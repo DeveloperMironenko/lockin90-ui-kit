@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { FunnelChart, type FunnelStep } from '../admin/FunnelChart';
+import { OperatorFunnel, type FunnelStep } from '../admin/OperatorFunnel';
 
 const meta = {
-  title: 'Primitives/FunnelChart',
-  component: FunnelChart,
+  title: 'Admin/OperatorFunnel',
+  component: OperatorFunnel,
   parameters: { layout: 'padded' },
-} satisfies Meta<typeof FunnelChart>;
+} satisfies Meta<typeof OperatorFunnel>;
 export default meta;
 
 /* A 5-step onboarding funnel (signup → activated) with per-step drop-offs,

@@ -16,6 +16,14 @@ export const Default: Story = {
   ),
 };
 
+export const Large: Story = {
+  render: () => (
+    <View style={{ padding: 24 }}>
+      <Spinner size={52} thickness={4.5} />
+    </View>
+  ),
+};
+
 export const Sizes: Story = {
   render: () => (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 24, padding: 24 }}>

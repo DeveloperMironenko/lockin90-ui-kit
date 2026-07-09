@@ -5,7 +5,7 @@
 > **Source:** `packages/ui/src/components/FunnelChart.tsx` · `packages/ui-native/src/components/FunnelChart.tsx` ·
 > web CSS `packages/ui/src/styles/components/funnelchart.css` (`.lk-fnl*`).
 > **Exports:** `FunnelChart`, types `FunnelChartProps`, `FunnelStage`, `FunnelChartVariant`, `FunnelChartFill`.
-> **Status:** Shipped. **Parity:** 🟡 same API & look; `shine` is a CSS `drop-shadow` on web vs a wider faint duplicate shape on native (RN SVG filters are patchy).
+> **Status:** Shipped. **Parity:** 🟡 same API & look; `shine` is a CSS `drop-shadow` on web vs a Gaussian-blurred duplicate shape on native (`FeGaussianBlur`, real RN-SVG filters).
 > **Stories:** `packages/ui/src/stories/FunnelChart.charts.stories.tsx` (`Charts/FunnelChart`) · `packages/ui-native/src/stories/FunnelChart.stories.tsx` (`Native/FunnelChart`).
 
 ---
@@ -52,7 +52,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | Ghost bars (FN-05) | h 5 / rx 2.5, above the thin bar — fill `rgba(255,255,255,0.14)`, the catalog's white-14%. **Deliberate non-token**: `--glass-2` (.075) is half as bright, `--border-2` (.16) is a border token — checked `tokens.css`, no equivalent |
 | Drop labels | `−{round((1 − fracᵢ/fracᵢ₋₁)·100)}%` right-aligned at x 306, `--zone-low`; suppressed on the first stage and clamped at 0 (never renders a negative drop) |
 | Zone colors (FN-04) | **funnel-page thresholds**: frac `> 0.6` → `--zone-high`, `> 0.4` → `--zone-mid`, else `--zone-low` (not the global `zoneOf` ≥0.62/≥0.38 — the catalog page's own `draw` is the spec here) |
-| Shine | web: `.lk-fnl-shine` → `drop-shadow(0 0 6px var(--lk-fnl-glow))`, glow color set inline per shape; native: duplicate shape behind, `stroke` = shape color, `strokeWidth` +8, `strokeOpacity 0.35`, `fill "none"` |
+| Shine | web: `.lk-fnl-shine` → `drop-shadow(0 0 6px var(--lk-fnl-glow))`, glow color set inline per shape; native: Gaussian-blurred duplicate shape behind (`FeGaussianBlur` stdDev 3) — bars @ `opacity 0.55`, band edges `strokeOpacity 0.8` |
 | Sizing | web `.lk-fnl-svg`: `width 100%; height auto; overflow visible` (aspect kept by the viewBox); native root: `width '100%', aspectRatio 320/150` |
 
 ## 4. States
@@ -70,7 +70,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks.
 
 **🟡 same API, platform-shaped implementation.** Identical geometry, data model, colors, and label layout (both compute from the same catalog constants). The real differences:
 
-- **Shine substrate** — web uses the CSS `drop-shadow` filter (like `Ring`); native draws a **wider faint duplicate shape** (`strokeWidth + 8`, `strokeOpacity 0.35`) because RN SVG filters are unreliable on device. Halo shape/intensity differs marginally; does not block use.
+- **Shine substrate** — web uses the CSS `drop-shadow` filter (like `Ring`); native draws a **Gaussian-blurred duplicate shape** behind (bars @ 0.55, bands same fill+edge silhouette — `FeGaussianBlur stdDeviation 3`, see CONVENTIONS.md). Halo shape/intensity differs marginally; does not block use.
 - **Label styling channel** — web styles `<text>` via `.lk-fnl-label` (CSS, `.06em`); native passes `fontSize/fontFamily/letterSpacing` props on `Svg.Text` (`0.5` ≈ `.06em` at 8.5px).
 - **Container** — web `div[role=img]` + `className`/rest; native `View accessibilityRole="image"` + `style`.
 

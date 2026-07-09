@@ -4,6 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, {
   Circle,
   Defs,
+  FeGaussianBlur,
+  Filter,
   G,
   Line,
   LinearGradient as SvgLinearGradient,
@@ -89,7 +91,7 @@ export interface BarChartProps {
   forecastFrom?: number;
   /** `waterfall`: starting level (on the `max` scale); defaults to the first bar's value */
   waterfallStart?: number;
-  /** glow underlay behind the bars (wider faint duplicate — no SVG filters on native) */
+  /** glow underlay behind the bars (a Gaussian-blurred duplicate on native) */
   shine?: boolean;
   /** faint horizontal gridlines (default true; `sparkbar-micro` defaults false) */
   grid?: boolean;
@@ -208,6 +210,7 @@ function VariantChart({
 }: BarChartProps & { variant: BarChartVariant }) {
   const uid = useId();
   const gid = `lk-bcv-g-${uid.replace(/[^a-zA-Z0-9]/g, '')}`;
+  const blurId = `lk-bcv-blur-${uid.replace(/[^a-zA-Z0-9]/g, '')}`;
 
   const hasSeries = (series?.length ?? 0) > 0 && (series![0]?.length ?? 0) > 0;
   const n = hasSeries ? series![0].length : bars.length;
@@ -387,16 +390,18 @@ function VariantChart({
       }
       if (shine)
         els.push(
-          // native glow = a wider faint duplicate (no SVG blur filters on device)
+          // shine — a Gaussian-blurred duplicate bar behind the crisp one (the
+          // web `.lk-bcv-shine` blur(5px) underlay)
           <Rect
             key={`sh${i}`}
-            x={fx(x - 2.5)}
-            y={fx(yOf(f) - 2.5)}
-            width={fx(bw + 5)}
-            height={fx(BASE_Y - yOf(f) + 5)}
+            x={fx(x)}
+            y={fx(yOf(f))}
+            width={fx(bw)}
+            height={fx(BASE_Y - yOf(f))}
             rx={4}
             fill={fillFor(f, i)}
-            opacity={0.35}
+            opacity={0.5}
+            filter={`url(#${blurId})`}
           />,
         );
       els.push(
@@ -443,8 +448,9 @@ function VariantChart({
     const cx = fx(bx(hlIdx) + bw / 2);
     const cy = fx(yOf(f) - 6);
     els.push(
-      // glow = wider faint duplicate; the pulse ring is static on native
-      <Circle key="pg" cx={cx} cy={cy} r={6.5} fill={c} opacity={0.25} />,
+      // glow — a Gaussian-blurred duplicate dot (the web `.lk-bcv-pulse-dot`
+      // drop-shadow(0 0 5px)); the pulse ring is static on native
+      <Circle key="pg" cx={cx} cy={cy} r={5.1} fill={c} opacity={0.8} filter={`url(#${blurId})`} />,
       <Circle key="pd" cx={cx} cy={cy} r={3.6} fill={c} />,
       <Circle key="pr" cx={cx} cy={cy} r={7} fill="none" stroke={c} strokeWidth={1.4} opacity={0.35} />,
     );
@@ -487,6 +493,15 @@ function VariantChart({
             </SvgLinearGradient>
           </Defs>
         ) : null}
+        {/* real Gaussian blur for the shine bars + pulse-dot glow (Fabric-native
+            in react-native-svg 15) — the native twin of the web `.lk-bcv-shine`
+            blur(5px) / `.lk-bcv-pulse-dot` drop-shadow(0 0 5px). Region in user
+            space over the full canvas so flat bars never clip the blur. */}
+        <Defs>
+          <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={VB_W + 20} height={VB_H + 20}>
+            <FeGaussianBlur stdDeviation={2.5} />
+          </Filter>
+        </Defs>
         {showGrid ? (
           <G>
             {[0.25, 0.5, 0.75].map((f) => (

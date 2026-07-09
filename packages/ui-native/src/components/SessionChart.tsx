@@ -10,7 +10,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Defs, Line, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
+import Svg, { Defs, FeGaussianBlur, Filter, Line, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /** Catalog variant names — one per session form in
@@ -128,8 +128,7 @@ export interface SessionChartProps {
   axisLabels?: SessionAxisLabel[];
   /** main trace stroke width (defaults: 2.5 · sauna temp 2.6 · heat ramp 3) */
   weight?: number;
-  /** glow underlay — a wider faint duplicate of the main trace (no SVG blur
-   *  filters on native; Ring precedent) */
+  /** glow underlay — a Gaussian-blurred duplicate of the main trace */
   shine?: boolean;
   /** plot height in px (also the viewBox height); default 150 */
   height?: number;
@@ -369,7 +368,17 @@ type SvgMark =
       cap?: boolean;
     }
   | { k: 'rect'; x: number; y: number; w: number; h: number; rx: number; fill: string; opacity?: number }
-  | { k: 'path'; d: string; stroke: string; w: number; opacity?: number; dash?: string; cap?: boolean };
+  | {
+      k: 'path';
+      d: string;
+      stroke: string;
+      w: number;
+      opacity?: number;
+      dash?: string;
+      cap?: boolean;
+      /** SVG filter reference (`url(#…)`) — the shine blur */
+      filter?: string;
+    };
 
 interface ODot {
   x: number;
@@ -432,8 +441,9 @@ function PulseRing({ color }: { color: string }) {
  * ramp vs target, overnight recovery (HRV up / RHR down on a violet canvas)
  * and CGM meal-response curves (baseline band + MEAL rule + peak/return, or a
  * 3-curve overlay with the bold mean). Native twin of `@lockin90/ui`
- * SessionChart — same prop API; `shine` is a wider faint duplicate stroke
- * (never SVG filters on native). The Svg stretches to the measured container
+ * SessionChart — same prop API; `shine` is a real Gaussian-blurred duplicate
+ * stroke (Fabric-native SVG filters in react-native-svg 15). The Svg
+ * stretches to the measured container
  * width via a fixed viewBox + non-uniform scaling; dots, chips and text render
  * as absolutely-positioned Views placed by percentage so they stay perfectly
  * round and legible.
@@ -481,6 +491,7 @@ export function SessionChart({
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
   const zoneId = `lk-snc-zone-${uid}`;
   const heatId = `lk-snc-heat-${uid}`;
+  const blurId = `lk-snc-blur-${uid}`;
   const [width, setWidth] = useState(0);
   const onLayout = (e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width);
 
@@ -508,9 +519,11 @@ export function SessionChart({
     oNotes.push({ x: W - P.r - 2, y: 12, text: resolvedStat, color: resolvedStatColor, anchor: 'end', stat: true });
 
   /** main-trace glow underlay + stroke (the catalog's `hrPath`) — the shine is
-   *  a wider faint duplicate stroke, never an SVG blur filter (Ring precedent) */
+   *  a Gaussian-blurred duplicate stroke behind the crisp trace, the native
+   *  twin of the web mark's `blur(5px)` underlay */
   const drawTrace = (d: string, stroke: string, w: number, dash?: string) => {
-    if (!dash && shine) marks.push({ k: 'path', d, stroke, w: w + 5, opacity: 0.45, cap: true });
+    if (!dash && shine)
+      marks.push({ k: 'path', d, stroke, w: w + 5, opacity: 0.45, cap: true, filter: `url(#${blurId})` });
     marks.push({ k: 'path', d, stroke, w, dash, cap: true });
   };
   const timeAxis = () =>
@@ -733,6 +746,15 @@ export function SessionChart({
                   <Stop offset="1" stopColor={colors.zoneLow} />
                 </LinearGradient>
               ) : null}
+              {shine ? (
+                /* real Gaussian blur for the trace shine (Fabric-native in
+                   react-native-svg 15) — the native twin of the web `blur(5px)`.
+                   Region in user space over the full canvas so flat traces
+                   never clip the blur to their bounding box. */
+                <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={h + 20}>
+                  <FeGaussianBlur stdDeviation={2.5} />
+                </Filter>
+              ) : null}
             </Defs>
             {marks.map((mk, i) =>
               mk.k === 'rect' ? (
@@ -769,6 +791,7 @@ export function SessionChart({
                   strokeOpacity={mk.opacity}
                   strokeDasharray={mk.dash}
                   strokeLinecap={mk.cap ? 'round' : undefined}
+                  filter={mk.filter}
                 />
               ),
             )}

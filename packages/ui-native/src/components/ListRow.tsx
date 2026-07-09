@@ -99,7 +99,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    paddingVertical: 14,
+    // minHeight keeps single-line and subtitle rows the SAME height (content is
+    // centered) so a mixed list doesn't look ragged; padding fits within it.
+    minHeight: 60,
+    paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: radii.sm,
   },

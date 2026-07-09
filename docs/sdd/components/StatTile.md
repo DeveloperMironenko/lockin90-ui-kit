@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/StatTile.tsx` · `packages/ui-native/src/components/StatTile.tsx` ·
 > no web CSS partner — all styling is inline SVG attributes (`.lk-stattile` on the root is a bare hook class, like `.lk-daywheel`).
 > **Exports:** `StatTile`, types `StatTileProps`, `StatTileVariant`, `StatTileAccessory`, `StatTileStat`, `StatTileRow` — **not yet re-exported from either `src/index.ts`** (the charts-program export wave lands separately).
-> **Status:** Built. **Parity:** 🟡 same API & geometry; the hero `shine` glow is a blurred duplicate number on web vs a wider faint duplicate (no blur) on native, and the verdict dot's `drop-shadow` is a faint halo circle on native.
+> **Status:** Built. **Parity:** 🟡 same API & geometry; the hero `shine` glow is a blurred duplicate number on both sides (native via `FeGaussianBlur` — real RN-SVG filters), and the verdict dot's `drop-shadow` is a faint halo circle on native.
 > **Stories:** `packages/ui/src/stories/StatTile.stories.tsx` (`Charts/StatTile`) · `packages/ui-native/src/stories/StatTile.stories.tsx` (`Native/StatTile`).
 
 ---
@@ -68,7 +68,7 @@ Geometry is the catalog's, in viewBox units (`W 320 · H 150 · pad l10 r12 t16 
 | Duo divider | hairline `white-10%` w1, x 160, y 38–112 |
 | Stat-list rows | y = 44 + i·30: label (18), value (86), mini-spark 122×20 at (170, y−8) in the row color |
 | Chips (catalog `tag()`) | rect h13 rx6.5 fill `rgba(8,10,18,0.78)` (`--bg-0` @ 78%) + tinted hairline @ 0.35; 8px mono |
-| Shine | hero: web blurred (8px) mint duplicate @ 0.5 under the number; native fontSize 56 duplicate @ 0.28 (no blur) · ring accessory: wider arc w9 @ 0.3 (web blurred 3px) |
+| Shine | hero: blurred mint duplicate @ 0.5 under the number on both — web `blur(8px)`, native 52px duplicate + `FeGaussianBlur` stdDev 4 · ring accessory: wider arc w9 @ 0.3, blurred on both (web 3px / native `FeGaussianBlur` stdDev 1.5) |
 
 ## 4. States
 
@@ -87,9 +87,9 @@ Pure render — no hover/press/focus/disabled states, no client hooks.
 
 **🟡 same API, platform-shaped implementation.** Identical geometry, type scale, colors, defaults and the same seeded default data (both port the catalog PRNG). The real differences:
 
-- **Hero `shine`** — web layers a `blur(8px)` mint duplicate at 0.5 under the number; native draws a **slightly larger (56px) duplicate at 0.28** — no blur filters on RN. Same "glowing number" read, softer halo on web.
+- **Hero `shine`** — web layers a `blur(8px)` mint duplicate at 0.5 under the number; native draws the **same 52px mint duplicate at 0.5**, Gaussian-blurred via `FeGaussianBlur stdDeviation 4` (see CONVENTIONS.md). Same "glowing number" read.
 - **Verdict dot glow** — web `drop-shadow(0 0 6px c)`; native a wider faint duplicate circle (r10 @ 0.3).
-- **Ring-accessory shine** — web blurred wider arc; native the same wider arc without blur.
+- **Ring-accessory shine** — web blurred wider arc; native the same wider arc (w9 @ 0.3) Gaussian-blurred via `FeGaussianBlur` stdDev 1.5.
 - **Delta x heuristic** — both use the same char-width approximation (SVG can't measure text at render); identical positions on both platforms by construction.
 - **Container** — web `svg[role=img]` + `className`/SVGProps rest; native `View accessibilityRole="image"` + `style`.
 

@@ -44,6 +44,16 @@ Inter (UI), JetBrains Mono (data).
 - **Native** uses `StyleSheet` + `react-native-svg` + `expo-linear-gradient`, `Pressable`/`Modal`,
   `PanResponder` for drag, `theme.ts`. No hover; press feedback instead.
 
+### Native glow/shadow substrate (current rule)
+Native SVG glows/shines are **real Gaussian blurs**: a duplicate of the crisp shape drawn behind it with
+`<Filter><FeGaussianBlur>` (react-native-svg 15, Fabric-native), the filter region padded so thin strokes
+don't clip — most charts use `filterUnits="userSpaceOnUse"` absolute rects (e.g. `x=-24 … width=VB_W+48`),
+a few use generous `%` regions. This **replaces** the old "wider faint unblurred duplicate — never SVG
+filters on native" rule; any SDD still citing it is stale. View elevation/glow **surfaces** use
+`nativeShadows.*` from `@lockin90/tokens` — RN New-Architecture CSS `boxShadow` strings, verbatim the web
+`shadows` values. Small colored **dot/marker glows** in some components still use legacy inline
+`shadowColor/shadowOpacity/shadowRadius`; the per-component SDD states which applies.
+
 ## Hard rules every SDD restates (tailored)
 1. **Tokens only** — no hardcoded color/space/radius/shadow, even if it "looks the same".
 2. **No lookalikes** — import the kit primitive; never re-create it locally.

@@ -31,6 +31,14 @@ export const Over: Story = {
   ),
 };
 
+export const AtLimit: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <CharCounter value={60} max={60} />
+    </View>
+  ),
+};
+
 export const States: Story = {
   render: () => (
     <View style={{ width: 320, gap: 16 }}>

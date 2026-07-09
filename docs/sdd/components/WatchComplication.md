@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/WatchComplication.tsx` · `packages/ui-native/src/components/WatchComplication.tsx` ·
 > no web CSS partner — all styling is inline SVG attributes (`.lk-watchcomp` on the root is a bare hook class, like `.lk-daywheel`).
 > **Exports:** `WatchComplication`, types `WatchComplicationProps`, `WatchComplicationCorners`, `WatchComplicationVariant` — **not yet re-exported from either `src/index.ts`** (the charts-program export wave lands separately).
-> **Status:** Built. **Parity:** 🟡 same API & geometry; every glow (`shine`) is a CSS `blur()` underlay on web vs a wider faint duplicate arc on native (RN SVG filters are patchy — the `Ring` rule).
+> **Status:** Built. **Parity:** 🟡 same API & geometry; every glow (`shine`) is a CSS `blur()` underlay on web vs a Gaussian-blurred duplicate arc on native (`FeGaussianBlur`, real RN-SVG Fabric filters).
 > **Stories:** `packages/ui/src/stories/WatchComplication.stories.tsx` (`Charts/WatchComplication`) · `packages/ui-native/src/stories/WatchComplication.stories.tsx` (`Native/WatchComplication`).
 
 ---
@@ -66,7 +66,7 @@ Square viewBox `0 0 112 112`, center **C (56, 56)**, face r 54; pill viewBox `0 
 | WC-06 pill | mini ring r 8 w 3 at (21,18), sweep = value; mono 8.5 `--text` line at (37,15) start-anchored; bar track 88×3.5 rx 1.75 at (37,23) + fill `88·v/100` in `color` (default `--mint`) |
 | WC-07 trio | r 40/30/20, w 6, round caps — `color`/`color2`/`color3` default `--mint`/`--cyan`/`--violet` (move/train/sleep) |
 | Type | big readout `--font-display` / `fonts.display` weight 700; captions `--font-mono` / `fonts.mono` 8.5 viewBox px, tracking `.06em` (native `0.5`) |
-| Shine | duplicate of the featured mark(s), stroke +5 (gauge +5=12, spark 6.8, corner 9.5, pill 8, trio 11) — web opacity 0.4–0.45 + `blur(4–5px)`; native the same duplicates @ 0.2 **without blur** |
+| Shine | duplicate of the featured mark(s), stroke +5 (gauge +5=12, spark 6.8, corner 9.5, pill 8, trio 11) — web opacity 0.4–0.45 + `blur(4–5px)`; native the same duplicates @ 0.4–0.45, blurred with `FeGaussianBlur` (`stdDeviation 2–2.5`) |
 | Sizing | renders at `size` px (viewBox scales) — default 108 = catalog 2×; 1× slot ≈ 54 (pill 75) |
 
 ## 4. States
@@ -84,7 +84,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks, no animat
 
 **🟡 same API, platform-shaped implementation.** Identical geometry, defaults, zone thresholds and draw order (both port the same catalog `draw()`). The real differences:
 
-- **Shine substrate** — web blurs the wider duplicate (`blur(4–5px)`, opacity 0.4–0.45); native draws the same duplicate arc @ 0.2 with **no filter** (RN SVG `<Filter>` is unreliable on device — the `Ring` glow rule).
+- **Shine substrate** — web blurs the wider duplicate (`blur(4–5px)`, opacity 0.4–0.45); native blurs the same duplicate arc @ 0.4–0.45 with a real `FeGaussianBlur` (`stdDeviation 2–2.5`; see CONVENTIONS.md).
 - **Container** — web `svg[role=img]` root + `className`/SVGProps rest; native `View accessibilityRole="image"` wrapping `Svg` + `style`.
 - **Label styling channel** — web inline `style={{ fontFamily, letterSpacing }}` on `<text>`; native `fontFamily/letterSpacing` props on `Svg.Text` (`0.5` ≈ `.06em`).
 

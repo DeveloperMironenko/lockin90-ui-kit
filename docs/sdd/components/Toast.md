@@ -1,19 +1,20 @@
 # SDD — `Toast` (+ `Badge` cross-ref)
 
 > **Package:** `@lockin90/ui` (web) · `@lockin90/ui-native` (native) — root cross-platform primitive.
-> **Source:** `packages/ui/src/components/Toast.tsx` (web Toast **+ Badge**) · `packages/ui-native/src/components/Toast.tsx` · web CSS `packages/ui/src/styles/components/toast.css` (`.lk-toast*`, `.lk-badge*`).
+> **Source:** `packages/ui/src/components/Toast.tsx` (web Toast **+ Badge**) · `packages/ui-native/src/components/Toast.tsx` · web CSS `packages/ui/src/styles/components/toast.css` (`.lk-toast*`) + `packages/ui/src/styles/primitives.css` (`.lk-chip*` / `.lk-chip-sm*` — **web Badge's actual markup**, see below).
 > **Exports:** `Toast`, `Badge`, type `ToastTone`, type `ToastProps`, type `BadgeTone`, type `BadgeProps`. **Native Badge lives in its own `Badge.tsx`** (separate file + `Badge.stories.tsx`), not in `Toast.tsx`.
 > **Status:** Shipped. **Parity:** 🟡 Toast is visually identical; **Badge**'s accent fill is a CSS gradient (web) vs `expo-linear-gradient` (native).
+> **Web Badge internals (new):** `Badge` is now a **thin wrapper rendering `<Chip size="sm">`** — see §2/§3. Exports and the `Badge`/`BadgeTone`/`BadgeProps` names are unchanged; only the implementation moved. The old standalone `.lk-badge*` CSS was **deleted** from `toast.css`.
 > **Stories:** `packages/ui/src/stories/Toast.stories.tsx` (shows Badge) · `packages/ui-native/src/stories/Toast.stories.tsx` · native `Badge.stories.tsx`.
 
 ---
 
 ## 1. Overview
 
-Two tiny status primitives sharing one web stylesheet:
+Two tiny status primitives sharing one source file (`Toast.tsx`) but, on web, **separate** stylesheets — `Toast` has its own `toast.css`; `Badge` now borrows `Chip`'s `primitives.css` rules instead of shipping its own:
 
 - **`Toast`** — a compact floating notification card: a tone-tinted leading icon, a bold title + optional dimmer message, a subtle tinted **left accent rail**, and an optional `×` dismiss. Four tones: `default`, `success`, `warn`, `danger`.
-- **`Badge`** (cross-ref) — a tiny count/status pill (smaller + simpler than `Chip`), or a bare glowing **dot**. Tones: `accent` (CTA-gradient fill), `high`, `mid`, `low`, `neutral`.
+- **`Badge`** (cross-ref) — a tiny count/status pill, or a bare glowing **dot**. Tones: `accent` (CTA-gradient fill), `high`, `mid`, `low`, `neutral`. **On web, `Badge` is now a thin wrapper rendering `<Chip size="sm">`** — it ships no CSS of its own anymore (see §2/§3); native `Badge` is unaffected, still its own standalone component (see §5).
 
 The kit provides only the toast **card** — queueing/positioning/auto-dismiss is the consuming app's concern (Toast renders the visual; the app stacks/times them).
 
@@ -45,8 +46,8 @@ The kit provides only the toast **card** — queueing/positioning/auto-dismiss i
 | `className`/`style` | — | — | web `className` / native `style` | platform-shaped | |
 | _rest_ | web `HTMLAttributes<HTMLSpanElement>` / native `ViewProps` | — | ✓ | ✓ | spread onto the pill/dot |
 
-- **Web Badge:** `forwardRef<HTMLSpanElement>`; accent fill is the `--grad-cta` CSS gradient; dot glow via `box-shadow: 0 0 8px currentColor`.
-- **Native Badge:** accent fill is an `expo-linear-gradient` (`gradients.cta`, `{0,0}→{1,1}`) behind the label; dot glow via `shadowColor`/`shadowRadius`.
+- **Web Badge (thin wrapper):** `forwardRef<HTMLSpanElement>` that renders `<Chip ref={ref} size="sm" tone={tone} dot={dot} className={className} {...rest}>{dot ? undefined : children}</Chip>` — `children` is force-cleared to `undefined` whenever `dot` is set (mirrors `Chip`'s own dot-collapse). Accent fill is `Chip`'s `.lk-chip-sm.lk-accent` filled `--grad-cta` gradient rule; dot glow is `.lk-chip-sm.lk-dot`'s `box-shadow: 0 0 8px currentColor`. No Badge-specific CSS remains — see `Chip.md` §3 (`size="sm"`) for the full tone/dot spec.
+- **Native Badge (unaffected):** its own standalone component (`Badge.tsx`), not touched by the web refactor; accent fill is an `expo-linear-gradient` (`gradients.cta`, `{0,0}→{1,1}`) behind the label; dot glow via `shadowColor`/`shadowRadius`.
 
 ## 3. Visual spec (tokens — never hardcode)
 
@@ -73,6 +74,11 @@ The kit provides only the toast **card** — queueing/positioning/auto-dismiss i
 | pill | `min-w 16` ×16, `2px 6px`, `--r-pill`, `--font-mono` 10px 600, tabular-nums | `min-w 16` ×16, `radii.pill`, `fonts.mono` 10px 600 |
 | `dot` | 8×8 circle, `box-shadow 0 0 8px currentColor` (none for neutral) | 8×8 circle, `shadowRadius 4` (none for neutral) |
 
+These web values are literally `Chip.tsx`'s `.lk-chip.lk-chip-sm*` rules in `primitives.css` — not a
+`.lk-badge*` selector (that class was removed). Every number above is byte-identical to what the
+retired standalone `Badge` rendered; this was a real visual delta between `md` and the old badge
+(filled accent, bare dot, tighter box) that got preserved by scoping it to `Chip`'s `size="sm"`.
+
 ## 4. States
 
 | State | Web Toast | Native Toast |
@@ -88,7 +94,7 @@ The kit provides only the toast **card** — queueing/positioning/auto-dismiss i
 
 **Verdict: 🟡 Toast identical, Badge platform-shaped.** `Toast` is visually equivalent on both sides — same card tokens, tone map, left rail, icon/title/message type, and `×`. The only platform-shaped piece is the **Badge accent gradient** (web CSS `--grad-cta` vs native `expo-linear-gradient`), the canonical 🟡 difference. Other notes:
 
-- **Badge location:** web `Badge` lives in `Toast.tsx` (shared stylesheet); native `Badge` is its **own** `Badge.tsx` with its own story. Same prop API either way.
+- **Badge location:** web `Badge` lives in `Toast.tsx` (still its own module, no longer a shared stylesheet — it now renders `Chip` and ships zero CSS of its own, see §2); native `Badge` is its **own** `Badge.tsx` with its own story. Same prop API either way, and the web implementation swap is invisible to callers — renders identically to the pre-refactor `.lk-badge*` output.
 - **Rail/glow substrate:** web rail/dot-glow use `::before` + `box-shadow`; native use a `View` + native shadow. Same visual.
 - **A11y role:** web Toast `role="status"`; native `accessibilityRole="alert"` + `liveRegion="polite"` (announces on appear).
 - **No positioning/queue:** neither platform ships toast stacking/auto-dismiss — the app owns it.
@@ -135,6 +141,6 @@ No capability gap blocks use.
 ## 9. Anti-patterns & lookalike ban
 
 - **No lookalikes.** A custom "snackbar" or a re-rolled count chip drifts from the tone map + CTA gradient. Import `Toast`/`Badge`.
-- **New need → both platforms.** A new tone or an action slot must be added to `ToastProps`/`BadgeProps` on web **and** native (keeping native Badge in `Badge.tsx`) with the same names/tokens.
+- **New need → both platforms.** A new tone or an action slot must be added to `ToastProps`/`BadgeProps` on web **and** native (keeping native Badge in `Badge.tsx`) with the same names/tokens. On web, a new `BadgeTone` first needs the matching tone on `Chip` (`ChipTone` + the `.lk-chip-sm` treatment in `Chip.md` §3) — `Badge` itself has no tone CSS to edit anymore, since it's a thin wrapper.
 - **Tokens only.** Rail, tones, the accent gradient, and the dot glow all come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping, confirm the web phone-width toast/badge and native match (same tone, title/message, dismiss, count) — accepting only the gradient-substrate difference.

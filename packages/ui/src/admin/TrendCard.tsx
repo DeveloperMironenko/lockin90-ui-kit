@@ -1,14 +1,22 @@
 import { useId } from 'react';
 import { cn } from '../cn';
 
-/* Sparkline — a titled 7-day area+line mini-chart card. Pure inline SVG, no chart lib.
-   Used in the operator overview charts row. Mirrors `.chart-card` / `.chart-svg` /
-   `.chart-line` / `.chart-area` from lockin90-design/admin/overview.html. Web-only.
-   `lk-spark*` classes. */
+/* TrendCard — a titled 7-day area+line mini-chart CARD (title + headline value +
+   delta + area/line chart). Pure inline SVG, no chart lib. Used in the operator
+   overview charts row. Mirrors `.chart-card` / `.chart-svg` / `.chart-line` /
+   `.chart-area` from lockin90-design/admin/overview.html. Web-only. `lk-trend*`
+   classes.
+
+   Renamed from `Sparkline` — it is a full stat CARD, not a bare inline
+   sparkline, and the name clashed with the root cross-platform `Sparkline`
+   primitive. Its CSS classes are namespaced `lk-trend*` (they previously shared
+   `lk-spark*` with the root `Sparkline`, which visually polluted both).
+   `admin/index.ts` keeps a deprecated `Sparkline`/`SparklineProps` alias for
+   back-compat. */
 
 export type SparkDeltaDir = 'up' | 'down' | 'flat';
 
-export interface SparklineProps {
+export interface TrendCardProps {
   /** Uppercase mono title, e.g. "Signups · 7d". */
   title: string;
   /** Big headline value, e.g. "312" or "41.2k" or "0.3%". */
@@ -48,10 +56,10 @@ function buildPaths(points: number[]): { line: string; area: string } {
 }
 
 /**
- * Titled mini area+line chart. Auto-scales `points` to the card; `color` drives the line and
+ * Titled mini area+line stat card. Auto-scales `points` to the card; `color` drives the line and
  * the (low-opacity) area fill. Delta is optional and colour-coded by `deltaDir`.
  */
-export function Sparkline({
+export function TrendCard({
   title,
   value,
   delta,
@@ -61,40 +69,40 @@ export function Sparkline({
   xLabels,
   ariaLabel,
   className,
-}: SparklineProps) {
+}: TrendCardProps) {
   const gradId = useId();
   const { line, area } = buildPaths(points);
 
   return (
-    <div className={cn('lk-spark', className)}>
-      <div className="lk-spark-head">
-        <div className="lk-spark-t">{title}</div>
-        <div className="lk-spark-v">
+    <div className={cn('lk-trend', className)}>
+      <div className="lk-trend-head">
+        <div className="lk-trend-t">{title}</div>
+        <div className="lk-trend-v">
           {value}
-          {delta != null && <small className={`lk-spark-delta lk-spark-delta--${deltaDir}`}>{delta}</small>}
+          {delta != null && <small className={`lk-trend-delta lk-trend-delta--${deltaDir}`}>{delta}</small>}
         </div>
       </div>
       <svg
-        className="lk-spark-svg"
+        className="lk-trend-svg"
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="none"
         role="img"
         aria-label={ariaLabel ?? `${title}: ${value}`}
       >
-        <line className="lk-spark-grid" x1="0" y1="22" x2={W} y2="22" />
-        <line className="lk-spark-grid" x1="0" y1="46" x2={W} y2="46" />
-        <line className="lk-spark-grid" x1="0" y1="70" x2={W} y2="70" />
+        <line className="lk-trend-grid" x1="0" y1="22" x2={W} y2="22" />
+        <line className="lk-trend-grid" x1="0" y1="46" x2={W} y2="46" />
+        <line className="lk-trend-grid" x1="0" y1="70" x2={W} y2="70" />
         <defs>
           <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor={color} />
             <stop offset="1" stopColor={color} stopOpacity="0" />
           </linearGradient>
         </defs>
-        <path className="lk-spark-area" fill={`url(#${gradId})`} d={area} />
-        <path className="lk-spark-line" stroke={color} d={line} />
+        <path className="lk-trend-area" fill={`url(#${gradId})`} d={area} />
+        <path className="lk-trend-line" stroke={color} d={line} />
       </svg>
       {xLabels && xLabels.length > 0 && (
-        <div className="lk-spark-axis">
+        <div className="lk-trend-axis">
           {xLabels.map((l, i) => <span key={i}>{l}</span>)}
         </div>
       )}

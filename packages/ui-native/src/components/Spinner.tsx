@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef } from 'react';
 import { Animated, Easing, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, LinearGradient, Stop } from 'react-native-svg';
 import { colors } from '@lockin90/tokens';
 
 export interface SpinnerProps {
@@ -73,22 +73,38 @@ export function Spinner({
             <Stop offset="0" stopColor={color} />
             <Stop offset="1" stopColor={colors.cyan} />
           </LinearGradient>
+          {/* real Gaussian blur for the halo (Fabric-native in react-native-svg 15) —
+              the native twin of the web arc's `drop-shadow(0 0 6px tint)`. Region in
+              user space so the blur is never clipped to the arc's bounding box. */}
+          <Filter
+            id={`${gradId}-blur`}
+            filterUnits="userSpaceOnUse"
+            x={-6}
+            y={-6}
+            width={size + 12}
+            height={size + 12}
+          >
+            <FeGaussianBlur stdDeviation={3} />
+          </Filter>
         </Defs>
         {/* faint neutral track */}
         <Circle cx={half} cy={half} r={r} fill="none" stroke={colors.border2} strokeWidth={thickness} />
-        {/* glow — a wider, faint copy of the arc behind it so the halo follows
-            the ring (not a square box shadow); avoids <Filter>, patchy on device */}
+        {/* glow — a Gaussian-blurred duplicate of the arc behind it: the same soft
+            halo the web arc gets from `drop-shadow(0 0 6px tint)`. (Discrete
+            concentric "feather" copies read as banded outlines on device — a real
+            blur is the only thing that looks like a blur.) */}
         <Circle
           cx={half}
           cy={half}
           r={r}
           fill="none"
           stroke={color}
-          strokeWidth={thickness + 4}
-          strokeOpacity={0.3}
+          strokeWidth={thickness + 2}
+          strokeOpacity={0.55}
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={dashOffset}
+          filter={`url(#${gradId}-blur)`}
         />
         {/* sweeping gradient arc */}
         <Circle

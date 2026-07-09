@@ -1,9 +1,10 @@
-import type { CSSProperties } from 'react';
 import { cn } from '../cn';
+import { Stat, type StatTone } from '../components/Stat';
 
-/* Statistic — a borderless big-number block for use INSIDE a Panel (hero metric + supporting
-   stats), distinct from StatCard which is a bordered card. Label (mono, faint) over a large
-   display value, optional sub caption. Web-only. `lk-statistic*` classes. */
+/* Statistic — a borderless big-number block for use INSIDE a Panel (hero metric +
+   supporting stats). Now a thin wrapper over the canonical root `Stat`: its `md`/`lg`
+   sizes map to Stat's `sm`/`lg` (20/28px), and `tone`/`valueColor`/`sub` pass straight
+   through. Export + types kept for back-compat. Web-only. */
 
 export type StatisticSize = 'md' | 'lg';
 export type StatisticTone = 'default' | 'gradient' | 'mint';
@@ -26,20 +27,14 @@ export interface StatisticProps {
 
 export function Statistic({ label, value, size = 'md', tone = 'default', valueColor, sub, className }: StatisticProps) {
   return (
-    <div className={cn('lk-statistic', className)}>
-      <span className="lk-statistic-label">{label}</span>
-      <span
-        className={cn(
-          'lk-statistic-value',
-          size === 'lg' && 'lk-statistic-value--lg',
-          !valueColor && tone === 'gradient' && 'lk-statistic-value--gradient',
-          !valueColor && tone === 'mint' && 'lk-statistic-value--mint',
-        )}
-        style={valueColor ? ({ color: valueColor } as CSSProperties) : undefined}
-      >
-        {value}
-      </span>
-      {sub != null && <span className="lk-statistic-sub">{sub}</span>}
-    </div>
+    <Stat
+      className={cn('lk-statistic', className)}
+      label={label}
+      value={value}
+      size={size === 'lg' ? 'lg' : 'sm'}
+      tone={tone as StatTone}
+      valueColor={valueColor}
+      sub={sub}
+    />
   );
 }

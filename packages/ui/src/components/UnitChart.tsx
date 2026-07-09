@@ -306,7 +306,9 @@ export function UnitChart({
             const n = 10;
             const gap = 3;
             const cell = Math.min(PLOT_H - 22, 110) / n - gap + 3; // 9.8
-            const gx = W / 2 - (n * (cell + gap)) / 2 + 20;
+            // grid sits LEFT of center — the +20 right-shift made its last columns
+            // (right edge ≈244) run under the dot legend at x=226; -34 keeps ≥36px clear.
+            const gx = W / 2 - (n * (cell + gap)) / 2 - 34;
             const cells = [];
             for (let r = 0; r < n; r++) {
               for (let c = 0; c < n; c++) {

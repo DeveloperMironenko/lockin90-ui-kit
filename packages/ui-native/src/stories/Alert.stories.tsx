@@ -18,6 +18,14 @@ export const Success: Story = {
   args: { tone: 'success', title: 'Saved' },
 };
 
+export const Warn: Story = {
+  args: { tone: 'warn', title: 'Late caffeine detected' },
+};
+
+export const Danger: Story = {
+  args: { tone: 'danger', title: 'Payment failed', onDismiss: () => {} },
+};
+
 export const Dismissable: Story = {
   args: { tone: 'danger', title: 'Payment failed', onDismiss: () => {} },
 };

@@ -1,9 +1,10 @@
 import type { HTMLAttributes } from 'react';
-import { cn } from '../cn';
+import { Chip, type ChipTone } from '../components/Chip';
 
-/* StatusChip — small mono signal chip. Tone maps to the zone palette; `dot` adds a glowing
-   leading dot. Used for audit outcomes (ok/audit/deploy/danger), user status, etc. Mirrors
-   `.chip` and its variants from the shared design tokens. Web-only. `lk-schip*` classes. */
+/* StatusChip — small mono signal chip. Now a thin wrapper over the canonical
+   cross-platform `Chip` (they were byte-identical `.chip` mirrors). `tone` maps
+   to the zone palette; `dot` adds a glowing leading dot. Export + types kept for
+   back-compat. Web-only. */
 
 export type StatusChipTone = 'neutral' | 'high' | 'mid' | 'low' | 'accent';
 
@@ -14,19 +15,21 @@ export interface StatusChipProps extends HTMLAttributes<HTMLSpanElement> {
   dot?: boolean;
 }
 
-const TONE_CLASS: Record<StatusChipTone, string> = {
-  neutral: '',
-  high: 'lk-schip--high',
-  mid: 'lk-schip--mid',
-  low: 'lk-schip--low',
-  accent: 'lk-schip--accent',
+/** StatusChip's `neutral` is the base chip (dim on glass) — i.e. Chip's `default`,
+ *  NOT Chip's greyer `neutral` — so the visuals stay identical. */
+const TONE_MAP: Record<StatusChipTone, ChipTone> = {
+  neutral: 'default',
+  high: 'high',
+  mid: 'mid',
+  low: 'low',
+  accent: 'accent',
 };
 
 /** Mono status chip. `tone` colours it; `dot` prepends a glowing dot. */
-export function StatusChip({ tone = 'neutral', dot = false, className, children, ...rest }: StatusChipProps) {
+export function StatusChip({ tone = 'neutral', dot = false, children, ...rest }: StatusChipProps) {
   return (
-    <span className={cn('lk-schip', TONE_CLASS[tone], dot && 'lk-schip--dot', className)} {...rest}>
+    <Chip tone={TONE_MAP[tone]} dot={dot} {...rest}>
       {children}
-    </span>
+    </Chip>
   );
 }

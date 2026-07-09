@@ -1,6 +1,6 @@
 import { Fragment, useId, useState, type ReactNode } from 'react';
 import { View, Text, StyleSheet, type DimensionValue, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Rect, Line, Defs, LinearGradient, Stop } from 'react-native-svg';
+import Svg, { Rect, Line, Defs, FeGaussianBlur, Filter, LinearGradient, Stop } from 'react-native-svg';
 import { colors, fonts, radii } from '@lockin90/tokens';
 
 /** A sleep stage. Ordered top → bottom on the plot: awake, rem, light, deep. */
@@ -100,10 +100,13 @@ const BAR_H = 12;
 /** width (px) of the left gutter reserved for stage labels */
 const STAGE_GUTTER = 48;
 /** extra size of a shine underlay shape (viewBox units each side) — glow = a
- *  wider, fainter duplicate behind the mark; never SVG filters (RN limitation,
- *  same approach as Ring's glow arc). */
+ *  Gaussian-blurred, fainter duplicate behind the mark (Fabric-native SVG
+ *  filters in react-native-svg 15), the native twin of the web
+ *  `drop-shadow(0 0 7px …)` shine. */
 const SHINE_PAD = 4;
-const SHINE_OPACITY = 0.35;
+/* the duplicate is blurred, so it runs a touch hotter than the old un-blurred
+ * fake to keep the perceived glow near the web's full-alpha drop-shadow */
+const SHINE_OPACITY = 0.5;
 
 /** Stages top → bottom — the classic hypnogram order (deep at the bottom). */
 const STAGES: SleepStage[] = ['awake', 'rem', 'light', 'deep'];
@@ -358,7 +361,8 @@ export function Hypnogram({
           />
         ))}
 
-        {/* shine — wider, fainter capsule duplicates behind the bars */}
+        {/* shine — Gaussian-blurred capsule duplicates behind the bars (the web
+            bars' drop-shadow(0 0 7px) glow) */}
         {shine &&
           bars.map((b) => (
             <Rect
@@ -371,6 +375,7 @@ export function Hypnogram({
               ry={(BAR_H + SHINE_PAD * 2) / 2}
               fill={STAGE_COLORS[b.stage]}
               opacity={SHINE_OPACITY}
+              filter={`url(#lk-hyp-blur-${uid})`}
             />
           ))}
 
@@ -414,6 +419,7 @@ export function Hypnogram({
           const down = (Math.max(0, iv.awakeMinutes) / effUnit) * effAmp;
           return (
             <Fragment key={i}>
+              {/* shine — Gaussian-blurred duplicates (the web drop-shadow(0 0 7px)) */}
               {shine && up > 0 && (
                 <Rect
                   x={r(x - SHINE_PAD / 2)}
@@ -423,6 +429,7 @@ export function Hypnogram({
                   rx={3}
                   fill={colors.violet}
                   opacity={SHINE_OPACITY}
+                  filter={`url(#lk-hyp-blur-${uid})`}
                 />
               )}
               {shine && down > 0 && (
@@ -434,6 +441,7 @@ export function Hypnogram({
                   rx={3}
                   fill={colors.zoneMid}
                   opacity={SHINE_OPACITY}
+                  filter={`url(#lk-hyp-blur-${uid})`}
                 />
               )}
               {up > 0 && (
@@ -471,6 +479,8 @@ export function Hypnogram({
           const w = weekStep * 0.56;
           return (
             <Fragment key={i}>
+              {/* shine — a Gaussian-blurred duplicate bar (the web
+                  drop-shadow(0 0 7px) glow) */}
               {shine && (
                 <Rect
                   x={r(x - SHINE_PAD / 2)}
@@ -480,6 +490,7 @@ export function Hypnogram({
                   rx={5}
                   fill={color}
                   opacity={SHINE_OPACITY}
+                  filter={`url(#lk-hyp-blur-${uid})`}
                 />
               )}
               <Rect
@@ -534,16 +545,18 @@ export function Hypnogram({
     );
   }
 
-  /** a round overlay dot (+ optional shine halo behind it), positioned in px */
+  /** a round overlay dot (RN View); shine = a real `boxShadow` glow — the
+   *  native twin of the web `.lk-hyp-dot` box-shadow(0 0 8px) */
   const dot = (key: string, xPx: number, yPx: number, color: string) => (
     <Fragment key={key}>
-      {shine && (
-        <View
-          style={[styles.dotHalo, { left: xPx - 8, top: yPx - 8, backgroundColor: color }]}
-          pointerEvents="none"
-        />
-      )}
-      <View style={[styles.dot, { left: xPx - 4, top: yPx - 4, backgroundColor: color }]} pointerEvents="none" />
+      <View
+        style={[
+          styles.dot,
+          { left: xPx - 4, top: yPx - 4, backgroundColor: color },
+          shine ? { boxShadow: `0 0 8px ${color}` } : null,
+        ]}
+        pointerEvents="none"
+      />
     </Fragment>
   );
 
@@ -567,6 +580,24 @@ export function Hypnogram({
         <View style={[styles.canvas, { width: canvasW }]}>
           {canvasW > 0 && (
             <Svg width={canvasW} height={height} viewBox={`0 0 ${VB_W} ${height}`} preserveAspectRatio="none">
+              {shine ? (
+                /* real Gaussian blur for the shine (Fabric-native in
+                   react-native-svg 15) — the native twin of the web
+                   drop-shadow(0 0 7px). Region in user space over the full
+                   canvas so flat bars never clip the blur. */
+                <Defs>
+                  <Filter
+                    id={`lk-hyp-blur-${uid}`}
+                    filterUnits="userSpaceOnUse"
+                    x={-12}
+                    y={-12}
+                    width={VB_W + 24}
+                    height={height + 24}
+                  >
+                    <FeGaussianBlur stdDeviation={3.5} />
+                  </Filter>
+                </Defs>
+              ) : null}
               {shapes}
             </Svg>
           )}
@@ -696,7 +727,6 @@ const styles = StyleSheet.create({
   centerRow: { position: 'absolute', left: 0, right: 0, alignItems: 'center' },
   // round bed/wake dots + the fainter, wider shine halo behind them
   dot: { position: 'absolute', width: 8, height: 8, borderRadius: 4 },
-  dotHalo: { position: 'absolute', width: 16, height: 16, borderRadius: 8, opacity: SHINE_OPACITY },
   // BED / WAKE side labels pinned at the series' mean y
   side: {
     position: 'absolute',

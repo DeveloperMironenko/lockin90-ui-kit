@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
-import { View, Text, StyleSheet, type ViewProps } from 'react-native';
-import { colors, radii, fonts } from '@lockin90/tokens';
+import { View, Text, StyleSheet, type ViewProps, type DimensionValue } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, radii, fonts, gradients } from '@lockin90/tokens';
 
 /* ── MetricTile ──────────────────────────────────────────────────────────── */
 
@@ -19,6 +20,16 @@ export interface MetricTileProps extends ViewProps {
   deltaTone?: MetricDeltaTone;
   /** faint icon in the top-right corner */
   icon?: ReactNode;
+  /** bottom spark-fill bar. A single value in [0,1] fills the bar to that
+   *  fraction; a multi-point series fills to `last / max`. Omit to hide the bar. */
+  spark?: number[];
+  /** override the spark fill colour (solid); defaults to the flux/cta gradient. */
+  sparkColor?: string;
+  /** placeholder mode: renders an em-dash `—` in place of the value, suppresses
+   *  the unit + delta pill, and shows the optional `hint` instead. */
+  empty?: boolean;
+  /** small helper line shown in empty mode (e.g. "No data yet — connect a wearable"). */
+  hint?: string;
 }
 
 const DELTA: Record<MetricDeltaTone, { color: string; bg: string }> = {
@@ -27,8 +38,18 @@ const DELTA: Record<MetricDeltaTone, { color: string; bg: string }> = {
   flat: { color: colors.textFaint, bg: colors.glass2 },
 };
 
+/** Fraction (0..1) the spark-fill bar should reach for a given series. */
+function sparkFill(vals: number[]): number {
+  if (vals.length === 0) return 0;
+  if (vals.length === 1) return Math.max(0, Math.min(1, vals[0]!));
+  const max = Math.max(...vals, 0);
+  if (max <= 0) return 0;
+  return Math.max(0, Math.min(1, vals[vals.length - 1]! / max));
+}
+
 /** A small KPI tile — glass card with a mono label + optional top-right icon, a
- *  big display value + unit, and an optional tone-colored delta pill. */
+ *  big display value + unit, and an optional tone-colored delta pill. In `empty`
+ *  mode it shows an em-dash placeholder + an optional `hint`. */
 export function MetricTile({
   label = 'Followers',
   value = '1.2k',
@@ -36,9 +57,27 @@ export function MetricTile({
   delta,
   deltaTone = 'flat',
   icon,
+  spark,
+  sparkColor,
+  empty,
+  hint,
   style,
   ...rest
 }: MetricTileProps) {
+  if (empty) {
+    return (
+      <View style={[styles.tile, style]} {...rest}>
+        <View style={styles.top}>
+          <Text style={styles.label}>{label}</Text>
+          {icon != null && <View style={styles.icon}>{icon}</View>}
+        </View>
+        <View style={styles.body}>
+          <Text style={[styles.value, styles.valueEmpty]}>—</Text>
+        </View>
+        {hint != null && <Text style={styles.hint}>{hint}</Text>}
+      </View>
+    );
+  }
   const d = DELTA[deltaTone];
   return (
     <View style={[styles.tile, style]} {...rest}>
@@ -53,6 +92,22 @@ export function MetricTile({
       {delta != null && (
         <View style={[styles.delta, { backgroundColor: d.bg }]}>
           <Text style={[styles.deltaText, { color: d.color }]}>{delta}</Text>
+        </View>
+      )}
+      {spark != null && spark.length > 0 && (
+        <View style={styles.spark}>
+          {sparkColor != null ? (
+            <View
+              style={[styles.sparkFill, { width: `${sparkFill(spark) * 100}%` as DimensionValue, backgroundColor: sparkColor }]}
+            />
+          ) : (
+            <LinearGradient
+              colors={[...gradients.cta.stops] as [string, string]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={[styles.sparkFill, { width: `${sparkFill(spark) * 100}%` as DimensionValue }]}
+            />
+          )}
         </View>
       )}
     </View>
@@ -158,6 +213,23 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     letterSpacing: 0.22,
   },
+  /* empty / zero-data placeholder: faint em-dash value + a faint mono hint line */
+  valueEmpty: { color: colors.textFaint },
+  hint: {
+    fontFamily: fonts.mono,
+    fontSize: 10.5,
+    letterSpacing: 0.21,
+    color: colors.textFaint,
+  },
+  /* spark-fill bar */
+  spark: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    overflow: 'hidden',
+    marginTop: 3,
+  },
+  sparkFill: { height: '100%', borderRadius: 999 },
   /* ProgressDots */
   dots: {
     flexDirection: 'row',

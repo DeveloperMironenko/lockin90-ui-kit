@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '../../cn';
+import { Card as RootCard } from '../../components/Card';
 
 export interface CardProps {
   children: ReactNode;
@@ -9,10 +10,13 @@ export interface CardProps {
   as?: 'div' | 'article' | 'li';
 }
 
-/** Marketing glass surface — the base panel for feature/pricing/testimonial blocks. */
+/** Marketing glass surface — a thin wrapper over the canonical root `Card` (the
+ *  polymorphic `as` lives there now) with the roomier marketing padding scale
+ *  (`.lk-mk-card`). Export + props kept for the marketing app. */
 export function Card({ children, className, hover = false, as = 'div' }: CardProps) {
-  const Tag = as;
   return (
-    <Tag className={cn('lk-card', 'lk-mk-card', hover && 'lk-hover', className)}>{children}</Tag>
+    <RootCard as={as} hover={hover} className={cn('lk-mk-card', className)}>
+      {children}
+    </RootCard>
   );
 }

@@ -64,6 +64,11 @@
 .lk-hr { height: 1px; border: 0; background: var(--border); margin: 0; }
 .lk-hr-grad { height: 1px; border: 0; background: linear-gradient(90deg, transparent, var(--border-2), transparent); }
 
+/* labeled divider — hairline · centered label · hairline (the "or continue with" pattern) */
+.lk-hr-labeled { display: flex; align-items: center; gap: 12px; width: 100%; }
+.lk-hr-labeled .lk-hr-line { flex: 1; height: 1px; background: var(--border); }
+.lk-hr-label { flex: none; font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
+
 /* ---- layout helpers ---- */
 .lk-wrap { width: min(1240px, 92vw); margin-inline: auto; }
 .lk-row { display: flex; gap: 16px; }

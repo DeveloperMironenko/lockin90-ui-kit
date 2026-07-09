@@ -4,8 +4,8 @@
 > **Source:** `packages/ui/src/components/RadarChart.tsx` · `packages/ui-native/src/components/RadarChart.tsx` ·
 > no web CSS partner — the SVG is styled entirely via inline attributes/style (`.lk-radar` is a bare hook class).
 > **Exports:** `RadarChart`, types `RadarChartProps`, `RadarVariant`, `RadarFill`, `RadarSeries`.
-> **Status:** Shipped. **Parity:** 🟡 same API & geometry; `shine` is a `blur(5px)` wider duplicate edge on web vs an
-> unblurred wider faint duplicate on native (RN SVG filters are patchy), and the gradient fill's glow color is solid accent on native.
+> **Status:** Shipped. **Parity:** 🟡 same API & geometry; `shine` is a `blur(5px)` wider duplicate edge on web vs a
+> Gaussian-blurred duplicate on native (`FeGaussianBlur`), and the gradient fill's glow color is solid accent on native.
 > **Stories:** `packages/ui/src/stories/RadarChart.stories.tsx` (`Charts/RadarChart`) · `packages/ui-native/src/stories/RadarChart.stories.tsx` (`Native/RadarChart`).
 
 ---
@@ -75,7 +75,7 @@ Minis: `R 30`, centers `x 62 + i·98` (62/160/258), captions at `y 127` (center+
 | Trail (RD-06) | per-set opacity `0.3 + 0.25·i`, newest `1` (catalog 30→55→100%); width 1.4, newest 2; no fills; dots + shine on the newest only; pill `'W1 → Wn'` |
 | Minis (RD-07) | edge width 1.6, no dots, fill 0.13; frame without labels; `--text-faint` day captions |
 | Pills (catalog `tag()`) | rect w `len·5.35+12`, h 13, rx 6.5, fill `--bg-0` @ 78% (native `${colors.bg0}C7` — the catalog's `rgba(8,10,18,0.78)`), stroke = pill color @ 0.35, width 0.8; centered **8px** mono text (tracking `.05em` / native `0.4`); end-anchored at x 304, y 26 (+ 42 for the overlay); x clamps into the padded box |
-| Shine | web: duplicate edge, width `w+5`, round-join, opacity **0.45**, `style="filter: blur(5px)"` (the catalog `C.blur`); native: same duplicate at opacity **0.2**, no blur |
+| Shine | web: duplicate edge, width `w+5`, round-join, opacity **0.45**, `style="filter: blur(5px)"` (the catalog `C.blur`); native: same duplicate at opacity **0.45**, `FeGaussianBlur stdDeviation 2.5` |
 | Sizing | fixed `width`/`height` px on both platforms (web `<svg width height>` · native `View {width,height}` + `Svg`), default 320×150 |
 
 ## 4. States
@@ -97,11 +97,10 @@ Pure render — no hover/press/focus/disabled states, no client hooks (only `use
 draw order (both port the same catalog `frame()`/`shape()`/`draw()`). The real differences:
 
 - **Shine substrate** — web draws a width `w+5` duplicate edge at opacity 0.45 under `filter: blur(5px)` (the
-  catalog's `C.blur`); native draws the **same wider duplicate at opacity 0.2 with no blur**, because RN SVG filters
-  are unreliable on device (Ring SDD precedent). Softness-only diff; does not block use.
+  catalog's `C.blur`); native draws the **same duplicate at opacity 0.45 under `FeGaussianBlur stdDeviation 2.5`**
+  (see CONVENTIONS.md). Softness-only diff; does not block use.
 - **Gradient glow color** — with `fillStyle="gradient"` the web glow duplicate is stroked by the gradient itself
-  (blur softens it); native substitutes solid `colors.accent` for the duplicate (`glowColor`) since there is no blur
-  to soften a hard gradient edge.
+  (blur softens it); native substitutes solid `colors.accent` for the duplicate (`glowColor`).
 - **Label styling channel** — web styles `<text>` via inline `style` (`--font-mono`, `.06em`/`.05em`); native passes
   `fontFamily/letterSpacing` props on `Svg.Text` (`0.5`/`0.4` ≈ the same tracking at 8.5/8px).
 - **Container** — web root `<svg role="img" aria-label=…>` + `className`/rest; native `View accessibilityRole="image"`

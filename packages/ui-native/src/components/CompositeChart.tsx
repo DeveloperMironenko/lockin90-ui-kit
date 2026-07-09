@@ -1,14 +1,15 @@
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { View, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* CompositeChart — the catalog composite family (CM-01/03/05/07,
    lockin90-design/charts/composite-charts.html): density + structure charts —
    treemaps, horizon rows, calendar micro-charts and goal trees, drawn in the
    fixed 320×150 catalog viewBox. Native twin of `@lockin90/ui`
-   CompositeChart — same prop API + geometry; every `shine` glow is a wider
-   faint duplicate shape (never SVG filters), like `Ring`. */
+   CompositeChart — same prop API + geometry; every `shine` glow is a real
+   Gaussian-blurred duplicate shape (Fabric-native SVG filters in
+   react-native-svg 15). */
 
 /** Catalog variant names (`lockin90-design/charts/composite-charts.html`). */
 export type CompositeChartVariant =
@@ -334,7 +335,7 @@ function Tag({
  * CompositeChart — the kit's density/structure composite (catalog family
  * `composite-charts`, CM-01/03/05/07): many numbers in one compact canvas.
  * Native twin of `@lockin90/ui` CompositeChart — same prop API + geometry;
- * `shine` glows are wider faint duplicate shapes (no blur filters).
+ * `shine` glows are real Gaussian-blurred duplicate shapes.
  *
  * - `treemap` (CM-01, default) — nested rounded rects, 28% fills + tinted
  *   borders; SELECT `coloring`: `time` hues / `zone` verdicts.
@@ -362,6 +363,8 @@ export function CompositeChart({
   height = H,
   style,
 }: CompositeChartProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-cm-blur-${uid}`;
   const heading = title ?? DEFAULT_TITLES[variant];
 
   let accessibilityLabel: string;
@@ -392,9 +395,19 @@ export function CompositeChart({
           const rh = h * bh - 3;
           return (
             <G key={i}>
-              {/* hero-tile glow — slightly larger faint duplicate (web: blur) */}
+              {/* hero-tile glow — a Gaussian-blurred duplicate behind the tile
+                  (the web tile's `blur(6px)` underlay) */}
               {shine && item.value > 20 ? (
-                <Rect x={(rx2 - 3).toFixed(1)} y={(ry - 3).toFixed(1)} width={(rw + 6).toFixed(1)} height={(rh + 6).toFixed(1)} rx={8} fill={col} opacity={0.22} />
+                <Rect
+                  x={rx2.toFixed(1)}
+                  y={ry.toFixed(1)}
+                  width={rw.toFixed(1)}
+                  height={rh.toFixed(1)}
+                  rx={6}
+                  fill={col}
+                  opacity={0.5}
+                  filter={`url(#${blurId})`}
+                />
               ) : null}
               <Rect
                 x={rx2.toFixed(1)}
@@ -545,8 +558,11 @@ export function CompositeChart({
             />
           );
         })}
-        {/* root glow — wider faint duplicate circle (web: blurred) */}
-        {shine ? <Circle cx={rootPos.x} cy={rootPos.y} r={19} fill={rootCol} opacity={0.25} /> : null}
+        {/* root glow — a Gaussian-blurred duplicate circle (the web root's
+            `blur(6px)` underlay) */}
+        {shine ? (
+          <Circle cx={rootPos.x} cy={rootPos.y} r={15} fill={rootCol} opacity={0.5} filter={`url(#${blurId})`} />
+        ) : null}
         <Path d={arcPath(rootPos.x, rootPos.y, 14, 0, 359.99)} fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth={4.5} />
         <Path d={arcPath(rootPos.x, rootPos.y, 14, 0, rootFrac * 360)} fill="none" stroke={rootCol} strokeWidth={4.5} strokeLinecap="round" />
         <SvgText x={rootPos.x} y={rootPos.y + 4} fill={colors.text} fontSize={10} textAnchor="middle" fontWeight="700" fontFamily={fonts.display}>
@@ -575,6 +591,16 @@ export function CompositeChart({
   return (
     <View accessibilityRole="image" accessibilityLabel={accessibilityLabel} style={[{ width, height }, style]}>
       <Svg width={width} height={height} viewBox={`0 0 ${W} ${H}`}>
+        {shine ? (
+          /* real Gaussian blur for the glows (Fabric-native in react-native-svg
+             15) — the native twin of the web `blur(6px)` underlays. Region in
+             user space over the full canvas so flat tiles never clip the blur. */
+          <Defs>
+            <Filter id={blurId} filterUnits="userSpaceOnUse" x={-12} y={-12} width={W + 24} height={H + 24}>
+              <FeGaussianBlur stdDeviation={3} />
+            </Filter>
+          </Defs>
+        ) : null}
         <Label x={P.l + 2} y={11} text={heading} anchor="start" />
         {content}
       </Svg>

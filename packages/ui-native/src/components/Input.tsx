@@ -85,7 +85,10 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: fonts.ui,
     fontSize: 14,
-    lineHeight: 20,
+    // Center the value/placeholder: drop the explicit lineHeight (it top/bottom-biases
+    // the glyph in a single-line TextInput) + Android font-padding/vertical-align props.
+    textAlignVertical: 'center',
+    includeFontPadding: false,
   },
   inputSm: { fontSize: 12.5 },
   unit: { flexShrink: 0, fontFamily: fonts.mono, fontSize: 11, color: colors.textFaint },

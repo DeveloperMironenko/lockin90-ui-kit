@@ -31,6 +31,14 @@ export const Flat: Story = {
   ),
 };
 
+export const InferredFromNumber: Story = {
+  render: () => (
+    <View style={{ alignItems: 'flex-start' }}>
+      <DeltaPill value={8} />
+    </View>
+  ),
+};
+
 export const Small: Story = {
   render: () => (
     <View style={{ alignItems: 'flex-start' }}>
@@ -43,6 +51,14 @@ export const IconOnly: Story = {
   render: () => (
     <View style={{ alignItems: 'flex-start' }}>
       <DeltaPill value="+1" iconOnly />
+    </View>
+  ),
+};
+
+export const ForcedTone: Story = {
+  render: () => (
+    <View style={{ alignItems: 'flex-start' }}>
+      <DeltaPill value="+22%" direction="down" tone="down" />
     </View>
   ),
 };

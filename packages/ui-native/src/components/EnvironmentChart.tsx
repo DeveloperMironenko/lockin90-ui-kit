@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { View, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /** Catalog variant names (`lockin90-design/charts/environment-charts.html`, EN-01…EN-04). */
@@ -59,8 +59,7 @@ export interface EnvironmentChartProps {
    *  `outdoor-window` 'ALL THREE LOW = GO OUTSIDE'. `''` hides it. */
   caption?: string;
   /** glow underlay behind the sun arc (catalog shine — `sun-uv-arc` only,
-   *  like the catalog) — a wider faint duplicate stroke on native, never SVG
-   *  filters */
+   *  like the catalog) — a Gaussian-blurred duplicate stroke on native */
   shine?: boolean;
   /** rendered width in px — the 320×150 viewBox scales to fit */
   width?: number;
@@ -266,7 +265,8 @@ function HoursUnder({ x0, cw, y, startHour }: { x0: number; cw: number; y: numbe
  * EN-01…EN-04): UV, pollen, air — when to train outside. Native twin of
  * `@lockin90/ui` EnvironmentChart — same prop API + geometry; the web SMIL
  * NOW-pulse is a static dot + faint halo ring here, and the sun-arc `shine`
- * glow is a wider faint duplicate stroke (never SVG filters), like `Ring`.
+ * glow is a real Gaussian-blurred duplicate stroke (Fabric-native SVG
+ * filters in react-native-svg 15).
  *
  * - `sun-uv-arc` (EN-01, default) — the sun path sunrise→sunset, 40 segments
  *   colored by UV (cyan low / amber mid / coral high) + NOW pulse on the arc +
@@ -312,6 +312,8 @@ export function EnvironmentChart({
   height = H,
   style,
 }: EnvironmentChartProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-env-blur-${uid}`;
   const heading = title ?? DEFAULT_TITLES[variant];
   const hint = caption ?? DEFAULT_CAPTIONS[variant];
 
@@ -331,6 +333,16 @@ export function EnvironmentChart({
     content = (
       <>
         <Label x={P.l + 2} y={11} text={heading} anchor="start" />
+        {shine ? (
+          /* real Gaussian blur for the arc shine (Fabric-native in react-native-svg
+             15) — the native twin of the web segments' `blur(5px)`. Region in user
+             space over the full canvas so flat segments never clip the blur. */
+          <Defs>
+            <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+              <FeGaussianBlur stdDeviation={2.5} />
+            </Filter>
+          </Defs>
+        ) : null}
         <Line x1={P.l} x2={W - P.r} y1={HORIZON} y2={HORIZON} stroke={HORIZON_STROKE} strokeWidth={1} />
         {Array.from({ length: SEGMENTS }, (_, i) => {
           const t0 = i / SEGMENTS;
@@ -340,7 +352,8 @@ export function EnvironmentChart({
           const c = uvColor(Math.sin(((t0 + t1) / 2) * Math.PI) * peakUv);
           return (
             <G key={i}>
-              {/* shine = wider faint duplicate segment (web blurs it) */}
+              {/* shine — a Gaussian-blurred duplicate segment behind the crisp one
+                  (the web segment's `blur(5px)` underlay) */}
               {shine ? (
                 <Line
                   x1={a.x.toFixed(1)}
@@ -350,7 +363,8 @@ export function EnvironmentChart({
                   stroke={c}
                   strokeWidth={8}
                   strokeLinecap="round"
-                  opacity={0.2}
+                  opacity={0.4}
+                  filter={`url(#${blurId})`}
                 />
               ) : null}
               <Line

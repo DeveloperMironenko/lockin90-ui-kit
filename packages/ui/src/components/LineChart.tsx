@@ -343,6 +343,20 @@ function patternDash(p: LinePattern | undefined): string | undefined {
   return undefined;
 }
 
+/** estimated chip-pill width (px): ~5.35px per 8px-mono glyph + padding — the
+ *  same `tag()` estimate the SVG chart families use for their pills. */
+const chipWidth = (text: string) => text.length * 5.35 + 12;
+
+/** chip x-anchoring: centered on the point, flipped to 'end'/'start' when the
+ *  pill's half-width would cross the plot edge (e.g. a series label anchored
+ *  on the last point), so edge-hugging pills stay fully inside the plot. */
+function chipAlign(x: number, text: string): 'start' | 'center' | 'end' {
+  const half = chipWidth(text) / 2;
+  if (x + half > VB_W) return 'end';
+  if (x - half < 0) return 'start';
+  return 'center';
+}
+
 const isUrlRef = (s: string) => s.startsWith('url(');
 
 /* ---------------- variant presets (the catalog CFG, tokens only) ---------------- */
@@ -518,6 +532,7 @@ interface OChip {
   y: number;
   text: string;
   color: string;
+  align: 'start' | 'center' | 'end';
 }
 interface OPulse {
   x: number;
@@ -807,7 +822,13 @@ export function LineChart({
   labels?.forEach((L) => {
     const q = pts[clampIdx(L.index)];
     if (!q) return;
-    oChips.push({ x: q[0], y: q[1] + (L.dy ?? -12), text: L.text, color: L.color ?? 'var(--text-dim)' });
+    oChips.push({
+      x: q[0],
+      y: q[1] + (L.dy ?? -12),
+      text: L.text,
+      color: L.color ?? 'var(--text-dim)',
+      align: chipAlign(q[0], L.text),
+    });
   });
 
   /* ---- overlay series (LC-39/41/42/44/56) ---- */
@@ -821,7 +842,13 @@ export function LineChart({
     const d = pathFor(sPts, s.curve ?? curveKind);
     if (s.label && sPts.length > 0) {
       const li = Math.max(0, Math.min(sPts.length - 1, s.labelIndex ?? sPts.length - 1));
-      oChips.push({ x: sPts[li][0], y: sPts[li][1] + (s.labelDy ?? -12), text: s.label, color: sColor });
+      oChips.push({
+        x: sPts[li][0],
+        y: sPts[li][1] + (s.labelDy ?? -12),
+        text: s.label,
+        color: sColor,
+        align: chipAlign(sPts[li][0], s.label),
+      });
     }
     return { d, sColor, sW, sDash, sOpacity, sPts, key: i };
   });
@@ -1219,7 +1246,23 @@ export function LineChart({
           </span>
         ))}
         {oChips.map((c, i) => (
-          <span key={`vc-${i}`} className="lk-lc-chip" style={{ left: ox(c.x), top: oy(c.y), color: c.color }}>
+          <span
+            key={`vc-${i}`}
+            className="lk-lc-chip"
+            style={{
+              left: ox(c.x),
+              top: oy(c.y),
+              color: c.color,
+              // edge-anchored pills hang inward from their point instead of
+              // centering on it (the CSS default), so they never clip
+              transform:
+                c.align === 'end'
+                  ? 'translate(-100%, -50%)'
+                  : c.align === 'start'
+                    ? 'translate(0, -50%)'
+                    : undefined,
+            }}
+          >
             {c.text}
           </span>
         ))}

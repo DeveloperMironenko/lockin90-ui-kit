@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/Hypnogram.tsx` · `packages/ui-native/src/components/Hypnogram.tsx` ·
 > web CSS `packages/ui/src/styles/components/hypnogram.css` (`.lk-hyp*`).
 > **Exports:** `Hypnogram`, types `SleepStage`, `HypnogramSegment`, `HypnogramProps`, `HypnogramVariant`, `EfficiencyInterval`, `SleepNight` (the three new types await their `src/index.ts` re-export line — index owned by the charts-program integrator).
-> **Status:** Shipped. **Parity:** 🟡 same API/visual; web stretch-SVG + %-positioned HTML overlays vs native measured-width SVG + px-positioned RN overlays; web `ariaLabel` prop native lacks; shine = CSS glow (web) vs wider faint duplicate shapes (native).
+> **Status:** Shipped. **Parity:** 🟡 same API/visual; web stretch-SVG + %-positioned HTML overlays vs native measured-width SVG + px-positioned RN overlays; web `ariaLabel` prop native lacks; shine = CSS glow (web) vs Gaussian-blurred duplicate shapes (native `FeGaussianBlur`).
 > **Stories:** `packages/ui/src/stories/Hypnogram.stories.tsx` · `packages/ui-native/src/stories/Hypnogram.stories.tsx` (`SL01Shine`, `SL04EfficiencyBars`, `SL05SleepWeek`, `SL06BedtimeDrift`, `SL07NightCoach`, `SL07DataOnly`).
 
 ---
@@ -81,7 +81,7 @@ Secondary type exports: **`SleepStage`** `'awake'|'rem'|'light'|'deep'`; **`Hypn
 | Side/day labels | `.lk-hyp-side` 10px · `.lk-hyp-day` 9.5px `var(--text-faint)` mono | `fonts.mono`, `colors.textFaint` |
 | Stage/axis labels | 10px / 9.5px `var(--font-mono)` `var(--text-faint)` | `fonts.mono`, `colors.textFaint` |
 | Shine (web) | `--lk-hyp-glow` set inline per mark → `drop-shadow(0 0 7px …)` on rects, `box-shadow 0 0 8px` on dots (same pattern as `.lk-ring-arc`'s `--lk-ring-glow`) | — |
-| Shine (native) | — | wider faint duplicates: capsules +`SHINE_PAD 4`/side op `0.35`; SL-04/05 bars +2/side; dots 16px halo op `0.35` — **never SVG filters** (Ring precedent) |
+| Shine (native) | — | Gaussian-blurred duplicates (`FeGaussianBlur stdDeviation 3.5`): capsules +`SHINE_PAD 4`/side op `0.5`; SL-04/05 bars +2/side; dots a real `boxShadow 0 0 8px` glow |
 | SVG | `preserveAspectRatio="none"`, `width:100%`, `overflow:visible` | `preserveAspectRatio="none"`, width = measured (− gutter when staged) |
 
 ## 4. States
@@ -105,7 +105,7 @@ No hover/focus/disabled — presentational.
 
 - **SVG sizing:** web fixed `viewBox 0 0 560 height` + `preserveAspectRatio="none"` stretch; native measures via `onLayout` and sizes the Svg (same viewBox, same non-uniform stretch). Same result.
 - **Overlays:** tags, dots, day letters and BED/WAKE labels are HTML positioned by `%` (web) vs RN Views positioned in px from the measured width (native) — substrate-only; keeps text/dots undistorted on both.
-- **Shine:** web = CSS `drop-shadow`/`box-shadow` in the mark's color; native = a wider, fainter duplicate shape behind the mark (RN cannot do SVG filters — same approach as native `Ring`'s glow arc, `strokeWidth + 8`, `strokeOpacity 0.35`).
+- **Shine:** web = CSS `drop-shadow`/`box-shadow` in the mark's color; native = a Gaussian-blurred, fainter duplicate shape behind the mark (`FeGaussianBlur stdDeviation 3.5`, op `0.5` — see CONVENTIONS.md); dots get a real `boxShadow 0 0 8px` glow.
 - **`ariaLabel` prop:** web only; native wraps with `accessibilityLabel`.
 - **Capsule gradient tail:** web `0.95 → 0.6`, native `0.95 → 0.85` (intentional brightness fix, pre-existing). Minor.
 
@@ -159,5 +159,5 @@ No capability gap — fully usable on both.
 - **No lookalikes.** A custom capsules-on-bands SVG, a hand-made diverging asleep/awake bar strip, or a bed/wake dot plot duplicates this primitive — import `Hypnogram` with the right `variant`.
 - **New need → add to BOTH platforms.** A new sleep variant, tag position, or state goes into web + native in the same change with the same prop names and tokens — never a one-off.
 - **Tokens only.** All mark/tag/label colors come from `@lockin90/tokens`; the shine glow inherits the mark's own token color.
-- **Native glow rule.** Never reach for `react-native-svg` filters — shine is a wider, fainter duplicate shape (see §3), the documented Ring approach.
+- **Native glow rule.** Shine is a Gaussian-blurred, fainter duplicate shape via `FeGaussianBlur` (see §3 and CONVENTIONS.md).
 - **Parity gate.** Before shipping a screen, confirm web phone-width ≡ native for the chosen variant: same bars/dots/tags, same colors, same day letters, same axis row.

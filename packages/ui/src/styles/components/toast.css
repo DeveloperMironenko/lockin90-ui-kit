@@ -1,7 +1,9 @@
 /* ============================================================================
-   Toast + Badge — a compact floating notification card and a tiny count/status
-   pill. Both are tone-driven; the Toast tints its icon + a subtle left accent
-   rail, the Badge fills in the tone color (or renders as a glowing dot).
+   Toast — a compact floating notification card. Tone-driven: it tints its icon
+   + a subtle left accent rail.
+
+   (`Badge` used to live here too; it is now a thin wrapper over `Chip` at its
+   `sm` size — see `.lk-chip-sm*` in primitives.css.)
    ========================================================================== */
 
 /* ---- Toast: compact floating glass card ---- */
@@ -84,48 +86,3 @@
 
 .lk-toast-danger .lk-toast-icon { color: var(--zone-low); }
 .lk-toast-danger::before { background: var(--zone-low); }
-
-/* ---- Badge: tiny count/status pill ---- */
-.lk-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 16px;
-  height: 16px;
-  padding: 2px 6px;
-  border-radius: var(--r-pill);
-  border: 1px solid transparent;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.lk-badge-accent {
-  color: #0A0A12;
-  background: var(--grad-cta);
-  border-color: transparent;
-}
-.lk-badge-high { color: var(--zone-high); background: rgba(52, 245, 197, 0.10); border-color: rgba(52, 245, 197, 0.35); }
-.lk-badge-mid { color: var(--zone-mid); background: rgba(255, 176, 32, 0.10); border-color: rgba(255, 176, 32, 0.35); }
-.lk-badge-low { color: var(--zone-low); background: rgba(255, 77, 109, 0.10); border-color: rgba(255, 77, 109, 0.35); }
-.lk-badge-neutral { color: var(--text-dim); background: var(--glass-2); border-color: var(--border); }
-
-/* dot variant: a small glowing circle, no text */
-.lk-badge-dot {
-  min-width: 0;
-  width: 8px;
-  height: 8px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: currentColor;
-  box-shadow: 0 0 8px currentColor;
-}
-.lk-badge-dot.lk-badge-accent { color: var(--accent); background: currentColor; }
-.lk-badge-dot.lk-badge-high { color: var(--zone-high); background: currentColor; }
-.lk-badge-dot.lk-badge-mid { color: var(--zone-mid); background: currentColor; }
-.lk-badge-dot.lk-badge-low { color: var(--zone-low); background: currentColor; }
-.lk-badge-dot.lk-badge-neutral { color: var(--text-faint); background: currentColor; box-shadow: none; }

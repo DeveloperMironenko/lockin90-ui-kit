@@ -1,6 +1,6 @@
 import { useId, type ReactNode } from 'react';
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, Defs, G, LinearGradient, Stop } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, LinearGradient, Stop } from 'react-native-svg';
 import { colors, fonts, radii } from '@lockin90/tokens';
 
 /** Zone verdict color for a 0–100 value (same thresholds as the chart catalog). */
@@ -94,7 +94,7 @@ export function Ring({
   const v = Math.max(0, Math.min(100, value));
   // reserve the glow's overhang (a wider stroke than the arc) so neither the arc
   // nor its halo clips against the square SVG viewBox
-  const glowPad = glow ? 5 : 0;
+  const glowPad = glow ? 8 : 0;
   const r = (size - sw) / 2 - glowPad;
 
   const useGradient = Array.isArray(gradient) && !zone;
@@ -134,8 +134,8 @@ export function Ring({
   return (
     <View style={[styles.root, { width: size, height: size }, style]}>
       <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        {useGradient ? (
-          <Defs>
+        <Defs>
+          {useGradient ? (
             <LinearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
               {gradient.map((stopColor, i) => (
                 <Stop
@@ -145,8 +145,16 @@ export function Ring({
                 />
               ))}
             </LinearGradient>
-          </Defs>
-        ) : null}
+          ) : null}
+          {glow ? (
+            /* real Gaussian blur for the halo (Fabric-native in react-native-svg 15) —
+               the native twin of the web arc's `filter: drop-shadow(0 0 8px glow)`.
+               Region padded generously so the blur isn't clipped at the arc's bbox. */
+            <Filter id={`${gradId}-blur`} x="-40%" y="-40%" width="180%" height="180%">
+              <FeGaussianBlur stdDeviation={6} />
+            </Filter>
+          ) : null}
+        </Defs>
         {rings.map((ring, i) => {
           const c = 2 * Math.PI * ring.r;
           const dashOffset = c * (1 - ring.v / 100);
@@ -163,9 +171,10 @@ export function Ring({
                 strokeDasharray={dashedTrack ? [2, 5] : undefined}
                 strokeLinecap={dashedTrack ? 'butt' : undefined}
               />
-              {/* glow — a wider, faint copy of the progress arc behind it, so the
-                  halo follows the circular ring (not a square box shadow). Avoids
-                  <Filter>/<FeGaussianBlur>, which is patchy on device. */}
+              {/* glow — a Gaussian-blurred duplicate of the progress arc behind it:
+                  the same soft halo the web arc gets from `drop-shadow(0 0 8px …)`.
+                  (Discrete concentric "feather" copies read as banded outlines on
+                  device — a real blur is the only thing that looks like a blur.) */}
               {glow ? (
                 <Circle
                   cx={half}
@@ -173,14 +182,15 @@ export function Ring({
                   r={ring.r}
                   fill="none"
                   stroke={ring.stroke}
-                  strokeWidth={sw + 8}
-                  strokeOpacity={0.35}
+                  strokeWidth={sw + 2}
+                  strokeOpacity={0.55}
                   strokeLinecap="round"
                   strokeDasharray={c}
                   strokeDashoffset={dashOffset}
                   rotation={-90}
                   originX={half}
                   originY={half}
+                  filter={`url(#${gradId}-blur)`}
                 />
               ) : null}
               {/* progress arc — rotated −90° to start at 12 o'clock */}

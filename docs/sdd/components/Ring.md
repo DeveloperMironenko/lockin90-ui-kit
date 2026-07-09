@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/Ring.tsx` · `packages/ui-native/src/components/Ring.tsx` ·
 > web CSS `packages/ui/src/styles/components/ring.css` (`.lk-ring*`).
 > **Exports:** `Ring`, type `RingProps`.
-> **Status:** Shipped (extended with the catalog score-ring family, DN-01…DN-09). **Parity:** 🟡 same API & look; glow is a CSS `drop-shadow` on web vs a wider faint duplicate arc on native, web animates the arc sweep + pulse wave (native pulse is a static dot + halo).
+> **Status:** Shipped (extended with the catalog score-ring family, DN-01…DN-09). **Parity:** 🟡 same API & look; glow is a CSS `drop-shadow` on web vs a Gaussian-blurred duplicate arc on native (real RN-SVG Fabric filters — see CONVENTIONS.md), web animates the arc sweep + pulse wave (native pulse is a static dot + halo).
 > **Stories:** `packages/ui/src/stories/Ring.stories.tsx` · `packages/ui-native/src/stories/Ring.stories.tsx` (catalog stories named `DN01ScoreRing` … `DN09DeltaRing`).
 
 ---
@@ -64,13 +64,13 @@ Higher-level rings (`Gauge`, `PhaseWheel`) are radial siblings; reach for `Ring`
 | Track circle | `stroke=trackColor`, width `thickness`; `dashed-track` → `stroke-dasharray "2 5"` | same; dashes `[2, 5]` + `strokeLinecap="butt"` |
 | Arc | round linecap, `dasharray=c`, `dashoffset=c·(1−v/100)` per ring | same; explicit `rotation={-90}` per circle |
 | Rotation | whole `<svg>` `transform: rotate(-90deg)` | per-`<Circle>` `rotation={-90}`; pulse dot pre-rotated (−90° in the angle math) |
-| Glow | `drop-shadow(0 0 8px var(--lk-ring-glow))` per arc | wider faint duplicate arc (`strokeWidth+8`, opacity 0.35) per ring |
+| Glow | `drop-shadow(0 0 8px var(--lk-ring-glow))` per arc | Gaussian-blurred duplicate arc per ring (`FeGaussianBlur` stdDev 6, `strokeWidth+2` @ 0.55) |
 | Pulse dot (DN-08) | `.lk-ring-pulse-dot` r3.6 + `drop-shadow(0 0 5px …)`; `.lk-ring-pulse-wave` scales 1→3 / fades over 1.8s (CSS keyframes, `transform-box: fill-box`) | static dot r3.6 + static halo ring r7 at 40% |
 | Reduced motion | `@media (prefers-reduced-motion: reduce)` hides the wave | n/a (already static) |
 | Delta chip (DN-09) | `.lk-ring-delta`: 9px `--font-mono`, `color-mix(var(--bg-0) 78%)` bg, 1px `color-mix(deltaColor 35%)` hairline, `--r-pill` | `${colors.bg0}C7` bg, `${deltaColor}59` border, `radii.pill` |
 | Center number | `--font-display` 700 32px `--text` (`.lk-ring-num`); `zone` → inline zone color | `fonts.display` 700 32px `colors.text`; `zone` → zone color |
 
-- **Radius:** web `r = (size − thickness)/2`; native subtracts `glowPad = glow ? 5 : 0` so the halo never clips (documented drift).
+- **Radius:** web `r = (size − thickness)/2`; native subtracts `glowPad = glow ? 8 : 0` so the blurred halo never clips (documented drift).
 
 ## 4. States
 
@@ -90,8 +90,8 @@ Static, read-only — no hover/focus/disabled.
 
 **Verdict: 🟡 same API, platform-shaped glow + motion.** Identical props, arc math, ring stacking, gradient handling, zone thresholds, −90° start, chip styling and 32px center. Substrate differences:
 
-- **Glow:** web CSS `drop-shadow` per arc; native wider faint duplicate arc (RN SVG filters are patchy on device).
-- **Glow padding:** native shrinks `r` by 5px when `glow` — marginally smaller ring, accepted.
+- **Glow:** web CSS `drop-shadow` per arc; native a **real Gaussian-blurred duplicate arc** (`<Filter><FeGaussianBlur stdDeviation={6}>`, Fabric-native in react-native-svg 15) — visually equivalent halo.
+- **Glow padding:** native shrinks `r` by 8px when `glow` — marginally smaller ring, accepted.
 - **Pulse:** web animates the expanding wave (CSS, reduced-motion safe); native draws a static dot + faint halo — no animation precedent in native kit charts.
 - **Animation:** web tweens the arc sweep; native renders final state.
 - **Color literals:** web accepts `var()`; native needs hex (the delta chip appends hex alpha suffixes — pass hex `deltaColor`).

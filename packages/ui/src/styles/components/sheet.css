@@ -3,7 +3,8 @@
    full-width, anchored to the bottom edge, rounded top corners, with a centered
    drag-handle pill; right/left variants are full-height ~360px edge panels.
    Optional font-display title, padded scrollable body. Slides in via a
-   transform on the `is-open` class. Closes on scrim click + ESC.
+   transform on the `is-open` class. Closes on scrim click + ESC; the bottom
+   variant also dismisses by dragging its header strip (handle + title) down.
    ========================================================================== */
 .lk-sheet-scrim {
   position: fixed;
@@ -46,7 +47,25 @@
   transform: translateY(0);
 }
 
+/* Draggable header strip (handle + title) of the bottom sheet. Negative
+   margin + matching padding extend the hit area to the panel's top edge
+   without shifting content. Drag down to dismiss. */
+.lk-sheet-grab {
+  display: flex;
+  flex-direction: column;
+  margin: -8px -16px 0;
+  padding: 8px 16px 0;
+  touch-action: none;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.lk-sheet-grab:active {
+  cursor: grabbing;
+}
+
 .lk-sheet-handle {
+  display: block;
   width: 40px;
   height: 4px;
   margin: 2px auto 10px;

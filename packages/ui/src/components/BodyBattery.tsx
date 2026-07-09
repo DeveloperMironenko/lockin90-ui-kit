@@ -450,7 +450,8 @@ export function BodyBattery({
           />
         ) : null}
         <rect x={bx + 3} y={by + 3} width={rd(fillW)} height={bh - 6} rx={rd(bh * 0.16)} fill={col} opacity={0.9} />
-        {isCharging ? <Bolt x={bx + bw / 2 - 3} y={rd(by + bh * 0.16)} s={bh / 16} color="var(--bg-0)" /> : null}
+        {/* charging is conveyed by the ETA caption alone — the in-glyph bolt was
+            dropped (too large at this scale, and black-on-black below ~50% fill). */}
         <text className="lk-bb-big" x={206} y={84} fill={col}>
           {`${Math.round(lv * 100)}%`}
         </text>

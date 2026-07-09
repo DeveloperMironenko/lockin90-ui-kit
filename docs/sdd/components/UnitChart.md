@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/UnitChart.tsx` · `packages/ui-native/src/components/UnitChart.tsx` ·
 > web CSS `packages/ui/src/styles/components/unitchart.css` (`.lk-unit*`).
 > **Exports:** `UnitChart`, types `UnitChartProps`, `UnitChartVariant`, `UnitSegment`, `UnitPictogramRow`, `UnitPictogramIcon`, `UnitHabitRow`.
-> **Status:** Shipped. **Parity:** 🟡 same API & look; the UN-01 TODAY pulse animates on web (CSS ring) but is a static duplicate halo on native, and `shine` blurs on web vs a wider faint duplicate on native.
+> **Status:** Shipped. **Parity:** 🟡 same API & look; the UN-01 TODAY pulse animates on web (CSS ring) but is a static duplicate halo on native; `shine` blurs on both (web CSS `blur` / native `FeGaussianBlur` Fabric filters).
 > **Stories:** `packages/ui/src/stories/UnitChart.stories.tsx` (`Charts/UnitChart`) · `packages/ui-native/src/stories/UnitChart.stories.tsx` (`Native/UnitChart`).
 
 ---
@@ -62,13 +62,13 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | Title / captions / day letters / counts | `--font-mono` / `fonts.mono`, **8.5** viewBox px, letter-spacing `.06em` (native `0.5`); title + captions `--text-faint`, tally labels `--text-dim`, counts in the row color |
 | Stat readout | `--font-display` / `fonts.display`, **12px / 700**, `--mint`, top-right at (`W−P.r−2`, 12) |
 | UN-01 grid | `columns` (15) × derived rows; gap 4; dot Ø `(298−30−4·(cols−1))/cols` ≈ 14.1; origin (`P.l+16`, `P.t+10`); filled = `color` at opacity `0.5 + 0.5·(i/done)` (the ramp), pending = `--glass-2`; TODAY (index `done`) = `--lime` pulse dot r 3.6 |
-| UN-02 grid | 10×10 cells 9.8px, gap 3, rx 2, opacity 0.9, centered block +20 right; unassigned cells `--glass-2`; legend dots r 4 at x 226, rows 22 apart, mono `'GOOD 52'` in `--text-dim` |
+| UN-02 grid | 10×10 cells 9.8px, gap 3, rx 2, opacity 0.9; grid block shifted **34 left of center** (`gx = W/2 − gridW/2 − 34` — the old `+20` right-shift ran its last columns under the legend; −34 keeps ≥36px clear); unassigned cells `--glass-2`; legend dots r 4 at x 226 (labels from x 236), rows 22 apart, mono `'GOOD 52'` in `--text-dim` |
 | UN-03 rows | rows 34 apart from `P.t+16`; label right-aligned at `P.l+74`; glyphs at `P.l+86 + u·26`, `scale(0.9)`, stroke 1.8 round, done opacity 1 / remaining **0.18**; count `done/total` after the row in the row color |
 | UN-04 strip | 7 dots r 10 at y `H/2+4`, x `P.l+34 + u·38`; done = fill `color` + dark check (`--bg-0`, stroke 2); pending = outline `--border-2` (catalog white-20%); day letters +24 below; chip-pill top-right |
 | UN-05 board | rows 30 apart from `P.t+18`; label right-aligned at `P.l+64` in the row hue; dots r 8 at `P.l+78 + d·30`, on = fill hue opacity 0.9 / off = outline `--border-2`; day letters at `H−4` |
 | Chip-pill (`note`) | catalog `tag()`: rect w `len·5.35+12`, h 13, rx 6.5, fill `--bg-0` at 78% (web `fillOpacity`, native alpha), tinted hairline stroke `0.35`/0.8px, centered 8px mono text; x clamped to `[P.l−4, W−P.r−w+4]` |
 | Pulse (UN-01 TODAY) | web `.lk-unit-pulsecore` (drop-shadow 5px currentColor) + `.lk-unit-pulsering` (r 3.6 → ×3.05, fade 0.8→0 over 1.8s, reduced-motion → hidden); native = static core r 3.6 + halo ring r 7 at strokeOpacity 0.4 |
-| Shine | web `filter: blur(4–5px)` faint duplicate circles (opacity 0.5); native wider faint duplicate at opacity 0.35 — never SVG filters |
+| Shine | faint duplicate circles blurred on both — web `filter: blur(4–5px)` (opacity 0.5); native `FeGaussianBlur` Fabric filter on the duplicate |
 | Sizing | web `.lk-unit-svg`: `width 100%; height auto; overflow visible`; native root: `width '100%', aspectRatio 320/150` |
 
 ## 4. States
@@ -89,7 +89,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks.
 **🟡 same API, platform-shaped implementation.** Identical geometry, ramp math, hue cycles and label layout (both compute from the same catalog constants). The real differences:
 
 - **TODAY pulse** — web animates the expanding ring via `.lk-unit-pulsering` CSS (and honors `prefers-reduced-motion`); native draws a **static duplicate halo** (r 7 ring at 0.4) because there is no cheap RN way to run the CSS pulse without Animated. Reads the same at a glance; motion differs.
-- **Shine substrate** — web blurs the duplicate (`filter: blur(4–5px)`); native draws the same duplicate **unblurred and fainter** (0.35 vs 0.5) — the `Ring` glow precedent; RN SVG filters are unreliable on device.
+- **Shine substrate** — web blurs the duplicate via CSS (`filter: blur(4–5px)`); native blurs the same duplicate with a **real `FeGaussianBlur` Fabric filter** (`userSpaceOnUse` region — see CONVENTIONS.md). Equivalent halos.
 - **Label styling channel** — web styles `<text>` via `.lk-unit-label` / `.lk-unit-tag` / `.lk-unit-stat`; native passes `fontSize/fontFamily/letterSpacing` props on `Svg.Text`.
 - **Container** — web `div[role=img]` + `className`/rest; native `View accessibilityRole="image"` + `style`.
 

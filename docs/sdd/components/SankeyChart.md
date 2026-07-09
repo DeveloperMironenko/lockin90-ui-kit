@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/SankeyChart.tsx` · `packages/ui-native/src/components/SankeyChart.tsx` ·
 > no web CSS partner — every visual is an inline SVG attribute/style (`styles/` is frozen; the root class `lk-sankey` is a hook only).
 > **Exports:** `SankeyChart`, types `SankeyChartProps`, `SankeyVariant`, `SankeyRibbonStyle`, `SankeyNode`, `SankeyLink`, `SankeyFactor`, `SankeyChord`.
-> **Status:** Built — not yet re-exported from `src/index.ts` (index wiring lands with the charts-program batch). **Parity:** 🟡 same API & geometry; `shine`/glow is CSS `blur`/`drop-shadow` on web vs wider faint duplicate shapes on native (RN SVG filters are unreliable on device).
+> **Status:** Built — not yet re-exported from `src/index.ts` (index wiring lands with the charts-program batch). **Parity:** 🟡 same API & geometry; `shine`/glow is CSS `blur`/`drop-shadow` on web vs Gaussian-blurred duplicate shapes on native (`FeGaussianBlur`, real RN-SVG Fabric filters).
 > **Stories:** `packages/ui/src/stories/SankeyChart.stories.tsx` (`Charts/SankeyChart`) · `packages/ui-native/src/stories/SankeyChart.stories.tsx` (`Native/SankeyChart`).
 
 ---
@@ -70,7 +70,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | Highlight (SK-09) | `highlight` link at **0.85**, all others **0.14** |
 | Chips (catalog `tag()`) | rect w `len·5.35+12`, h 13, rx 6.5, fill `--bg-0` @ 78% (web `color-mix`, native `${colors.bg0}C7`), stroke = chip color @ 0.35, width 0.8; centered **8px** mono text (tracking `.05em` / native `0.4`); x clamps into the padded box. Left chips start-anchored at node x+14, right chips end-anchored at node x−6, y = node center |
 | Chord (SK-13) | circle at (160, 83) r 46, stroke `--text` @ 7% (the catalog's white-7%), width 1; factors every `360/n`° from 12 o'clock; chords `M p1 Q center p2`, stroke = **source** factor color, width `strength × 0.9`, round caps, opacity **0.3**; dots r 5 + glow; chips at r 59, middle-anchored |
-| Shine | web: blurred clone under each ribbon (`blur(6px)` @ 0.35; chords `blur(5px)`, width +4, @ 0.3; factor dots `drop-shadow(0 0 4px color)` always); native: **wider faint duplicates** — ribbon re-drawn with `fillOpacity 0.22` + 6px stroke @ 0.18, chords width +5 @ 0.12, factor dots r 8 @ 0.3 under the r 5 dot |
+| Shine | web: blurred clone under each ribbon (`blur(6px)` @ 0.35; chords `blur(5px)`, width +4, @ 0.3; factor dots `drop-shadow(0 0 4px color)` always); native: **Gaussian-blurred duplicates** (`FeGaussianBlur`) — ribbon fill re-drawn @ 0.35 (`stdDeviation 3`), chords width +4 @ 0.3 (`stdDeviation 2.5`), factor dots r 5 @ 0.55 (`stdDeviation 2`) under the r 5 dot |
 | White-alpha mapping | catalog `rgba(8,10,18,…)` → `--bg-0`/`colors.bg0` alphas; `rgba(255,255,255,…)` → `--text`/`colors.text` alphas (chord ring 7%, SK-11 LOST 25%, glass 14%) |
 | Sizing | fixed `width`/`height` px on the `<svg>`/`Svg` (default 320×150); native wraps in a `View` of the same size |
 
@@ -92,7 +92,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks (`useId` o
 
 **🟡 same API, platform-shaped implementation.** Identical types, catalog demo data, geometry (`stack`/`ribbonPath`/`polar` are line-for-line the same math), colors, chip math, draw order and label fallbacks. The real differences:
 
-- **Shine/glow substrate** — web blurs a duplicate path (`filter: blur(6px)`, chords `blur(5px)`, dot `drop-shadow`); native draws **wider faint duplicate shapes** (ribbon fill+stroke dup, chord stroke +5, dot r 8 halo) because RN SVG filters are unreliable on device (Ring SDD precedent). Slightly softer edges on web; does not block use.
+- **Shine/glow substrate** — web blurs a duplicate path (`filter: blur(6px)`, chords `blur(5px)`, dot `drop-shadow`); native blurs **duplicate shapes** with real `FeGaussianBlur` filters (ribbon fill dup `stdDeviation 3`, chord +4 `stdDeviation 2.5`, dot `stdDeviation 2`; see CONVENTIONS.md). Slightly softer edges on web; does not block use.
 - **Label styling channel** — web sets `fontFamily`/`letterSpacing` via inline `style` on `<text>` (`.06em`/`.05em`); native passes `letterSpacing` props on `Svg.Text` (`0.5`/`0.4`).
 - **Alpha tokens** — web `color-mix(in srgb, var(--x) N%, transparent)`; native 8-digit hex (`${colors.bg0}C7`, `${colors.text}12/40`). Same resolved colors.
 - **Container** — web bare `svg[role=img]` + `className`/rest; native `View accessibilityRole="image"` wrapping the `Svg`.

@@ -4,6 +4,8 @@ import Svg, {
   Circle,
   ClipPath,
   Defs,
+  FeGaussianBlur,
+  Filter,
   G,
   Line,
   LinearGradient,
@@ -22,8 +24,8 @@ import { colors, fonts } from '@lockin90/tokens';
    multi-supplement kinetics and the liquid battery vessels (glass body +
    battery cap + wavy two-Q liquid surface + clipped bubbles + zone-colored
    fill + a % readout that inverts when submerged). Native twin of
-   `@lockin90/ui` SupplementChart — same prop API; glows are wider faint
-   duplicate shapes (never SVG filters).
+   `@lockin90/ui` SupplementChart — same prop API; glows are Gaussian-blurred
+   duplicate shapes (Fabric-native SVG filters — Ring precedent).
    (SP-08 does not exist — a numbering gap in the catalog.) */
 
 export type SupplementChartVariant =
@@ -305,8 +307,10 @@ function PulseDot({ x, y, color }: { x: number; y: number; color: string }) {
   );
 }
 
-/** SATURATED / LOW zone level bands (5% washes + right-edge band labels). */
-function LevelBands() {
+/** SATURATED / LOW zone level bands (5% washes + edge band labels — right by
+ *  default; `labelsLeft` moves them to the band's left edge when the right
+ *  edge is occupied, e.g. by SP-07's end-of-line series pills). */
+function LevelBands({ labelsLeft = false }: { labelsLeft?: boolean }) {
   const bands: Array<[number, number, string, string]> = [
     [0.72, 1, colors.zoneHigh, 'SATURATED'],
     [0.35, 0.72, colors.zoneMid, ''],
@@ -325,7 +329,12 @@ function LevelBands() {
             opacity={0.05}
           />
           {text ? (
-            <Label x={W - PAD.r - 2} y={lvlY(hi) + 9} fill={color} anchor="end">
+            <Label
+              x={labelsLeft ? PAD.l + 2 : W - PAD.r - 2}
+              y={lvlY(hi) + 9}
+              fill={color}
+              anchor={labelsLeft ? 'start' : 'end'}
+            >
               {text}
             </Label>
           ) : null}
@@ -393,7 +402,10 @@ function VesselGlyph({
     `Q${rd(xw + ww * 0.25)} ${rd(lt - amp)} ${rd(xw + ww * 0.5)} ${rd(lt)}` +
     `Q${rd(xw + ww * 0.75)} ${rd(lt + amp)} ${rd(xw + ww)} ${rd(lt)}`;
   const wave = `${surface}L${rd(xw + ww)} ${rd(y + h)}L${rd(xw)} ${rd(y + h)}Z`;
-  const inLiquid = lt < y + h / 2;
+  // % readout placement: centered in the liquid when the fill is tall enough
+  // to hold it (≥ 30%), else riding just above the wavy surface
+  const inLiquid = lv >= 0.3;
+  const pctY = inLiquid ? (lt + y + h) / 2 + 3 : lt - amp - 4;
   const bubbleSpec: Array<[number, number, number]> = [
     [0.3, 0.35, 2],
     [0.62, 0.55, 1.4],
@@ -410,6 +422,20 @@ function VesselGlyph({
           <Stop offset="0%" stopColor={col} stopOpacity={0.9} />
           <Stop offset="100%" stopColor={col} stopOpacity={0.45} />
         </LinearGradient>
+        {shine ? (
+          /* real Gaussian blur for the liquid shine — the native twin of the
+             web vessel's `.lk-supp-shine-wide` `blur(6px)` fill duplicate */
+          <Filter
+            id={`${vid}-blur`}
+            filterUnits="userSpaceOnUse"
+            x={x - 12}
+            y={y - 12}
+            width={w + 24}
+            height={h + 24}
+          >
+            <FeGaussianBlur stdDeviation={3} />
+          </Filter>
+        ) : null}
       </Defs>
       {/* battery cap */}
       <Rect
@@ -433,9 +459,9 @@ function VesselGlyph({
         strokeOpacity={0.22}
         strokeWidth={1.4}
       />
-      {/* liquid shine — a wider faint duplicate of the surface highlight
-          (no blur filters on native; the web blurs the liquid instead) */}
-      {shine ? <Path d={surface} fill="none" stroke={col} strokeWidth={7} opacity={0.35} /> : null}
+      {/* liquid shine — a Gaussian-blurred unclipped duplicate under the fill
+          (the web vessel's `blur(6px)` clone) */}
+      {shine ? <Path d={wave} fill={col} opacity={0.5} filter={`url(#${vid}-blur)`} /> : null}
       {/* liquid, clipped to the body */}
       <Path d={wave} fill={`url(#${vid}-l)`} clipPath={`url(#${vid}-c)`} />
       {/* liquid surface highlight */}
@@ -456,10 +482,11 @@ function VesselGlyph({
             />
           ))
         : null}
-      {/* % centered in the vessel — inverts when the liquid covers it */}
+      {/* % readout — centered in the liquid (inverted) when the fill can hold
+          it, else just above the liquid surface */}
       <SvgText
         x={rd(x + w / 2)}
-        y={rd(y + h / 2 + 3)}
+        y={rd(pctY)}
         fill={inLiquid ? colors.bg0 : colors.text}
         textAnchor="middle"
         fontSize={10.5}
@@ -551,11 +578,12 @@ export function SupplementChart({
   style,
 }: SupplementChartProps) {
   const uid = useId().replace(/[^a-zA-Z0-9-]/g, '');
+  const blurId = `lk-supp-blur-${uid}`;
 
   const lineColor =
     color ?? (variant === 'depletion-forecast' || variant === 'adherence-level' ? colors.cyan : colors.mint);
 
-  /** level line + optional glow underlay (wider faint duplicate on native). */
+  /** level line + optional glow underlay (Gaussian-blurred duplicate on native). */
   const levelLine = (
     pts: Pt[],
     opts: { stroke?: string; w?: number; dash?: [number, number]; opacity?: number; glow?: boolean } = {},
@@ -565,8 +593,19 @@ export function SupplementChart({
     const sw = opts.w ?? 2.5;
     return (
       <G>
+        {/* glow — a Gaussian-blurred duplicate of the line behind it: the same
+            soft glow the web line gets from its `blur(5px)` underlay. (Feather
+            copies read as banded outlines on device.) */}
         {opts.glow ? (
-          <Path d={d} fill="none" stroke={stroke} strokeWidth={sw + 5} strokeLinecap="round" opacity={0.45} />
+          <Path
+            d={d}
+            fill="none"
+            stroke={stroke}
+            strokeWidth={sw + 5}
+            strokeLinecap="round"
+            opacity={0.45}
+            filter={`url(#${blurId})`}
+          />
         ) : null}
         <Path
           d={d}
@@ -583,6 +622,7 @@ export function SupplementChart({
 
   let body: ReactNode = null;
   let showBands = false;
+  let bandLabelsLeft = false;
   let axis: [string, string] | null = null;
 
   if (variant === 'saturation-story') {
@@ -818,12 +858,28 @@ export function SupplementChart({
       </G>
     );
   } else if (variant === 'stack-levels') {
-    /* SP-07 — 3 level curves with different kinetics + right pills */
+    /* SP-07 — 3 level curves with different kinetics + end-of-line pills */
     const trio = (series ?? DEFAULT_STACK_SERIES).slice(0, 3);
     const widths = [2.5, 2, 1.8];
     const opacities = [1, 0.85, 0.8];
     const colorsBy = [colors.mint, colors.cyan, colors.zoneMid];
     showBands = bands ?? true;
+    bandLabelsLeft = true; // the right edge belongs to the series pills
+    // pill y from each series' FINAL level; overlapping pills are pushed apart
+    // (min gap = pill height + 2) top-down, then clamped inside the plot
+    const pillH = 13;
+    const pillYs = trio.map((s) => lvlY(s.levels[s.levels.length - 1] ?? 0));
+    const order = pillYs.map((y, si) => ({ si, y })).sort((a, b) => a.y - b.y);
+    const yMin = PAD.t + pillH / 2;
+    const yMax = H - PAD.b - pillH / 2;
+    order.forEach((p, i) => {
+      p.y = Math.max(yMin, Math.min(p.y, yMax));
+      if (i > 0) p.y = Math.max(p.y, order[i - 1].y + pillH + 2);
+    });
+    // if the pushed chain ran past the plot bottom, shift it back up whole
+    const over = order.length > 0 ? order[order.length - 1].y - yMax : 0;
+    if (over > 0) order.forEach((p) => (p.y -= over));
+    order.forEach((p) => (pillYs[p.si] = p.y));
     body = (
       <G>
         {trio.map((s, si) => {
@@ -842,7 +898,7 @@ export function SupplementChart({
           );
         })}
         {trio.map((s, si) => (
-          <Tag key={si} x={W - PAD.r - 4} y={26 + si * 16} color={s.color ?? colorsBy[si]} anchor="end" text={s.name} />
+          <Tag key={si} x={W - PAD.r - 4} y={pillYs[si]} color={s.color ?? colorsBy[si]} anchor="end" text={s.name} />
         ))}
       </G>
     );
@@ -919,6 +975,22 @@ export function SupplementChart({
   return (
     <View accessibilityRole="image" accessibilityLabel={ariaLabel} style={[styles.root, style]}>
       <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`}>
+        {/* real Gaussian blur for the level-line glow (Fabric-native in
+            react-native-svg 15) — the native twin of the web `.lk-supp-shine`
+            `blur(5px)` underlay. Region in user space so a flat (plateaued)
+            level line never clips the blur to its bounding box. */}
+        <Defs>
+          <Filter
+            id={blurId}
+            filterUnits="userSpaceOnUse"
+            x={-10}
+            y={-10}
+            width={W + 20}
+            height={H + 20}
+          >
+            <FeGaussianBlur stdDeviation={2.5} />
+          </Filter>
+        </Defs>
         {title ? (
           <Label x={PAD.l + 2} y={11} fill={colors.textFaint} anchor="start">
             {title}
@@ -929,7 +1001,7 @@ export function SupplementChart({
             {stat}
           </SvgText>
         ) : null}
-        {showBands ? <LevelBands /> : null}
+        {showBands ? <LevelBands labelsLeft={bandLabelsLeft} /> : null}
         {body}
         {axis ? (
           <G>

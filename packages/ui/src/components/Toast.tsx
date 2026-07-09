@@ -1,5 +1,6 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
+import { Chip } from './Chip';
 import { Icon, type IconName } from './Icon';
 
 /* ============================================================================
@@ -69,26 +70,19 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   dot?: boolean;
 }
 
-const BADGE_TONE: Record<BadgeTone, string> = {
-  accent: 'lk-badge-accent',
-  high: 'lk-badge-high',
-  mid: 'lk-badge-mid',
-  low: 'lk-badge-low',
-  neutral: 'lk-badge-neutral',
-};
-
-/** Tiny count/status pill — smaller + simpler than Chip; or a `dot` indicator. */
+/**
+ * Tiny count/status pill — a thin wrapper over the canonical `Chip` at its `sm`
+ * size (`BadgeTone` is a subset of `ChipTone`, so it maps 1:1). Kept as its own
+ * export/type for back-compat; renders identically to the retired `lk-badge`
+ * (filled-gradient accent, bare glowing `dot`) via the `.lk-chip-sm` rules.
+ */
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   { children = '3', tone = 'accent', dot, className, ...rest },
   ref,
 ) {
   return (
-    <span
-      ref={ref}
-      className={cn('lk-badge', BADGE_TONE[tone], dot && 'lk-badge-dot', className)}
-      {...rest}
-    >
-      {dot ? null : children}
-    </span>
+    <Chip ref={ref} size="sm" tone={tone} dot={dot} className={className} {...rest}>
+      {dot ? undefined : children}
+    </Chip>
   );
 });

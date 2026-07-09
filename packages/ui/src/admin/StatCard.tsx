@@ -1,9 +1,13 @@
-import type { CSSProperties, HTMLAttributes } from 'react';
+import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 import { cn } from '../cn';
+import { MetricTile } from '../components/MetricTile';
 
 /* StatCard — a KPI cell: uppercase label, big display value, a delta line, and a bottom
-   "spark" fill bar. Used in the operator overview stat row. Mirrors `.stat` / `.stat-cell`
-   / `.barfill` from lockin90-design/admin/overview.html. Web-only. `lk-statcard*` classes. */
+   "spark" fill bar. Now a thin wrapper over the canonical `MetricTile` (it owns the
+   label / value / delta / spark skeleton; the `spark` accessory was added there). The
+   KPI-cell chrome (opaque card, value tone, arrow line-delta) is re-applied via the
+   `.lk-metric.lk-statcard` rules in statcard.css, so the wrapper is visually identical
+   to the old StatCard. Export + types kept for back-compat. Web-only. */
 
 export type StatDeltaDir = 'up' | 'down' | 'flat';
 export type StatValueTone = 'default' | 'gradient' | 'mint';
@@ -47,35 +51,31 @@ export function StatCard({
   className,
   ...rest
 }: StatCardProps) {
+  // Value tone is applied via a nested span so MetricTile's plain value slot keeps
+  // the flux gradient / mint / computed colour the old StatCard rendered.
+  const valueNode: ReactNode = valueColor ? (
+    <span style={{ color: valueColor } as CSSProperties}>{value}</span>
+  ) : valueTone === 'gradient' ? (
+    <span className="lk-statcard-value--gradient">{value}</span>
+  ) : valueTone === 'mint' ? (
+    <span className="lk-statcard-value--mint">{value}</span>
+  ) : (
+    value
+  );
+
+  const arrow = ARROW[deltaDir];
+  const deltaStr = delta != null ? (arrow ? `${arrow} ${delta}` : delta) : undefined;
+
   return (
-    <div className={cn('lk-statcard', className)} {...rest}>
-      <span className="lk-statcard-label">{label}</span>
-      <span
-        className={cn(
-          'lk-statcard-value',
-          !valueColor && valueTone === 'gradient' && 'lk-statcard-value--gradient',
-          !valueColor && valueTone === 'mint' && 'lk-statcard-value--mint',
-        )}
-        style={valueColor ? ({ color: valueColor } as CSSProperties) : undefined}
-      >
-        {value}
-      </span>
-      {delta != null && (
-        <span className={cn('lk-statcard-delta', `lk-statcard-delta--${deltaDir}`)}>
-          {ARROW[deltaDir] && <span aria-hidden>{ARROW[deltaDir]} </span>}
-          {delta}
-        </span>
-      )}
-      {spark != null && (
-        <div className="lk-statcard-spark">
-          <i
-            style={{
-              ['--v']: Math.max(0, Math.min(1, spark)),
-              ...(sparkColor ? { background: sparkColor } : {}),
-            } as CSSProperties}
-          />
-        </div>
-      )}
-    </div>
+    <MetricTile
+      className={cn('lk-statcard', className)}
+      label={label}
+      value={valueNode}
+      delta={deltaStr}
+      deltaTone={deltaDir}
+      spark={spark != null ? [spark] : undefined}
+      sparkColor={sparkColor}
+      {...rest}
+    />
   );
 }

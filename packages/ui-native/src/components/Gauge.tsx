@@ -1,6 +1,6 @@
 import { useId, type ReactNode } from 'react';
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Path, Line, Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
+import Svg, { Path, Line, Circle, Defs, FeGaussianBlur, Filter, LinearGradient, Stop } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /** Zone verdict color for a normalized 0..1 value (catalog thresholds). */
@@ -45,8 +45,8 @@ export interface GaugeProps {
   /** color the value arc + readout by the value's zone verdict on the
    *  [min,max] scale (≥62% → high, ≥38% → mid, else low). */
   zone?: boolean;
-  /** glow underlay — a wider faint duplicate of the value arc (the catalog's
-   *  shine modifier; off by default). No blur filter on native (RN limitation). */
+  /** glow underlay — a Gaussian-blurred duplicate of the value arc (the
+   *  catalog's shine modifier; off by default). */
   shine?: boolean;
   /** number of tick marks along the arc (default 0 = off) */
   ticks?: number;
@@ -189,6 +189,23 @@ export function Gauge({
             </LinearGradient>
           </Defs>
         ) : null}
+        {shine && !hasZones ? (
+          /* real Gaussian blur for the shine (Fabric-native in react-native-svg 15) —
+             the native twin of the web value arc's `blur(6px)` underlay. Region in
+             user space so short/flat arcs never clip the blur to their bbox. */
+          <Defs>
+            <Filter
+              id={`${gradId}-blur`}
+              filterUnits="userSpaceOnUse"
+              x={-12}
+              y={-12}
+              width={size + 24}
+              height={size + 24}
+            >
+              <FeGaussianBlur stdDeviation={3} />
+            </Filter>
+          </Defs>
+        ) : null}
 
         {/* track — the full sweep, faint */}
         <Path
@@ -211,15 +228,18 @@ export function Gauge({
           />
         ))}
 
-        {/* shine — a wider faint duplicate under the value arc (no blur on RN) */}
+        {/* shine — a Gaussian-blurred duplicate of the value arc behind it: the
+            same soft glow the web arc gets from its `blur(6px)` underlay.
+            (Discrete "feather" copies read as banded outlines on device.) */}
         {shine && !hasZones && v > min ? (
           <Path
             d={arcPath(cx, cy, r, startDeg, valueAngle)}
             fill="none"
             stroke={arcStroke}
-            strokeWidth={thickness + 8}
-            strokeOpacity={0.35}
+            strokeWidth={thickness + 5}
+            strokeOpacity={0.5}
             strokeLinecap="round"
+            filter={`url(#${gradId}-blur)`}
           />
         ) : null}
 

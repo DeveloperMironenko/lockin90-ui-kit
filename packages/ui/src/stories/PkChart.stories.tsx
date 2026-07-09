@@ -18,10 +18,26 @@ export const SingleDose: StoryObj<typeof meta> = {
   },
 };
 
+/** Live trace from raw samples — the ECG-style variant. It carries a heartbeat
+ *  paced by `bpm` (beat period = 60000/bpm ms): a lub-dub pulse + sonar ring on
+ *  the peak dot and a glow flash of the trace on every beat. */
 export const FromSamples: StoryObj<typeof meta> = {
   args: {
     doses: undefined,
     samples: [4, 38, 92, 74, 58, 110, 96, 78, 62, 48, 36, 26],
     axis: ['6a', '9a', '12p', '3p', '6p', '9p'],
+    bpm: 64,
+  },
+};
+
+/** The live trace with the heartbeat disabled via `still` — the static,
+ *  catalogable state (reduced-motion users get this automatically). */
+export const Still: StoryObj<typeof meta> = {
+  args: {
+    doses: undefined,
+    samples: [4, 38, 92, 74, 58, 110, 96, 78, 62, 48, 36, 26],
+    axis: ['6a', '9a', '12p', '3p', '6p', '9p'],
+    bpm: 64,
+    still: true,
   },
 };

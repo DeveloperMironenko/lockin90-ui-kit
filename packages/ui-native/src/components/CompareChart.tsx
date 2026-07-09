@@ -1,5 +1,6 @@
+import { useId } from 'react';
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* CompareChart — the shared catalog before/after compare family (CP-01…CP-07,
@@ -7,9 +8,10 @@ import { colors, fonts } from '@lockin90/tokens';
    fixed 320×150 viewBox — metric slopes between two day columns, dumbbell
    rows, bump rank lanes, signed delta arrows, mirrored bars, a hero slope
    over faint cohort ghost slopes, and the program-milestone ladder. Native
-   twin of `@lockin90/ui` CompareChart — same prop API; shine is a wider
-   faint duplicate stroke (never SVG filters) and the ladder NOW pulse is a
-   static halo ring (Ring precedent — no SMIL/JS animation on native). */
+   twin of `@lockin90/ui` CompareChart — same prop API; shine is a
+   Gaussian-blurred duplicate stroke (Fabric-native SVG filters — Ring
+   precedent) and the ladder NOW pulse is a static halo ring (no SMIL/JS
+   animation on native). */
 
 export type CompareChartVariant =
   | 'slope-panel' /* CP-01 — 2 columns · one slope per metric · deltas right */
@@ -276,6 +278,8 @@ export function CompareChart({
   ariaLabel = 'Before / after comparison',
   style,
 }: CompareChartProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-cmp-blur-${uid}`;
   const isSlope = variant === 'slope-panel' || variant === 'cohort-slopes';
   const hero = variant === 'cohort-slopes';
 
@@ -301,6 +305,24 @@ export function CompareChart({
   return (
     <View accessibilityRole="image" accessibilityLabel={ariaLabel} style={[styles.root, style]}>
       <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`}>
+        {shine ? (
+          /* real Gaussian blur for the slope shine (Fabric-native in
+             react-native-svg 15) — the native twin of the web `.lk-cmp-shine`
+             `blur(5px)` underlay. Region in user space so a flat slope line
+             never clips the blur to its zero-height bounding box. */
+          <Defs>
+            <Filter
+              id={blurId}
+              filterUnits="userSpaceOnUse"
+              x={-10}
+              y={-10}
+              width={W + 20}
+              height={H + 20}
+            >
+              <FeGaussianBlur stdDeviation={2.5} />
+            </Filter>
+          </Defs>
+        ) : null}
         {title ? (
           <Label x={PAD.l + 2} y={11} fill={colors.textFaint} anchor="start">
             {title}
@@ -350,8 +372,9 @@ export function CompareChart({
               const yb = rd(Y(m.after));
               return (
                 <G key={i}>
-                  {/* shine — a wider faint duplicate line behind the slope
-                      (no SVG filters on native) */}
+                  {/* shine — a Gaussian-blurred duplicate of the slope behind it:
+                      the same soft glow the web slope gets from its `blur(5px)`
+                      underlay. (Feather copies read as banded outlines on device.) */}
                   {shine ? (
                     <Line
                       x1={rd(x0)}
@@ -362,6 +385,7 @@ export function CompareChart({
                       strokeWidth={wpx + 5}
                       strokeLinecap="round"
                       strokeOpacity={0.45}
+                      filter={`url(#${blurId})`}
                     />
                   ) : null}
                   <Line

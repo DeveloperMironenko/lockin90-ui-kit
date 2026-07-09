@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/AreaChart.tsx` · `packages/ui-native/src/components/AreaChart.tsx` ·
 > web CSS `packages/ui/src/styles/components/area.css` (`.lk-area*`).
 > **Exports:** `AreaChart`, types `AreaChartProps`, `AreaSeries`, `AreaMultiple`, `AreaChartVariant`.
-> **Status:** Shipped. **Parity:** 🟡 same API & look; `shine` blurs the mint underlay on web (`filter: blur(5px)`) vs a wider faint duplicate stroke on native (RN SVG filters are patchy).
+> **Status:** Shipped. **Parity:** 🟡 same API & look; `shine` blurs the mint underlay on web (`filter: blur(5px)`) vs a Gaussian-blurred duplicate stroke on native (`FeGaussianBlur`, real RN-SVG Fabric filters).
 > **Stories:** `packages/ui/src/stories/AreaChart.stories.tsx` (`Charts/AreaChart`) · `packages/ui-native/src/stories/AreaChart.stories.tsx` (`Native/AreaChart`).
 
 ---
@@ -65,7 +65,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | Legend | top-right, reversed (topmost layer first), laid right-to-left from x 306: mono first-word in `--text-dim` at y 11, dot r 3 at y 8.2 in the layer color; slot width `len·5.6 + 8` + 8px gap |
 | Grid | 3 interior rows at plot 25/50/75%, `--border` at `strokeOpacity 0.55` (the catalog's white-5%); baseline at y 136, `--border` full (white-9% ≡ the token) |
 | NOW rule (AR-05) | vertical 1px `--text` at `strokeOpacity 0.25` (catalog white-25% → text token, the LineChart NOW-rule precedent) from y `P.t−2` to the baseline; caption above at y 11 |
-| Shine | mint (`--mint`) top edge of the LAST band: 7.5px round-cap underlay at `opacity 0.45` — **blurred 5px on web** (`.lk-area-shine`), plain wider duplicate on native — under a crisp 2.2px mint line |
+| Shine | mint (`--mint`) top edge of the LAST band: 7.5px round-cap underlay at `opacity 0.45` — **blurred on both** (web `.lk-area-shine` 5px, native `FeGaussianBlur stdDeviation 2.5`) — under a crisp 2.2px mint line |
 | Mini-multiples (AR-07) | panel `mi` at x `P.l + mi·(plotW/3 + 2)`, width `plotW/3 − 10` (≈89.3); y maps into `plotH − 20`; duo fills `--mint` + `--violet` at `opacity 0.45`, **no stroke**; captions centered at y `H−2`; all three panels share ONE 0.94 scale so days are comparable |
 | Sizing | web `.lk-area-svg`: `width 100%; height auto; overflow visible` (aspect kept by the viewBox); native root: `width '100%', aspectRatio 320/150` |
 
@@ -86,7 +86,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks beyond `us
 
 **🟡 same API, platform-shaped implementation.** Identical geometry, stacking math, colors and label layout (both compute from the same catalog constants and the same private `monotonePath` port). The real differences:
 
-- **Shine substrate** — web blurs the 7.5px mint underlay with `.lk-area-shine` (`filter: blur(5px)`, the catalog's `blur()`); native draws the same underlay **unblurred** (a wider faint duplicate stroke, the `Ring` precedent) because RN SVG filters are unreliable on device. Halo softness differs marginally; does not block use.
+- **Shine substrate** — web blurs the 7.5px mint underlay with `.lk-area-shine` (`filter: blur(5px)`, the catalog's `blur()`); native blurs the same underlay with a real `FeGaussianBlur` (`stdDeviation 2.5`; see CONVENTIONS.md). Halo softness differs marginally; does not block use.
 - **Label styling channel** — web styles `<text>` via `.lk-area-label` / `.lk-area-tag-text` (CSS `.06em`/`.05em`); native passes `fontSize/fontFamily/letterSpacing` props on `Svg.Text` (`0.5`/`0.4`).
 - **Tag pill fill** — same bg-0-at-78% value, expressed as `color-mix` on web vs the `#RRGGBBAA` suffix (`C7`) on native.
 - **Container** — web `div[role=img]` + `className`/rest; native `View accessibilityRole="image"` + `style`.

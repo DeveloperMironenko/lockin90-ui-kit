@@ -1,13 +1,15 @@
+import { useId } from 'react';
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /* BiomarkerRange — the shared catalog biomarker family (BR-01…BR-05,
    lockin90-design/charts/biomarker-charts.html): lab results the readable way —
    a value dot inside its reference range, drawn in a fixed 320×150 viewBox with
    mono catalog labels. Native twin of `@lockin90/ui` BiomarkerRange — same prop
-   API; shine is a wider faint duplicate shape and the BR-02 pulse is a static
-   duplicate halo (never SVG filters / CSS animation on native). SUPERSEDES the
+   API; shine is a real Gaussian-blurred duplicate dot (Fabric-native SVG
+   filters in react-native-svg 15) and the BR-02 pulse is a static duplicate
+   halo (no CSS animation on native). SUPERSEDES the
    web-only ADMIN ReferenceRangeBar for product surfaces (that one has no
    native twin and stays in `@lockin90/ui/admin`). */
 
@@ -225,12 +227,24 @@ function Tag({
   );
 }
 
-/** State-colored value dot; shine = wider faint duplicate circle behind it
- *  (the native glow — never SVG filters). */
+/** State-colored value dot; shine = a Gaussian-blurred duplicate circle behind
+ *  it — the native twin of the web `.lk-bmr-dot--shine` drop-shadow(0 0 5px).
+ *  (Un-blurred wide copies read as hard outlines on device.) */
 function Dot({ x, y, r, color, shine }: { x: number; y: number; r: number; color: string; shine: boolean }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-bmr-blur-${uid}`;
   return (
     <G>
-      {shine ? <Circle cx={rd(x)} cy={rd(y)} r={r + 3} fill={color} opacity={0.35} /> : null}
+      {shine ? (
+        <Defs>
+          {/* region in user space over the full canvas so the tiny dot never
+              clips its blur to the dot's bbox */}
+          <Filter id={blurId} filterUnits="userSpaceOnUse" x={-10} y={-10} width={W + 20} height={H + 20}>
+            <FeGaussianBlur stdDeviation={2.5} />
+          </Filter>
+        </Defs>
+      ) : null}
+      {shine ? <Circle cx={rd(x)} cy={rd(y)} r={r + 1.5} fill={color} opacity={0.8} filter={`url(#${blurId})`} /> : null}
       <Circle
         cx={rd(x)}
         cy={rd(y)}

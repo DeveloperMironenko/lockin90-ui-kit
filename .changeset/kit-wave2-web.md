@@ -1,0 +1,11 @@
+---
+"@lockin90/ui": minor
+---
+
+Wave 2 — consolidate the web tone-pill, stat-tile, proportion-bar, and card families onto single sources of truth. Every existing export name + its `*Props`/`*Tone` types keep working (admin/marketing apps import them); the duplicates are now thin wrappers of the canonical primitive, with no visual regressions. New canonical props (a native twin should mirror these for parity):
+
+- **`Chip` gains `size?: 'sm' | 'md'`** (default `'md'`; new `ChipSize` type). `size="sm"` is the compact count/status badge — tighter box, 10px tabular mono, a FILLED-gradient `accent`, and a bare glowing `dot`. `Badge` (`Toast.tsx`), admin `StatusChip`, and marketing `Pill` are now thin wrappers of `Chip` (the retired `.lk-badge*` / `.lk-schip*` / `.lk-pill` CSS was deleted). `StatusChip`'s `neutral` maps to `Chip`'s `default` (its true equivalent). Base `.lk-chip` gained `white-space: nowrap`.
+- **`Stat` gains `tone?: 'default' | 'gradient' | 'mint'`, `valueColor?`, `size?: 'sm' | 'md' | 'lg' | 'hero'`, `sub?`** (new `StatTone`/`StatSize` types; default `md` unchanged). `sm`/`lg` mirror admin `Statistic` (20/28px); `hero` is the marketing `Stat` (oversized value, label below, animated spectrum gradient). The `gradient` tone renders static flux on sm/md/lg and the animated full-spectrum on `hero`. Admin `Statistic` + marketing `Stat` are now thin wrappers of `Stat` (retired `.lk-statistic*` / `.lk-mkt-stat*` CSS deleted).
+- **`MetricTile` gains `spark?: number[]`** (+ `sparkColor?`) — a bottom fill bar (single value in `[0,1]`, or a series filled to `last/max`). Admin `StatCard` is now a thin wrapper of `MetricTile` via `spark` (KPI-cell chrome re-scoped onto `.lk-metric.lk-statcard`; delta line + value tone preserved).
+- **`Card` gains a polymorphic `as?: ElementType`** (default `div`). Marketing `Card` is now a thin wrapper of the root `Card` (`as` lives on root; `.lk-mk-card` padding kept).
+- **Fixed a `.lk-spark*` CSS collision:** admin `TrendCard` shared `.lk-spark` / `.lk-spark-line` / `.lk-spark-area` with the root `Sparkline`, polluting both. TrendCard's classes are renamed `.lk-trend*` (CSS file `sparkline.css` → `trendcard.css`); its component API is unchanged.

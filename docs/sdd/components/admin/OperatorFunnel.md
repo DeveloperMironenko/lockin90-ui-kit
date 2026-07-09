@@ -1,11 +1,12 @@
-# SDD — `FunnelChart` (+ `FunnelStep` type)
+# SDD — `OperatorFunnel` (+ `FunnelStep` type)
 
 > **Package:** `@lockin90/ui/admin` — web-only operator-console primitive (admin app is web-only).
-> **Import as:** `import { FunnelChart } from '@lockin90/ui/admin'`.
-> **Source:** `packages/ui/src/admin/FunnelChart.tsx` · web CSS `packages/ui/src/styles/components/funnel.css` (`.lk-funnel*`). NO native counterpart.
-> **Exports:** `FunnelChart`, type `FunnelChartProps`, type `FunnelStep`.
+> **Import as:** `import { OperatorFunnel } from '@lockin90/ui/admin'`.
+> **Renamed:** was `FunnelChart` — renamed to `OperatorFunnel` to avoid a name/type clash with the root `@lockin90/ui` chart `FunnelChart` (catalog program). `admin/index.ts` keeps deprecated `FunnelChart` / `FunnelChartProps` aliases for back-compat (existing admin-app imports keep working); prefer the new names.
+> **Source:** `packages/ui/src/admin/OperatorFunnel.tsx` · web CSS `packages/ui/src/styles/components/funnel.css` (`.lk-funnel*`). NO native counterpart.
+> **Exports:** `OperatorFunnel`, type `OperatorFunnelProps`, type `FunnelStep` (+ deprecated aliases `FunnelChart`, `FunnelChartProps`).
 > **Status:** Shipped. **Parity:** 🖥️ web-only (admin) — operator console has no native surface.
-> **Stories:** `packages/ui/src/stories/FunnelChart.stories.tsx`.
+> **Stories:** `packages/ui/src/stories/OperatorFunnel.stories.tsx` (Storybook title `Admin/OperatorFunnel`).
 
 ---
 
@@ -29,7 +30,7 @@ the caller supplies fully-computed `steps`.
 
 ## 2. API contract
 
-### `FunnelChartProps` (extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>`)
+### `OperatorFunnelProps` (extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>`)
 
 | Prop | Type | Default | Notes |
 | --- | --- | --- | --- |
@@ -95,7 +96,7 @@ No hover / focus / pressed / disabled — it is non-interactive (`role="img"`).
 ## 5. Platform & relationship to root kit
 
 **Web-only by design.** The admin operator console ships only on web, so there is no native
-`FunnelChart` and none is planned — the web≡native parity rule does not apply to `/admin`
+`OperatorFunnel` and none is planned — the web≡native parity rule does not apply to `/admin`
 primitives. It composes the root kit's `Icon` for step glyphs but is otherwise self-contained
 (no root-primitive wrapper). It emits `lk-funnel*` classes whose CSS is folded into the shared
 `dist/styles.css` (no extra import).
@@ -109,7 +110,7 @@ primitives. It composes the root kit's `Icon` for step glyphs but is otherwise s
   component only proportions and paints.
 
 ```tsx
-import { FunnelChart, type FunnelStep } from '@lockin90/ui/admin';
+import { OperatorFunnel, type FunnelStep } from '@lockin90/ui/admin';
 
 const steps: FunnelStep[] = [
   { id: 'signup',   label: 'Signed up',   icon: 'user',  count: 12_480, conversionPct: 100 },
@@ -117,7 +118,7 @@ const steps: FunnelStep[] = [
   { id: 'activated',label: 'Activated',    icon: 'check', count: 7_905, conversionPct: 63.3, dropPct: 15.1 },
 ];
 
-<FunnelChart steps={steps} legend />
+<OperatorFunnel steps={steps} legend />
 ```
 
 ## 7. Accessibility
@@ -146,9 +147,9 @@ const steps: FunnelStep[] = [
 ## 9. Anti-patterns & lookalike ban
 
 - **No lookalikes.** A hand-rolled "stacked proportional bars + drop pills" funnel re-creates
-  this primitive and will drift from the spectrum/threshold conventions — import `FunnelChart`.
+  this primitive and will drift from the spectrum/threshold conventions — import `OperatorFunnel`.
 - **New need → extend here.** A different funnel shape or a new drop-severity band is a prop/
-  variant on `FunnelChart`, not a one-off in an admin route.
+  variant on `OperatorFunnel`, not a one-off in an admin route.
 - **Tokens only.** Tier colours, drop tones, radii, and fonts must stay token-sourced; the only
   literals are the deliberate over-bar contrast values documented in §3.
 - **Threshold is canonical.** The `>20%` "intervene" cutoff lives here so every admin funnel

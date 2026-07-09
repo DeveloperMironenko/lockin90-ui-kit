@@ -28,6 +28,15 @@ export const WithContent: Story = {
   ),
 };
 
+/** Empty gate — a glass placeholder fills the area behind the lock card. */
+export const Empty: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <ProGate title="PRO Feature" subtitle="Unlock advanced insights" />
+    </View>
+  ),
+};
+
 export const Locked: Story = {
   render: () => (
     <View style={{ width: 320, gap: 12 }}>

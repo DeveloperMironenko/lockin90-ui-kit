@@ -83,11 +83,20 @@ export const shadows = {
 } as const;
 
 /** Native (React Native) shadow descriptors for the same elevations. */
+// Softened 2026-07: the old values (elev2 at 0.7 opacity / 18px offset) rendered as a
+// HARD, offset dark box-shadow on the RN New Architecture (Fabric) instead of a soft
+// drop. Lower opacity + smaller offset + wider radius read as a soft shadow on device.
+// True CSS box-shadows via RN's New-Architecture `boxShadow` style prop (RN 0.76+,
+// Fabric): the SAME strings as the web `shadows` tokens, so both platforms render
+// identical shadow geometry. The legacy iOS layer-shadow props (shadowColor/Opacity/
+// Radius/Offset) are gone deliberately — they bleed through translucent glass
+// backgrounds and trace content rects, which read as a hard "glossy" smear on device.
 export const nativeShadows = {
-  elev1: { shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 20, shadowOffset: { width: 0, height: 2 }, elevation: 6 },
-  elev2: { shadowColor: '#000', shadowOpacity: 0.7, shadowRadius: 50, shadowOffset: { width: 0, height: 18 }, elevation: 16 },
-  glowAccent: { shadowColor: '#7C5CFF', shadowOpacity: 0.35, shadowRadius: 40, shadowOffset: { width: 0, height: 0 }, elevation: 10 },
-  glowMint: { shadowColor: '#34F5C5', shadowOpacity: 0.3, shadowRadius: 36, shadowOffset: { width: 0, height: 0 }, elevation: 10 },
+  elev1: { boxShadow: shadows.elev1 },
+  elev2: { boxShadow: shadows.elev2 },
+  glowAccent: { boxShadow: shadows.glowAccent },
+  glowCyan: { boxShadow: shadows.glowCyan },
+  glowMint: { boxShadow: shadows.glowMint },
 } as const;
 
 /** Motion primitives. */

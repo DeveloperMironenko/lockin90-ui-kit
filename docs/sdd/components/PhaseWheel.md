@@ -62,7 +62,7 @@ Cycle variants:
 | Aspect | Web | Native |
 | --- | --- | --- |
 | Phase arcs | `.lk-pw-cycle-arc` stroke = `phase.color`, width `thickness`, round caps, opacity `.9` (`.2` dimmed), opacity transition `.45s var(--ease)` | same values via `Path`; dim via `<G opacity>`; no transition |
-| `shine` | `.lk-pw-arc-shine` `drop-shadow(0 0 5px currentColor) + (0 0 12px)`, `color` set inline per arc | wider faint duplicate `Path` behind: `strokeWidth thickness+8`, `strokeOpacity 0.35` (Ring precedent — **never** SVG filters) |
+| `shine` | `.lk-pw-arc-shine` `drop-shadow(0 0 5px currentColor) + (0 0 12px)`, `color` set inline per arc | Gaussian-blurred duplicate `Path` behind (`FeGaussianBlur stdDeviation 5`): `strokeWidth thickness+2`, `strokeOpacity 0.6` |
 | D-labels | `.lk-pw-dlabel` `9px var(--font-mono)` `var(--text-faint)` ls `.06em` | `fonts.mono 9` `colors.textFaint` |
 | Today dot | `.lk-pw-today` r4 `fill var(--text)` + `drop-shadow(0 0 5px var(--text))`; `.lk-pw-today-pulse` ring `stroke-width 1.4` animating `scale 1→2.75 / opacity .8→0` 1.8s infinite (reduced-motion: static `scale(1.8)` at `.3`) | static: r4 `colors.text` dot + r8 halo ring `strokeWidth 1.4` `strokeOpacity 0.3` |
 | Center big / sub | `.lk-pw-day` `24px` w700 ls `−.02em` `var(--text)` (+`lk-display lk-tnum`) · `.lk-pw-daysub` `9px var(--font-mono)` `var(--text-faint)` | `fonts.display 24` `'700'` ls −0.5 · `fonts.mono 9` `colors.textFaint` |
@@ -95,7 +95,7 @@ No hover/focus/disabled — presentational.
 **Verdict: 🟡 same API & geometry; three substrate differences.** `phaseRanges`/`dayAngle`/`arcPath`/`stripTicks` and every default (`day 21`, 28-day phases, `width 300`, strip metrics) are copy-identical. Differences:
 
 - **Today pulse:** web animates an expanding ring (`lk-pw-pulse` keyframes); native shows a **static** dot + halo (no CSS animation in RN SVG; StatusDot precedent: "web pulses; native static glow").
-- **`shine`:** web = CSS `drop-shadow` on the arc; native = wider faint duplicate arc (`+8`, `0.35`) — RN SVG filters are unsupported/patchy. Visual intent identical.
+- **`shine`:** web = CSS `drop-shadow` on the arc; native = a Gaussian-blurred duplicate arc (`+2` @ `0.6`, `FeGaussianBlur stdDeviation 5` — see CONVENTIONS.md). Visual intent identical.
 - **Label overflow / box size:** native wheel canvas is `size + 32` (PAD 16) because RN SVG hard-clips; web uses `.lk-pw-cycle { padding: 12px }` + `overflow: visible`. Account for the larger native box in layout. (Circadian keeps its PAD 46 / padding 32px.)
 - Color literal: web accepts `var()`; native needs resolved hex (defaults come from `@lockin90/tokens`). Web-only: arc dim transition, SVG drop-shadow polish.
 

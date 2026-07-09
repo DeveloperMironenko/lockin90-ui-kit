@@ -1,6 +1,6 @@
-import { type ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 
 /** One arc of the donut, sized by its `value` share of the total. */
@@ -56,8 +56,8 @@ export interface DonutChartProps {
   /** hero segment index — drawn +4px wider with shine, others dim to 30%
    *  (defaults to `0` for `variant="hero-arc"`) */
   hero?: number;
-  /** glow underlay behind full-opacity segments — a wider faint duplicate arc
-   *  (no blur filter on native; defaults on for `hero-arc`) */
+  /** glow underlay behind full-opacity segments — a Gaussian-blurred duplicate
+   *  arc (defaults on for `hero-arc`) */
   shine?: boolean;
   /** leader lines + chip-pill labels around the ring, from each segment's
    *  `label` (defaults on for `callout-arcs` / `nested-arcs`). Reserves 34px
@@ -153,6 +153,8 @@ export function DonutChart({
   children,
   style,
 }: DonutChartProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const blurId = `lk-dn-blur-${uid}`;
   const isShare = variant !== 'donut';
   const box = size ?? (variant === 'mini-multiples' ? 72 : 120);
   const sw =
@@ -183,6 +185,23 @@ export function DonutChart({
     return (
       <View style={[{ width: box, height: box }, styles.box, style]}>
         <Svg width={box} height={box} viewBox={`0 0 ${box} ${box}`}>
+          {shineOn ? (
+            /* real Gaussian blur for the shine (Fabric-native in react-native-svg
+               15) — the native twin of the web segment's `blur(5px)` underlay.
+               Region in user space so thin segments never clip the blur. */
+            <Defs>
+              <Filter
+                id={blurId}
+                filterUnits="userSpaceOnUse"
+                x={-10}
+                y={-10}
+                width={box + 20}
+                height={box + 20}
+              >
+                <FeGaussianBlur stdDeviation={2.5} />
+              </Filter>
+            </Defs>
+          ) : null}
           {innerArcs.map((a, i) => {
             if (a.dot) {
               const p = polar(c, c, innerR, a.mid);
@@ -225,15 +244,18 @@ export function DonutChart({
             }
             return (
               <G key={i}>
-                {/* shine — a wider faint duplicate under the arc (no blur on RN) */}
+                {/* shine — a Gaussian-blurred duplicate of the segment behind it:
+                    the same soft glow the web segment gets from its `blur(5px)`
+                    underlay. (Feather copies read as banded outlines on device.) */}
                 {shineOn && a.op === 1 ? (
                   <Path
                     d={arcPath(c, c, r, a.a0, a.a1)}
                     fill="none"
                     stroke={a.seg.color}
-                    strokeWidth={a.swi + 6}
-                    strokeOpacity={0.3}
+                    strokeWidth={a.swi + 5}
+                    strokeOpacity={0.45}
                     strokeLinecap="round"
+                    filter={`url(#${blurId})`}
                   />
                 ) : null}
                 <Path

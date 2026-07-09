@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/RoseChart.tsx` · `packages/ui-native/src/components/RoseChart.tsx` ·
 > no CSS partner file — visuals ride inline SVG attributes (`.lk-rose` on the root is a bare hook class).
 > **Exports:** `RoseChart`, types `RoseChartProps`, `RosePetal`, `RoseVariant`.
-> **Status:** Shipped. **Parity:** 🟡 same API & geometry; `shine` is a blurred duplicate petal (`filter: blur(5px)` @ 0.5) on web vs a faint duplicate with a wide soft edge on native (RN SVG filters are patchy).
+> **Status:** Shipped. **Parity:** 🟡 same API & geometry; `shine` is a blurred duplicate petal @ 0.5 on both — web `filter: blur(5px)`, native `FeGaussianBlur stdDeviation 2.5` (real RN-SVG filters).
 > **Stories:** `packages/ui/src/stories/RoseChart.stories.tsx` (`Charts/RoseChart`) · `packages/ui-native/src/stories/RoseChart.stories.tsx` (`Native/RoseChart`).
 
 ---
@@ -60,7 +60,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 | Compare (RS-03) | ghost petals first: `--text` @ 55% (web `color-mix`, native `${colors.text}8C` — the catalog's white-55%), `fillOpacity 0`, stroke 1.2, dash `3 3`; filled petals (default `--violet`) 0.3/1.5 on top; rim labels at `MAXR+12`; pills at (262, 34) petal color / (262, 50) `--text-dim` |
 | Labels | `--font-mono` / `fonts.mono`, **8.5** viewBox px, tracking `.06em` (native `0.5`) — title start-anchored at (12, 11) `--text-faint`; rim labels middle-anchored at `polar(mid)` y+3 |
 | Chips (catalog `tag()`) | rect w `len·5.35+12`, h 13, rx 6.5, fill `--bg-0` @ 78% (web `color-mix`, native `${colors.bg0}C7`), stroke = chip color @ 0.35, width 0.8; centered **8px** mono text, tracking `.05em` (native `0.4`); x clamps into the padded box |
-| Shine | web: duplicate petal under the crisp one, `opacity 0.5` + `filter: blur(5px)` (the catalog's `C.blur(…, 5)`); native: duplicate with `fillOpacity 0.25` + wide soft edge `strokeWidth 5` @ `strokeOpacity 0.18`, round-joined — no SVG filters |
+| Shine | web: duplicate petal under the crisp one, `opacity 0.5` + `filter: blur(5px)` (the catalog's `C.blur(…, 5)`); native: the same duplicate at `opacity 0.5`, Gaussian-blurred (`FeGaussianBlur stdDeviation 2.5`) |
 | Sizing | web `<svg width height viewBox>`; native `View {width, height}` wrapping `Svg` — both default 320×150 and scale the viewBox to the given px |
 
 ## 4. States
@@ -80,7 +80,7 @@ Pure render — no hover/press/focus/disabled states, no client hooks.
 
 **🟡 same API, platform-shaped implementation.** Identical geometry (`polar`/`slicePath`/`petalGeom` are line-for-line the same port of the catalog `draw()`), same data model, defaults, colors, opacities, chip math and draw order. The real differences:
 
-- **Shine substrate** — web blurs a duplicate petal via CSS (`filter: blur(5px)`, opacity 0.5 — the catalog's exact modifier); native draws a **duplicate petal with a wide faint round-joined edge** (fill 0.25 + stroke 5 @ 0.18) because RN SVG filters are unreliable on device (Ring SDD precedent). Glow-texture-only diff; does not block use.
+- **Shine substrate** — web blurs a duplicate petal via CSS (`filter: blur(5px)`, opacity 0.5 — the catalog's exact modifier); native draws the **same duplicate at 0.5**, Gaussian-blurred via `FeGaussianBlur stdDeviation 2.5` in a padded `userSpaceOnUse` region (see CONVENTIONS.md). Glow-texture-only diff; does not block use.
 - **Label styling channel** — web sets `fontFamily`/`letterSpacing` via inline `style` on `<text>`; native passes them as `Svg.Text` props (`0.5`/`0.4` ≈ `.06em`/`.05em`).
 - **Container** — web root **is** the `<svg role="img">` (+ `className`/SVG rest); native wraps `Svg` in a `View accessibilityRole="image"` (+ `style`). Same computed accessible label on both.
 - Internal dash typing differs (`'3 3'` string vs `[3, 3]` array) — invisible at the API.

@@ -1,5 +1,6 @@
-import { type ReactNode } from 'react';
+import { Fragment, useState, type ReactNode } from 'react';
 import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { Checkbox } from './Checkbox';
@@ -42,6 +43,53 @@ export interface TableProps {
   selectedKeys?: string[];
   /** Fired with the next set of selected row keys when selection changes. */
   onSelectionChange?: (keys: string[]) => void;
+  /**
+   * Per-row status tint. Return `'ok' | 'warn' | 'danger'` to give a row a subtle
+   * left-border + gradient tint (mint / amber / rose), or `undefined` for none.
+   * If omitted, the row's own `_tone` field is read as a fallback. Tints are purely
+   * decorative and don't change layout.
+   */
+  rowTone?: (
+    row: Record<string, ReactNode>,
+    index: number,
+  ) => 'ok' | 'warn' | 'danger' | undefined;
+  /** Enable the expandable-detail-row affordance — adds a leading chevron column. */
+  expandable?: boolean;
+  /** Renders the full-width detail panel shown beneath an expanded row. */
+  renderDetail?: (row: Record<string, ReactNode>, index: number) => ReactNode;
+  /** Controlled set of expanded row keys (uses the same `rowKey` accessor). */
+  expandedKeys?: (string | number)[];
+  /** Fired with the next set of expanded row keys when an expand toggle changes. */
+  onExpandedChange?: (keys: (string | number)[]) => void;
+}
+
+/** Per-tone rail + row wash colors (web `.lk-table-row-ok/-warn/-danger`): a 3px
+ *  left accent bar plus a 6% status tint fading to transparent by 70% of the row. */
+const ROW_TONE: Record<'ok' | 'warn' | 'danger', { rail: string; wash: string; washEnd: string }> = {
+  ok: { rail: colors.zoneHigh, wash: 'rgba(52,245,197,0.06)', washEnd: 'rgba(52,245,197,0)' },
+  warn: { rail: colors.zoneMid, wash: 'rgba(255,176,32,0.06)', washEnd: 'rgba(255,176,32,0)' },
+  danger: { rail: colors.zoneLow, wash: 'rgba(255,77,109,0.06)', washEnd: 'rgba(255,77,109,0)' },
+};
+
+/** Chevron toggle for an expandable row — rotates down→up when its row is open.
+ *  Mirrors the web glyph (`M6 9l6 6 6-6`) + `.lk-table-expand-open` rotation. */
+function ExpandIcon({ open }: { open: boolean }) {
+  return (
+    <View style={open ? styles.expandIconOpen : undefined}>
+      <Svg
+        width={13}
+        height={13}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke={colors.textFaint}
+        strokeWidth={2.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <Path d="M6 9l6 6 6-6" />
+      </Svg>
+    </View>
+  );
 }
 
 /** Sort indicator glyph next to a sortable header: a neutral up/down chevron pair
@@ -63,6 +111,19 @@ function SortIcon({ state }: { state: 'none' | 'asc' | 'desc' }) {
       {state !== 'asc' && <Path d="M7 14l5 5 5-5" />}
     </Svg>
   );
+}
+
+/** Next expanded-keys list after toggling `key`: removed when present, appended
+ *  when absent (set semantics — duplicates collapse, order of survivors kept).
+ *  (Pure — extracted from the component so the bookkeeping is unit-testable.) */
+export function toggleExpandKey(
+  keys: Iterable<string | number>,
+  key: string | number,
+): (string | number)[] {
+  const next = new Set(keys);
+  if (next.has(key)) next.delete(key);
+  else next.add(key);
+  return [...next];
 }
 
 const DEFAULT_COLUMNS: TableColumn[] = [
@@ -99,8 +160,26 @@ export function Table({
   rowKey = (_row, i) => String(i),
   selectedKeys,
   onSelectionChange,
+  rowTone,
+  expandable = false,
+  renderDetail,
+  expandedKeys,
+  onExpandedChange,
 }: TableProps) {
   const clickable = typeof onRowClick === 'function';
+
+  // Expansion bookkeeping — controlled via `expandedKeys`/`onExpandedChange`, else
+  // an internal set. Only meaningful when `expandable` is on. The chevron column is
+  // added when `expandable` is set regardless of whether a `renderDetail` is given.
+  const [internalExpanded, setInternalExpanded] = useState<(string | number)[]>([]);
+  const expandedControlled = expandedKeys !== undefined;
+  const expanded = new Set(expandedControlled ? expandedKeys : internalExpanded);
+
+  const toggleExpanded = (key: string | number) => {
+    const arr = toggleExpandKey(expanded, key);
+    if (!expandedControlled) setInternalExpanded(arr);
+    onExpandedChange?.(arr);
+  };
 
   // Selection bookkeeping — only meaningful when `selectable` is on.
   const selected = new Set(selectedKeys ?? []);
@@ -131,6 +210,10 @@ export function Table({
       <View style={styles.table}>
         {/* header */}
         <View style={[styles.head, dense && styles.headDense]}>
+          {expandable && (
+            // empty leading header cell over the chevron column (web th "Expand row")
+            <View style={[dense ? styles.cellDense : styles.cell, styles.expandCell]} />
+          )}
           {selectable && (
             <View style={[dense ? styles.cellDense : styles.cell, styles.selectCell]}>
               <Checkbox
@@ -183,6 +266,15 @@ export function Table({
           const last = i === rows.length - 1;
           const key = selectable ? rowKey(row, i) : undefined;
           const isSelected = key != null && selected.has(key);
+          // Tone: explicit `rowTone` accessor wins, else the row's own `_tone` field.
+          const tone =
+            rowTone?.(row, i) ??
+            (row._tone as 'ok' | 'warn' | 'danger' | undefined);
+          const toneColors = tone ? ROW_TONE[tone] : undefined;
+          // Expansion uses the same `rowKey` accessor so keys stay consistent with
+          // selection; it's evaluated independently of `selectable`.
+          const expandKey = expandable ? rowKey(row, i) : undefined;
+          const isExpanded = expandKey != null && expanded.has(expandKey);
           const RowInner = (
             <View
               style={[
@@ -190,8 +282,44 @@ export function Table({
                 dense && styles.rowDense,
                 last && styles.rowLast,
                 isSelected && styles.rowSelected,
+                isExpanded && styles.rowExpanded,
               ]}
             >
+              {toneColors && (
+                // Decorative status tint — a wash fading across the row + a 3px
+                // left rail. Absolutely positioned so there's no layout shift and
+                // the pressed glass still reads on top.
+                <>
+                  <LinearGradient
+                    colors={[toneColors.wash, toneColors.washEnd] as [string, string]}
+                    locations={[0, 0.7]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={StyleSheet.absoluteFill}
+                    pointerEvents="none"
+                  />
+                  <View
+                    style={[styles.toneRail, { backgroundColor: toneColors.rail }]}
+                    pointerEvents="none"
+                  />
+                </>
+              )}
+              {expandable && (
+                // Chevron is its own Pressable; pressing it captures the touch so
+                // the outer row Pressable's onRowClick does NOT fire.
+                <View style={[dense ? styles.cellDense : styles.cell, styles.expandCell]}>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={isExpanded ? 'Collapse row' : 'Expand row'}
+                    accessibilityState={{ expanded: isExpanded }}
+                    onPress={() => toggleExpanded(expandKey!)}
+                    hitSlop={6}
+                    style={styles.expandBtn}
+                  >
+                    <ExpandIcon open={isExpanded} />
+                  </Pressable>
+                </View>
+              )}
               {selectable && (
                 // Checkbox is its own Pressable; pressing it captures the touch so the
                 // outer row Pressable's onRowClick does NOT fire.
@@ -217,16 +345,26 @@ export function Table({
             </View>
           );
 
-          return clickable ? (
-            <Pressable
-              key={i}
-              onPress={() => onRowClick!(row, i)}
-              style={({ pressed }) => (pressed ? styles.pressed : undefined)}
-            >
-              {RowInner}
-            </Pressable>
-          ) : (
-            <View key={i}>{RowInner}</View>
+          return (
+            <Fragment key={i}>
+              {clickable ? (
+                <Pressable
+                  onPress={() => onRowClick!(row, i)}
+                  style={({ pressed }) => (pressed ? styles.pressed : undefined)}
+                >
+                  {RowInner}
+                </Pressable>
+              ) : (
+                <View>{RowInner}</View>
+              )}
+              {expandable && isExpanded && renderDetail && (
+                // full-width detail panel beneath the expanded row — flush cell,
+                // accent-tinted inner band (web `.lk-table-detail-row/-cell/-inner`)
+                <View style={[styles.detail, last && styles.detailLast]}>
+                  <View style={styles.detailInner}>{renderDetail(row, i)}</View>
+                </View>
+              )}
+            </Fragment>
           );
         })}
       </View>
@@ -269,6 +407,30 @@ const styles = StyleSheet.create({
   rowLast: { borderBottomWidth: 0 },
   // selected row keeps a faint persistent tint (distinct from the pressed glass)
   rowSelected: { backgroundColor: colors.glass },
+  // the open parent row keeps a faint accent tint (matches the detail panel)
+  rowExpanded: { backgroundColor: 'rgba(124,92,255,0.05)' },
+  // the 3px status accent bar hugging a toned row's left edge
+  toneRail: { position: 'absolute', top: 0, bottom: 0, left: 0, width: 3 },
+  // leading chevron column: narrow, content hugs, button centered
+  expandCell: { width: 36, alignItems: 'center', justifyContent: 'center' },
+  expandBtn: {
+    width: 22,
+    height: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radii.sm,
+  },
+  // chevron points down when collapsed, flips up when the row is open
+  expandIconOpen: { transform: [{ rotate: '180deg' }] },
+  // detail panel: flush hairline-bordered cell + accent-tinted padded inner band
+  detail: { borderBottomWidth: 1, borderBottomColor: colors.border },
+  detailLast: { borderBottomWidth: 0 },
+  detailInner: {
+    padding: 16,
+    backgroundColor: 'rgba(124,92,255,0.05)',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(124,92,255,0.18)',
+  },
   // leading checkbox column: narrow, content hugs, box centered
   selectCell: { width: 44, alignItems: 'center', justifyContent: 'center' },
   pressed: { backgroundColor: colors.glass },

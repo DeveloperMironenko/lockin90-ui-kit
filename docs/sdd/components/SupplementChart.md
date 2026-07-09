@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/SupplementChart.tsx` · `packages/ui-native/src/components/SupplementChart.tsx` ·
 > web CSS `packages/ui/src/styles/components/supplement.css` (`.lk-supp*`).
 > **Exports:** `SupplementChart`, types `SupplementChartProps`, `SupplementChartVariant`, `SupplementRow`, `SupplementSeries`, `SupplementVessel`.
-> **Status:** Shipped. **Parity:** 🟡 same API & look; web blurs glow underlays (`filter: blur`) + animates the pulse ring (SMIL), native draws wider faint duplicates + a static halo (RN SVG filters/SMIL are unreliable).
+> **Status:** Shipped. **Parity:** 🟡 same API & look; glows blur on both (web CSS `blur` / native `FeGaussianBlur` Fabric filters); the pulse ring animates on web (SMIL) vs a static halo on native.
 > **Stories:** `packages/ui/src/stories/SupplementChart.stories.tsx` (`Charts/SupplementChart`) · `packages/ui-native/src/stories/SupplementChart.stories.tsx` (`Native/SupplementChart`).
 
 ---
@@ -66,15 +66,16 @@ Geometry is the catalog's, in viewBox units: `W 320 · H 150 · pad l10 r12 t16 
 
 | Element | Spec (both platforms) |
 | --- | --- |
-| Zone bands | `[0.72,1]` `--zone-high` + SATURATED label · `[0.35,0.72]` `--zone-mid` · `[0,0.35]` `--zone-low` + LOW label; rect `opacity 0.05`, labels right-anchored at band top +9 |
-| Level line | monotone-cubic smooth (catalog `smoothPath` port), `2.5px` round cap; `shine` adds a `+5px` wide `opacity 0.45` duplicate — **blurred 5px on web** (`.lk-supp-shine`), plain on native |
+| Zone bands | `[0.72,1]` `--zone-high` + SATURATED label · `[0.35,0.72]` `--zone-mid` · `[0,0.35]` `--zone-low` + LOW label; rect `opacity 0.05`, labels right-anchored at band top +9 — **except SP-07**, which forces band labels **left** (`P.l+2`, anchor start; the right edge belongs to the series pills) |
+| Level line | monotone-cubic smooth (catalog `smoothPath` port), `2.5px` round cap; `shine` adds a `+5px` wide `opacity 0.45` duplicate — blurred on both (web `.lk-supp-shine` 5px / native `FeGaussianBlur`) |
+| Series pills (SP-07) | right-anchored at `W−P.r−4`; each pill's **y derives from its series' final level** (`lvlY(last)`); sorted top-down, clamped into the plot, **collision-pushed** to a min gap of `pillH+2` (15px), and the whole chain shifts up if it overruns the bottom |
 | Dose dots | r3 at `H−P.b−4`: taken = `--mint` fill · missed = dashed `1.5 1.5` `--zone-low` stroke 1.3 |
 | Missed window (SP-01) | rect `--zone-low` `opacity 0.07` rx5 spanning the first ≥2-day miss run ±6px + `MISSED × n` pill; SATURATED pill at the pre-miss peak |
 | Rows (SP-02) | name mono right-anchored at x76; track `plotW−150`×10 rx5 `--glass-2` (catalog white-7%); fill row color `opacity 0.92` min-width 10; % + status pill in the row color |
 | Stems (SP-04) | 3px round `--mint` `opacity 0.22` from baseline to the level |
 | Forecast (SP-05) | past solid / projection dashed `5 5` `opacity 0.75`; NOW rule 1px `--text` at `strokeOpacity 0.22`; coral pulse + pill at the LOW crossing |
 | Cells (SP-06) | h12 rx3 cells at `P.t+4`: taken `--mint` `opacity 0.75` / missed dashed `2 2` `--zone-low`; line rides at 62% of the model level (display squash under the strip) |
-| Vessel | cap `w·0.4`×5 rx2 `--text` op 0.28 · body rx9 `--glass` fill + `--text` stroke `strokeOpacity 0.22` 1.4px · liquid = two-Q wave (amp 2.6, top at `y+h−2−level·(h−6)`) filled with a vertical gradient of the zone color 90%→45%, clipped to an inset rx7.5 rect · surface highlight 1.6px zone color op 0.95 · 4 outlined bubbles `--text` `strokeOpacity 0.4` (clipped) · centered 10.5px mono-600 %, fill `--bg-0` when the liquid passes mid-height else `--text` |
+| Vessel | cap `w·0.4`×5 rx2 `--text` op 0.28 · body rx9 `--glass` fill + `--text` stroke `strokeOpacity 0.22` 1.4px · liquid = two-Q wave (amp 2.6, top at `y+h−2−level·(h−6)`) filled with a vertical gradient of the zone color 90%→45%, clipped to an inset rx7.5 rect · surface highlight 1.6px zone color op 0.95 · 4 outlined bubbles `--text` `strokeOpacity 0.4` (clipped) · 10.5px mono-600 % label: fill `≥ 30%` → **centered in the liquid body** ( `(surface + bottom)/2 + 3`, `--bg-0` dark-on-liquid) · fill `< 30%` → sits **above the surface** (`surface − amp − 4`, `--text`) |
 | Vessel zones | ≥0.62 `--zone-high` · ≥0.38 `--zone-mid` · else `--zone-low` (catalog `zoneOf`) |
 | Hero (SP-10) | vessel 56×100 at x78; FULL tick `--text` op 0.35 / LOW tick `--zone-low` at `lowAt`; 24px display-700 % at (196,56); caption dim, status pill, note faint |
 | Pills/labels | catalog `tag()` (dark bg-0-at-78% pill + tinted hairline + 8px mono) and 8.5px mono labels — same spec as AreaChart |
@@ -98,7 +99,7 @@ Pure render — no hover/press/focus/disabled; hooks: `useId` (+ web `useMotionO
 
 **🟡 same API, platform-shaped implementation.** Identical geometry, model math, colors and label layout (same catalog constants + the same private `monotonePath` port). Real differences:
 
-- **Glow substrate** — web blurs underlays (`.lk-supp-shine` 5px; vessel liquid `.lk-supp-shine-wide` 6px, the catalog `blur()`); native draws **unblurred wider faint duplicates** (line: +5px stroke; vessel: a 7px op-0.35 duplicate of the surface highlight) — the Ring precedent, RN SVG filters are unreliable.
+- **Glow substrate** — web blurs underlays via CSS (`.lk-supp-shine` 5px; vessel liquid `.lk-supp-shine-wide` 6px, the catalog `blur()`); native blurs the same duplicates with **real `FeGaussianBlur` Fabric filters** (`userSpaceOnUse` regions — see CONVENTIONS.md). Equivalent halos.
 - **Pulse dot** — web = glow dot (`drop-shadow` via `.lk-supp-glowdot`) + SMIL expanding ring (reduced-motion safe); native = glow-duplicate circle + static halo ring (no SMIL on RN).
 - **Vessel clip** — both clip the liquid: web `<clipPath>` / native `react-native-svg` `ClipPath` — substrate-only.
 - **Label styling channel** — web CSS classes vs native `Svg.Text` font props; tag pill fill `color-mix` vs `#RRGGBBAA` (`C7`).

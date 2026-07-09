@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/TimelineChart.tsx` · `packages/ui-native/src/components/TimelineChart.tsx` —
 > fully inline-styled; `.lk-tlc` / `.lk-tlc--<variant>` are hook classes only (no CSS partner file).
 > **Exports:** `TimelineChart`, types `TimelineChartProps`, `TimelineChartVariant`, `TimelineMarkerStyle`, `TimelineFeedLayout`, `TimelineEvent`, `TimelineSpan`, `TimelineLane`, `TimelineCluster`, `TimelineMilestone`, `TimelineAxisLabel`, `TimelineZoneStop`.
-> **Status:** Shipped. **Parity:** 🟡 same API & geometry; the render substrate differs by necessity — web = SVG + HTML overlays with CSS `drop-shadow`/`blur` and an SMIL pulse, native = SVG + View overlays with `shadow*` glow, an `Animated` pulse ring, and shine as a wider faint duplicate (no filters).
+> **Status:** Shipped. **Parity:** 🟡 same API & geometry; the render substrate differs by necessity — web = SVG + HTML overlays with CSS `drop-shadow`/`blur` and an SMIL pulse, native = SVG + View overlays with `shadow*` glow, an `Animated` pulse ring, and shine as a Gaussian-blurred duplicate (`FeGaussianBlur`, real RN-SVG Fabric filters).
 > **Stories:** `packages/ui/src/stories/TimelineChart.stories.tsx` (`Charts/TimelineChart`) · `packages/ui-native/src/stories/TimelineChart.stories.tsx` (`Native/TimelineChart`).
 
 ---
@@ -94,7 +94,7 @@ Geometry is the catalog's, in viewBox units: `W 320 · pad l10 r12 t16 b14`; rai
 | Flags (TL-17) | stem `--text` @ 0.3 1.2px; 30×12 pennant `M0 0L30 6L0 12Z` @ 0.9; chip below at `y+24` |
 | Journey (TL-18) | track `--text` @ 0.1, 6px round; progress = `--lime`→`--mint` gradient 6px; milestone rings Ø 11 (passed = `--mint` fill; ahead = `--bg-1` + `--text` @ 25% border); mint pulse + chip at the head |
 | NOW | rule `--text` @ 0.25 from `y−26` to `y+20`; pulse dot r 3.6 `--text` + expanding ring; `nowLabel` at `y−32` `--text-dim` |
-| Shine (journey) | web wider 11px mint duplicate @ 0.5 with `blur(6px)`; native same duplicate @ 0.3, **no blur** (Ring precedent) |
+| Shine (journey) | web wider 11px mint duplicate @ 0.5 with `blur(6px)`; native same duplicate @ 0.5, blurred with `FeGaussianBlur stdDeviation 3` |
 
 Deterministic defaults are catalog ports: `genData('wave', 77, 24)` spark, `genData('noisy', 31, 25)` heat, the WAKE→WIND-DOWN event day, BLOCKS/LANES/GANTT/BRACKETS/CLUSTERS/MILESTONES tables.
 
@@ -116,7 +116,7 @@ Pure render — no hover/press/focus/disabled states; the only client behavior i
 **🟡 same API, platform-shaped implementation.** Both sides build the *same* mark/overlay lists from the same catalog constants — geometry, colors, data model and label layout are identical. The real differences:
 
 - **Pulse substrate** — web uses an SMIL `<animate>` ring behind a `drop-shadow` dot, gated by `prefers-reduced-motion`; native uses an `Animated.loop` ring (scale 1→3, fade .8→0, 1.8s — same choreography). Native has no reduced-motion gate (no OS media query); web falls back to a static halo.
-- **Glow substrate** — web `filter: drop-shadow(...)` on dots and `blur(6px)` on the journey shine; native `shadowColor/shadowRadius/elevation` on dots and an **un-blurred** wider faint duplicate for shine (RN SVG filters unreliable — Ring precedent).
+- **Glow substrate** — web `filter: drop-shadow(...)` on dots and `blur(6px)` on the journey shine; native `shadowColor/shadowRadius/elevation` on dots and a **Gaussian-blurred** wider duplicate for shine (`FeGaussianBlur stdDeviation 3`; see CONVENTIONS.md).
 - **Overlay substrate** — web absolutely-positioned `<span>`s with `%` left + `transform` anchoring; native zero-size anchor `View`s with `alignItems` anchoring (Yoga static position). Same visual result.
 - **Dashed ring rendering** — `planned-hollow` rings are CSS `border: dashed` (web) vs RN `borderStyle: 'dashed'` (native); dash rhythm differs slightly by renderer.
 - **Container** — web `div.lk-tlc[…]` + `className`/rest, `aria-label` on the inner svg; native `View accessibilityRole="image"` + `style`, Svg sized to the measured width.
@@ -173,7 +173,7 @@ Standalone chart — composes nothing from the kit; typically placed inside a `C
 - Don't feed absolute timestamps or minutes — the component never scales input.
 - Don't use `markers="pills"` with unlabeled events — pills only render when `label` is set.
 - Don't rebuild the feed as a list component with dots — TL-15 *is* the timeline feed.
-- Don't animate the NOW pulse yourself or add SVG filters on native; the substrate is fixed (§5).
+- Don't animate the NOW pulse yourself on native; the substrate is fixed (§5) — the shine already uses the kit `FeGaussianBlur` pattern.
 - Don't hardcode hex in `color` overrides.
 
 ## 9. Anti-patterns & lookalike ban
@@ -181,5 +181,5 @@ Standalone chart — composes nothing from the kit; typically placed inside a `C
 - **No hand-rolled timelines.** Any event rail, day strip, span lane, mini gantt, activity feed or journey/progress rail on a product surface is this component — never a local SVG/View lookalike.
 - **New variant → both platforms.** A new timeline form is added here, web + native in the same unit of work, with the same prop names — never a one-off in an app.
 - **Tokens only** — the catalog's raw whites are expressed as `--text`/`colors.text` + opacity inside the component; dark ink on colored pills is `--void`, never `#000`.
-- **Substrate diffs stay documented, not widened** — don't bolt blur filters onto native or replace the Animated pulse with SMIL; §5 is the accepted contract.
+- **Substrate diffs stay documented, not widened** — don't replace the Animated pulse with SMIL (the shine already uses the kit `FeGaussianBlur` pattern); §5 is the accepted contract.
 - **Parity gate:** any change ships only after the web story and the native story are compared side-by-side against `timeline-charts.html`.
