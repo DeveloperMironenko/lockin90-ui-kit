@@ -63,6 +63,39 @@
   cursor: not-allowed;
 }
 
+/* `size="sm"` — the design settings `.pref-select`: a compact mono glass pill
+   (`--glass-2` fill, `--border` hairline, padding 8×14) that hugs its content. */
+.lk-select-trigger.lk-select-sm {
+  width: auto;
+  gap: 5px;
+  padding: 8px 12px 8px 14px;
+  border-color: var(--border);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.2;
+}
+.lk-select-trigger.lk-select-sm:hover {
+  border-color: var(--border-2);
+}
+.lk-select-trigger.lk-select-sm .lk-select-chevron {
+  width: 13px;
+  height: 13px;
+  stroke: var(--text-faint);
+  stroke-width: 1.8;
+}
+
+/* optional leading icon inside the field (design `.lang-wrap` globe) */
+.lk-select-lead {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.lk-select-lead > svg {
+  width: 14px;
+  height: 14px;
+}
+
 .lk-select-value {
   flex: 1 1 auto;
   min-width: 0;
@@ -117,6 +150,30 @@
     opacity: 0;
     transform: translateY(-4px) scale(0.985);
   }
+}
+
+/* ---- `searchable` — panel with a SearchInput filter ----
+   FIXED size while open (height here, width inline from the trigger) so
+   filtering never resizes the panel per keystroke — mirrors the native
+   fixed-height search sheet. The list scrolls inside. */
+.lk-select-panel.lk-select-searchable {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  height: min(320px, 60vh);
+  max-height: none;
+  overflow: hidden;
+}
+.lk-select-search {
+  flex: 0 0 auto;
+}
+.lk-select-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
 }
 
 .lk-select-option {

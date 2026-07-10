@@ -124,3 +124,65 @@
   background: var(--grad-mint);
   box-shadow: var(--glow-mint);
 }
+
+/* `tone="gradient"` — the design settings `.seg` treatment: the ACTIVE segment
+   is a CTA-gradient pill (violet→cyan) + accent glow + dark-ink label
+   (design `.seg button[aria-pressed="true"]`). Idle segments are unaffected. */
+.lk-seg[data-tone='gradient'] .lk-seg-tab.is-active {
+  color: #07080d;
+  background: var(--grad-cta);
+  box-shadow: 0 0 16px rgba(124, 92, 255, 0.4);
+}
+
+/* ----------------------------------------------------------------------------
+   `appearance="tint"` — the design changelog `.svc-toggle`: glass track;
+   hairline-bordered 11px/600 segments; the ACTIVE segment is an accent-tinted
+   pill with an accent border (no raised shadow); count badges shrink to mono
+   8.5 (padding 1×5, `--border` hairline) and tint cyan when active.
+   -------------------------------------------------------------------------- */
+.lk-seg[data-appearance='tint'] { background: var(--glass); }
+.lk-seg[data-appearance='tint'] .lk-seg-tab {
+  gap: 5px;
+  font-size: 11px;
+  padding: 7px 6px;
+  border: 1px solid transparent; /* reserve the active border — no layout shift */
+}
+.lk-seg[data-appearance='tint'] .lk-seg-tab.is-active {
+  color: var(--text);
+  background: rgba(124, 92, 255, 0.14);
+  border-color: rgba(124, 92, 255, 0.32);
+  box-shadow: none;
+}
+.lk-seg[data-appearance='tint'] .lk-seg-count {
+  font-size: 8.5px;
+  padding: 1px 5px;
+  background: var(--glass-2);
+  border: 1px solid var(--border);
+  color: var(--text-faint);
+}
+.lk-seg[data-appearance='tint'] .lk-seg-tab.is-active .lk-seg-count {
+  color: var(--accent-2);
+  border-color: rgba(34, 211, 238, 0.3);
+  background: rgba(34, 211, 238, 0.1);
+}
+
+/* ----------------------------------------------------------------------------
+   `size="sm"` — the design settings compact `.seg`: a content-hugging pill
+   track (padding 3, gap 2, `--border` hairline, glass fill) of mono 12px/500
+   segments (padding 6px 14px) that size to their label instead of stretching.
+   -------------------------------------------------------------------------- */
+.lk-seg.lk-seg-sm {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-color: var(--border);
+  background: var(--glass);
+}
+.lk-seg-sm .lk-seg-tab {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: normal;
+  padding: 6px 14px;
+}

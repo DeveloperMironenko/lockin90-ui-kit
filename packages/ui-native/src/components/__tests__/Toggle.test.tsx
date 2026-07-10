@@ -6,12 +6,13 @@ import { findAll, inlineStyle, parse, render } from './markup';
  * absolutely positioned INSIDE the border with a `pad` inset, so the "on"
  * travel must subtract BOTH borders and BOTH pads:
  *   knobOffset = track − 2·border − knob − 2·pad
- * (md: 58−2−24−6 = 26 · sm: 44−2−20−6 = 16). Anything else either overshoots
+ * (md: 42−2−18−4 = 18 · sm: 36−2−15−4 = 15 — the design `.switch` /
+ * `.switch.sm` translateX values exactly). Anything else either overshoots
  * into the border or leaves the knob short of the right pad. */
 
 const SIZES = {
-  md: { track: 58, knob: 24, pad: 3 },
-  sm: { track: 44, knob: 20, pad: 3 },
+  md: { track: 42, knob: 18, pad: 2 },
+  sm: { track: 36, knob: 15, pad: 2 },
 } as const;
 const BORDER = 1;
 

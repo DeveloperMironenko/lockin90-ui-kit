@@ -21,6 +21,9 @@ export const Variants: StoryObj = {
       <GradientText gradient="violet" style={{ fontSize: 24, fontWeight: '700' }}>
         Violet
       </GradientText>
+      <GradientText gradient="mint" style={{ fontSize: 24, fontWeight: '700' }}>
+        Mint
+      </GradientText>
     </View>
   ),
 };

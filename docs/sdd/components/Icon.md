@@ -11,7 +11,7 @@
 
 ## 1. Overview
 
-The kit's **single icon facade** — one component, a **113-name `IconName` union** (identical on both platforms).
+The kit's **single icon facade** — one component, a **117-name `IconName` union** (identical on both platforms).
 Since the Lucide adoption, **98 names map to Lucide glyphs** (`lucide-react` on web, `lucide-react-native` on
 native, both `^1.24.0`; 93 distinct Lucide imports — 5 alias pairs like `back`+`chevronLeft` → `ChevronLeft`,
 `billing`+`card` → `CreditCard`) and **15 stay custom hand-drawn** (the 5 mood faces + the brand/provider marks
@@ -42,7 +42,7 @@ platforms); `apple` and `stripe` are filled silhouettes rendered in the resolved
 - **Native:** Lucide names render the mapped `lucide-react-native` component bare (no wrapper, `strokeWidth 1.9`,
   `color` prop); custom names are `(color) => ReactNode` functions drawn with `react-native-svg` primitives so
   `color` injects into fills. No `className`/`style`/rest; pass `color` explicitly.
-- **`strokeWidth` is not a prop** — 1.9 is fixed in both facades. The 113-name union is hand-duplicated in the
+- **`strokeWidth` is not a prop** — 1.9 is fixed in both facades. The 117-name union is hand-duplicated in the
   two `Icon.tsx` files under a "⚠️ KEEP IN SYNC" comment (no shared names module).
 
 ## 3. Visual spec (tokens — never hardcode)
@@ -59,7 +59,7 @@ platforms); `apple` and `stripe` are filled silhouettes rendered in the resolved
 `size` is unitless px; pass e.g. `16`/`17`/`14` to match a row's type (the `Button` row auto-sizes its leading
 `svg` via CSS, but standalone you set `size`).
 
-### IconName categories (113 names — 98 Lucide-mapped + 15 custom; representative, not exhaustive)
+### IconName categories (117 names — 102 Lucide-mapped + 15 custom; representative, not exhaustive)
 
 | Category | Notable names |
 | --- | --- |
@@ -74,6 +74,7 @@ platforms); `apple` and `stripe` are filled silhouettes rendered in the resolved
 | Domain / nav (web rebuild) | `energy` `sleep` `insights` `billing` `globe` `heart` `flame` `height` `weight` `arrow-right` `shield` |
 | Mobile domain | `mail` `caffeine` `meal` `mood` `scale` `ruler` `card` `data-source` |
 | Consumer screens | `send` `attach` `emoji` `mic` `comment` `bookmark` `target` `medal` `drop` `utensil` `barcode-scan` `pill` `flask` `syringe` `camera` |
+| Devices / tools | `wrench` `monitor` `smartphone` `laptop` (account sub-pages: security sessions · changelog change-groups) |
 | Mood faces (escalating, **custom**) | `mood-rough` `mood-low` `mood-ok` `mood-good` `mood-great` |
 | Provider marks (mono silhouette, **custom**) | `oura` `whoop` `garmin` `polar` `apple-health` `dexcom` `strava` |
 | Brand marks (**custom**) | `google` (**multicolor**), `apple` `stripe` (filled silhouette in resolved color) |
@@ -89,7 +90,7 @@ the wrapping `Button`/`Pressable`, not the icon.
 ## 5. Web ↔ native parity
 
 **Verdict: 🟡 — identical glyph set + geometry, platform-shaped coloring/wrapper.** The **single reconciled
-113-name union** (98 Lucide-mapped from the same `^1.24.0` release, 15 custom with the same paths), the 24
+117-name union** (102 Lucide-mapped from the same `^1.24.0` release, 15 custom with the same paths), the 24
 viewBox, the fixed 1.9 stroke, round caps, default size 18, and the `google` brand fills are 1:1. The
 differences are substrate:
 

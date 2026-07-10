@@ -55,6 +55,7 @@
 }
 .lk-gradient-text.lk-cta { background-image: linear-gradient(135deg, #7C5CFF, #22D3EE, #7C5CFF); }
 .lk-gradient-text.lk-violet { background-image: linear-gradient(135deg, #A855F7, #6E7BFF, #A855F7); }
+.lk-gradient-text.lk-mint { background-image: linear-gradient(135deg, #34F5C5, #22D3EE, #34F5C5); }
 @keyframes lk-flow-text { to { background-position: 200% 0; } }
 .lk-muted { color: var(--text-dim); }
 .lk-faint { color: var(--text-faint); }

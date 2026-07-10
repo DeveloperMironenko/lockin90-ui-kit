@@ -31,6 +31,8 @@ mirrors the `Input` field look (glass shell, accent focus, invalid red). Each op
 | `invalid` | `boolean` | `false` | ✓ | ✓ | red border (web also reddens the ring) |
 | `disabled` | `boolean` | `false` | ✓ | ✓ | dims field, blocks open |
 | `name` | `string` | — | ✓ | — | **web-only** — renders a hidden `<input>` so the value posts in a native form |
+| `size` | `'md' \| 'sm'` | `'md'` | ✓ | ✓ | `'md'` = standard form field (unchanged); `'sm'` = the design settings `.pref-select` compact mono glass pill: `--glass-2` fill, `--border` hairline (not border-2), content-hugging, mono value (web 13px p8×14 · native 11px p6×9), 13px `--text-faint` chevron |
+| `leading` | `ReactNode` | — | ✓ | ✓ | optional leading icon inside the field before the value (design `.lang-wrap` globe on the Language select); web wraps it in `.lk-select-lead` |
 | `id` | `string` | — | ✓ | — | **web-only** — on the trigger `<button>` |
 | `className` / `style` | — | — | `className` + rest | — | **web-only** — native takes no `style`/rest |
 | _rest_ | `Omit<HTMLAttributes<HTMLDivElement>,'onChange'>` (web) | — | ✓ | — | spread onto the root `<div>` (web only) |

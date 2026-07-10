@@ -59,3 +59,26 @@ filters on native" rule; any SDD still citing it is stale. View elevation/glow *
 2. **No lookalikes** — import the kit primitive; never re-create it locally.
 3. **New need → add to BOTH platforms** — same prop name, same tokens; never a one-off.
 4. **Parity gate** — web phone-width render ≡ native render before a screen ships.
+
+## One primitive per role (owner rule, 2026-07-09 — "they have to be the same")
+The SAME interaction role always renders through the SAME kit primitive, everywhere —
+including INSIDE other kit components. Concretely:
+- **Search is always `SearchInput`** — never a bare `TextInput`/`<input>` styled to look
+  like one (that's how Select's panel drifted: different size, missing magnifier). In
+  menus/sheets/panels use `shape="sm"` so it matches the surrounding fields; standalone
+  search keeps the default pill. A search field that appears on OPEN is `autoFocus`.
+- Same for every other role: toggles are `Toggle`, segmented choices are `SegmentedTabs`,
+  option pickers are `Select`/the option-sheet pattern, badges are `Badge`, chips are
+  `Chip`, back is `BackLink`/ScreenHeader-back. If a composite kit component needs one of
+  these inside it, it IMPORTS the primitive — it does not re-draw it.
+- Searchable option lists keep a FIXED panel height while filtering (the sheet must not
+  resize per keystroke), and long catalogs (>8 options) get search + scroll by default.
+- If two surfaces show the same role looking different, that is a bug in whichever one
+  bypassed the primitive — fix it AT THE PRIMITIVE'S CALLSITE, never by re-styling a copy.
+- **State patterns are roles too**: error = kit `Alert` (message, then a ≥10px gap, then a
+  ghost Retry `Button` — never button glued to text) · loading = kit `Skeleton` rows shaped
+  like the real content · empty = kit `EmptyState` with design copy. Same pattern on every
+  screen; new screens copy an existing screen's state block, not invent one.
+- **Locale rules ride along**: dates/numbers format with the APP language (`i18n.language`),
+  never the device default; every server-sourced enum/id shown to users goes through
+  `t('<ns>.<id>', { defaultValue })` with catalog keys for the known ids.

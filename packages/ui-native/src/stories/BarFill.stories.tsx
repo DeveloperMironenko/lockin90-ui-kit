@@ -28,3 +28,17 @@ export const Levels: Story = {
     </View>
   ),
 };
+
+/** Gradient variants — mint for healthy coverage / unlimited bars, warm for
+ *  warn-threshold quota bars (mock `.barfill.q-unlimited` / `.q-warn`). */
+export const Gradients: Story = {
+  render: () => (
+    <View style={{ width: 320, gap: 12 }}>
+      <BarFill value={0.72} />
+      <BarFill value={0.96} gradient="mint" height={6} />
+      <BarFill value={0.34} gradient="warm" />
+      <BarFill value={0.6} gradient="violet" />
+      <BarFill value={0.85} gradient="flux" />
+    </View>
+  ),
+};

@@ -47,15 +47,7 @@ export function Card({ lit, padLg, pad, flat, blur, tone, variant, style, childr
         style={[composed, styles.cardBlur, style]}
         {...rest}
       >
-        {lit && (
-          <LinearGradient
-            colors={gradients.flux.stops as unknown as [string, string]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.lit}
-            pointerEvents="none"
-          />
-        )}
+        {lit && <LitHairline />}
         {children}
       </OptionalBlurView>
     );
@@ -63,9 +55,34 @@ export function Card({ lit, padLg, pad, flat, blur, tone, variant, style, childr
 
   return (
     <View style={[composed, style]} {...rest}>
-      {lit && <View style={styles.lit} pointerEvents="none" />}
+      {lit && <LitHairline />}
       {children}
     </View>
+  );
+}
+
+// The web `.lk-card.lk-lit::before` hairline, natively: a 1px gradient strip
+// inset by the corner radius, fading to zero-alpha at both ends (the previous
+// plain-View implementation had no fill — invisible — and the blur branch drew
+// a hard-ended full-opacity flux line that read as a solid top border).
+// Zero-alpha endpoints are color-matched (not 'transparent') so iOS doesn't
+// blend the fade through gray.
+const LIT_STOPS = [
+  'rgba(124,92,255,0)',
+  'rgba(124,92,255,0.7)',
+  'rgba(34,211,238,0.7)',
+  'rgba(34,211,238,0)',
+] as const;
+
+function LitHairline() {
+  return (
+    <LinearGradient
+      colors={LIT_STOPS as unknown as [string, string]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      style={styles.lit}
+      pointerEvents="none"
+    />
   );
 }
 
@@ -110,14 +127,13 @@ const styles = StyleSheet.create({
   // when blurred, drop most of the opaque fill so the frost shows through, and
   // clip the blur to the card radius (iOS needs overflow:hidden for this)
   cardBlur: { backgroundColor: 'rgba(255,255,255,0.02)', overflow: 'hidden' },
+  // web parity: `inset: 0 var(--r) auto var(--r); height: 1px` — the straight
+  // hairline stays inside the top edge, clear of the rounded corners.
   lit: {
     position: 'absolute',
     top: 0,
-    left: 0,
-    right: 0,
-    height: 1.5,
-    borderTopLeftRadius: radii.md,
-    borderTopRightRadius: radii.md,
-    opacity: 0.85,
+    left: radii.md,
+    right: radii.md,
+    height: 1,
   },
 });
