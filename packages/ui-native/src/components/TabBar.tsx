@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, type StyleProp, type ViewStyle } fro
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
 import { Icon, type IconName } from './Icon';
+import { OptionalBlurView } from '../internal/optionalBlur';
 
 /* ============================================================================
    Mobile atoms — TabBar (bottom navigation) + FAB (floating action button).
@@ -68,36 +69,54 @@ export function TabBar({
   floating = false,
   style,
 }: TabBarProps) {
+  const tabs = items.map((item, i) => {
+    const isActive = i === active;
+    const isFab = i === fabIndex;
+    const tint = isActive ? colors.accent : colors.textFaint;
+    return (
+      <Pressable
+        key={i}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: isActive }}
+        onPress={() => (isFab && onFabPress ? onFabPress() : onChange?.(i))}
+        style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
+      >
+        {isFab ? (
+          <LinearGradient
+            colors={gradients.cta.stops as unknown as [string, string]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.fabTile}
+          >
+            {renderIcon(item.icon, '#08090F')}
+          </LinearGradient>
+        ) : (
+          <View style={styles.iconWrap}>{renderIcon(item.icon, tint)}</View>
+        )}
+        <Text style={[styles.label, { color: isFab ? colors.textDim : tint }]}>{item.label}</Text>
+      </Pressable>
+    );
+  });
+
+  // Floating bars are FROSTED when the app ships expo-blur (the design's
+  // `backdrop-filter: blur(20px) saturate(120%)`); without it the translucent
+  // fill approximates. The web twin uses the real backdrop-filter.
+  if (floating && OptionalBlurView) {
+    return (
+      <OptionalBlurView
+        intensity={40}
+        tint="dark"
+        style={[styles.bar, styles.barFloating, style]}
+        accessibilityRole="tablist"
+      >
+        {tabs}
+      </OptionalBlurView>
+    );
+  }
+
   return (
     <View style={[styles.bar, floating && styles.barFloating, style]} accessibilityRole="tablist">
-      {items.map((item, i) => {
-        const isActive = i === active;
-        const isFab = i === fabIndex;
-        const tint = isActive ? colors.accent : colors.textFaint;
-        return (
-          <Pressable
-            key={i}
-            accessibilityRole="tab"
-            accessibilityState={{ selected: isActive }}
-            onPress={() => (isFab && onFabPress ? onFabPress() : onChange?.(i))}
-            style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
-          >
-            {isFab ? (
-              <LinearGradient
-                colors={gradients.cta.stops as unknown as [string, string]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.fabTile}
-              >
-                {renderIcon(item.icon, '#08090F')}
-              </LinearGradient>
-            ) : (
-              <View style={styles.iconWrap}>{renderIcon(item.icon, tint)}</View>
-            )}
-            <Text style={[styles.label, { color: isFab ? colors.textDim : tint }]}>{item.label}</Text>
-          </Pressable>
-        );
-      })}
+      {tabs}
     </View>
   );
 }
@@ -171,13 +190,19 @@ const styles = StyleSheet.create({
   // floating glass pill (the mockups' `.tabbar`): rounded, hairline all round, a
   // semi-opaque dark fill (= bg1 @ 82%; tokens have no alpha-bg), and an upward
   // ambient float shadow (no token — nativeShadows are elev/glow, not floats).
+  // owner pick (2026-07-10): full CAPSULE, not the design's 26px — the bar's
+  // curve follows the iPhone screen corner; equal 8px padding inside; hosts
+  // give it EQUAL 12px side + bottom insets (don't let the safe area inflate
+  // the bottom gap). `overflow: hidden` clips the blur to the capsule.
   barFloating: {
     width: undefined,
     borderTopWidth: 0,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radii.xl,
+    borderRadius: radii.pill,
+    paddingHorizontal: 8,
     backgroundColor: 'rgba(12,15,26,0.82)',
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOpacity: 0.6,
     shadowRadius: 24,
