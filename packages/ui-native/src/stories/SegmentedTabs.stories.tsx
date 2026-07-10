@@ -75,3 +75,34 @@ export const MintTone: Story = {
     </View>
   ),
 };
+
+/** `size="sm"` + `tone="gradient"` — the design settings `.seg`: a compact
+ *  content-hugging mono pill control whose active segment is a CTA-gradient
+ *  pill + glow + dark label (unit system / week start rows). */
+export const SmallGradient: Story = {
+  render: () => (
+    <View style={{ width: 320, gap: 12 }}>
+      <SegmentedTabs tabs={['Metric', 'Imperial']} active={0} size="sm" tone="gradient" />
+      <SegmentedTabs tabs={['Mon', 'Sun']} active={0} size="sm" tone="gradient" />
+    </View>
+  ),
+};
+
+/** `appearance="tint"` + per-tab icons + counts — the design changelog
+ *  `.svc-toggle` service filter: glass track, accent-tinted active pill +
+ *  accent border, cyan-tinted active count badge. */
+export const ServiceFilter: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <SegmentedTabs
+        tabs={[
+          { label: 'All', icon: 'list', count: 5 },
+          { label: 'Web', icon: 'monitor', count: 3 },
+          { label: 'Mobile', icon: 'smartphone', count: 2 },
+        ]}
+        active={0}
+        appearance="tint"
+      />
+    </View>
+  ),
+};

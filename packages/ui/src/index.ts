@@ -44,7 +44,7 @@ export { FormField, SearchInput } from './components/FormField';
 export type { FormFieldProps, SearchInputProps } from './components/FormField';
 export { GradientText } from './components/GradientText';
 export type { GradientTextProps } from './components/GradientText';
-export { Icon } from './components/Icon';
+export { Icon, BRAND_COLORS } from './components/Icon';
 export type { IconName, IconProps } from './components/Icon';
 export { Input } from './components/Input';
 export type { InputProps } from './components/Input';

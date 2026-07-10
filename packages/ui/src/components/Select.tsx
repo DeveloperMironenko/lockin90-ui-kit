@@ -8,9 +8,11 @@ import {
   type CSSProperties,
   type HTMLAttributes,
   type KeyboardEvent,
+  type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../cn';
+import { SearchInput } from './FormField';
 import { computeMenuPosition, type MenuPosition } from './tooltipPosition';
 
 /** A single option in a {@link Select}. */
@@ -38,8 +40,24 @@ export interface SelectProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onCha
   invalid?: boolean;
   /** disable the field */
   disabled?: boolean;
+  /** show a search field in the option panel to filter a long list (by label). */
+  searchable?: boolean;
+  /** placeholder for the search field (pass a localized string). @default 'Search…' */
+  searchPlaceholder?: string;
   /** name for a hidden input so the value posts in a native form */
   name?: string;
+  /**
+   * Field scale. `'md'` (default) is the standard form field. `'sm'` is the
+   * design settings compact glass pill (`.pref-select`): mono 13px value,
+   * `--glass-2` fill, `--border` hairline, padding 8×14, 13px chevron — hugs
+   * its content instead of stretching. Mirrors native `size="sm"`.
+   */
+  size?: 'md' | 'sm';
+  /**
+   * Optional leading icon rendered inside the field before the value
+   * (design `.lang-wrap` globe on the language select). Mirrors native `leading`.
+   */
+  leading?: ReactNode;
 }
 
 const DEFAULT_OPTIONS: SelectOption[] = [
@@ -52,8 +70,10 @@ const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : use
 
 /** Dark glassy custom select — NOT the browser `<select>`. A field trigger opens
  *  a portaled, collision-aware listbox (flips above / shifts to stay on-screen)
- *  with full keyboard support (arrows, Home/End, type-ahead, Enter/Esc). Mirrors
- *  the native `Select`'s look; same prop API. */
+ *  with full keyboard support (arrows, Home/End, type-ahead, Enter/Esc). With
+ *  `searchable`, the panel gains a kit `SearchInput` (autofocused) that filters
+ *  options by label inside a FIXED-height panel. Mirrors the native `Select`'s
+ *  look; same prop API. */
 export function Select({
   options = DEFAULT_OPTIONS,
   value,
@@ -63,7 +83,11 @@ export function Select({
   required = false,
   invalid = false,
   disabled = false,
+  searchable = false,
+  searchPlaceholder = 'Search…',
   name,
+  size = 'md',
+  leading,
   className,
   id,
   ...rest
@@ -72,10 +96,11 @@ export function Select({
   const [pos, setPos] = useState<MenuPosition | null>(null);
   const [triggerW, setTriggerW] = useState(0);
   const [active, setActive] = useState(0);
+  const [query, setQuery] = useState('');
 
   const rootRef = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLUListElement>(null);
+  const panelRef = useRef<HTMLElement | null>(null);
   const optRefs = useRef<Array<HTMLLIElement | null>>([]);
   const typeahead = useRef({ buf: '', at: 0 });
 
@@ -87,7 +112,15 @@ export function Select({
   const selectedIndex = options.findIndex((o) => o.value === value);
   const selected = selectedIndex >= 0 ? options[selectedIndex] : undefined;
 
-  const enabledIndices = options.map((o, i) => (o.disabled ? -1 : i)).filter((i) => i >= 0);
+  // the list the panel shows — filtered by label (case-insensitive) while searching.
+  // Mirrors the native Select's filter; `active` indexes into THIS list.
+  const trimmedQuery = query.trim().toLowerCase();
+  const shown =
+    searchable && trimmedQuery
+      ? options.filter((o) => o.label.toLowerCase().includes(trimmedQuery))
+      : options;
+
+  const enabledIndices = shown.map((o, i) => (o.disabled ? -1 : i)).filter((i) => i >= 0);
   const firstEnabled = () => (enabledIndices.length ? enabledIndices[0] : 0);
   const lastEnabled = () => (enabledIndices.length ? enabledIndices[enabledIndices.length - 1] : 0);
   /** next enabled index from `from` in `dir`, wrapping. */
@@ -105,15 +138,17 @@ export function Select({
 
   const openMenu = () => {
     if (disabled) return;
+    // query is always '' here (reset on close), so `shown` === `options`
     setActive(selectedIndex >= 0 ? selectedIndex : firstEnabled());
     setOpen(true);
   };
   const close = (focusBtn = true) => {
     setOpen(false);
+    setQuery('');
     if (focusBtn) btnRef.current?.focus();
   };
   const choose = (i: number) => {
-    const opt = options[i];
+    const opt = shown[i];
     if (!opt || opt.disabled) return;
     onChange?.(opt.value);
     close();
@@ -125,8 +160,17 @@ export function Select({
     if (now - ta.at > 700) ta.buf = '';
     ta.at = now;
     ta.buf += char.toLowerCase();
-    const match = options.findIndex((o) => !o.disabled && o.label.toLowerCase().startsWith(ta.buf));
+    const match = shown.findIndex((o) => !o.disabled && o.label.toLowerCase().startsWith(ta.buf));
     if (match >= 0) setActive(match);
+  };
+
+  /** search field: re-filter and land the highlight on the first match. */
+  const onQueryChange = (next: string) => {
+    setQuery(next);
+    const t = next.trim().toLowerCase();
+    const filtered = t ? options.filter((o) => o.label.toLowerCase().includes(t)) : options;
+    const first = filtered.findIndex((o) => !o.disabled);
+    setActive(first >= 0 ? first : 0);
   };
 
   // position while open + keep pinned on scroll/resize (mirrors Menu)
@@ -221,9 +265,74 @@ export function Select({
     }
   };
 
-  const panelStyle: CSSProperties = pos
-    ? { top: pos.top, left: pos.left, minWidth: triggerW }
-    : { top: 0, left: 0, minWidth: triggerW, opacity: 0, pointerEvents: 'none' };
+  /** keyboard on the (focused) search field — navigate/choose in the filtered list. */
+  const onSearchKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setActive((a) => step(a, 1));
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setActive((a) => step(a, -1));
+        break;
+      case 'Enter':
+        e.preventDefault();
+        choose(active);
+        break;
+      case 'Escape':
+        // preventDefault also stops type="search" from clearing itself first
+        e.preventDefault();
+        close();
+        break;
+      case 'Tab':
+        close(false);
+        break;
+    }
+  };
+
+  // searchable panels are FIXED-size while open (height via CSS, width here) so
+  // filtering never resizes them per keystroke — mirrors the native search sheet.
+  const panelStyle: CSSProperties = {
+    ...(pos
+      ? { top: pos.top, left: pos.left, minWidth: triggerW }
+      : { top: 0, left: 0, minWidth: triggerW, opacity: 0, pointerEvents: 'none' }),
+    ...(searchable ? { width: Math.max(triggerW, 260) } : null),
+  };
+
+  const rows = !open
+    ? null
+    : shown.map((opt, i) => {
+        const isSel = opt.value === value;
+        return (
+          <li
+            key={opt.value}
+            ref={(el) => {
+              optRefs.current[i] = el;
+            }}
+            id={optionId(i)}
+            role="option"
+            aria-selected={isSel}
+            aria-disabled={opt.disabled || undefined}
+            className={cn(
+              'lk-select-option',
+              i === active && 'is-active',
+              isSel && 'is-selected',
+              opt.disabled && 'is-disabled',
+            )}
+            onMouseEnter={() => !opt.disabled && setActive(i)}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => choose(i)}
+          >
+            <span className="lk-select-option-label">{opt.label}</span>
+            {isSel ? (
+              <svg className="lk-select-check" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 13l4 4L19 7" />
+              </svg>
+            ) : null}
+          </li>
+        );
+      });
 
   return (
     <div ref={rootRef} className={cn('lk-select-wrap', className)} {...rest}>
@@ -242,17 +351,28 @@ export function Select({
         ref={btnRef}
         type="button"
         id={id}
-        className={cn('lk-select-trigger', invalid && 'lk-select-invalid', disabled && 'lk-select-disabled')}
+        className={cn(
+          'lk-select-trigger',
+          size === 'sm' && 'lk-select-sm',
+          invalid && 'lk-select-invalid',
+          disabled && 'lk-select-disabled',
+        )}
         role="combobox"
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={open ? listboxId : undefined}
-        aria-activedescendant={open ? optionId(active) : undefined}
+        // with a search field the input is the focused combobox and carries this
+        aria-activedescendant={open && !searchable ? optionId(active) : undefined}
         aria-invalid={invalid || undefined}
         disabled={disabled}
         onClick={() => (open ? close() : openMenu())}
         onKeyDown={onTriggerKey}
       >
+        {leading != null ? (
+          <span className="lk-select-lead" aria-hidden="true">
+            {leading}
+          </span>
+        ) : null}
         <span className={cn('lk-select-value', !selected && 'lk-select-placeholder')}>
           {selected ? selected.label : (placeholder ?? '')}
         </span>
@@ -265,46 +385,57 @@ export function Select({
 
       {open && typeof document !== 'undefined'
         ? createPortal(
-            <ul
-              ref={panelRef}
-              id={listboxId}
-              role="listbox"
-              aria-label={label}
-              className={cn('lk-select-panel', pos && `lk-select-${pos.side}`, pos && 'is-open')}
-              style={panelStyle}
-            >
-              {options.map((opt, i) => {
-                const isSel = opt.value === value;
-                return (
-                  <li
-                    key={opt.value}
-                    ref={(el) => {
-                      optRefs.current[i] = el;
-                    }}
-                    id={optionId(i)}
-                    role="option"
-                    aria-selected={isSel}
-                    aria-disabled={opt.disabled || undefined}
-                    className={cn(
-                      'lk-select-option',
-                      i === active && 'is-active',
-                      isSel && 'is-selected',
-                      opt.disabled && 'is-disabled',
-                    )}
-                    onMouseEnter={() => !opt.disabled && setActive(i)}
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => choose(i)}
-                  >
-                    <span className="lk-select-option-label">{opt.label}</span>
-                    {isSel ? (
-                      <svg className="lk-select-check" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M5 13l4 4L19 7" />
-                      </svg>
-                    ) : null}
-                  </li>
-                );
-              })}
-            </ul>,
+            searchable ? (
+              <div
+                ref={(el) => {
+                  panelRef.current = el;
+                }}
+                className={cn(
+                  'lk-select-panel',
+                  'lk-select-searchable',
+                  pos && `lk-select-${pos.side}`,
+                  pos && 'is-open',
+                )}
+                style={panelStyle}
+              >
+                {/* the ONE search primitive (kit rule: never a bare <input> where
+                    SearchInput exists) — sm shape to sit inside the panel, autofocused */}
+                <SearchInput
+                  shape="sm"
+                  className="lk-select-search"
+                  value={query}
+                  onChange={onQueryChange}
+                  placeholder={searchPlaceholder}
+                  autoFocus
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  role="combobox"
+                  aria-expanded={true}
+                  aria-autocomplete="list"
+                  aria-controls={listboxId}
+                  aria-activedescendant={shown.length ? optionId(active) : undefined}
+                  onKeyDown={onSearchKey}
+                />
+                <ul id={listboxId} role="listbox" aria-label={label} className="lk-select-list">
+                  {rows}
+                </ul>
+              </div>
+            ) : (
+              <ul
+                ref={(el) => {
+                  panelRef.current = el;
+                }}
+                id={listboxId}
+                role="listbox"
+                aria-label={label}
+                className={cn('lk-select-panel', pos && `lk-select-${pos.side}`, pos && 'is-open')}
+                style={panelStyle}
+              >
+                {rows}
+              </ul>
+            ),
             document.body,
           )
         : null}

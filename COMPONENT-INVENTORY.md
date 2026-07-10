@@ -126,7 +126,7 @@ Legend — Parity: ✅ same API · 🟡 same API, platform-shaped impl · 🔵 c
 | Component | Exports | Purpose | Key variants/props | Parity |
 | --- | --- | --- | --- | --- |
 | **BrandMark** | — | Signature energy-line + peak-dot logo | `variant: mark·lockup·icon·mono`, `size` | 🟡 SVG both; web `title`, native `style` |
-| **GradientText** | — | Spectrum-gradient text fill | `gradient: flux·cta·violet` | 🟡 web CSS clip; native 2-pass SVG measure |
+| **GradientText** | — | Spectrum-gradient text fill | `gradient: flux·cta·violet·mint` | 🟡 web CSS clip; native 2-pass SVG measure |
 | **Icon** | — | Inline-SVG glyph set | `name` (11: back, chevron, share, more, lock, play, info, timer, plus, check, star), `size` | ✅ identical 11-set |
 | **Divider** | — | Hairline rule | web `gradient?` fade | 🔵 native has no gradient variant |
 | **Pulse** | — | Breathing live-status dot | `tone: ok·warn·bad` | 🟡 CSS anim vs shadow |
@@ -160,7 +160,7 @@ Legend — Parity: ✅ same API · 🟡 same API, platform-shaped impl · 🔵 c
 | **Badge** | (in Toast)² | Tiny count/dot pill | `tone: accent·high·mid·low·neutral`, `dot` | 🟡 |
 | **StatusDot** | (in KeyValue)¹ | Tiny status dot + pulse | `tone: high·mid·low·accent·neutral`, `pulse` | 🟡 |
 | **Ring** | — | Circular progress, glow arc | `value·size·thickness·gradient·glow`; NEW `variant: score·dual·triple·thin-halo·dashed-track·pulse·delta`, `zone`, `delta` | 🟡 SVG both; native glow via 2nd circle |
-| **BarFill** | — | Thin gradient progress bar (0–1) | `value·height·visible` | 🟡 |
+| **BarFill** | — | Thin gradient progress bar (0–1) | `value·height·visible`, `gradient: cta·mint·warm·flux·violet` | 🟡 |
 | **Sparkline** | — | Mini trend line + area + end dot | `data·fill·dot·strokeWidth` | 🟡 |
 | **BarChart** | `BarChartVariant`·`BarChartLegendItem` | Vertical gradient bars, highlights | `bars·max·showValues`; NEW `variant` (14: bars·spectrum·zone·lollipop·diverging-tide·stacked·grouped-pair·value-caps·fade-history·today-pulse·rank-rows·waterfall·goal-bars·sparkbar-micro), `legend` | 🟡 gradient string vs tuple |
 | **LineChart** | `LineChartVariant`·`LineSeries`·`LineCurve`·`LinePattern`·`GradientStop`·`LineLabel` | Smooth/straight line, area, grid, axes, markers | `data·axis·smooth·yAxis·markers`; NEW `variant` (solid·gradient·veil·tide-split·glass-fill·curve-styles·dash-dot·stroke-weight·neon·aurora-halo·ghost-echo·bead-chain·comet-head·peak-flag + marker/compare/band/forecast forms), multi-`series`, `curve`, `pattern` | 🟡 web stretch-SVG vs fixed viewBox |
@@ -205,7 +205,7 @@ Legend — Parity: ✅ same API · 🟡 same API, platform-shaped impl · 🔵 c
 | --- | --- | --- | --- | --- |
 | **TabBar** | `FAB` | Bottom nav (icon+label); floating action button | `items·active`; FAB circular/extended | 🟡 native accepts `IconName` strings |
 | **Tabs** | — | Underline text tabs | `tabs·active` | ✅ |
-| **SegmentedTabs** | — | iOS pill segmented control | `tabs·active`, `locked: number[]` upsell | ✅ locked behavior identical |
+| **SegmentedTabs** | — | iOS pill segmented control | `tabs·active` (items: `count·tone·icon`), `locked: number[]` upsell, `appearance: raised·tint` | ✅ locked behavior identical |
 | **Pagination** | `Breadcrumb` | Numbered pager w/ ellipsis; crumb trail | `page·pageCount`; `items·onNavigate` | 🟡 web `<a href>` vs Pressable |
 | **BackLink** | — | Chevron-left back affordance | `label·href·onClick/onPress` | 🟡 consumer owns nav (no router.back built in) |
 | **Toolbar** | `Dropzone` | Icon-button group; file-drop area | `items`; `label·hint·onFiles` | 🔵 native Dropzone is tap-only (no drag-drop) |

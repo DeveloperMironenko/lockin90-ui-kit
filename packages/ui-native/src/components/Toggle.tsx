@@ -1,6 +1,6 @@
 import { View, Text, Pressable, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
+import { colors, radii, fonts, gradients } from '@lockin90/tokens';
 
 export type ToggleSize = 'sm' | 'md';
 
@@ -18,9 +18,15 @@ export interface ToggleProps {
   style?: StyleProp<ViewStyle>;
 }
 
-/** On/off switch — a glass pill track (glass-2 + border-2) holding a CTA-gradient
- *  knob that slides L→R when on; the TRACK only tints accent when on (mirrors the
- *  web `.lk-toggle`). An optional `label` is laid out in a row beside the switch. */
+/** The design's dark ink for content sitting on a bright CTA gradient
+ *  (design `.switch[aria-checked="true"]::after` — #07080d). */
+const INK_ON_GRADIENT = '#07080D';
+
+/** On/off switch — the design `.switch`: OFF is a glass pill track (subtle
+ *  white fill + border-2) holding a solid text-dim knob; ON fills the TRACK
+ *  with the CTA gradient (violet→cyan) + accent glow and the knob goes dark
+ *  ink. Mirrors the web `.lk-toggle` 1:1 (lockin90-design settings screens).
+ *  An optional `label` is laid out in a row beside the switch. */
 export function Toggle({
   checked = false,
   onChange,
@@ -35,12 +41,9 @@ export function Toggle({
   // else the "on" knob overshoots by 2px and sits flush against the right edge.
   const knobOffset = dims.track - TRACK_BORDER * 2 - dims.knob - dims.pad * 2;
 
-  // the knob is ALWAYS the cta gradient (matches web `.lk-toggle-knob`)
+  // knob: solid text-dim when off, dark ink when on (design `.switch::after`)
   const knob = (
-    <LinearGradient
-      colors={gradients.cta.stops as unknown as [string, string]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
+    <View
       style={[
         styles.knob,
         {
@@ -53,6 +56,7 @@ export function Toggle({
           marginTop: -dims.knob / 2,
           left: dims.pad,
           transform: [{ translateX: checked ? knobOffset : 0 }],
+          backgroundColor: checked ? INK_ON_GRADIENT : colors.textDim,
         },
       ]}
     />
@@ -71,6 +75,14 @@ export function Toggle({
         disabled && styles.disabled,
       ]}
     >
+      {checked && (
+        <LinearGradient
+          colors={gradients.cta.stops as unknown as [string, string]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.trackFill}
+        />
+      )}
       {knob}
     </Pressable>
   );
@@ -93,9 +105,11 @@ export function Toggle({
   );
 }
 
+// Design sizes (mobile mock `.switch` / `.switch.sm`): md 42×24 knob 18,
+// sm 36×21 knob 15; knob inset 2px.
 const SIZE = {
-  md: { track: 58, height: 32, knob: 24, pad: 3 },
-  sm: { track: 44, height: 26, knob: 20, pad: 3 },
+  md: { track: 42, height: 24, knob: 18, pad: 2 },
+  sm: { track: 36, height: 21, knob: 15, pad: 2 },
 } as const;
 
 /** Track border width (must match `trackOff`/`trackOn` borderWidth below). */
@@ -106,22 +120,29 @@ const styles = StyleSheet.create({
     position: 'relative',
     borderRadius: radii.pill,
     flexShrink: 0,
+    overflow: 'hidden',
   },
   trackOff: {
-    backgroundColor: colors.glass2,
+    // design `.switch`: rgba(255,255,255,.06) fill + border-2 hairline
+    backgroundColor: 'rgba(255,255,255,0.06)',
     borderWidth: 1,
     borderColor: colors.border2,
   },
-  // on — track only TINTS accent (web `.lk-toggle.is-on`), it is NOT gradient-filled
+  // on — the TRACK fills with the CTA gradient + accent glow, border transparent
+  // (design `.switch[aria-checked="true"]`)
   trackOn: {
-    backgroundColor: 'rgba(124,92,255,0.18)',
+    backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: 'rgba(124,92,255,0.40)',
+    borderColor: 'transparent',
+    boxShadow: '0 0 14px rgba(124,92,255,0.45)',
+  },
+  trackFill: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: radii.pill,
   },
   knob: {
     position: 'absolute',
     zIndex: 1,
-    ...nativeShadows.glowAccent,
   },
   row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   label: { fontFamily: fonts.ui, fontSize: 14, fontWeight: '500', color: colors.text },

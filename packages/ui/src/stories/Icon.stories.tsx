@@ -139,6 +139,11 @@ const ALL: IconName[] = [
   'flask',
   'syringe',
   'camera',
+  // devices / tools
+  'wrench',
+  'monitor',
+  'smartphone',
+  'laptop',
   // session
   'logout',
 ];

@@ -22,11 +22,13 @@ The **iOS-style segmented control** — a glass pill *track* of equal-width segm
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `tabs` | `SegmentedTabItem[]` | `['Stats','History','Guide','Ranks']` | ✓ | ✓ | `string \| { label, count?, tone? }` mixed — **both platforms** (strings normalized by `toTab()`) |
+| `tabs` | `SegmentedTabItem[]` | `['Stats','History','Guide','Ranks']` | ✓ | ✓ | `string \| { label, count?, tone?, icon? }` mixed — **both platforms** (strings normalized by `toTab()`); `icon` renders a leading 13px kit `Icon` before the label (changelog service filter) |
+| `appearance` | `'raised' \| 'tint'` | `'raised'` | ✓ | ✓ | `'tint'` = the design changelog `.svc-toggle` treatment: glass track, hairline-bordered 11px segments, ACTIVE = accent tint `rgba(124,92,255,.14)` + accent border `.32` (no raised shadow); count badges shrink to mono 8.5 (pad 1×5, `--border` hairline) and tint cyan (`--accent-2` on `rgba(34,211,238,.1)`) when active |
 | `active` | `number` | `0` | ✓ | ✓ | index of the active segment |
 | `onChange` | `(index: number) => void` | — | ✓ | ✓ | fires with the pressed index; never fires for `locked` |
 | `locked` | `number[]` | — | ✓ | ✓ | indices dimmed + non-interactive + lock glyph |
-| `tone` | `'accent' \| 'mint'` | `'accent'` | ✓ | ✓ | **control-level** selected-segment color; `'accent'` = current glass pill (unchanged), `'mint'` = mint gradient + glow + dark label |
+| `tone` | `'accent' \| 'mint' \| 'gradient'` | `'accent'` | ✓ | ✓ | **control-level** selected-segment color; `'accent'` = current glass pill (unchanged), `'mint'` = mint gradient + glow + dark label, `'gradient'` = CTA gradient (`--grad-cta`) + glow `0 0 16px rgba(124,92,255,.4)` (native 14px, mobile design) + dark ink `#07080D` label — the design settings `.seg` treatment |
+| `size` | `'md' \| 'sm'` | `'md'` | ✓ | ✓ | `'md'` = full-width equal segments (unchanged); `'sm'` = the design settings compact `.seg`: content-hugging pill track (padding 3, gap 2, `--border` hairline, `--glass` fill), mono segments (web 12px/500 p6×14 · native 10.5px/500 p5×11) |
 | `className` | `string` | — | ✓ | — | web only |
 | _rest_ | `HTMLAttributes<HTMLDivElement>` minus `onChange` (web) | — | ✓ | — | spreads to the track `<div>` |
 
@@ -61,6 +63,9 @@ The **iOS-style segmented control** — a glass pill *track* of equal-width segm
 | Idle text | `--text-dim` / `colors.textDim` |
 | Active (`tone="accent"`, default) | bg `--glass-2`, text `--text`, `box-shadow 0 1px 2px rgba(0,0,0,.3)` (native mirrors via `shadowOpacity .3`, `elevation 2`) |
 | Active (`tone="mint"`) | bg `--grad-mint` / `gradients.mint`, glow `--glow-mint` / `nativeShadows.glowMint`, label `#0A0A12` (dark-on-bright, both platforms) |
+| Active (`tone="gradient"`) | bg `--grad-cta` / `gradients.cta`, glow `0 0 16px rgba(124,92,255,.4)` (web) / `0 0 14px …` (native, mobile design), label ink `#07080D` — design `.seg button[aria-pressed=true]` |
+| `size="sm"` track | padding 3, gap 2, `--border` hairline, `--glass` fill, content-hugging (web `inline-flex`, native `alignSelf:flex-start`) |
+| `size="sm"` segment | `--font-mono` 500, hugs label (`flex: 0 0 auto`): web 12px p6×14 (web design `.seg button`) · native 10.5px p5×11 (mobile design `.seg button`) |
 | Locked | `opacity 0.5`, non-interactive, `Icon name="lock" size={12}` |
 
 - **Hover (web):** idle segment text brightens to `--text`.

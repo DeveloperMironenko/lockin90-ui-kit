@@ -20,6 +20,7 @@ A **thin horizontal gradient progress bar** — a faint pill track with a `--gra
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
 | `value` | `number` | — (required) | ✓ | ✓ | fill fraction, clamped to `[0,1]` |
+| `gradient` | `'cta' \| 'mint' \| 'warm' \| 'flux' \| 'violet'` | `'cta'` | ✓ | ✓ | fill gradient token — `mint` = healthy coverage/unlimited bars, `warm` = warn-threshold quota bars (mock `.barfill.q-unlimited`/`.q-warn`). Web renders `.lk-barfill--<g>` variants over `--grad-*`; native reads `gradients[g].stops` |
 | **`visible`** | `boolean` | `true` | ✓ | — | **web only** — when `false` the fill is collapsed to width 0 (animate in on reveal) |
 | **`height`** | `number` | `8` | — | ✓ | **native only** — track height in px; also sets the pill radius |
 | `className` | `string` | — | ✓ | — | web only |

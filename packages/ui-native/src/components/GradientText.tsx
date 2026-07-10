@@ -15,7 +15,7 @@ export function gradientTextStops(stops: readonly string[], still: boolean): str
 }
 
 export interface GradientTextProps extends TextProps {
-  gradient?: 'flux' | 'cta' | 'violet';
+  gradient?: 'flux' | 'cta' | 'violet' | 'mint';
   /** disable the slow flowing animation (matches web `.lk-gradient-text`); static fill. */
   still?: boolean;
 }

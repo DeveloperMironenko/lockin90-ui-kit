@@ -145,6 +145,10 @@ const styles = StyleSheet.create({
   },
   featuredInner: {
     position: 'relative',
+    // fill the gradient-border wrapper — in a stretched row (horizontal tier
+    // scroller) a content-sized inner card left the wrapper's lower half as a
+    // thick gradient band instead of a 1.5px hairline.
+    flex: 1,
     backgroundColor: colors.bg1,
     borderWidth: 0,
     borderRadius: radii.md - 1.5,
@@ -186,7 +190,7 @@ const styles = StyleSheet.create({
   },
   price: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'baseline',
     gap: 6,
     marginTop: 8,
     marginBottom: 2,

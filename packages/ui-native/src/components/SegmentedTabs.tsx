@@ -1,7 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
-import { Icon } from './Icon';
+import { Icon, type IconName } from './Icon';
 
 /**
  * Semantic tone for a rich segment's active state + leading dot — mirrors the
@@ -21,6 +21,9 @@ export interface SegmentedTab {
   count?: number;
   /** Tones the segment's active pill + a leading dot. */
   tone?: SegmentedTone;
+  /** Leading 13px glyph before the label (e.g. the changelog service filter
+   *  All/Web/Mobile). Mirrors the web `SegmentedTab.icon`. */
+  icon?: IconName;
 }
 
 /** Accepts the plain-string form or the rich object form, mixed freely.
@@ -43,6 +46,10 @@ const TONE_TINT: Record<SegmentedTone, string> = {
   danger: 'rgba(255,77,109,0.16)',
 };
 
+/** The design's dark ink for labels on a bright CTA gradient
+ *  (design `.seg button[aria-pressed="true"]` — #07080d). */
+const INK_ON_GRADIENT = '#07080D';
+
 export interface SegmentedTabsProps {
   /**
    * Segments, one button each. Each may be a plain label string or a
@@ -64,8 +71,28 @@ export interface SegmentedTabsProps {
    * raised glass pill; `'mint'` paints the active segment with the mint
    * gradient (`gradients.mint`) + mint glow + dark label — the onboarding
    * Activity-level control (mirrors web `tone="mint"` / design `.seg.on.mint`).
+   * `'gradient'` paints it with the CTA gradient (`gradients.cta`) + accent
+   * glow + dark label — the design settings `.seg` treatment (unit system /
+   * week start controls). Mirrors web `tone="gradient"`.
    */
-  tone?: 'accent' | 'mint';
+  tone?: 'accent' | 'mint' | 'gradient';
+  /**
+   * Control scale. `'md'` (default) is the full-width tab bar (equal-width
+   * segments). `'sm'` is the design settings compact control: a
+   * content-hugging pill track (padding 3, gap 2, `--border` hairline, glass
+   * fill) of mono 10.5px segments (padding 5×11) that size to their label.
+   * Mirrors web `size="sm"` / design `.seg`.
+   */
+  size?: 'md' | 'sm';
+  /**
+   * Track/active treatment. `'raised'` (default) keeps the standard raised
+   * glass active pill. `'tint'` is the design changelog `.svc-toggle`
+   * treatment: glass track, hairline-bordered segments, and an ACTIVE segment
+   * painted with an accent tint + accent border (no shadow); count badges
+   * shrink to mono 8.5 and tint cyan when active. Mirrors web
+   * `appearance="tint"`.
+   */
+  appearance?: 'raised' | 'tint';
 }
 
 /**
@@ -80,29 +107,45 @@ export function SegmentedTabs({
   onChange,
   locked,
   tone = 'accent',
+  size = 'md',
+  appearance = 'raised',
 }: SegmentedTabsProps) {
+  const isSm = size === 'sm';
+  const isTint = appearance === 'tint';
   return (
-    <View style={styles.track} accessibilityRole="tablist">
+    <View
+      style={[styles.track, isSm && styles.trackSm, isTint && styles.trackTint]}
+      accessibilityRole="tablist"
+    >
       {tabs.map((item, i) => {
-        const { label, count, tone: itemTone } = toTab(item);
+        const { label, count, tone: itemTone, icon } = toTab(item);
         const isActive = i === active;
         const isLocked = locked?.includes(i) ?? false;
-        const isMintActive = isActive && tone === 'mint';
+        const isGradActive = isActive && tone !== 'accent';
         const toneColor = itemTone != null ? TONE_COLOR[itemTone] : undefined;
-        // Label: mint-active dark-on-bright wins over a per-item tone (web
-        // specificity: `[data-tone='mint'] .is-active` beats `.is-active.lk-seg-*`);
-        // otherwise an active toned segment tints its label toward the tone.
-        const labelColor = isMintActive
-          ? '#0A0A12'
+        // Label: a gradient-active (mint/cta) dark-on-bright label wins over a
+        // per-item tone (web specificity: `[data-tone] .is-active` beats
+        // `.is-active.lk-seg-*`); otherwise an active toned segment tints its
+        // label toward the tone.
+        const labelColor = isGradActive
+          ? tone === 'mint'
+            ? '#0A0A12'
+            : INK_ON_GRADIENT
           : isActive
             ? (toneColor ?? colors.text)
             : colors.textDim;
         const countBg = isActive
           ? itemTone != null
             ? TONE_TINT[itemTone]
-            : colors.glass
+            : isTint
+              ? TINT_COUNT_ACTIVE.bg
+              : colors.glass
           : colors.glass2;
-        const countColor = isActive ? (toneColor ?? colors.text) : colors.textDim;
+        const countColor = isActive
+          ? (toneColor ?? (isTint ? TINT_COUNT_ACTIVE.color : colors.text))
+          : isTint
+            ? colors.textFaint
+            : colors.textDim;
         return (
           <Pressable
             key={i}
@@ -112,33 +155,50 @@ export function SegmentedTabs({
             onPress={isLocked ? undefined : () => onChange?.(i)}
             style={({ pressed }) => [
               styles.tab,
-              isActive && tone === 'accent' && styles.tabActive,
+              isSm && styles.tabSm,
+              isTint && styles.tabTint,
+              isActive && tone === 'accent' && (isTint ? styles.tabActiveTint : styles.tabActive),
               pressed && !isActive && !isLocked && styles.tabPressed,
               isLocked && styles.tabLocked,
             ]}
           >
-            {isMintActive && (
+            {isGradActive && (
               <LinearGradient
-                colors={gradients.mint.stops as unknown as [string, string]}
+                colors={
+                  (tone === 'mint' ? gradients.mint.stops : gradients.cta.stops) as unknown as [
+                    string,
+                    string,
+                  ]
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                style={styles.tabActiveMint}
+                style={[styles.tabActiveFill, tone === 'mint' ? styles.glowMint : styles.glowCta]}
               />
             )}
             {toneColor != null && (
               <View style={[styles.dot, { backgroundColor: toneColor }]} />
             )}
+            {icon != null && <Icon name={icon} size={13} color={labelColor} />}
             <Text
               numberOfLines={2}
               adjustsFontSizeToFit
               minimumFontScale={0.8}
-              style={[styles.label, { color: labelColor }]}
+              style={[styles.label, isSm && styles.labelSm, { color: labelColor }]}
             >
               {label}
             </Text>
             {count != null && (
-              <View style={[styles.count, { backgroundColor: countBg }]}>
-                <Text style={[styles.countText, { color: countColor }]}>{count}</Text>
+              <View
+                style={[
+                  styles.count,
+                  isTint && styles.countTint,
+                  isTint && isActive && styles.countTintActive,
+                  { backgroundColor: countBg },
+                ]}
+              >
+                <Text style={[styles.countText, isTint && styles.countTextTint, { color: countColor }]}>
+                  {count}
+                </Text>
               </View>
             )}
             {isLocked && <Icon name="lock" size={12} color={colors.textDim} />}
@@ -149,6 +209,20 @@ export function SegmentedTabs({
   );
 }
 
+// `appearance="tint"` active count-badge accent — the sanctioned paired alpha
+// literals for the design `.svc-btn[aria-pressed="true"] .svc-count`
+// (accent-2 on a cyan tint).
+const TINT_COUNT_ACTIVE = {
+  color: colors.accent2,
+  bg: 'rgba(34,211,238,0.10)',
+  border: 'rgba(34,211,238,0.30)',
+};
+// design `.svc-btn[aria-pressed="true"]`: accent-tinted pill + accent border
+const TINT_ACTIVE = {
+  bg: 'rgba(124,92,255,0.14)',
+  border: 'rgba(124,92,255,0.32)',
+};
+
 const styles = StyleSheet.create({
   track: {
     flexDirection: 'row',
@@ -158,6 +232,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg1,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  // sm — design settings `.seg`: content-hugging track, padding 3, gap 2,
+  // `--border` hairline, glass fill
+  trackSm: {
+    alignSelf: 'flex-start',
+    gap: 2,
+    padding: 3,
+    backgroundColor: colors.glass,
   },
   tab: {
     flex: 1,
@@ -171,6 +253,37 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     backgroundColor: 'transparent',
   },
+  // sm segments hug their label (design `.seg button`: padding 5px 11px)
+  tabSm: {
+    flex: 0,
+    paddingVertical: 5,
+    paddingHorizontal: 11,
+  },
+  // appearance="tint" — design changelog `.svc-toggle`: glass track; segments
+  // carry a transparent hairline so the active border doesn't shift layout
+  trackTint: { backgroundColor: colors.glass },
+  tabTint: {
+    gap: 5,
+    paddingVertical: 7,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  // design `.svc-btn[aria-pressed="true"]` — accent tint + accent border, no shadow
+  tabActiveTint: {
+    backgroundColor: TINT_ACTIVE.bg,
+    borderColor: TINT_ACTIVE.border,
+  },
+  // design `.svc-count`: mono 8.5, padding 1×5, glass-2 + `--border` hairline
+  countTint: {
+    paddingVertical: 1,
+    paddingHorizontal: 5,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  countTintActive: {
+    borderColor: TINT_COUNT_ACTIVE.border,
+  },
+  countTextTint: { fontSize: 8.5, lineHeight: 11 },
   tabLocked: { opacity: 0.5 },
   tabActive: {
     backgroundColor: colors.glass2,
@@ -181,20 +294,29 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   tabPressed: { opacity: 0.7 },
-  // mint-tone active segment: a mint-gradient fill (the LinearGradient is
-  // absolutely positioned behind the label) + mint glow, mirroring web
-  // `[data-tone='mint'] .is-active`. The label paints dark-on-bright.
-  tabActiveMint: {
+  // gradient-tone active segment: a gradient fill (the LinearGradient is
+  // absolutely positioned behind the label) + glow, mirroring web
+  // `[data-tone='mint'|'gradient'] .is-active`. The label paints dark-on-bright.
+  tabActiveFill: {
     ...StyleSheet.absoluteFillObject,
     borderRadius: radii.pill,
-    ...nativeShadows.glowMint,
   },
+  glowMint: { ...nativeShadows.glowMint },
+  // design `.seg button[aria-pressed="true"]`: 0 0 14px rgba(124,92,255,.4)
+  glowCta: { boxShadow: '0 0 14px rgba(124,92,255,0.4)' },
   label: {
     fontFamily: fonts.ui,
     fontSize: 11,
     fontWeight: '600',
     textAlign: 'center',
     letterSpacing: -0.07,
+  },
+  // sm — design `.seg button`: mono 10.5/500
+  labelSm: {
+    fontFamily: fonts.mono,
+    fontSize: 10.5,
+    fontWeight: '500',
+    letterSpacing: 0,
   },
   // leading tone dot — 6px round, colored per tone (web `.lk-seg-dot`)
   dot: {

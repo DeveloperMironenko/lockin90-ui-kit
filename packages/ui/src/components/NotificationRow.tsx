@@ -1,6 +1,15 @@
-import { type HTMLAttributes } from 'react';
+import { type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
 import { Icon, type IconName } from './Icon';
+
+/** Tint of the leading icon tile — the design's `.n-ico.t-*` category tones. */
+export type NotificationTone =
+  | 'insight'
+  | 'coach'
+  | 'achieve'
+  | 'announce'
+  | 'sync'
+  | 'billing';
 
 export interface NotificationRowProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'onClick'> {
@@ -9,23 +18,29 @@ export interface NotificationRowProps
   /** Right-aligned relative timestamp, e.g. "2h", "Yesterday". Pre-formatted. */
   time: string;
   /** Optional dimmer snippet under the title. */
-  body?: string;
-  /** Shows the unread accent dot + tints the row. */
+  /** Accepts a node so hosts can render rich text (links/bold). */
+  body?: string | ReactNode;
+  /** Shows the unread cyan dot, tints the card and draws the gradient
+   *  left-edge bar (design `.notif.unread`). Read rows dim to 66%. */
   unread?: boolean;
-  /** Optional typed leading icon from the shared set. */
+  /** Typed glyph shown inside the 34px tinted tile. */
   icon?: IconName;
+  /** Tile tint per notification category (design `.n-ico.t-*`). @default 'announce' */
+  tone?: NotificationTone;
   /** Tap handler — renders the row as an interactive `<button>` when set. */
   onClick?: () => void;
 }
 
 /**
- * A single notification list item: an unread dot + optional leading icon +
- * title with a right-aligned relative `time`, plus an optional `body` snippet
- * below. With `onClick` it renders an interactive `<button>` (hover bg),
- * otherwise a static `<div>`. Adjacent rows draw a hairline between them.
+ * NotificationRow — one inbox card (design extras.html `.card.notif`): a 34px
+ * tinted icon tile, headline + right-aligned mono time (unread rows lead with
+ * a glowing cyan dot), and an optional snippet below. Unread cards tint
+ * violet and draw a 3px gradient bar down the left edge; read cards dim to
+ * 66%. With `onClick` it renders an interactive `<button>` (hover lift),
+ * otherwise a static `<div>`.
  *
- * Cross-platform primitive: the native twin (`@lockin90/ui-native`) mirrors this
- * contract with `onPress` in place of `onClick`.
+ * Cross-platform primitive: the native twin (`@lockin90/ui-native`) mirrors
+ * this contract with `onPress` in place of `onClick`.
  */
 export function NotificationRow({
   title,
@@ -33,27 +48,28 @@ export function NotificationRow({
   body,
   unread,
   icon,
+  tone = 'announce',
   onClick,
   className,
   ...rest
 }: NotificationRowProps) {
   const classes = cn(
     'lk-notif',
-    unread && 'lk-notif-unread',
+    unread ? 'lk-notif-unread' : 'lk-notif-read',
     onClick && 'lk-notif-tappable',
     className,
   );
 
   const body_ = (
     <>
-      <span className={cn('lk-notif-dot', !unread && 'lk-notif-dot-off')} aria-hidden="true" />
       {icon != null && (
-        <span className="lk-notif-icon">
-          <Icon name={icon} size={16} />
+        <span className={cn('lk-notif-tile', `lk-notif-t-${tone}`)}>
+          <Icon name={icon} size={17} />
         </span>
       )}
       <span className="lk-notif-main">
         <span className="lk-notif-head">
+          {unread && <span className="lk-notif-dot" aria-hidden="true" />}
           <span className="lk-notif-title">{title}</span>
           <span className="lk-notif-time">{time}</span>
         </span>

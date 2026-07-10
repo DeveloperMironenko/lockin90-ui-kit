@@ -48,3 +48,25 @@ export const Tones: StoryObj<typeof meta> = {
 export const MintTone: StoryObj<typeof meta> = {
   args: { tabs: ['Sedentary', 'Light', 'Active', 'Athlete'], active: 2, tone: 'mint' },
 };
+
+/** `size="sm"` + `tone="gradient"` — the design settings `.seg`: a compact
+ *  content-hugging mono pill control whose active segment is a CTA-gradient
+ *  pill + glow + dark label (unit system / week start rows). */
+export const SmallGradient: StoryObj<typeof meta> = {
+  args: { tabs: ['Metric', 'Imperial'], active: 0, size: 'sm', tone: 'gradient' },
+};
+
+/** `appearance="tint"` + per-tab icons + counts — the design changelog
+ *  `.svc-toggle` service filter: glass track, accent-tinted active pill +
+ *  accent border, cyan-tinted active count badge. */
+export const ServiceFilter: StoryObj<typeof meta> = {
+  args: {
+    tabs: [
+      { label: 'All', icon: 'list', count: 5 },
+      { label: 'Web', icon: 'monitor', count: 3 },
+      { label: 'Mobile', icon: 'smartphone', count: 2 },
+    ],
+    active: 0,
+    appearance: 'tint',
+  },
+};

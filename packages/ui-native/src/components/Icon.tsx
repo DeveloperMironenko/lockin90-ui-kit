@@ -48,6 +48,7 @@ import {
   Info,
   Italic,
   Languages,
+  Laptop,
   LayoutGrid,
   Link,
   List,
@@ -58,6 +59,7 @@ import {
   Medal,
   MessageSquare,
   Mic,
+  Monitor,
   Moon,
   MoveVertical,
   Palette,
@@ -76,6 +78,7 @@ import {
   Settings,
   Share,
   Shield,
+  Smartphone,
   Smile,
   Sparkle,
   Star,
@@ -92,6 +95,7 @@ import {
   Utensils,
   Video,
   Weight,
+  Wrench,
   X,
   Zap,
   type LucideIcon,
@@ -226,6 +230,11 @@ export type IconName =
   | 'flask'
   | 'syringe'
   | 'camera'
+  // devices / tools (account sub-pages: security sessions · changelog groups)
+  | 'wrench'
+  | 'monitor'
+  | 'smartphone'
+  | 'laptop'
   // session
   | 'logout';
 
@@ -234,6 +243,14 @@ export interface IconProps {
   /** pixel size of the rendered glyph (width = height) @default 18 */
   size?: number;
   /**
+   * Non-square rendering for WIDE glyphs (the vendored brand WORDMARKS —
+   * whoop/oura/garmin/polar span the full 24-box width at ~4-7 units tall).
+   * When set, `width`×`height` replace the square `size` box; the 24-unit
+   * viewBox scales to fit. E.g. a readable wordmark row slot: width 72, height 16.
+   */
+  width?: number;
+  height?: number;
+  /**
    * Glyph color. Native has no `currentColor` inheritance, so this stands in
    * for the web's parent-driven `currentColor`. @default colors.text
    */
@@ -241,9 +258,10 @@ export interface IconProps {
 }
 
 /**
- * Names that stay hand-drawn: brand marks Lucide doesn't ship (google, apple,
- * stripe + provider silhouettes) and the bespoke 5-step mood scale (its two
- * frown depths / two smile depths have no distinct Lucide equivalents).
+ * Names that stay custom (non-Lucide): brand marks Lucide doesn't ship —
+ * vendored real logo paths where a clean vector exists, hand-drawn otherwise —
+ * and the bespoke 5-step mood scale (its two frown depths / two smile depths
+ * have no distinct Lucide equivalents).
  */
 type CustomIconName =
   | 'mood-rough'
@@ -379,6 +397,11 @@ const LUCIDE: Record<Exclude<IconName, CustomIconName>, LucideIcon> = {
   flask: FlaskConical,
   syringe: Syringe,
   camera: Camera,
+  // devices / tools
+  wrench: Wrench,
+  monitor: Monitor,
+  smartphone: Smartphone,
+  laptop: Laptop,
   // session
   logout: LogOut,
 };
@@ -427,32 +450,62 @@ const CUSTOM_GLYPHS: Record<CustomIconName, (color: string) => ReactNode> = {
     </>
   ),
 
-  // ── provider / brand marks (monochrome silhouettes) ──────────────────────
-  oura: () => (
-    <>
-      <Circle cx="12" cy="12" r="9" />
-      <Circle cx="12" cy="12" r="4.5" />
-    </>
+  // ── provider / brand marks (real logo paths, monochrome fills) ───────────
+  // Vendored sources:
+  //   oura   — official ŌURA wordmark vector (PD textlogo), rescaled to the 24-box
+  //   whoop  — Wikimedia Commons "WHOOP_Logo_Black.svg" (PD textlogo), ® dropped, rescaled
+  //   polar  — Wikimedia Commons "Polar_Electro_Logo.svg" (PD textlogo), ® dropped, rescaled
+  //   garmin — simple-icons v16.25.0 `garmin` (MIT), verbatim 24×24
+  //   strava — simple-icons v16.25.0 `strava` (MIT), inset ×0.85 about center for optical balance
+  //   apple-health — hand-drawn Health-app heart (no vendorable mark)
+  //   dexcom — hand-drawn silhouette (no vendorable mark)
+  oura: (color) => (
+    <Path
+      fill={color}
+      stroke="none"
+      fillRule="evenodd"
+      d="M1.535 8.93h3.07V8.267H1.535zM15.565 12.478h-2.148V10.277h2.148c0.765 0 1.279 0.442 1.279 1.1s-0.514 1.101-1.279 1.101m0.711 0.515c0.737-0.21 1.213-0.844 1.213-1.616 0-1.001-0.773-1.674-1.924-1.674H12.772v5.918h0.645V13.061h2.184l1.391 2.56h0.698l-1.451-2.617z m-6.85 2.74c1.581 0 2.685-1.11 2.684-2.7V9.703h-0.662v3.285c0 1.226-0.832 2.082-2.022 2.082-0.987 0-2.049-0.652-2.049-2.082V9.703h-0.663v3.33c0 1.59 1.115 2.7 2.712 2.7M20.993 10.475l1.397 3.056H19.587L20.993 10.475Zm-0.311-0.771L17.976 15.622h0.692l0.669-1.517h3.302l0.669 1.517h0.692L21.294 9.704z m-17.611-0.112C1.377 9.592 0 10.969 0 12.662s1.377 3.071 3.071 3.071 3.071-1.377 3.07-3.071S4.764 9.592 3.071 9.592m0 5.479c-1.328 0-2.408-1.08-2.408-2.408s1.08-2.408 2.408-2.408 2.408 1.08 2.408 2.408-1.08 2.408-2.408 2.408"
+    />
   ),
-  whoop: () => <Path d="M3 12h4l2.5-7 5 14 2.5-7H21" />,
-  garmin: () => <Path d="M12 3.5l8 15H4z" />,
-  polar: () => (
-    <>
-      <Circle cx="12" cy="12" r="9" />
-      <Circle cx="12" cy="12" r="2.5" />
-    </>
+  whoop: (color) => (
+    <Path
+      fill={color}
+      stroke="none"
+      fillRule="evenodd"
+      d="M12.868 10.028C12.335 10.02 11.82 10.223 11.437 10.593 11.054 10.964 10.833 11.471 10.824 12.004 10.847 12.531 11.073 13.028 11.454 13.392 11.834 13.757 12.341 13.96 12.868 13.96 13.395 13.96 13.902 13.757 14.282 13.392 14.663 13.028 14.889 12.531 14.912 12.004 14.902 11.472 14.681 10.964 14.298 10.594 13.915 10.224 13.401 10.02 12.868 10.028ZM12.868 13.514C12.461 13.521 12.068 13.365 11.775 13.082 11.482 12.799 11.313 12.412 11.306 12.004 11.306 11.59 11.471 11.193 11.763 10.9 12.056 10.607 12.454 10.442 12.868 10.442 13.282 10.442 13.68 10.607 13.972 10.9 14.265 11.193 14.43 11.59 14.43 12.004 14.423 12.412 14.254 12.799 13.961 13.082 13.668 13.365 13.275 13.521 12.868 13.514ZM6.4 10.028H6.898V13.98H6.4V10.028ZM7.4 11.764H8.834V12.246H7.4V11.764ZM9.834 10.028H9.336V13.98H9.834V10.028ZM20.93 10.028H21.43V13.98H20.93V10.028ZM21.93 10.028H22.6C22.78 10.025 22.96 10.057 23.128 10.123 23.296 10.189 23.449 10.287 23.579 10.412 23.709 10.537 23.813 10.687 23.885 10.852 23.958 11.018 23.997 11.196 24 11.376 23.997 11.557 23.958 11.735 23.885 11.9 23.813 12.066 23.709 12.215 23.579 12.34 23.449 12.465 23.296 12.564 23.128 12.63 22.96 12.696 22.78 12.728 22.6 12.724H21.932V12.256H22.6C22.837 12.26 23.066 12.169 23.237 12.004 23.408 11.84 23.506 11.614 23.51 11.376 23.505 11.139 23.407 10.914 23.236 10.749 23.066 10.585 22.837 10.495 22.6 10.498H21.932L21.93 10.028ZM15.788 12.004C15.811 11.478 16.037 10.981 16.418 10.616 16.798 10.252 17.305 10.049 17.832 10.049 18.359 10.049 18.866 10.252 19.246 10.616 19.627 10.981 19.853 11.478 19.876 12.004 19.853 12.531 19.627 13.028 19.246 13.392 18.866 13.757 18.359 13.96 17.832 13.96 17.305 13.96 16.798 13.757 16.418 13.392 16.037 13.028 15.811 12.531 15.788 12.004ZM16.27 12.004C16.27 12.419 16.435 12.817 16.728 13.111 17.022 13.404 17.42 13.569 17.835 13.569 18.25 13.569 18.648 13.404 18.942 13.111 19.235 12.817 19.4 12.419 19.4 12.004 19.4 11.59 19.235 11.193 18.943 10.9 18.65 10.607 18.252 10.442 17.838 10.442 17.424 10.442 17.026 10.607 16.734 10.9 16.441 11.193 16.276 11.59 16.276 12.004H16.27ZM2.958 11.522L3.732 13.98H4.216L5.46 10.028H4.976L3.976 13.21 3.442 11.522H2.958ZM0 10.028L0.774 12.486H1.258L0.484 10.028H0ZM1.244 13.98L2.488 10.028H2.972L1.728 13.98H1.244Z"
+    />
   ),
-  'apple-health': () => (
-    <Path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z" />
+  garmin: (color) => (
+    <Path
+      fill={color}
+      stroke="none"
+      d="M6.265 12.024a.289.289 0 0 0-.236-.146h-.182a.289.289 0 0 0-.234.146l-1.449 3.025c-.041.079.004.138.094.138h.335c.132 0 .193-.061.228-.134.037-.073.116-.234.13-.266.02-.045.083-.071.175-.071h1.559c.089 0 .148.016.175.071.018.035.098.179.136.256a.24.24 0 0 0 .234.142h.486c.089 0 .13-.069.098-.132-.034-.061-1.549-3.029-1.549-3.029zm-.914 2.224c-.089 0-.132-.067-.094-.148l.571-1.222c.039-.081.1-.081.136 0l.555 1.222c.037.081-.006.148-.096.148H5.351zm12.105-2.201v3.001c0 .083.073.138.163.138h.396c.089 0 .163-.057.163-.146v-2.998c0-.089-.059-.163-.148-.163h-.411c-.09-.001-.163.054-.163.168zm-6.631 1.88c-.051-.073-.022-.154.063-.181 0 0 .342-.102.506-.25.165-.146.246-.36.246-.636a1 1 0 0 0-.096-.457.787.787 0 0 0-.27-.303 1.276 1.276 0 0 0-.423-.171c-.165-.035-.386-.047-.386-.047a8.81 8.81 0 0 0-.325-.008H8.495a.164.164 0 0 0-.163.163v2.998c0 .089.073.146.163.146h.388c.089 0 .163-.057.163-.146v-1.193s.002 0 .002-.002l.738-.002c.089 0 .205.061.258.134l.766 1.077c.071.096.138.132.228.132h.508c.089 0 .104-.085.073-.128-.032-.038-.794-1.126-.794-1.126zm-.311-.61a1.57 1.57 0 0 1-.213.028 8.807 8.807 0 0 1-.325.006h-.763a.164.164 0 0 1-.163-.163v-.608c0-.089.073-.163.163-.163h.762c.089 0 .236.004.325.006 0 0 .114.004.213.028a.629.629 0 0 1 .24.098.358.358 0 0 1 .126.148.473.473 0 0 1 0 .374.352.352 0 0 1-.126.148.617.617 0 0 1-.239.098zm11.803-1.439c-.089 0-.163.059-.163.146v1.919c0 .089-.051.11-.114.047l-1.921-1.992a.376.376 0 0 0-.276-.118h-.362c-.114 0-.163.061-.163.122v3.068c0 .061.059.12.148.12h.362c.089 0 .152-.049.152-.132l.002-2.021c0-.089.051-.11.114-.045l2.004 2.082a.36.36 0 0 0 .279.116h.272a.164.164 0 0 0 .163-.163v-2.986a.164.164 0 0 0-.163-.163h-.334zm-7.835 1.87c-.043.079-.116.077-.159 0l-.939-1.724a.262.262 0 0 0-.236-.146h-.51a.164.164 0 0 0-.163.163v2.996c0 .089.059.15.163.15h.317c.089 0 .154-.057.154-.142 0-.041.002-2.179.004-2.179.004 0 1.173 2.177 1.173 2.177a.105.105 0 0 0 .189 0s1.179-2.173 1.181-2.173c.004 0 .002 2.11.002 2.173 0 .087.069.142.159.142h.364c.089 0 .163-.045.163-.163V12.04a.164.164 0 0 0-.163-.163h-.488a.265.265 0 0 0-.244.142l-.967 1.729zM0 13.529c0 1.616 1.653 1.697 1.984 1.697 1.098 0 1.561-.297 1.58-.309a.29.29 0 0 0 .152-.264v-1.116a.186.186 0 0 0-.187-.187H2.151c-.104 0-.171.083-.171.187v.116c0 .104.067.187.171.187h.797a.14.14 0 0 1 .14.14v.52c-.157.065-.874.274-1.451.136-.836-.199-.901-.89-.901-1.096 0-.173.053-1.043 1.079-1.13.831-.071 1.378.264 1.384.268.098.051.199.014.254-.089l.104-.209c.043-.085.028-.175-.077-.246-.006-.004-.59-.319-1.494-.319C.055 11.813 0 13.354 0 13.529zm22.134-2.478h-2.165c-.079 0-.148-.039-.187-.108s-.039-.146 0-.215l1.084-1.874a.21.21 0 0 1 .187-.108.21.21 0 0 1 .187.108l1.084 1.874a.203.203 0 0 1 0 .215.22.22 0 0 1-.19.108zm1.488 3.447c.207 0 .378.169.378.378a.379.379 0 0 1-.378.378.379.379 0 0 1-.378-.378.38.38 0 0 1 .378-.378zm.002.7c.173 0 .305-.14.305-.321s-.13-.321-.305-.321-.307.14-.307.321c0 .18.13.321.307.321zm-.146-.543h.169c.102 0 .152.041.152.124 0 .071-.045.122-.114.122l.126.195h-.077l-.124-.195h-.061v.195h-.073v-.441h.002zm.073.189h.085c.055 0 .091-.012.091-.069 0-.051-.045-.065-.091-.065h-.085v.134z"
+    />
+  ),
+  polar: (color) => (
+    <Path
+      fill={color}
+      stroke="none"
+      fillRule="evenodd"
+      d="M9.562 11.705c0.096 1.232-0.915 2.318-2.139 2.355-1.294 0.04-2.231-1.09-1.976-2.355h4.115m-0.129-0.564C9.131 10.365 8.382 9.9 7.562 9.921c-0.81 0.021-1.549 0.505-1.916 1.22h3.787M1.301 11.705h2.211c0.153 0 0.285-0.124 0.3-0.277 0.015-0.159-0.105-0.287-0.265-0.287H0.9l0.336-0.978c0.029-0.083 0.109-0.143 0.199-0.143h2.33c0.793 0 1.389 0.653 1.316 1.443-0.07 0.757-0.73 1.358-1.489 1.359l-1.456 0c-0.135 0-0.252 0.085-0.293 0.206L1.578 13.798c-0.029 0.084-0.109 0.143-0.198 0.143H0.307c-0.19 0-0.307-0.181-0.246-0.359l0.45-1.308c0.115-0.334 0.434-0.569 0.79-0.569m20.523 2.236l-0.248-0.928c-0.031-0.117-0.13-0.191-0.25-0.191l-0.344 0c-0.135 0-0.252 0.085-0.294 0.206l-0.264 0.77c-0.029 0.084-0.109 0.143-0.198 0.143h-1.073c-0.19 0-0.307-0.181-0.246-0.359l0.449-1.308c0.115-0.334 0.434-0.569 0.79-0.569h2.212c0.153 0 0.286-0.124 0.299-0.277 0.015-0.159-0.105-0.287-0.264-0.287H19.746l0.336-0.978c0.029-0.083 0.109-0.143 0.198-0.143h2.331c0.793 0 1.389 0.653 1.316 1.443-0.049 0.534-0.392 0.99-0.856 1.213l0.338 1.265H21.824M12.091 11.141l0.299-0.872c0.042-0.124-0.04-0.249-0.173-0.249h-1.176c-0.089 0-0.17 0.059-0.199 0.143l-0.336 0.978h1.585m0.978 2.8h-3.156c-0.19 0-0.307-0.181-0.246-0.359l0.645-1.877h1.585l-0.221 0.643c-0.061 0.178 0.059 0.358 0.248 0.358h1.345c0.19 0 0.311 0.18 0.25 0.358l-0.252 0.734c-0.029 0.084-0.109 0.143-0.198 0.143M16.714 10.095l-0.872 1.046h2.348l-0.088-0.957c-0.009-0.096-0.088-0.164-0.184-0.164h-1.044c-0.062 0-0.121 0.028-0.16 0.075m0.317 3.846h1.187c0.119 0 0.219-0.109 0.209-0.229l-0.185-2.007h-2.87l-1.485 1.781c-0.15 0.181-0.045 0.455 0.197 0.455h0.943c0.062 0 0.121-0.031 0.16-0.078l0.78-0.935c0.057-0.068 0.142-0.106 0.231-0.106h0.318c0.138 0 0.252 0.096 0.265 0.235l0.066 0.716a0.183 0.183 0 0 0 0.184 0.168"
+    />
+  ),
+  'apple-health': (color) => (
+    <Path
+      fill={color}
+      stroke="none"
+      d="M12 20.9c-.32 0-.63-.11-.88-.32C6.72 16.87 2.7 13.4 2.7 9.42 2.7 6.17 5.24 3.7 8.42 3.7c1.48 0 2.75.62 3.58 1.68C12.83 4.32 14.1 3.7 15.58 3.7c3.18 0 5.72 2.47 5.72 5.72 0 3.98-4.02 7.45-8.42 11.16-.25.21-.56.32-.88.32Z"
+    />
   ),
   dexcom: () => (
     <Path d="M12 3.5C12 3.5 5 11 5 15a7 7 0 0 0 14 0c0-4-7-11.5-7-11.5z" />
   ),
-  strava: () => (
-    <>
-      <Path d="M12 3l-5.5 10h4L12 9l1.5 4h4z" />
-      <Path d="M14 13l-2 4-2-4" />
-    </>
+  strava: (color) => (
+    <Path
+      fill={color}
+      stroke="none"
+      d="M14.879 17.052l-1.776-3.498h-2.605L14.879 22.2l4.377-8.646h-2.606m-5.956-4.759l2.41 4.758h3.546L10.694 1.8l-5.95 11.754h3.543"
+    />
   ),
   google: () => (
     <G stroke="none">
@@ -483,17 +536,44 @@ const CUSTOM_GLYPHS: Record<CustomIconName, (color: string) => ReactNode> = {
  * Glyphs are drawn on a 24-unit viewBox with round caps/joins and a 1.9
  * stroke; color defaults to the body text token (native has no `currentColor`).
  */
-export function Icon({ name, size = 18, color = colors.text }: IconProps) {
+/** Official brand ink for the vendored provider marks, adapted for the dark UI
+ *  (brands whose primary mark is black render white here — the standard
+ *  dark-surface treatment; colored brands keep their real hex). */
+export const BRAND_COLORS: Partial<Record<IconName, string>> = {
+  whoop: '#FFFFFF',
+  oura: '#FFFFFF',
+  garmin: '#FFFFFF',
+  polar: '#D10027',
+  strava: '#FC4C02',
+  'apple-health': '#FF2D55',
+  dexcom: '#58A618',
+  google: '#FFFFFF',
+  apple: '#FFFFFF',
+};
+
+/** Vertical bounds of the vendored WORDMARK glyphs inside the 24-box (measured
+ *  at vendor time) — lets non-square rendering crop to the mark's own band so a
+ *  `width`×`height` box is filled edge-to-edge instead of letterboxed. */
+const WORDMARK_BAND: Partial<Record<IconName, { y: number; h: number }>> = {
+  whoop: { y: 9.4, h: 5.2 },
+  oura: { y: 7.7, h: 8.7 },
+  garmin: { y: 8.1, h: 7.7 },
+  polar: { y: 9.3, h: 5.4 },
+};
+
+export function Icon({ name, size = 18, width, height, color = colors.text }: IconProps) {
   const LucideGlyph = (LUCIDE as Partial<Record<IconName, LucideIcon>>)[name];
   if (LucideGlyph) {
     return <LucideGlyph size={size} color={color} strokeWidth={1.9} />;
   }
   const custom = (CUSTOM_GLYPHS as Partial<Record<IconName, (c: string) => ReactNode>>)[name];
+  const band = width != null || height != null ? WORDMARK_BAND[name] : undefined;
   return (
     <Svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
+      width={width ?? size}
+      height={height ?? size}
+      viewBox={band ? `0 ${band.y} 24 ${band.h}` : '0 0 24 24'}
+      preserveAspectRatio={band ? 'xMinYMid meet' : 'xMidYMid meet'}
       fill="none"
       stroke={color}
       strokeWidth={1.9}

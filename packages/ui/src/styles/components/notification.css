@@ -1,50 +1,91 @@
 /* ============================================================================
-   NotificationRow — a notification list item: unread dot + optional leading
-   icon + title with a right-aligned relative time, plus an optional body
-   snippet. Adjacent rows share a hairline. `unread` shows the accent dot + a
-   faint accent tint + bolder title; `tappable` rows render a <button> that
-   highlights on hover. Tokens from @lockin90/tokens. Classes `lk-notif*`.
+   NotificationRow — one inbox card (design extras.html `.card.notif`): a 34px
+   tinted icon tile (`lk-notif-tile` + per-tone `lk-notif-t-*`), headline with
+   a right-aligned mono time (unread rows lead with a glowing cyan dot), and
+   an optional snippet. `unread` tints the card violet and draws a 3px
+   gradient bar down the left edge; read rows dim to 66%. `tappable` rows
+   render a <button> that highlights on hover. Tokens from @lockin90/tokens.
+   Classes `lk-notif*`.
    ========================================================================== */
 .lk-notif {
+  position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  padding: 14px;
-  border: 0;
-  background: transparent;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--glass);
   font-family: var(--font-ui);
   text-align: left;
   color: var(--text);
+  overflow: hidden;
 }
 
-/* hairline between adjacent rows */
-.lk-notif + .lk-notif {
-  border-top: 1px solid var(--border);
+/* ---- unread: violet tint + gradient left-edge bar (design `.notif.unread`) ---- */
+.lk-notif-unread {
+  background: rgba(124, 92, 255, 0.055);
+  border-color: rgba(124, 92, 255, 0.22);
+}
+.lk-notif-unread::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 11px;
+  bottom: 11px;
+  width: 3px;
+  border-radius: 0 4px 4px 0;
+  background: var(--grad-cta);
+  box-shadow: 0 0 10px rgba(124, 92, 255, 0.6);
 }
 
-/* ---- unread accent dot (kept as a fixed slot so read/unread align) ---- */
-.lk-notif-dot {
+/* ---- read: dimmed (design `.notif.read`) ---- */
+.lk-notif-read {
+  opacity: 0.66;
+}
+
+/* ---- 34px tinted icon tile (design `.n-ico`) ---- */
+.lk-notif-tile {
   flex: none;
-  width: 8px;
-  height: 8px;
-  margin-top: 5px;
-  border-radius: var(--r-pill);
-  background: var(--accent);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 55%, transparent);
-}
-.lk-notif-dot-off {
-  visibility: hidden;
-  box-shadow: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid transparent;
 }
 
-/* ---- optional leading icon ---- */
-.lk-notif-icon {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  margin-top: 1px;
-  color: var(--text-faint);
+/* per-tone paired literals (design `.n-ico.t-*`) */
+.lk-notif-t-insight {
+  color: #22d3ee;
+  background: rgba(34, 211, 238, 0.1);
+  border-color: rgba(34, 211, 238, 0.32);
+}
+.lk-notif-t-coach {
+  color: #a855f7;
+  background: rgba(168, 85, 247, 0.1);
+  border-color: rgba(168, 85, 247, 0.32);
+}
+.lk-notif-t-achieve {
+  color: #a8ff35;
+  background: rgba(168, 255, 53, 0.1);
+  border-color: rgba(168, 255, 53, 0.32);
+}
+.lk-notif-t-announce {
+  color: #7c5cff;
+  background: rgba(124, 92, 255, 0.1);
+  border-color: rgba(124, 92, 255, 0.32);
+}
+.lk-notif-t-sync {
+  color: #ffb020;
+  background: rgba(255, 176, 32, 0.1);
+  border-color: rgba(255, 176, 32, 0.34);
+}
+.lk-notif-t-billing {
+  color: #34f5c5;
+  background: rgba(52, 245, 197, 0.1);
+  border-color: rgba(52, 245, 197, 0.32);
 }
 
 /* ---- body column ---- */
@@ -55,62 +96,76 @@
   min-width: 0;
 }
 
+/* `.n-top` — dot + title + time */
 .lk-notif-head {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
 }
 
+/* `.n-udot` — 7px cyan glow dot */
+.lk-notif-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--accent-2);
+  box-shadow: 0 0 7px var(--accent-2);
+}
+
+/* `.n-title` — display 12/700, tight */
 .lk-notif-title {
   flex: 1;
   min-width: 0;
-  font-size: 14px;
-  line-height: 1.3;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
   color: var(--text);
 }
+.lk-notif-read .lk-notif-title {
+  color: var(--text-dim);
+}
 
+/* `.n-time` — mono 8.5 faint */
 .lk-notif-time {
   flex: none;
   margin-left: auto;
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.02em;
+  font-size: 8.5px;
   color: var(--text-faint);
   white-space: nowrap;
 }
 
+/* `.n-snippet` — 10.5 dim */
 .lk-notif-body {
   margin-top: 2px;
-  font-size: 12.5px;
-  line-height: 1.35;
+  font-size: 10.5px;
+  line-height: 1.4;
   color: var(--text-dim);
 }
-
-/* ---- unread ---- */
-.lk-notif-unread {
-  background: color-mix(in srgb, var(--accent) 6%, transparent);
-}
-.lk-notif-unread .lk-notif-title {
+.lk-notif-body b {
+  color: var(--text);
   font-weight: 600;
 }
 
 /* ---- tappable (button) ---- */
 .lk-notif-tappable {
   cursor: pointer;
-  border-radius: var(--r-sm);
-  transition: background 0.18s ease;
+  transition:
+    border-color 0.3s ease,
+    background 0.3s ease,
+    opacity 0.3s ease;
 }
 .lk-notif-tappable:hover,
 .lk-notif-tappable:focus-visible {
-  background: var(--glass);
+  background: var(--glass-2);
+  border-color: var(--border-2);
   outline: none;
 }
 .lk-notif-unread.lk-notif-tappable:hover,
 .lk-notif-unread.lk-notif-tappable:focus-visible {
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-}
-/* keep the hairline reading right after a hovered button row */
-.lk-notif-tappable:hover + .lk-notif,
-.lk-notif-tappable:focus-visible + .lk-notif {
-  border-top-color: transparent;
+  background: rgba(124, 92, 255, 0.1);
 }

@@ -60,6 +60,9 @@ export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElem
   onClear?: () => void;
   /** optional trailing keyboard-shortcut hint (e.g. `⌘K`) rendered as a faint mono chip */
   kbdHint?: string;
+  /** shell shape — `'pill'` (default, standalone search) or `'sm'` (the standard
+   *  Input radius, for menus/sheets where the search sits among other fields). */
+  shape?: 'pill' | 'sm';
 }
 
 /** Search field — leading magnifier, transparent input, trailing × clear when non-empty. */
@@ -69,6 +72,7 @@ export function SearchInput({
   placeholder = 'Search…',
   onClear,
   kbdHint,
+  shape = 'pill',
   className,
   ...rest
 }: SearchInputProps) {
@@ -80,7 +84,7 @@ export function SearchInput({
   }
 
   return (
-    <div className={cn('lk-search', className)}>
+    <div className={cn('lk-search', shape === 'sm' && 'lk-search--sm', className)}>
       <span className="lk-search-lead" aria-hidden="true">
         <svg
           width={16}

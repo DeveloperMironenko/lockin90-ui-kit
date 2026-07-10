@@ -208,6 +208,12 @@
 .lk-barfill { height: 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); overflow: hidden; }
 .lk-barfill > i { display: block; height: 100%; width: 0; border-radius: 999px; background: var(--grad-cta); transition: width 1.1s var(--ease); }
 .lk-barfill.is-visible > i { width: calc(var(--v, 0) * 100%); }
+/* gradient variants (`gradient` prop) — mint = healthy coverage / unlimited,
+   warm = warn-threshold quota (mock `.barfill.q-unlimited` / `.q-warn`). */
+.lk-barfill--mint > i { background: var(--grad-mint); }
+.lk-barfill--warm > i { background: var(--grad-warm); }
+.lk-barfill--flux > i { background: var(--grad-flux); }
+.lk-barfill--violet > i { background: var(--grad-violet); }
 
 /* ---- energy ring (SVG; animate the arc with useRing / data-ring) ---- */
 .lk-ring { position: relative; display: inline-grid; place-items: center; }

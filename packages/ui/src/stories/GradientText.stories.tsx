@@ -9,3 +9,6 @@ const meta = {
 export default meta;
 
 export const Default: StoryObj<typeof meta> = { args: { children: 'LockIn90' } };
+
+/** `gradient="mint"` — mint→cyan clip (the changelog mobile version chips). */
+export const Mint: StoryObj<typeof meta> = { args: { children: 'v1.7.0', gradient: 'mint' } };

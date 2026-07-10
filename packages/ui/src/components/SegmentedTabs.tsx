@@ -1,6 +1,6 @@
 import { type HTMLAttributes } from 'react';
 import { cn } from '../cn';
-import { Icon } from './Icon';
+import { Icon, type IconName } from './Icon';
 
 /** Semantic tone for a segment's active state + leading dot. `canary` paints
  *  amber (`--warn`) for staged/partial rollouts (e.g. the pipeline
@@ -16,6 +16,9 @@ export interface SegmentedTab {
   count?: number;
   /** Tones the segment's active pill + a leading dot. */
   tone?: SegmentedTone;
+  /** Leading 13px glyph before the label (e.g. the changelog service filter
+   *  All/Web/Mobile). Mirrors the native `SegmentedTab.icon`. */
+  icon?: IconName;
 }
 
 /** Accepts the legacy plain-string form or the rich object form, mixed freely. */
@@ -45,11 +48,30 @@ export interface SegmentedTabsProps extends Omit<HTMLAttributes<HTMLDivElement>,
    * gradient (`--grad-mint`) + mint glow + dark label — the onboarding
    * Activity-level control (design `.seg.on.mint`).
    *
+   * `'gradient'` paints it with the CTA gradient (`--grad-cta`) + accent glow
+   * + dark label — the design settings `.seg` treatment (unit system / week
+   * start controls).
+   *
    * Control-level: this is distinct from a rich item's per-segment
    * `SegmentedTab.tone` (`ok`/`canary`/`danger`), which tints individual
    * segments' label/badge and is unrelated to the selected-pill color.
    */
-  tone?: 'accent' | 'mint';
+  tone?: 'accent' | 'mint' | 'gradient';
+  /**
+   * Control scale. `'md'` (default) is the full-width tab bar (equal-width
+   * segments). `'sm'` is the design settings compact control: a
+   * content-hugging pill track of mono segments (design `.seg`).
+   */
+  size?: 'md' | 'sm';
+  /**
+   * Track/active treatment. `'raised'` (default) keeps the standard raised
+   * glass active pill. `'tint'` is the design changelog `.svc-toggle`
+   * treatment: glass track, hairline-bordered segments, and an ACTIVE segment
+   * painted with an accent tint + accent border (no shadow); count badges
+   * shrink to mono 8.5 and tint cyan when active. Mirrors native
+   * `appearance="tint"`.
+   */
+  appearance?: 'raised' | 'tint';
 }
 
 /** iOS-style segmented control — a pill track of equal-width segments; the
@@ -61,18 +83,21 @@ export function SegmentedTabs({
   onChange,
   locked,
   tone = 'accent',
+  size = 'md',
+  appearance = 'raised',
   className,
   ...rest
 }: SegmentedTabsProps) {
   return (
     <div
-      className={cn('lk-seg', className)}
+      className={cn('lk-seg', size === 'sm' && 'lk-seg-sm', className)}
       role="tablist"
-      data-tone={tone === 'mint' ? 'mint' : undefined}
+      data-tone={tone !== 'accent' ? tone : undefined}
+      data-appearance={appearance !== 'raised' ? appearance : undefined}
       {...rest}
     >
       {tabs.map((item, i) => {
-        const { label, count, tone } = toTab(item);
+        const { label, count, tone, icon } = toTab(item);
         const isLocked = locked?.includes(i) ?? false;
         return (
           <button
@@ -91,6 +116,7 @@ export function SegmentedTabs({
             onClick={isLocked ? undefined : () => onChange?.(i)}
           >
             {tone && <span className="lk-seg-dot" aria-hidden="true" />}
+            {icon != null && <Icon name={icon} size={13} />}
             {label}
             {count != null && <span className="lk-seg-count">{count}</span>}
             {isLocked && <Icon name="lock" size={12} />}

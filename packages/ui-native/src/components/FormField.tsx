@@ -61,6 +61,9 @@ export interface SearchInputProps extends Omit<TextInputProps, 'onChange' | 'val
   placeholder?: string;
   /** invoked by the trailing × clear button (in addition to `onChange('')`) */
   onClear?: () => void;
+  /** shell shape — `'pill'` (default, standalone search) or `'sm'` (the standard
+   *  Input radius, for menus/sheets where the search sits among other fields). */
+  shape?: 'pill' | 'sm';
 }
 
 /** Search field — leading magnifier, transparent input, trailing × clear when non-empty. */
@@ -69,6 +72,7 @@ export function SearchInput({
   onChange,
   placeholder = 'Search…',
   onClear,
+  shape = 'pill',
   style,
   onFocus,
   onBlur,
@@ -83,7 +87,13 @@ export function SearchInput({
   }
 
   return (
-    <View style={[styles.search, { borderColor: focused ? colors.accent : colors.border2 }]}>
+    <View
+      style={[
+        styles.search,
+        shape === 'sm' && styles.searchSm,
+        { borderColor: focused ? colors.accent : colors.border2 },
+      ]}
+    >
       <View style={styles.searchLead}>
         <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
           <Circle cx={11} cy={11} r={7} stroke={colors.textFaint} strokeWidth={1.9} />
@@ -182,6 +192,9 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     borderWidth: 1,
     backgroundColor: colors.glass2,
+  },
+  searchSm: {
+    borderRadius: radii.sm,
   },
   searchLead: { flexShrink: 0 },
   searchInput: {
