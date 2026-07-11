@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
 import { Icon, type IconName } from './Icon';
 import { OptionalBlurView } from '../internal/optionalBlur';
+import { hapticSelection } from '../internal/optionalHaptics';
 
 /* ============================================================================
    Mobile atoms — TabBar (bottom navigation) + FAB (floating action button).
@@ -78,7 +79,12 @@ export function TabBar({
         key={i}
         accessibilityRole="tab"
         accessibilityState={{ selected: isActive }}
-        onPress={() => (isFab && onFabPress ? onFabPress() : onChange?.(i))}
+        onPress={() => {
+          // selection tick on every tab/FAB press (no-op without expo-haptics)
+          hapticSelection();
+          if (isFab && onFabPress) onFabPress();
+          else onChange?.(i);
+        }}
         style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
       >
         {isFab ? (
@@ -98,24 +104,27 @@ export function TabBar({
     );
   });
 
-  // Floating bars are FROSTED when the app ships expo-blur (the design's
-  // `backdrop-filter: blur(20px) saturate(120%)`); without it the translucent
-  // fill approximates. The web twin uses the real backdrop-filter.
-  if (floating && OptionalBlurView) {
+  // Floating bar — the frosted capsule. The blur/translucent fill is an INNER
+  // absolutely-filled layer clipped to the capsule, so the FAB tile can still
+  // overhang the top edge (an `overflow:hidden` on the container would clip
+  // it flat). Frosted for real when the app ships expo-blur (the design's
+  // `backdrop-filter: blur(20px) saturate(120%)`); translucent fallback
+  // otherwise. The web twin uses the real backdrop-filter.
+  if (floating) {
     return (
-      <OptionalBlurView
-        intensity={40}
-        tint="dark"
-        style={[styles.bar, styles.barFloating, style]}
-        accessibilityRole="tablist"
-      >
+      <View style={[styles.barFloating, style]} accessibilityRole="tablist">
+        {OptionalBlurView ? (
+          <OptionalBlurView intensity={40} tint="dark" style={styles.capsuleFill} />
+        ) : (
+          <View style={styles.capsuleFill} />
+        )}
         {tabs}
-      </OptionalBlurView>
+      </View>
     );
   }
 
   return (
-    <View style={[styles.bar, floating && styles.barFloating, style]} accessibilityRole="tablist">
+    <View style={[styles.bar, style]} accessibilityRole="tablist">
       {tabs}
     </View>
   );
@@ -191,23 +200,33 @@ const styles = StyleSheet.create({
   // semi-opaque dark fill (= bg1 @ 82%; tokens have no alpha-bg), and an upward
   // ambient float shadow (no token — nativeShadows are elev/glow, not floats).
   // owner pick (2026-07-10): full CAPSULE, not the design's 26px — the bar's
-  // curve follows the iPhone screen corner; equal 8px padding inside; hosts
-  // give it EQUAL 12px side + bottom insets (don't let the safe area inflate
-  // the bottom gap). `overflow: hidden` clips the blur to the capsule.
+  // curve follows the iPhone screen corner; design height 62, equal 8px inner
+  // padding; hosts give it EQUAL 12px side + bottom insets (don't let the
+  // safe area inflate the bottom gap). NO overflow:hidden here — the FAB tile
+  // overhangs the top edge; the fill layer below does the capsule clipping.
   barFloating: {
-    width: undefined,
-    borderTopWidth: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    gap: 2,
+    height: 62,
+    paddingHorizontal: 8,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radii.pill,
-    paddingHorizontal: 8,
-    backgroundColor: 'rgba(12,15,26,0.82)',
-    overflow: 'hidden',
     shadowColor: '#000',
     shadowOpacity: 0.6,
     shadowRadius: 24,
     shadowOffset: { width: 0, height: -6 },
     elevation: 16,
+  },
+  // the frosted/translucent background, clipped to the capsule independently
+  // of the content so the FAB overhang survives
+  capsuleFill: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: radii.pill,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(12,15,26,0.82)',
   },
   item: {
     flex: 1,
@@ -226,11 +245,12 @@ const styles = StyleSheet.create({
   iconWrap: { alignItems: 'center', justifyContent: 'center' },
   // elevated center-FAB tile (fabIndex): a rounded-square grad-cta tile that
   // overhangs the bar top, matching home.html `.tab.fab .fab-ic`.
+  // owner pick (2026-07-10, preview B): fully ROUND fab — echoes the capsule bar
   fabTile: {
     width: 44,
     height: 44,
     marginTop: -24,
-    borderRadius: 15,
+    borderRadius: radii.pill,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,

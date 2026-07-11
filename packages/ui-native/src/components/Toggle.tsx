@@ -1,4 +1,5 @@
 import { View, Text, Pressable, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import { hapticSelection } from '../internal/optionalHaptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients } from '@lockin90/tokens';
 
@@ -67,7 +68,11 @@ export function Toggle({
       accessibilityRole="switch"
       accessibilityState={{ checked, disabled }}
       disabled={disabled}
-      onPress={() => onChange?.(!checked)}
+      onPress={() => {
+        // selection tick when the app ships expo-haptics (silent no-op otherwise)
+        hapticSelection();
+        onChange?.(!checked);
+      }}
       style={[
         styles.track,
         { width: dims.track, height: dims.height },
