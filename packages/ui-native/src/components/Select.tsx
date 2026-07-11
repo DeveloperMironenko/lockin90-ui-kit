@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { hapticSelection } from "../internal/optionalHaptics";
 import { SearchInput } from './FormField';
 
 /** A single option in a {@link Select}. */
@@ -148,7 +149,7 @@ export function Select({
         accessibilityRole="button"
         accessibilityState={{ disabled, expanded: open }}
         disabled={disabled}
-        onPress={() => setOpen(true)}
+        onPress={() => { hapticSelection(); setOpen(true); }}
       >
         {leading != null ? <View style={styles.leading}>{leading}</View> : null}
         <Text

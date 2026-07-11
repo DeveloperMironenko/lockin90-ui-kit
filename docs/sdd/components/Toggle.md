@@ -102,3 +102,6 @@ const [on, setOn] = useState(false);
 - **No lookalikes.** A custom switch re-creating the gradient track is a parity violation — import `Toggle`.
 - **New size/variant?** Add it on **both** platforms (same prop, same tokens) — never a one-off.
 - **Parity gate.** Before shipping a settings surface, confirm web phone-width and native render the same: dim knob off, gradient track + ink knob on, same per-platform design size, same slide.
+
+## Update — 2026-07-10
+- **Haptics:** flipping the toggle fires `hapticSelection()` (native, via `optionalHaptics`; no-op without expo-haptics).

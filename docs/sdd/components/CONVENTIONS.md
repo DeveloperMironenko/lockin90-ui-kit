@@ -82,3 +82,7 @@ including INSIDE other kit components. Concretely:
 - **Locale rules ride along**: dates/numbers format with the APP language (`i18n.language`),
   never the device default; every server-sourced enum/id shown to users goes through
   `t('<ns>.<id>', { defaultValue })` with catalog keys for the known ids.
+
+## Optional-haptics seam (2026-07-10)
+
+`internal/optionalHaptics.ts` (native) mirrors `optionalBlur`: `expo-haptics` is an OPTIONAL peer, gated on the native module being registered. Exports `hapticSelection` (tick — toggles/tabs/buttons/segments/rows/pickers), `hapticLift`/`hapticDrop` (drag). Every helper is a silent no-op when the app has not installed expo-haptics (and in web/Storybook). Use these for tactile feedback instead of importing `expo-haptics` directly — it keeps binaries without the module crash-free.

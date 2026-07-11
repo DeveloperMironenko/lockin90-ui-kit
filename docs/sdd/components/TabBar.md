@@ -147,3 +147,7 @@ No capability gap blocks use — both render an equivalent bottom nav + FAB.
 - **New need → add to BOTH platforms.** Need a badge count on a tab, a hidden/scroll-aware bar, or a mini FAB? Add it to `TabBar`/`FAB` on web AND native (same prop, same tokens) — never a one-off.
 - **Tokens only.** Bar bg `--bg-1`, accent, `--grad-cta`, `--glow-accent`, mono labels — all from tokens; never literals (the dark glyph `#0A0A12`/`#08090F` is the deliberate dark-on-gradient constant, matched on both platforms).
 - **Parity gate.** Before shipping the app shell, confirm the web phone-width bottom bar + FAB and the native ones match (same items, same active treatment, same FAB tile).
+
+## Update — 2026-07-10
+- **Floating bar = frosted CAPSULE** (owner pick B): `floating` renders a full-radius (`--r-pill`) capsule at height 62 with an INNER absolutely-filled blur/translucent layer clipped to the capsule — so the center FAB tile still overhangs the top edge (an `overflow:hidden` on the container clips it flat). Real backdrop blur via `OptionalBlurView` (expo-blur optional peer); translucent fill fallback. The FAB tile is fully round. Hosts place it with EQUAL 12px side + bottom insets (do NOT inflate the bottom by the safe-area inset).
+- **Haptics:** every tab/FAB press fires `hapticSelection()` (see `optionalHaptics` — no-op without expo-haptics).

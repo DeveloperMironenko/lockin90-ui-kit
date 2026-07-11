@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet, type ViewProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { hapticSelection } from "../internal/optionalHaptics";
 
 export interface ListRowProps extends ViewProps {
   /** Leading slot — an icon, avatar, badge, or letter chip. */
@@ -78,7 +79,7 @@ export function ListRow({
   if (onPress) {
     return (
       <Pressable
-        onPress={onPress}
+        onPress={onPress ? () => { hapticSelection(); onPress(); } : undefined}
         style={({ pressed }) => [...rowStyle, pressed && styles.pressed]}
         {...rest}
       >

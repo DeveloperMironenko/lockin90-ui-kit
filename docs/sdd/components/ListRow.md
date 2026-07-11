@@ -129,3 +129,6 @@ There is **no capability gap** — both render the same row.
 - **New need → add to BOTH platforms.** Need a switch-trailing variant, a two-line trailing, or a multi-select check? Add it to `ListRow` on web AND native (same prop, same tokens) — never a one-off.
 - **Tokens only.** Padding, gap, type sizes, the accent active tint, and the hairline come from `@lockin90/tokens` — never literals (the native `rgba(124,92,255,0.14)` exists only because RN lacks `color-mix`, and tracks `--accent`).
 - **Parity gate.** Before shipping a list screen, confirm the web phone-width rows and the native rows match — same slots, same active/danger tint, same separators.
+
+## Update — 2026-07-10
+- **Haptics:** the primary interaction (segment change / row press / panel open) fires `hapticSelection()` (native `optionalHaptics`; no-op without expo-haptics).

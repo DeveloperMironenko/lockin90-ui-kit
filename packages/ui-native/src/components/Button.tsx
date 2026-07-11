@@ -2,6 +2,7 @@ import { type ReactNode } from 'react';
 import { Pressable, Text, StyleSheet, View, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, gradients, fonts, nativeShadows } from '@lockin90/tokens';
+import { hapticSelection } from '../internal/optionalHaptics';
 
 export type ButtonVariant = 'default' | 'primary' | 'ghost';
 export type ButtonTone = 'danger';
@@ -33,14 +34,23 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
  *  with `variant` for destructive actions (solid red on `default`, red-tinted on
  *  `ghost`). `leading`/`trailing` render an icon before/after the label (the row is
  *  `gap: 9`-spaced). */
-export function Button({ variant = 'default', tone, size = 'md', title, leading, trailing, style, ...rest }: ButtonProps) {
+export function Button({ variant = 'default', tone, size = 'md', title, leading, trailing, style, onPress, ...rest }: ButtonProps) {
   const pad = size === 'sm' ? styles.padSm : styles.padMd;
   const labelSize = size === 'sm' ? 13 : 14;
   const danger = tone === 'danger';
 
+  // selection tick on every press (no-op without expo-haptics) — a real button
+  // press should feel like one, same as the tab bar
+  const press = onPress
+    ? (e: Parameters<NonNullable<ButtonProps['onPress']>>[0]) => {
+        hapticSelection();
+        onPress(e);
+      }
+    : undefined;
+
   if (variant === 'primary' && !danger) {
     return (
-      <Pressable {...rest}>
+      <Pressable onPress={press} {...rest}>
         {({ pressed }) => (
           <LinearGradient
             colors={gradients.cta.stops as unknown as [string, string]}
@@ -85,7 +95,7 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
   }
 
   return (
-    <Pressable {...rest}>
+    <Pressable onPress={press} {...rest}>
       {({ pressed }) => (
         <View
           style={[

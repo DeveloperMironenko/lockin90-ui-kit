@@ -115,3 +115,6 @@ No capability gap.
 - **New need → add to BOTH platforms.** A new field (e.g. an avatar leading slot, a swipe action, a grouped header) is a prop added to web AND native with the same name + tokens — never a one-off.
 - **Tokens only.** The accent dot/glow/tint, mono time, radius, and hairline are all tokens — no literals.
 - **Parity gate.** Confirm the web phone-width row ≡ native row (same dot, icon, title, time, body, tint) before shipping the notifications feed.
+
+## Update — 2026-07-10
+- **`tone` prop** (`insight|coach|achieve|announce|sync|billing`, default `announce`): the leading glyph now sits in a 34px tinted category TILE (design `extras.html .n-ico.t-*`), not a bare icon. Unread rows draw a violet tint + a `--grad-cta` left-edge bar + a cyan dot; read rows dim to 66%. Same `tone` API on web + native.
