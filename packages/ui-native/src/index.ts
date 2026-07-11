@@ -296,4 +296,7 @@ export type { ChartStateVariant, ChartStateProps } from './components/ChartState
 export { WatchComplication } from './components/WatchComplication';
 export type { WatchComplicationVariant, WatchComplicationCorners, WatchComplicationProps } from './components/WatchComplication';
 export { EnvironmentChart } from './components/EnvironmentChart';
-export type { EnvironmentChartVariant, EnvironmentChartProps } from './components/EnvironmentChart';
+export type { EnvironmentChartVariant, EnvironmentChartProps } from './components/EnvironmentChart';// Optional-haptics helpers — silent no-ops in apps without expo-haptics; use
+// these for custom interactions (drags, pickers) so binaries without the
+// native module never crash.
+export { hapticSelection, hapticLift, hapticDrop } from './internal/optionalHaptics';
