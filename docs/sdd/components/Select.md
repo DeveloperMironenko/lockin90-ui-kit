@@ -154,3 +154,6 @@ The overlay differences are expected substrate, not capability gaps that block u
 - **Tokens only.** Field, panel, option, and selected colors come from `@lockin90/tokens`; hardcoded hexes drift.
 - **Parity gate.** Confirm the web phone-width select and the native select show the same field, the same
   options, and the same selected indicator before shipping.
+
+## Update — 2026-07-10
+- **Haptics:** the primary interaction (segment change / row press / panel open) fires `hapticSelection()` (native `optionalHaptics`; no-op without expo-haptics).

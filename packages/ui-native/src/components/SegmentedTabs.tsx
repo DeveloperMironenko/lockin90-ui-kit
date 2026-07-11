@@ -1,6 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
+import { hapticSelection } from "../internal/optionalHaptics";
 import { Icon, type IconName } from './Icon';
 
 /**
@@ -152,7 +153,7 @@ export function SegmentedTabs({
             accessibilityRole="tab"
             accessibilityState={{ selected: isActive, disabled: isLocked }}
             disabled={isLocked}
-            onPress={isLocked ? undefined : () => onChange?.(i)}
+            onPress={isLocked ? undefined : () => { hapticSelection(); onChange?.(i); }}
             style={({ pressed }) => [
               styles.tab,
               isSm && styles.tabSm,

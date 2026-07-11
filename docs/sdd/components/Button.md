@@ -150,3 +150,6 @@ There is **no capability gap** that blocks use — the button is fully usable an
 - **New variant?** If a screen needs a button style that doesn't exist, **add a `variant` to `Button` on BOTH platforms** (same prop name, same tokens) — never a one-off local component.
 - **Tokens only.** Any color/space/radius/shadow not sourced from tokens is a bug, even if it "looks the same" today — token renames (Aurora Flux) will silently break hardcoded values.
 - **Parity gate.** Before shipping a screen that uses Button, confirm the web phone-width render and the native render are identical (same variant, size, leading, label).
+
+## Update — 2026-07-10
+- **Haptics:** every press fires `hapticSelection()` before the handler (native, via `optionalHaptics`; no-op without expo-haptics).

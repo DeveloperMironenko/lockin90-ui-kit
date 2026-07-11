@@ -134,3 +134,6 @@ No capability gap blocks use.
 - **New need → add to BOTH platforms.** A new item field or tone ships to web **and** native `SegmentedTabs` with the same prop shape and tokens — don't fork a local variant.
 - **Tokens only.** Track bg `--bg-1`, active `--glass-2`, tone `--ok/--warn/--bad`, mono badge font — all from `@lockin90/tokens`, never literals.
 - **Parity gate.** Before shipping a shared screen with a segmented control, confirm the web phone-width and native renders match (same segments, same active pill, same locked treatment, same count/tone rendering).
+
+## Update — 2026-07-10
+- **Haptics:** the primary interaction (segment change / row press / panel open) fires `hapticSelection()` (native `optionalHaptics`; no-op without expo-haptics).

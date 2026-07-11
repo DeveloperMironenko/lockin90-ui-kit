@@ -5,6 +5,18 @@ _Generated 2026-06-21 from live source in `packages/ui` (web) + `packages/ui-nat
 > **Status note:** the fully-rebuilt kit now lives on **`main`** (the earlier wipe was
 > superseded). All three packages build, with Storybook catalogs on both sides.
 >
+> **Recent additions (2026-07-10):**
+> - **NotificationRow → design cards:** new `tone` prop (`insight·coach·achieve·announce·sync·billing`)
+>   renders the glyph in a 34px tinted category tile; unread = violet tint + `--grad-cta` left-edge
+>   bar + cyan dot, read dims to 66% (web + native).
+> - **TabBar `floating` = frosted capsule:** full-radius capsule, height 62, inner clipped blur layer
+>   (FAB overhangs the top edge), round FAB, real backdrop blur via `OptionalBlurView`.
+> - **Haptics (native):** new `internal/optionalHaptics` (expo-haptics OPTIONAL peer, gated on the
+>   native module; silent no-op otherwise) — exports `hapticSelection·hapticLift·hapticDrop`. Wired
+>   into Toggle, TabBar, Button, SegmentedTabs, ListRow, Select for tactile feedback.
+> - **Select `searchable` (web):** SearchInput-in-panel filter with keyboard nav + combobox a11y
+>   (matches the native twin).
+>
 > **Recent additions (2026-06-21):**
 > - **Parity gaps closed (native):** Divider `gradient`, CodeInput paste, ProGate frost,
 >   Dropzone/DateField OS pickers, Card `blur` (optional-peer + graceful fallback).
@@ -203,7 +215,7 @@ Legend — Parity: ✅ same API · 🟡 same API, platform-shaped impl · 🔵 c
 ### 4. Navigation & Layout
 | Component | Exports | Purpose | Key variants/props | Parity |
 | --- | --- | --- | --- | --- |
-| **TabBar** | `FAB` | Bottom nav (icon+label); floating action button | `items·active`; FAB circular/extended | 🟡 native accepts `IconName` strings |
+| **TabBar** | `FAB` | Bottom nav (icon+label); floating action button | `items·active·fabIndex`; `floating` = frosted capsule (blur + 62px, round FAB); native press haptic | 🟡 native accepts `IconName` strings + expo-blur/haptics optional peers |
 | **Tabs** | — | Underline text tabs | `tabs·active` | ✅ |
 | **SegmentedTabs** | — | iOS pill segmented control | `tabs·active` (items: `count·tone·icon`), `locked: number[]` upsell, `appearance: raised·tint` | ✅ locked behavior identical |
 | **Pagination** | `Breadcrumb` | Numbered pager w/ ellipsis; crumb trail | `page·pageCount`; `items·onNavigate` | 🟡 web `<a href>` vs Pressable |
