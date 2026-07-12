@@ -4,7 +4,7 @@
 import { describe, expect, test } from 'vitest';
 import { colors } from '@lockin90/tokens';
 import { SetTable, setLabels, type WorkoutSet } from '../SetTable';
-import { findByText, hasDeclaration, parse, render, type El } from './markup';
+import { ancestors, findByText, hasDeclaration, parse, render, type El } from './markup';
 
 /** The element carries the color, whether react-native-web serialized it as
  *  an atomic class or an inline style (dynamic style objects go inline). */
@@ -68,5 +68,24 @@ describe('SetTable', () => {
     expect(findByText(withAdd, '+ ADD DROP SET')).toBeDefined();
     const without = parse(render(SetTable, { sets: SETS }));
     expect(findByText(without, '+ ADD SET')).toBeUndefined();
+  });
+
+  test('editable boxes ONLY the current set value — done/pending stay plain, done dimmed', () => {
+    const sets: WorkoutSet[] = [
+      { id: 'p', setType: 'working', weight: 60, reps: 5 }, // pending
+      { id: 'c', setType: 'working', weight: 80, reps: 5, isCurrent: true }, // current
+      { id: 'd', setType: 'working', weight: 100, reps: 5, done: true }, // done
+    ];
+    const root = parse(render(SetTable, { sets, editable: true, columns: ['set', 'value'] }));
+    // the one cyan-accented box wraps the CURRENT value only
+    const boxed = (text: string) =>
+      ancestors(findByText(root, text)!).some((a) => hasDeclaration(a, 'rgba(34,211,238,0.35)'));
+    expect(boxed('80×5')).toBe(true);
+    expect(boxed('60×5')).toBe(false);
+    expect(boxed('100×5')).toBe(false);
+    // done value de-emphasized (textDim #AAB2C6), pending/current stay bright
+    expect(carriesColor(findByText(root, '100×5')!, '170,178,198')).toBe(true);
+    expect(carriesColor(findByText(root, '60×5')!, '170,178,198')).toBe(false);
+    expect(colors.textDim).toBe('#AAB2C6');
   });
 });

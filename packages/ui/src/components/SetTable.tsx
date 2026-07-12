@@ -36,7 +36,8 @@ export interface SetTableProps extends HTMLAttributes<HTMLDivElement> {
   sets: WorkoutSet[];
   /** Columns to render, in this order (default all 4). */
   columns?: SetTableColumn[];
-  /** Render values in tappable input-look boxes (tap → `onSetPress`). */
+  /** Values are tappable (tap → `onSetPress`); they stay plain text — only
+   *  the CURRENT set's value gets the cyan-accented box ("you are here"). */
   editable?: boolean;
   /** Row tapped (open the set editor). */
   onSetPress?: (id: string) => void;
@@ -149,7 +150,15 @@ export function SetTable({
                 {has('set') && <td className={cn('lk-settable-set', TYPE_CLASS[s.setType])}>{labels[i]}</td>}
                 {has('value') && (
                   <td className="lk-settable-val">
-                    <span className={cn('lk-settable-valtext', editable && 'lk-settable-valbox')}>
+                    {/* three glance-distinct states: pending = plain mono text,
+                        current = the ONE cyan-boxed emphasized value, done =
+                        dimmed plain text on the mint row wash */}
+                    <span
+                      className={cn(
+                        'lk-settable-valtext',
+                        editable && s.isCurrent && 'lk-settable-valbox',
+                      )}
+                    >
                       {formatValue(s)}
                     </span>
                     {s.isPr && s.done ? <PrBadge size="sm" className="lk-settable-pr" /> : null}

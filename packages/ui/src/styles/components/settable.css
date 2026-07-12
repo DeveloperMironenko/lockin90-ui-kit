@@ -84,20 +84,15 @@
 .lk-settable-done .lk-settable-valtext {
   color: var(--text-dim);
 }
-/* editable — input-look box (tap → onSetPress) */
+/* editable — values are plain tappable TEXT (the design removed the input-box
+   look); ONLY the current set's value carries the cyan-accented box, so
+   done / current / pending read distinct at a glance. */
 .lk-settable-valtext.lk-settable-valbox {
   display: inline-block;
   padding: 6px 12px;
   border-radius: var(--r-sm);
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.03);
-}
-.lk-settable-current .lk-settable-valtext.lk-settable-valbox {
-  border-color: rgba(34, 211, 238, 0.35);
-}
-.lk-settable-done .lk-settable-valtext.lk-settable-valbox {
-  border-color: rgba(52, 245, 197, 0.18);
-  background: rgba(52, 245, 197, 0.04);
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  background: rgba(34, 211, 238, 0.05);
 }
 /* PR badge — absolutely positioned so the centered number never shifts */
 .lk-settable-pr {

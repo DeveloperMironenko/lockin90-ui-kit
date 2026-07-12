@@ -39,7 +39,8 @@ export interface SetTableProps {
   sets: WorkoutSet[];
   /** Columns to render, in this order (default all 4). */
   columns?: SetTableColumn[];
-  /** Render values in tappable input-look boxes (tap → `onSetPress`). */
+  /** Values are tappable (tap → `onSetPress`); they stay plain text — only
+   *  the CURRENT set's value gets the cyan-accented box ("you are here"). */
   editable?: boolean;
   /** Row tapped (open the set editor). */
   onSetPress?: (id: string) => void;
@@ -179,7 +180,10 @@ export function SetTable({
             )}
             {has('value') && (
               <View style={styles.colValue}>
-                <View style={editable ? [styles.valBox, valBoxTint(s)] : null}>
+                {/* three glance-distinct states: pending = plain mono text,
+                    current = the ONE cyan-boxed emphasized value, done =
+                    dimmed plain text on the mint row wash */}
+                <View style={editable && s.isCurrent ? styles.valBox : null}>
                   <Text style={[styles.valText, s.done ? styles.valDone : null]}>{formatValue(s)}</Text>
                 </View>
                 {s.isPr && s.done ? <PrBadge size="sm" style={styles.pr} /> : null}
@@ -261,13 +265,6 @@ export function SetTable({
   );
 }
 
-/** Editable value-box border tint per row state (mirrors the web valbox). */
-function valBoxTint(s: WorkoutSet): ViewStyle | null {
-  if (s.done) return { borderColor: 'rgba(52,245,197,0.18)', backgroundColor: 'rgba(52,245,197,0.04)' };
-  if (s.isCurrent) return { borderColor: 'rgba(34,211,238,0.35)' };
-  return null;
-}
-
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 9, paddingHorizontal: 2 },
   headRow: { paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: colors.border },
@@ -291,13 +288,14 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   valDone: { color: colors.textDim },
+  // The one accented box — editable CURRENT set only (mirrors the web valbox).
   valBox: {
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: radii.sm,
     borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    borderColor: 'rgba(34,211,238,0.35)',
+    backgroundColor: 'rgba(34,211,238,0.05)',
   },
   pr: { position: 'absolute', right: 8 },
 

@@ -74,8 +74,12 @@ describe('SetTable', () => {
     expect(noAdd).not.toContain('lk-settable-add');
   });
 
-  it('editable renders the input-look value box', () => {
+  it('editable boxes ONLY the current set value — done/pending stay plain tappable text', () => {
     const html = renderToStaticMarkup(<SetTable sets={SETS} editable />);
-    expect(html).toContain('lk-settable-valbox');
+    expect(html.match(/lk-settable-valbox/g)).toHaveLength(1); // set c (isCurrent) only
+    const noCurrent = renderToStaticMarkup(
+      <SetTable sets={SETS.filter((s) => !s.isCurrent)} editable />,
+    );
+    expect(noCurrent).not.toContain('lk-settable-valbox');
   });
 });
