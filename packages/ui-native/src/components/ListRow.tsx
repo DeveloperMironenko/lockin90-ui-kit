@@ -19,6 +19,10 @@ export interface ListRowProps extends ViewProps {
   onPress?: () => void;
   /** Accent-tinted selected state (used in pickers). */
   active?: boolean;
+  /** Overrides the ACTIVE-state background — a translucent color string
+   *  (e.g. the change-exercise cyan `'rgba(34,211,238,0.09)'`, design
+   *  `.exl.on`). Default keeps the accent tint. */
+  activeTint?: string;
   /** Danger tone — tints the title `--zone-low`. */
   danger?: boolean;
   /**
@@ -51,6 +55,7 @@ export function ListRow({
   trailing,
   onPress,
   active,
+  activeTint,
   danger,
   divider = true,
   style,
@@ -72,7 +77,7 @@ export function ListRow({
   const rowStyle = [
     styles.row,
     divider && styles.divider,
-    active && styles.active,
+    active && (activeTint != null ? { backgroundColor: activeTint } : styles.active),
     style,
   ];
 

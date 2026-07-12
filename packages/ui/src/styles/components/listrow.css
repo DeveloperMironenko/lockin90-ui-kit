@@ -76,15 +76,17 @@
 }
 
 /* ---- active (selected in a picker) ---- */
+/* `activeTint` sets --lk-listrow-active-bg inline to override the accent tint
+   (e.g. the change-exercise cyan, design `.exl.on`). */
 .lk-listrow-active {
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  background: var(--lk-listrow-active-bg, color-mix(in srgb, var(--accent) 12%, transparent));
 }
 .lk-listrow-active .lk-listrow-title {
   color: var(--text);
 }
 .lk-listrow-active.lk-listrow-tappable:hover,
 .lk-listrow-active.lk-listrow-tappable:focus-visible {
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  background: var(--lk-listrow-active-bg, color-mix(in srgb, var(--accent) 18%, transparent));
 }
 
 /* ---- danger ---- */

@@ -14,6 +14,10 @@ export interface ListRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'titl
   onClick?: () => void;
   /** Accent-tinted selected state (used in pickers). */
   active?: boolean;
+  /** Overrides the ACTIVE-state background — a translucent color string
+   *  (e.g. the change-exercise cyan `'rgba(34,211,238,0.09)'`, design
+   *  `.exl.on`). Default keeps the accent tint. */
+  activeTint?: string;
   /** Danger tone — tints the title `--zone-low`. */
   danger?: boolean;
 }
@@ -23,7 +27,7 @@ export interface ListRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'titl
  *  hairline between them (handled in CSS). With `onClick` it renders an
  *  interactive `<button>`; otherwise a static `<div>`. */
 export const ListRow = forwardRef<HTMLDivElement, ListRowProps>(function ListRow(
-  { leading, title, subtitle, trailing, onClick, active, danger, className, ...rest },
+  { leading, title, subtitle, trailing, onClick, active, activeTint, danger, className, style, ...rest },
   ref,
 ) {
   const classes = cn(
@@ -33,6 +37,11 @@ export const ListRow = forwardRef<HTMLDivElement, ListRowProps>(function ListRow
     danger && 'lk-listrow-danger',
     className,
   );
+  /* activeTint rides a CSS custom property the .lk-listrow-active bg reads */
+  const rowStyle =
+    activeTint != null
+      ? ({ ...style, '--lk-listrow-active-bg': activeTint } as React.CSSProperties)
+      : style;
 
   const body = (
     <>
@@ -51,6 +60,7 @@ export const ListRow = forwardRef<HTMLDivElement, ListRowProps>(function ListRow
         ref={ref as unknown as React.Ref<HTMLButtonElement>}
         type="button"
         className={classes}
+        style={rowStyle}
         onClick={onClick}
         aria-pressed={active || undefined}
         {...(rest as HTMLAttributes<HTMLButtonElement>)}
@@ -61,7 +71,7 @@ export const ListRow = forwardRef<HTMLDivElement, ListRowProps>(function ListRow
   }
 
   return (
-    <div ref={ref} className={classes} {...rest}>
+    <div ref={ref} className={classes} style={rowStyle} {...rest}>
       {body}
     </div>
   );

@@ -112,3 +112,10 @@
   align-items: center;
   gap: 8px;
 }
+
+/* single-row banner (no subtitle, no stats) — the actions fold into the head
+   row after the status (design 5 `.at`); they never shrink or wrap, the title
+   alone truncates. */
+.lk-sessionbanner-actions.lk-sessionbanner-actions-inline {
+  flex: none;
+}

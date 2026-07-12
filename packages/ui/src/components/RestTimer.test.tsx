@@ -55,4 +55,48 @@ describe('RestTimer', () => {
     const live = renderToStaticMarkup(<RestTimer remainingSec={30} totalSec={90} />);
     expect(live).not.toContain('lk-resttimer-paused');
   });
+
+  it('compact renders the 42px ring (r 18, stroke 4) with only the time inside', () => {
+    const html = renderToStaticMarkup(
+      <RestTimer
+        remainingSec={45}
+        totalSec={90}
+        compact
+        sublabel="Next 1:05"
+        onSkip={() => {}}
+        trailing={<span>142 bpm</span>}
+      />,
+    );
+    expect(html).toContain('lk-resttimer-compact');
+    expect(html).toContain('width="42"');
+    expect(html).toContain('r="18"');
+    expect(html).toContain('stroke-width="4"');
+    // compact C = 2π·18 ≈ 113.10 → offset at 50% ≈ 56.55
+    expect(html).toContain('stroke-dashoffset="56.55"');
+    expect(html).toContain('0:45');
+    expect(html).toContain('Rest'); // label — in the text column
+    expect(html).toContain('Next 1:05'); // sublabel under it
+    expect(html).toContain('Skip');
+    expect(html).toContain('142 bpm');
+    // the label moved OUT of the ring: the center block holds only the time
+    const center = html.match(/<div class="lk-resttimer-center">(.*?)<\/div>/)?.[1] ?? '';
+    expect(center).toContain('lk-resttimer-time');
+    expect(center).not.toContain('lk-resttimer-label');
+  });
+
+  it('hero default keeps the 116px ring with the label inside', () => {
+    const html = renderToStaticMarkup(<RestTimer remainingSec={45} totalSec={90} />);
+    expect(html).not.toContain('lk-resttimer-compact');
+    expect(html).toContain('width="116"');
+    expect(html).toContain('r="50"');
+    const center = html.match(/<div class="lk-resttimer-center">(.*?)<\/div>/)?.[1] ?? '';
+    expect(center).toContain('lk-resttimer-label');
+  });
+
+  it('compact keeps the paused dim', () => {
+    const html = renderToStaticMarkup(<RestTimer remainingSec={30} totalSec={90} compact paused />);
+    expect(html).toContain('lk-resttimer-compact');
+    expect(html).toContain('lk-resttimer-paused');
+    expect(html).toContain(', paused');
+  });
 });

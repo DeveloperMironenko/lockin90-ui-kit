@@ -60,4 +60,31 @@ describe('SessionBanner', () => {
     expect(html).toContain('lk-sessionbanner-leading');
     expect(html).toContain('ICON');
   });
+
+  it('folds the actions INLINE into the head row when there is no subtitle and no stats (single-row)', () => {
+    const html = renderToStaticMarkup(
+      <SessionBanner title="Push Day A" status="LIVE · 24:18" live actions={[{ label: 'Finish', variant: 'primary' }]} />,
+    );
+    expect(html).toContain('lk-sessionbanner-actions-inline');
+    // the head row contains no nested <div>, so the first </div> closes it —
+    // the Finish button must sit INSIDE it, after the status
+    const head = html.match(/<div class="lk-sessionbanner-head">(.*?)<\/div>/)?.[1] ?? '';
+    expect(head).toContain('LIVE · 24:18');
+    expect(head).toContain('Finish');
+  });
+
+  it('keeps the actions on their own row when stats or subtitle exist', () => {
+    const withStats = renderToStaticMarkup(
+      <SessionBanner title="A" stats={[{ value: '142', label: 'BPM' }]} actions={[{ label: 'Finish' }]} />,
+    );
+    expect(withStats).not.toContain('lk-sessionbanner-actions-inline');
+    expect(withStats).toContain('lk-sessionbanner-actions');
+    const head = withStats.match(/<div class="lk-sessionbanner-head">(.*?)<\/div>/)?.[1] ?? '';
+    expect(head).not.toContain('Finish');
+    const withSub = renderToStaticMarkup(
+      <SessionBanner title="A" subtitle="Bench Press · set 2 of 5" actions={[{ label: 'Finish' }]} />,
+    );
+    expect(withSub).not.toContain('lk-sessionbanner-actions-inline');
+    expect(withSub).toContain('lk-sessionbanner-actions');
+  });
 });

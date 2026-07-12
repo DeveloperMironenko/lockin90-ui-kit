@@ -5,12 +5,23 @@ import { hapticSelection } from "../internal/optionalHaptics";
 import { Icon, type IconName } from './Icon';
 
 /**
- * Semantic tone for a rich segment's active state + leading dot — mirrors the
- * web `SegmentedTone`. `canary` paints amber for staged/partial rollouts, `ok`
- * mint, `danger` red. Do not confuse with the control-level `tone`
- * (`'accent' | 'mint'`) prop, which colors the SELECTED pill.
+ * Per-segment tone — mirrors the web `SegmentedTone`. Two families:
+ * - SEMANTIC tones (`ok`/`canary`/`danger`) — a leading dot + active-only
+ *   label tint. `canary` paints amber for staged/partial rollouts, `ok` mint,
+ *   `danger` red.
+ * - COLOR tones (`amber`/`cyan`/`violet`/`magenta`) — set-type tints (the
+ *   edit-set type selector, design `.sg`: warm-up amber → warn, working cyan,
+ *   drop violet, failure magenta). The label is tinted at ALL times (inactive
+ *   too), there is NO leading dot, and the ACTIVE segment paints a tone@16%
+ *   fill + a 1px tone@50% border.
+ * Do not confuse with the control-level `tone` (`'accent' | 'mint'`) prop,
+ * which colors the SELECTED pill.
  */
-export type SegmentedTone = 'ok' | 'canary' | 'danger';
+export type SegmentedTone = 'ok' | 'canary' | 'danger' | 'amber' | 'cyan' | 'violet' | 'magenta';
+
+/** The 4 color tones — always-tinted label, no dot (vs the semantic dots). */
+type SegmentedColorTone = Extract<SegmentedTone, 'amber' | 'cyan' | 'violet' | 'magenta'>;
+const COLOR_TONES: ReadonlySet<SegmentedTone> = new Set(['amber', 'cyan', 'violet', 'magenta']);
 
 /** A rich segment: a `label` plus an optional trailing `count` badge and a
  *  semantic `tone`. Plain strings are still accepted and render identically.
@@ -20,7 +31,8 @@ export interface SegmentedTab {
   label: string;
   /** Small trailing count badge inside the segment (e.g. catalog item counts). */
   count?: number;
-  /** Tones the segment's active pill + a leading dot. */
+  /** Semantic tone (dot + active tint) or color tone (always-tinted label,
+   *  no dot, tinted active fill) — see `SegmentedTone`. */
   tone?: SegmentedTone;
   /** Leading 13px glyph before the label (e.g. the changelog service filter
    *  All/Web/Mobile). Mirrors the web `SegmentedTab.icon`. */
@@ -33,18 +45,34 @@ export type SegmentedTabItem = string | SegmentedTab;
 
 const toTab = (t: SegmentedTabItem): SegmentedTab => (typeof t === 'string' ? { label: t } : t);
 
-// Per-item tone colors (dot + active label/badge accent) — web `--lk-seg-tone`.
+// Per-item tone colors (dot / label / active badge accent) — web `--lk-seg-tone`.
 const TONE_COLOR: Record<SegmentedTone, string> = {
   ok: colors.ok,
   canary: colors.warn,
   danger: colors.bad,
+  amber: colors.warn,
+  cyan: colors.cyan,
+  violet: colors.violet,
+  magenta: colors.magenta,
 };
-// Active count-badge tint per tone — the sanctioned paired literals for the web
-// `color-mix(in srgb, var(--lk-seg-tone) 16%, transparent)`.
+// Tone tint at 16% (active fill / count badge) — the sanctioned paired literals
+// for the web `color-mix(in srgb, var(--lk-seg-tone) 16%, transparent)`.
 const TONE_TINT: Record<SegmentedTone, string> = {
   ok: 'rgba(52,245,197,0.16)',
   canary: 'rgba(255,176,32,0.16)',
   danger: 'rgba(255,77,109,0.16)',
+  amber: 'rgba(255,176,32,0.16)',
+  cyan: 'rgba(34,211,238,0.16)',
+  violet: 'rgba(168,85,247,0.16)',
+  magenta: 'rgba(255,61,129,0.16)',
+};
+// Active border for the 4 COLOR tones — paired literals for the web
+// `color-mix(in srgb, var(--lk-seg-tone) 50%, transparent)` (design `.sg.on`).
+const TONE_BORDER: Record<SegmentedColorTone, string> = {
+  amber: 'rgba(255,176,32,0.5)',
+  cyan: 'rgba(34,211,238,0.5)',
+  violet: 'rgba(168,85,247,0.5)',
+  magenta: 'rgba(255,61,129,0.5)',
 };
 
 /** The design's dark ink for labels on a bright CTA gradient
@@ -124,17 +152,21 @@ export function SegmentedTabs({
         const isLocked = locked?.includes(i) ?? false;
         const isGradActive = isActive && tone !== 'accent';
         const toneColor = itemTone != null ? TONE_COLOR[itemTone] : undefined;
+        const isColorTone = itemTone != null && COLOR_TONES.has(itemTone);
         // Label: a gradient-active (mint/cta) dark-on-bright label wins over a
         // per-item tone (web specificity: `[data-tone] .is-active` beats
-        // `.is-active.lk-seg-*`); otherwise an active toned segment tints its
-        // label toward the tone.
+        // `.is-active.lk-seg-*`); a COLOR-toned label is tinted at ALL times
+        // (inactive too — web `.lk-seg-colortone`); otherwise an active
+        // SEMANTIC-toned segment tints its label toward the tone.
         const labelColor = isGradActive
           ? tone === 'mint'
             ? '#0A0A12'
             : INK_ON_GRADIENT
-          : isActive
-            ? (toneColor ?? colors.text)
-            : colors.textDim;
+          : isColorTone
+            ? toneColor!
+            : isActive
+              ? (toneColor ?? colors.text)
+              : colors.textDim;
         const countBg = isActive
           ? itemTone != null
             ? TONE_TINT[itemTone]
@@ -158,7 +190,17 @@ export function SegmentedTabs({
               styles.tab,
               isSm && styles.tabSm,
               isTint && styles.tabTint,
-              isActive && tone === 'accent' && (isTint ? styles.tabActiveTint : styles.tabActive),
+              // color-tone tabs always carry a transparent hairline so the
+              // active border doesn't shift layout (same trick as tabTint)
+              isColorTone && styles.tabColorTone,
+              // a color-toned ACTIVE segment paints the tone@16% fill +
+              // tone@50% border INSTEAD of the raised glass pill
+              isActive && tone === 'accent' && !isColorTone &&
+                (isTint ? styles.tabActiveTint : styles.tabActive),
+              isActive && !isGradActive && isColorTone && {
+                backgroundColor: TONE_TINT[itemTone!],
+                borderColor: TONE_BORDER[itemTone as SegmentedColorTone],
+              },
               pressed && !isActive && !isLocked && styles.tabPressed,
               isLocked && styles.tabLocked,
             ]}
@@ -176,7 +218,7 @@ export function SegmentedTabs({
                 style={[styles.tabActiveFill, tone === 'mint' ? styles.glowMint : styles.glowCta]}
               />
             )}
-            {toneColor != null && (
+            {toneColor != null && !isColorTone && (
               <View style={[styles.dot, { backgroundColor: toneColor }]} />
             )}
             {icon != null && <Icon name={icon} size={13} color={labelColor} />}
@@ -273,6 +315,12 @@ const styles = StyleSheet.create({
   tabActiveTint: {
     backgroundColor: TINT_ACTIVE.bg,
     borderColor: TINT_ACTIVE.border,
+  },
+  // color-tone segments (design `.sg`) — reserve the 1px active border so
+  // activation doesn't shift layout; active fill/border are inline per tone
+  tabColorTone: {
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
   // design `.svc-count`: mono 8.5, padding 1×5, glass-2 + `--border` hairline
   countTint: {

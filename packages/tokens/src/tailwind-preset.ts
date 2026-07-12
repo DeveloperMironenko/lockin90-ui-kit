@@ -28,6 +28,7 @@ const preset = {
         indigo: colors.indigo,
         violet: colors.violet,
         magenta: colors.magenta,
+        orange: colors.orange,
         accent: colors.accent,
         'accent-2': colors.accent2,
         'accent-3': colors.accent3,

@@ -20,9 +20,14 @@ export interface DeltaPillProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'c
   iconOnly?: boolean;
 }
 
-/** Infer up/down/flat from the numeric sign of a value (string or number). */
+/** Infer up/down/flat from the numeric sign of a value (string or number).
+ *  Normalizes the TRUE MINUS sign U+2212 ('−4', the design's negative glyph)
+ *  to ASCII '-' before parsing so it doesn't lose the sign. */
 function inferDirection(value: string | number): DeltaDirection {
-  const n = typeof value === 'number' ? value : parseFloat(String(value).replace(/[^0-9.+-]/g, ''));
+  const n =
+    typeof value === 'number'
+      ? value
+      : parseFloat(String(value).replace(/−/g, '-').replace(/[^0-9.+-]/g, ''));
   if (Number.isNaN(n) || n === 0) return 'flat';
   return n > 0 ? 'up' : 'down';
 }

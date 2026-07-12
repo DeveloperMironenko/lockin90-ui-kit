@@ -29,6 +29,7 @@ export const colors = {
   indigo: '#6E7BFF',
   violet: '#A855F7',
   magenta: '#FF3D81',
+  orange: '#FF8A3D', // recovery tint (design `--orange`)
   // accents
   accent: '#7C5CFF',
   accent2: '#22D3EE',
@@ -132,7 +133,7 @@ const cssVarName: Record<ColorToken, string> = {
   void: '--void', bg0: '--bg-0', bg1: '--bg-1', bg2: '--bg-2',
   glass: '--glass', glass2: '--glass-2', border: '--border', border2: '--border-2',
   text: '--text', textDim: '--text-dim', textFaint: '--text-faint',
-  lime: '--lime', mint: '--mint', cyan: '--cyan', indigo: '--indigo', violet: '--violet', magenta: '--magenta',
+  lime: '--lime', mint: '--mint', cyan: '--cyan', indigo: '--indigo', violet: '--violet', magenta: '--magenta', orange: '--orange',
   accent: '--accent', accent2: '--accent-2', accent3: '--accent-3',
   zoneHigh: '--zone-high', zoneMid: '--zone-mid', zoneLow: '--zone-low',
   ok: '--ok', warn: '--warn', bad: '--bad', info: '--info',

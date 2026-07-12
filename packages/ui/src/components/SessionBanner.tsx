@@ -25,7 +25,9 @@ export interface SessionBannerProps extends Omit<HTMLAttributes<HTMLElement>, 't
   subtitle?: string;
   /** Up to 3 mono stat readouts (value + label). */
   stats?: SessionBannerStat[];
-  /** Action buttons (kit `Button`, `sm`). */
+  /** Action buttons (kit `Button`, `sm`). Render on their own row; when there
+   *  is no `subtitle` and no `stats` they fold INLINE into the head row
+   *  (single-row banner — design 5 `.at`). */
   actions?: SessionBannerAction[];
   /** Pulsing red-pink live dot (magenta `#FF3D81`); also tints `status`. */
   live?: boolean;
@@ -37,8 +39,12 @@ export interface SessionBannerProps extends Omit<HTMLAttributes<HTMLElement>, 't
  * SessionBanner — the active-session live banner: a dark glass card with a
  * one-line header (optional leading slot, pulsing magenta live dot, title
  * that truncates, status that never wraps), a dim subtitle, up to 3 mono
- * stats split by hairlines, and a row of kit-Button actions. The live-dot
- * pulse is CSS-driven and disabled under `prefers-reduced-motion`.
+ * stats split by hairlines, and a row of kit-Button actions. When there is
+ * no subtitle AND no stats, the actions render INLINE at the end of the head
+ * row (after the status) so the whole banner is ONE row — the Active
+ * screen's top bar (design 5 `.at`: live dot + title left, status right,
+ * Finish button far right). The live-dot pulse is CSS-driven and disabled
+ * under `prefers-reduced-motion`.
  */
 export function SessionBanner({
   title,
@@ -52,6 +58,16 @@ export function SessionBanner({
   ...rest
 }: SessionBannerProps) {
   const shownStats = stats?.slice(0, 3) ?? [];
+  const hasActions = actions != null && actions.length > 0;
+  /* just a bar — no second row to sit above: fold the actions into the head */
+  const inlineActions = hasActions && subtitle == null && shownStats.length === 0;
+  const actionButtons = hasActions
+    ? actions.map((a, i) => (
+        <Button key={i} size="sm" variant={a.variant === 'primary' ? 'primary' : 'ghost'} onClick={a.onPress}>
+          {a.label}
+        </Button>
+      ))
+    : null;
   return (
     <section className={cn('lk-sessionbanner', className)} {...rest}>
       <div className="lk-sessionbanner-head">
@@ -60,6 +76,9 @@ export function SessionBanner({
         <span className="lk-sessionbanner-title">{title}</span>
         {status != null && (
           <span className={cn('lk-sessionbanner-status', live && 'lk-sessionbanner-status-live')}>{status}</span>
+        )}
+        {inlineActions && (
+          <span className="lk-sessionbanner-actions lk-sessionbanner-actions-inline">{actionButtons}</span>
         )}
       </div>
       {subtitle != null && <div className="lk-sessionbanner-sub">{subtitle}</div>}
@@ -73,15 +92,7 @@ export function SessionBanner({
           ))}
         </div>
       )}
-      {actions && actions.length > 0 && (
-        <div className="lk-sessionbanner-actions">
-          {actions.map((a, i) => (
-            <Button key={i} size="sm" variant={a.variant === 'primary' ? 'primary' : 'ghost'} onClick={a.onPress}>
-              {a.label}
-            </Button>
-          ))}
-        </div>
-      )}
+      {hasActions && !inlineActions && <div className="lk-sessionbanner-actions">{actionButtons}</div>}
     </section>
   );
 }

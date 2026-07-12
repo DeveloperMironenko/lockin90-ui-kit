@@ -72,6 +72,38 @@
   margin-left: auto;
 }
 
+/* ----------------------------------------------------------------------------
+   `compact` — the design's Active rest bar (`.rb`/`.rg`): 42px ring (r 18,
+   stroke 4) with ONLY the mint time inside; the label moves OUT of the ring
+   into a text column (mono caption over a bold display line); Skip + trailing
+   sit inline right. No card chrome — the consumer wraps it in a Card.
+   -------------------------------------------------------------------------- */
+.lk-resttimer.lk-resttimer-compact {
+  gap: 10px;
+}
+.lk-resttimer-compact .lk-resttimer-ring {
+  width: 42px;
+  height: 42px;
+}
+/* the tiny centered readout is MINT (design `.rg .num`) */
+.lk-resttimer-compact .lk-resttimer-time {
+  font-size: 11px;
+  color: var(--mint);
+}
+/* text column — label caption above the bold sublabel (design `.rl` / `.rt`) */
+.lk-resttimer-compact .lk-resttimer-main {
+  gap: 1px;
+}
+.lk-resttimer-compact .lk-resttimer-label {
+  font-size: 7px;
+}
+.lk-resttimer-compact .lk-resttimer-sub {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+
 /* paused — dim the arc + readout */
 .lk-resttimer.lk-resttimer-paused .lk-resttimer-arc {
   opacity: 0.4;

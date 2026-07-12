@@ -114,6 +114,33 @@
 }
 
 /* ----------------------------------------------------------------------------
+   Color tones — the set-type tints (edit-set type selector, design 5b `.sg`:
+   warm-up amber · working cyan · drop violet · failure magenta). Unlike the
+   semantic tones above: the label is tinted at ALL times (inactive too), there
+   is NO leading dot (the component skips it), and the ACTIVE segment paints a
+   tone@16% fill + a 1px tone@50% inset ring (no layout shift — web tabs are
+   borderless).
+   -------------------------------------------------------------------------- */
+.lk-seg-tab.lk-seg-amber { --lk-seg-tone: var(--warn); }
+.lk-seg-tab.lk-seg-cyan { --lk-seg-tone: var(--cyan); }
+.lk-seg-tab.lk-seg-violet { --lk-seg-tone: var(--violet); }
+.lk-seg-tab.lk-seg-magenta { --lk-seg-tone: var(--magenta); }
+
+.lk-seg-tab.lk-seg-colortone,
+.lk-seg-tab.lk-seg-colortone:hover {
+  color: var(--lk-seg-tone);
+}
+.lk-seg-tab.is-active.lk-seg-colortone {
+  color: var(--lk-seg-tone);
+  background: color-mix(in srgb, var(--lk-seg-tone) 16%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lk-seg-tone) 50%, transparent);
+}
+.lk-seg-tab.is-active.lk-seg-colortone .lk-seg-count {
+  color: var(--lk-seg-tone);
+  background: color-mix(in srgb, var(--lk-seg-tone) 16%, transparent);
+}
+
+/* ----------------------------------------------------------------------------
    Selected-segment tone (the control-level `tone` prop). Default keeps the
    raised glass pill; `tone="mint"` paints the ACTIVE segment with the mint
    gradient + mint glow + dark-on-bright label — the onboarding Activity-level

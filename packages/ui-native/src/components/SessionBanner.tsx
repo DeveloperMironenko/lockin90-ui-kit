@@ -26,7 +26,9 @@ export interface SessionBannerProps {
   subtitle?: string;
   /** Up to 3 mono stat readouts (value + label). */
   stats?: SessionBannerStat[];
-  /** Action buttons (kit `Button`, `sm`). */
+  /** Action buttons (kit `Button`, `sm`). Render on their own row; when there
+   *  is no `subtitle` and no `stats` they fold INLINE into the head row
+   *  (single-row banner — design 5 `.at`). */
   actions?: SessionBannerAction[];
   /** Pulsing red-pink live dot (magenta `#FF3D81`); also tints `status`. */
   live?: boolean;
@@ -68,7 +70,10 @@ function LiveDot() {
  * `SessionBanner` (same prop API): a dark glass card with a one-line header
  * (optional leading slot, pulsing magenta live dot, truncating title,
  * no-wrap status), a dim subtitle, up to 3 mono stats split by hairlines,
- * and a row of kit-Button actions.
+ * and a row of kit-Button actions. When there is no subtitle AND no stats,
+ * the actions render INLINE at the end of the head row (after the status) so
+ * the whole banner is ONE row — the Active screen's top bar (design 5 `.at`:
+ * live dot + title left, status right, Finish button far right).
  */
 export function SessionBanner({
   title,
@@ -81,6 +86,20 @@ export function SessionBanner({
   style,
 }: SessionBannerProps) {
   const shownStats = stats?.slice(0, 3) ?? [];
+  const hasActions = actions != null && actions.length > 0;
+  /* just a bar — no second row to sit above: fold the actions into the head */
+  const inlineActions = hasActions && subtitle == null && shownStats.length === 0;
+  const actionButtons = hasActions
+    ? actions.map((a, i) => (
+        <Button
+          key={i}
+          size="sm"
+          variant={a.variant === 'primary' ? 'primary' : 'ghost'}
+          title={a.label}
+          onPress={a.onPress}
+        />
+      ))
+    : null;
   return (
     <View style={[styles.card, style]}>
       <View style={styles.head}>
@@ -94,6 +113,7 @@ export function SessionBanner({
             {status}
           </Text>
         )}
+        {inlineActions && <View style={styles.actionsInline}>{actionButtons}</View>}
       </View>
       {subtitle != null && <Text style={styles.sub}>{subtitle}</Text>}
       {shownStats.length > 0 && (
@@ -106,19 +126,7 @@ export function SessionBanner({
           ))}
         </View>
       )}
-      {actions && actions.length > 0 && (
-        <View style={styles.actions}>
-          {actions.map((a, i) => (
-            <Button
-              key={i}
-              size="sm"
-              variant={a.variant === 'primary' ? 'primary' : 'ghost'}
-              title={a.label}
-              onPress={a.onPress}
-            />
-          ))}
-        </View>
-      )}
+      {hasActions && !inlineActions && <View style={styles.actions}>{actionButtons}</View>}
     </View>
   );
 }
@@ -181,4 +189,7 @@ const styles = StyleSheet.create({
   statLabel: { fontFamily: fonts.mono, fontSize: 8.5, letterSpacing: 1, color: colors.textFaint },
 
   actions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  // single-row banner — actions fold into the head row (design 5 `.at`);
+  // they never shrink or wrap, the title alone truncates
+  actionsInline: { flexShrink: 0, flexDirection: 'row', alignItems: 'center', gap: 8 },
 });

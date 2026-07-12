@@ -2,10 +2,20 @@ import { type HTMLAttributes } from 'react';
 import { cn } from '../cn';
 import { Icon, type IconName } from './Icon';
 
-/** Semantic tone for a segment's active state + leading dot. `canary` paints
- *  amber (`--warn`) for staged/partial rollouts (e.g. the pipeline
- *  Off/Canary/On flag); `ok` is mint (`--ok`), `danger` is red (`--bad`). */
-export type SegmentedTone = 'ok' | 'canary' | 'danger';
+/** Per-segment tone. Two families:
+ *  - SEMANTIC tones (`ok`/`canary`/`danger`) — a leading dot + active-only
+ *    label tint. `canary` paints amber (`--warn`) for staged/partial rollouts
+ *    (e.g. the pipeline Off/Canary/On flag); `ok` is mint (`--ok`), `danger`
+ *    is red (`--bad`).
+ *  - COLOR tones (`amber`/`cyan`/`violet`/`magenta`) — set-type tints (the
+ *    edit-set type selector, design `.sg`: warm-up amber → `--warn`, working
+ *    cyan, drop violet, failure magenta). The label is tinted at ALL times
+ *    (inactive too), there is NO leading dot, and the ACTIVE segment paints a
+ *    tone@16% fill + a 1px tone@50% border. */
+export type SegmentedTone = 'ok' | 'canary' | 'danger' | 'amber' | 'cyan' | 'violet' | 'magenta';
+
+/** The 4 color tones — always-tinted label, no dot (vs the semantic dots). */
+const COLOR_TONES: ReadonlySet<SegmentedTone> = new Set(['amber', 'cyan', 'violet', 'magenta']);
 
 /** A rich segment: a `label` plus an optional trailing `count` badge and a
  *  semantic `tone`. Plain strings are still accepted and render identically. */
@@ -14,7 +24,8 @@ export interface SegmentedTab {
   label: string;
   /** Small trailing count badge inside the segment (e.g. catalog item counts). */
   count?: number;
-  /** Tones the segment's active pill + a leading dot. */
+  /** Semantic tone (dot + active tint) or color tone (always-tinted label,
+   *  no dot, tinted active fill) — see `SegmentedTone`. */
   tone?: SegmentedTone;
   /** Leading 13px glyph before the label (e.g. the changelog service filter
    *  All/Web/Mobile). Mirrors the native `SegmentedTab.icon`. */
@@ -99,6 +110,7 @@ export function SegmentedTabs({
       {tabs.map((item, i) => {
         const { label, count, tone, icon } = toTab(item);
         const isLocked = locked?.includes(i) ?? false;
+        const isColorTone = tone != null && COLOR_TONES.has(tone);
         return (
           <button
             key={i}
@@ -112,10 +124,11 @@ export function SegmentedTabs({
               i === active && 'is-active',
               isLocked && 'lk-seg-locked',
               tone && `lk-seg-${tone}`,
+              isColorTone && 'lk-seg-colortone',
             )}
             onClick={isLocked ? undefined : () => onChange?.(i)}
           >
-            {tone && <span className="lk-seg-dot" aria-hidden="true" />}
+            {tone && !isColorTone && <span className="lk-seg-dot" aria-hidden="true" />}
             {icon != null && <Icon name={icon} size={13} />}
             {label}
             {count != null && <span className="lk-seg-count">{count}</span>}

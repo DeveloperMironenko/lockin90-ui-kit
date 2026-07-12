@@ -5,7 +5,7 @@ import { createElement } from 'react';
 import { Text } from 'react-native';
 import { describe, expect, test } from 'vitest';
 import { RestTimer, formatRestTime, restFraction } from '../RestTimer';
-import { findByText, parse, render } from './markup';
+import { findByText, hasDeclaration, parse, render } from './markup';
 
 describe('formatRestTime', () => {
   test('formats m:ss with zero-padded seconds (clamped at 0)', () => {
@@ -57,5 +57,38 @@ describe('RestTimer', () => {
     // the glow duplicate (blur filter) only renders while running
     expect(live).toContain('lk-resttimer-blur');
     expect(paused).not.toContain('lk-resttimer-blur');
+  });
+
+  test('compact renders the 42px ring (r 18 → C ≈ 113.10) with the mint time inside', () => {
+    const html = render(RestTimer, {
+      remainingSec: 45,
+      totalSec: 90,
+      compact: true,
+      sublabel: 'Next 1:05',
+      onSkip: () => {},
+    });
+    const root = parse(html);
+    const time = findByText(root, '0:45')!;
+    expect(time).toBeDefined();
+    // compact readout is MINT (design `.rg .num`), not the hero white
+    expect(hasDeclaration(time, '52,245,197')).toBe(true);
+    // label moved OUT of the ring into the text column, above the sublabel
+    expect(findByText(root, 'REST')).toBeDefined();
+    expect(findByText(root, 'Next 1:05')).toBeDefined();
+    expect(findByText(root, 'Skip')).toBeDefined();
+    // compact geometry: C = 2π·18 ≈ 113.10 → offset at 50% ≈ 56.55
+    expect(html).toContain('113.10');
+    expect(html).toContain('56.5');
+    expect(html).not.toContain('157.0'); // no hero arc
+    // the glow duplicate arc still renders in compact
+    expect(html).toContain('lk-resttimer-blur');
+  });
+
+  test('hero default keeps the 116/r50 geometry (no compact readout)', () => {
+    const html = render(RestTimer, { remainingSec: 45, totalSec: 90 });
+    expect(html).toContain('157.07');
+    expect(html).not.toContain('113.10');
+    const time = findByText(parse(html), '0:45')!;
+    expect(hasDeclaration(time, '52,245,197')).toBe(false); // hero time stays text-white
   });
 });

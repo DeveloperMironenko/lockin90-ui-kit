@@ -6,7 +6,7 @@ import { createElement } from 'react';
 import { Text } from 'react-native';
 import { describe, expect, test } from 'vitest';
 import { SessionBanner } from '../SessionBanner';
-import { findAll, findByText, hasDeclaration, parse, render, type El } from './markup';
+import { ancestors, findAll, findByText, hasDeclaration, parse, render, type El } from './markup';
 
 /** Any element whose classes or inline style carry the rgb triplet (colors
  *  live in react-native-web's atomic-class sheet, not the HTML). */
@@ -64,5 +64,33 @@ describe('SessionBanner', () => {
     expect(findByText(root, 'Resume')).toBeDefined();
     expect(findByText(root, 'Discard')).toBeDefined();
     expect(findByText(root, 'ICON')).toBeDefined();
+  });
+
+  test('single-row: with no subtitle/stats the actions fold INLINE into the head row', () => {
+    const root = parse(
+      render(SessionBanner, {
+        title: 'Push Day A',
+        status: 'LIVE · 24:18',
+        live: true,
+        actions: [{ label: 'Finish', variant: 'primary' as const }],
+      }),
+    );
+    const head = findByText(root, 'Push Day A')!.parent!; // the head row View
+    const finish = findByText(root, 'Finish')!;
+    expect(ancestors(finish)).toContain(head);
+  });
+
+  test('with stats present the actions keep their own row below', () => {
+    const root = parse(
+      render(SessionBanner, {
+        title: 'Push Day A',
+        stats: [{ value: '142', label: 'bpm' }],
+        actions: [{ label: 'Finish' }],
+      }),
+    );
+    const head = findByText(root, 'Push Day A')!.parent!;
+    const finish = findByText(root, 'Finish')!;
+    expect(finish).toBeDefined();
+    expect(ancestors(finish)).not.toContain(head);
   });
 });

@@ -231,21 +231,21 @@ Legend — Parity: ✅ same API · 🟡 same API, platform-shaped impl · 🔵 c
 | **Table** | — | Sticky-header data table, sortable, dense | `columns·rows·sortKey·sortDir·dense` | 🟡 `<table>` vs flex Views in ScrollView |
 | **SetTable** | `setLabels`·`WorkoutSet`·`SetType`·`SetReferenceTone`·`SetTableColumn` | Per-set workout table — colored W/1/2/D/F labels, mono weight×reps, coach/AI reference, mint done-check, PR badge | `columns: set·value·reference·check`, `editable`, `onSetPress·onTogglePress·onAddSet`, `referenceHeader` | 🟡 `<table>` vs flex rows; grad-mint check = CSS vs expo-linear-gradient |
 | **PrBadge** | — | Solid RED personal-record flag (#FF4757, 4px radius, red glow) | `label` (PR·NEW·AT PEAK…), `size: sm·md` | ✅ |
-| **RestTimer** | `formatRestTime`·`restFraction` | Between-sets countdown — mint arc on faint track, mono time, Skip + trailing slot | `remainingSec·totalSec·label·sublabel·onSkip·paused` | 🟡 web dashoffset transition; native discrete redraw + Gaussian glow |
+| **RestTimer** | `formatRestTime`·`restFraction` | Between-sets countdown — mint arc on faint track, mono time, Skip + trailing slot | `remainingSec·totalSec·label·sublabel·onSkip·paused`, `compact` = 42px rest-bar ring (mint time only; label+sublabel beside) | 🟡 web dashoffset transition; native discrete redraw + Gaussian glow |
 | **TemplateCard** | `TemplateSource` | Workout-template row card — name, meta, last-used, source pill, tint bar | `source: coach·ai·manual`, `tint`, `onPress`, `trailing` | ✅ |
 | **PrCard** | `PrCardState` | Personal-record card — red border/glow + PrBadge tag when new/atPeak | `state: new·atPeak·offPeak`, `onPress` | ✅ |
-| **SessionBanner** | `SessionBannerStat`·`SessionBannerAction` | Active-session live banner — one-line header, pulsing magenta dot, ≤3 stats, Button actions | `status·subtitle·stats·actions·live·leading` | 🟡 CSS pulse (reduced-motion gated) vs Animated loop; web backdrop blur |
+| **SessionBanner** | `SessionBannerStat`·`SessionBannerAction` | Active-session live banner — one-line header, pulsing magenta dot, ≤3 stats, Button actions; no subtitle/stats → actions fold INLINE into the head (single-row `.at` bar) | `status·subtitle·stats·actions·live·leading` | 🟡 CSS pulse (reduced-motion gated) vs Animated loop; web backdrop blur |
 
 ### 4. Navigation & Layout
 | Component | Exports | Purpose | Key variants/props | Parity |
 | --- | --- | --- | --- | --- |
 | **TabBar** | `FAB` | Bottom nav (icon+label); floating action button | `items·active·fabIndex`; `floating` = frosted capsule (blur + 62px, round FAB); native press haptic | 🟡 native accepts `IconName` strings + expo-blur/haptics optional peers |
 | **Tabs** | — | Underline text tabs | `tabs·active` | ✅ |
-| **SegmentedTabs** | — | iOS pill segmented control | `tabs·active` (items: `count·tone·icon`), `locked: number[]` upsell, `appearance: raised·tint` | ✅ locked behavior identical |
+| **SegmentedTabs** | — | iOS pill segmented control | `tabs·active` (items: `count·tone·icon`; tone = semantic `ok·canary·danger` dot or set-type COLOR `amber·cyan·violet·magenta` always-tinted label, no dot, tinted active fill), `locked: number[]` upsell, `appearance: raised·tint` | ✅ locked behavior identical |
 | **Pagination** | `Breadcrumb` | Numbered pager w/ ellipsis; crumb trail | `page·pageCount`; `items·onNavigate` | 🟡 web `<a href>` vs Pressable |
 | **BackLink** | — | Chevron-left back affordance | `label·href·onClick/onPress` | 🟡 consumer owns nav (no router.back built in) |
 | **Toolbar** | `Dropzone` | Icon-button group; file-drop area | `items`; `label·hint·onFiles` | 🔵 native Dropzone is tap-only (no drag-drop) |
-| **ListRow** | — | Tappable list item, leading/trailing | `title·subtitle·active·danger·divider` | 🟡 web CSS sibling divider vs `divider` prop |
+| **ListRow** | — | Tappable list item, leading/trailing | `title·subtitle·active·activeTint` (override active bg, e.g. `.exl.on` cyan)`·danger·divider` | 🟡 web CSS sibling divider vs `divider` prop |
 | **Timeline** | — | Vertical milestone roadmap | items `status: done·now·next`, `statusLabel` | 🟡 |
 | **Accordion** | — | Collapsible disclosure list | `items·multiple·defaultOpen` | ✅ |
 
