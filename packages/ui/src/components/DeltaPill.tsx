@@ -2,7 +2,10 @@ import { forwardRef, type HTMLAttributes } from 'react';
 import { cn } from '../cn';
 
 export type DeltaDirection = 'up' | 'down' | 'flat';
-export type DeltaTone = 'auto' | 'up' | 'down' | 'neutral';
+/** `energy` — the training design's energy-affect chip: gain mint, cost AMBER
+ *  (never red — red is reserved for PRs/danger), neutral gray. Derives from
+ *  the direction like `auto` but maps `down` → amber instead of coral. */
+export type DeltaTone = 'auto' | 'up' | 'down' | 'neutral' | 'energy';
 export type DeltaSize = 'sm' | 'md';
 
 export interface DeltaPillProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'children'> {
@@ -30,9 +33,11 @@ const TONE_FROM_DIR: Record<DeltaDirection, 'up' | 'down' | 'neutral'> = {
   flat: 'neutral',
 };
 
-const TONE_CLASS: Record<'up' | 'down' | 'neutral', string> = {
+// `downAmber` backs the `energy` tone's negative side (amber, never red).
+const TONE_CLASS: Record<'up' | 'down' | 'neutral' | 'downAmber', string> = {
   up: 'lk-delta-up',
   down: 'lk-delta-down',
+  downAmber: 'lk-delta-down-amber',
   neutral: 'lk-delta-neutral',
 };
 
@@ -59,7 +64,14 @@ export const DeltaPill = forwardRef<HTMLSpanElement, DeltaPillProps>(function De
   ref,
 ) {
   const dir = direction ?? inferDirection(value);
-  const resolvedTone = tone === 'auto' ? TONE_FROM_DIR[dir] : tone;
+  const resolvedTone =
+    tone === 'auto'
+      ? TONE_FROM_DIR[dir]
+      : tone === 'energy'
+        ? dir === 'down'
+          ? 'downAmber'
+          : TONE_FROM_DIR[dir]
+        : tone;
   return (
     <span
       ref={ref}

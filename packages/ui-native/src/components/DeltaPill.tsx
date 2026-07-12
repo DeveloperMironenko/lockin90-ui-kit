@@ -3,7 +3,10 @@ import Svg, { Path, Line } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 
 export type DeltaDirection = 'up' | 'down' | 'flat';
-export type DeltaTone = 'auto' | 'up' | 'down' | 'neutral';
+/** `energy` — the training design's energy-affect chip: gain mint, cost AMBER
+ *  (never red — red is reserved for PRs/danger), neutral gray. Derives from
+ *  the direction like `auto` but maps `down` → amber instead of coral. */
+export type DeltaTone = 'auto' | 'up' | 'down' | 'neutral' | 'energy';
 export type DeltaSize = 'sm' | 'md';
 
 export interface DeltaPillProps {
@@ -33,9 +36,11 @@ const TONE_FROM_DIR: Record<DeltaDirection, 'up' | 'down' | 'neutral'> = {
 };
 
 // Native has no `currentColor`; resolve each tone to fg + tinted bg/border.
-const TONE: Record<'up' | 'down' | 'neutral', { color: string; border: string; bg: string }> = {
+// `downAmber` backs the `energy` tone's negative side (amber, never red).
+const TONE: Record<'up' | 'down' | 'neutral' | 'downAmber', { color: string; border: string; bg: string }> = {
   up: { color: colors.zoneHigh, border: 'rgba(52,245,197,0.32)', bg: 'rgba(52,245,197,0.10)' },
   down: { color: colors.zoneLow, border: 'rgba(255,77,109,0.32)', bg: 'rgba(255,77,109,0.10)' },
+  downAmber: { color: colors.zoneMid, border: 'rgba(255,176,32,0.35)', bg: 'rgba(255,176,32,0.08)' },
   neutral: { color: colors.textDim, border: colors.border, bg: colors.glass },
 };
 
@@ -61,7 +66,14 @@ function ArrowGlyph({ direction, size, color }: { direction: DeltaDirection; siz
 /** Compact directional pill: arrow + signed value, tinted by direction. */
 export function DeltaPill({ value, direction, tone = 'auto', size = 'md', iconOnly = false, style }: DeltaPillProps) {
   const dir = direction ?? inferDirection(value);
-  const resolvedTone = tone === 'auto' ? TONE_FROM_DIR[dir] : tone;
+  const resolvedTone =
+    tone === 'auto'
+      ? TONE_FROM_DIR[dir]
+      : tone === 'energy'
+        ? dir === 'down'
+          ? 'downAmber'
+          : TONE_FROM_DIR[dir]
+        : tone;
   const t = TONE[resolvedTone];
   const sm = size === 'sm';
   const glyphSize = sm ? 10 : 12;

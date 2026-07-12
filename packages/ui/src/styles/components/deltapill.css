@@ -37,6 +37,12 @@
   background: rgba(255, 77, 109, 0.10);
   border-color: rgba(255, 77, 109, 0.32);
 }
+/* energy tone, negative side — amber, never red (training energy-affect rule) */
+.lk-deltapill.lk-delta-down-amber {
+  color: var(--zone-mid);
+  background: rgba(255, 176, 32, 0.08);
+  border-color: rgba(255, 176, 32, 0.35);
+}
 .lk-deltapill.lk-delta-neutral {
   color: var(--text-dim);
   background: var(--glass);
