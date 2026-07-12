@@ -296,3 +296,17 @@ export { WatchComplication } from './components/WatchComplication';
 export type { WatchComplicationVariant, WatchComplicationCorners, WatchComplicationProps } from './components/WatchComplication';
 export { EnvironmentChart } from './components/EnvironmentChart';
 export type { EnvironmentChartVariant, EnvironmentChartProps } from './components/EnvironmentChart';
+
+// Training primitives — set logging, rest, templates, PRs, live session
+export { PrBadge } from './components/PrBadge';
+export type { PrBadgeSize, PrBadgeProps } from './components/PrBadge';
+export { SetTable, setLabels } from './components/SetTable';
+export type { SetType, SetReferenceTone, WorkoutSet, SetTableColumn, SetTableProps } from './components/SetTable';
+export { RestTimer, formatRestTime, restFraction } from './components/RestTimer';
+export type { RestTimerProps } from './components/RestTimer';
+export { TemplateCard } from './components/TemplateCard';
+export type { TemplateSource, TemplateCardProps } from './components/TemplateCard';
+export { PrCard } from './components/PrCard';
+export type { PrCardState, PrCardProps } from './components/PrCard';
+export { SessionBanner } from './components/SessionBanner';
+export type { SessionBannerStat, SessionBannerAction, SessionBannerProps } from './components/SessionBanner';

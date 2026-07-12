@@ -1,0 +1,114 @@
+/* ============================================================================
+   SessionBanner — active-session live banner.
+   Dark glass card; one-line header (title truncates, status never wraps);
+   pulsing magenta live dot (static under prefers-reduced-motion); up to 3
+   mono stats split by hairlines; kit-Button actions.
+   ========================================================================== */
+.lk-sessionbanner {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 14px 16px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: rgba(10, 12, 20, 0.72);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  color: var(--text);
+}
+
+.lk-sessionbanner-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+.lk-sessionbanner-leading {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+}
+.lk-sessionbanner-title {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lk-sessionbanner-status {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  font-feature-settings: "tnum" 1;
+  white-space: nowrap;
+  color: var(--text-dim);
+}
+.lk-sessionbanner-status.lk-sessionbanner-status-live {
+  color: var(--magenta);
+}
+
+/* live dot — pulsing magenta */
+.lk-sessionbanner-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--magenta);
+  box-shadow: 0 0 8px rgba(255, 61, 129, 0.7);
+  animation: lk-sessionbanner-pulse 1.6s var(--ease) infinite;
+}
+@keyframes lk-sessionbanner-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-sessionbanner-dot { animation: none; }
+}
+
+.lk-sessionbanner-sub {
+  font-size: 12.5px;
+  color: var(--text-dim);
+}
+
+/* stats — up to 3, split by hairlines */
+.lk-sessionbanner-stats {
+  display: flex;
+  align-items: stretch;
+}
+.lk-sessionbanner-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 12px;
+}
+.lk-sessionbanner-stat:first-child {
+  padding-left: 0;
+}
+.lk-sessionbanner-stat + .lk-sessionbanner-stat {
+  border-left: 1px solid var(--border);
+}
+.lk-sessionbanner-statval {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  font-feature-settings: "tnum" 1;
+}
+.lk-sessionbanner-statlabel {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.lk-sessionbanner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

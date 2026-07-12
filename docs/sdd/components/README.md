@@ -61,6 +61,11 @@ Parity legend: ✅ identical API · 🟡 same API, platform-shaped impl · 🔵 
 [NotificationRow](./NotificationRow.md) · [ReauthDialog](./ReauthDialog.md) ·
 [Spinner](./Spinner.md) · [DotsLoader](./DotsLoader.md)
 
+## Training
+[SetTable](./SetTable.md) (+ setLabels) · [PrBadge](./PrBadge.md) · [RestTimer](./RestTimer.md)
+(+ formatRestTime/restFraction) · [TemplateCard](./TemplateCard.md) · [PrCard](./PrCard.md) ·
+[SessionBanner](./SessionBanner.md)
+
 ## Domain · messaging · AI · social · billing
 [MuscleDiagram](./MuscleDiagram.md) · [MessageBubble](./MessageBubble.md) ·
 [MessageComposer](./MessageComposer.md) · [TypingIndicator](./TypingIndicator.md) ·

@@ -1,0 +1,82 @@
+/* ============================================================================
+   PrCard — personal-record card.
+   new / atPeak = the red-PR treatment: red-tinted border + soft red glow
+   (PR red #FF4757 — the matched off-spectrum literal, see PrBadge). offPeak
+   keeps the plain glass surface + a quiet amber text tag.
+   ========================================================================== */
+.lk-prcard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  width: 100%;
+  text-align: left;
+  padding: 13px 15px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--glass);
+  color: var(--text);
+}
+.lk-prcard.lk-prcard-hot {
+  border-color: rgba(255, 71, 87, 0.38);
+  box-shadow: 0 0 18px rgba(255, 71, 87, 0.16);
+}
+.lk-prcard.lk-prcard-tappable {
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.lk-prcard.lk-prcard-tappable:hover {
+  background: var(--glass-2);
+}
+.lk-prcard.lk-prcard-hot.lk-prcard-tappable:hover {
+  border-color: rgba(255, 71, 87, 0.55);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-prcard.lk-prcard-tappable { transition: none; }
+}
+
+.lk-prcard-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+.lk-prcard-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lk-prcard-off {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--zone-mid);
+}
+.lk-prcard-kind {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.lk-prcard-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-top: 3px;
+}
+.lk-prcard-detail {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-dim);
+}

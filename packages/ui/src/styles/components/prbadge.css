@@ -1,0 +1,28 @@
+/* ============================================================================
+   PrBadge — solid red personal-record flag.
+   PR red #FF4757 is the deliberate off-spectrum signal color of the training
+   design (matched literal on native — see PrBadge.tsx docblock). 4px radius,
+   white bold mono, soft red glow.
+   ========================================================================== */
+.lk-prbadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  color: #fff;
+  background: #ff4757;
+  border-radius: 4px;
+  padding: 3px 7px;
+  box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+}
+.lk-prbadge.lk-prbadge-sm {
+  font-size: 8.5px;
+  padding: 2px 5px;
+  box-shadow: 0 0 8px rgba(255, 71, 87, 0.45);
+}

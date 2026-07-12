@@ -135,3 +135,11 @@
 @import './components/supplement.css';
 @import './components/unitchart.css';
 @import './components/vitals.css';
+
+/* --- training primitives --- */
+@import './components/prbadge.css';
+@import './components/settable.css';
+@import './components/resttimer.css';
+@import './components/templatecard.css';
+@import './components/prcard.css';
+@import './components/sessionbanner.css';

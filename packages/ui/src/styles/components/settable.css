@@ -1,0 +1,188 @@
+/* ============================================================================
+   SetTable — per-set workout table (the training design's core primitive).
+   Set-type colors: warmup amber (--zone-mid) · working cyan (--accent-2) ·
+   drop violet (--violet) · failure magenta (--magenta). Current row = cyan
+   tint (accent-2 @ 7%), done row = mint tint + filled mint check. No dashed
+   underlines anywhere.
+   ========================================================================== */
+.lk-settable {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.lk-settable-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.lk-settable-table thead th {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+.lk-settable-table thead th.lk-settable-h-set,
+.lk-settable-table thead th.lk-settable-h-value {
+  text-align: center;
+}
+.lk-settable-table thead th.lk-settable-h-reference {
+  text-align: right;
+}
+.lk-settable-table tbody td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.lk-settable-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.lk-settable-row.lk-settable-tappable {
+  cursor: pointer;
+}
+.lk-settable-row.lk-settable-tappable:hover {
+  background: var(--glass);
+}
+
+/* row tints — current = cyan (accent-2 @ 7%), done = mint */
+.lk-settable-row.lk-settable-current,
+.lk-settable-row.lk-settable-current.lk-settable-tappable:hover {
+  background: rgba(34, 211, 238, 0.07);
+}
+.lk-settable-row.lk-settable-done,
+.lk-settable-row.lk-settable-done.lk-settable-tappable:hover {
+  background: rgba(52, 245, 197, 0.05);
+}
+
+/* SET column — display-font label colored by set type */
+.lk-settable-set {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+  width: 44px;
+}
+.lk-settable-set.lk-settable-warmup { color: var(--zone-mid); }
+.lk-settable-set.lk-settable-working { color: var(--accent-2); }
+.lk-settable-set.lk-settable-drop { color: var(--violet); }
+.lk-settable-set.lk-settable-failure { color: var(--magenta); }
+
+/* value column — centered mono weight×reps; PR badge floats right of it */
+.lk-settable-val {
+  position: relative;
+  text-align: center;
+}
+.lk-settable-valtext {
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  font-weight: 600;
+  font-feature-settings: "tnum" 1;
+  color: var(--text);
+}
+.lk-settable-done .lk-settable-valtext {
+  color: var(--text-dim);
+}
+/* editable — input-look box (tap → onSetPress) */
+.lk-settable-valtext.lk-settable-valbox {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+}
+.lk-settable-current .lk-settable-valtext.lk-settable-valbox {
+  border-color: rgba(34, 211, 238, 0.35);
+}
+.lk-settable-done .lk-settable-valtext.lk-settable-valbox {
+  border-color: rgba(52, 245, 197, 0.18);
+  background: rgba(52, 245, 197, 0.04);
+}
+/* PR badge — absolutely positioned so the centered number never shifts */
+.lk-settable-pr {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* reference column — right-aligned mono; coach = mint, ai = violet accent */
+.lk-settable-ref {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-feature-settings: "tnum" 1;
+  text-align: right;
+  white-space: nowrap;
+  color: var(--text-faint);
+}
+.lk-settable-ref.lk-settable-ref-coach { color: var(--mint); }
+.lk-settable-ref.lk-settable-ref-ai { color: var(--accent); }
+
+/* done check — glass square, filled mint once done */
+.lk-settable-checkcell {
+  width: 44px;
+  text-align: center;
+}
+.lk-settable-check {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+  color: var(--text-faint);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease),
+    background var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.lk-settable-check:hover {
+  color: var(--text);
+  border-color: var(--border-2);
+}
+.lk-settable-check svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+.lk-settable-check[aria-pressed="true"] {
+  color: #07080d;
+  background: var(--grad-mint);
+  border-color: transparent;
+  box-shadow: var(--glow-mint);
+  transform: scale(1.04);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-settable-check { transition: none; }
+}
+
+/* + Add set row — cyan uppercase mono */
+.lk-settable-addrow td {
+  padding: 0;
+  border-bottom: 0;
+}
+.lk-settable-add {
+  display: block;
+  width: 100%;
+  padding: 11px 10px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--accent-2);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  border-radius: var(--r-sm);
+}
+.lk-settable-add:hover {
+  background: rgba(34, 211, 238, 0.06);
+}

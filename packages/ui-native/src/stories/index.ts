@@ -81,6 +81,8 @@ import * as PendingPatternCardStories from './PendingPatternCard.stories';
 import * as PhaseWheelStories from './PhaseWheel.stories';
 import * as PkChartStories from './PkChart.stories';
 import * as PopoverStories from './Popover.stories';
+import * as PrBadgeStories from './PrBadge.stories';
+import * as PrCardStories from './PrCard.stories';
 import * as PricingTierCardStories from './PricingTierCard.stories';
 import * as ProGateStories from './ProGate.stories';
 import * as ProgressBarStories from './ProgressBar.stories';
@@ -89,6 +91,7 @@ import * as QRCodeStories from './QRCode.stories';
 import * as RadarChartStories from './RadarChart.stories';
 import * as RangeBarStories from './RangeBar.stories';
 import * as ReauthDialogStories from './ReauthDialog.stories';
+import * as RestTimerStories from './RestTimer.stories';
 import * as RichTextEditorStories from './RichTextEditor.stories';
 import * as RingStories from './Ring.stories';
 import * as RoseChartStories from './RoseChart.stories';
@@ -98,7 +101,9 @@ import * as ScrollProgressStories from './ScrollProgress.stories';
 import * as SectionDividerStories from './SectionDivider.stories';
 import * as SegmentedTabsStories from './SegmentedTabs.stories';
 import * as SelectStories from './Select.stories';
+import * as SessionBannerStories from './SessionBanner.stories';
 import * as SessionChartStories from './SessionChart.stories';
+import * as SetTableStories from './SetTable.stories';
 import * as ShareCardStories from './ShareCard.stories';
 import * as SheetStories from './Sheet.stories';
 import * as SkeletonStories from './Skeleton.stories';
@@ -120,6 +125,7 @@ import * as TableStories from './Table.stories';
 import * as TabsStories from './Tabs.stories';
 import * as TagCloudStories from './TagCloud.stories';
 import * as TagInputStories from './TagInput.stories';
+import * as TemplateCardStories from './TemplateCard.stories';
 import * as TimelineStories from './Timeline.stories';
 import * as TimelineChartStories from './TimelineChart.stories';
 import * as ToastStories from './Toast.stories';
@@ -226,6 +232,8 @@ export const STORY_MODULES: Record<string, StoryModule> = {
   "PhaseWheel": PhaseWheelStories,
   "PkChart": PkChartStories,
   "Popover": PopoverStories,
+  "PrBadge": PrBadgeStories,
+  "PrCard": PrCardStories,
   "PricingTierCard": PricingTierCardStories,
   "ProGate": ProGateStories,
   "ProgressBar": ProgressBarStories,
@@ -234,6 +242,7 @@ export const STORY_MODULES: Record<string, StoryModule> = {
   "RadarChart": RadarChartStories,
   "RangeBar": RangeBarStories,
   "ReauthDialog": ReauthDialogStories,
+  "RestTimer": RestTimerStories,
   "RichTextEditor": RichTextEditorStories,
   "Ring": RingStories,
   "RoseChart": RoseChartStories,
@@ -243,7 +252,9 @@ export const STORY_MODULES: Record<string, StoryModule> = {
   "SectionDivider": SectionDividerStories,
   "SegmentedTabs": SegmentedTabsStories,
   "Select": SelectStories,
+  "SessionBanner": SessionBannerStories,
   "SessionChart": SessionChartStories,
+  "SetTable": SetTableStories,
   "ShareCard": ShareCardStories,
   "Sheet": SheetStories,
   "Skeleton": SkeletonStories,
@@ -265,6 +276,7 @@ export const STORY_MODULES: Record<string, StoryModule> = {
   "Tabs": TabsStories,
   "TagCloud": TagCloudStories,
   "TagInput": TagInputStories,
+  "TemplateCard": TemplateCardStories,
   "Timeline": TimelineStories,
   "TimelineChart": TimelineChartStories,
   "Toast": ToastStories,

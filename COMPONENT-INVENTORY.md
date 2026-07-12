@@ -5,6 +5,24 @@ _Generated 2026-06-21 from live source in `packages/ui` (web) + `packages/ui-nat
 > **Status note:** the fully-rebuilt kit now lives on **`main`** (the earlier wipe was
 > superseded). All three packages build, with Storybook catalogs on both sides.
 >
+> **Recent additions (2026-07-11) — training primitives (+6, web + native):**
+> - **SetTable** — the per-set workout table (the training design's core primitive): colored
+>   `W/1/2/D/F` set labels (warmup amber · working cyan · drop violet · failure magenta), centered
+>   mono `weight×reps`, coach/AI reference column (mint/violet), mint done-check, cyan current-row
+>   tint, red `PR` badge floated right of the value, `+ Add set` row. Helper `setLabels` exported.
+> - **PrBadge** — the solid RED personal-record flag (`#FF4757`, the deliberate off-spectrum signal
+>   literal; 4px radius, white mono, red glow). Used by SetTable + PrCard, exported as its own atom.
+> - **RestTimer** — between-sets countdown: mint arc draining on a faint track (116/r50 ring),
+>   mono time centered, sublabel + ghost Skip + `trailing` HR slot; prop-driven (caller ticks).
+>   Helpers `formatRestTime`/`restFraction` exported.
+> - **TemplateCard** — workout-template row card: display-font name, dim meta, faint "last used",
+>   mint `COACH` / violet `AI` source pill, tinted left edge bar, pressable.
+> - **PrCard** — personal-record card: `new`/`atPeak` = red-tinted border + glow + red PrBadge tag;
+>   `offPeak` = quiet amber text tag.
+> - **SessionBanner** — active-session live banner: dark glass card, one-line header (truncating
+>   title · no-wrap status · pulsing magenta live dot), ≤3 mono stats split by hairlines, kit-Button
+>   actions.
+>
 > **Recent additions (2026-07-10):**
 > - **NotificationRow → design cards:** new `tone` prop (`insight·coach·achieve·announce·sync·billing`)
 >   renders the glyph in a 34px tinted category tile; unread = violet tint + `--grad-cta` left-edge
@@ -211,6 +229,12 @@ Legend — Parity: ✅ same API · 🟡 same API, platform-shaped impl · 🔵 c
 | **WatchComplication** | `WatchComplicationCorners` | Watch-face complication tiles | `variant: ring-score·battery-gauge·micro-spark·corner-gauge·inline-pill·rings-trio` | 🟡 web SVG ↔ RN-svg |
 | **EnvironmentChart** | — | Sun / UV / pollen / AQI environment views | `variant: sun-uv-arc·pollen-rows·aqi-day·outdoor-window` | 🟡 web SVG ↔ RN-svg |
 | **Table** | — | Sticky-header data table, sortable, dense | `columns·rows·sortKey·sortDir·dense` | 🟡 `<table>` vs flex Views in ScrollView |
+| **SetTable** | `setLabels`·`WorkoutSet`·`SetType`·`SetReferenceTone`·`SetTableColumn` | Per-set workout table — colored W/1/2/D/F labels, mono weight×reps, coach/AI reference, mint done-check, PR badge | `columns: set·value·reference·check`, `editable`, `onSetPress·onTogglePress·onAddSet`, `referenceHeader` | 🟡 `<table>` vs flex rows; grad-mint check = CSS vs expo-linear-gradient |
+| **PrBadge** | — | Solid RED personal-record flag (#FF4757, 4px radius, red glow) | `label` (PR·NEW·AT PEAK…), `size: sm·md` | ✅ |
+| **RestTimer** | `formatRestTime`·`restFraction` | Between-sets countdown — mint arc on faint track, mono time, Skip + trailing slot | `remainingSec·totalSec·label·sublabel·onSkip·paused` | 🟡 web dashoffset transition; native discrete redraw + Gaussian glow |
+| **TemplateCard** | `TemplateSource` | Workout-template row card — name, meta, last-used, source pill, tint bar | `source: coach·ai·manual`, `tint`, `onPress`, `trailing` | ✅ |
+| **PrCard** | `PrCardState` | Personal-record card — red border/glow + PrBadge tag when new/atPeak | `state: new·atPeak·offPeak`, `onPress` | ✅ |
+| **SessionBanner** | `SessionBannerStat`·`SessionBannerAction` | Active-session live banner — one-line header, pulsing magenta dot, ≤3 stats, Button actions | `status·subtitle·stats·actions·live·leading` | 🟡 CSS pulse (reduced-motion gated) vs Animated loop; web backdrop blur |
 
 ### 4. Navigation & Layout
 | Component | Exports | Purpose | Key variants/props | Parity |
