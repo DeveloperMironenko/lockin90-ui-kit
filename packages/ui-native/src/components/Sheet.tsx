@@ -6,7 +6,9 @@ import {
   Pressable,
   StyleSheet,
   Animated,
+  KeyboardAvoidingView,
   PanResponder,
+  Platform,
 } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
 
@@ -82,34 +84,44 @@ export function Sheet({ open = true, onClose, side = 'bottom', title, children }
 
   return (
     <RNModal transparent visible={open} animationType="slide" onRequestClose={onClose} statusBarTranslucent>
-      <Pressable style={[styles.scrim, align]} onPress={() => onClose?.()}>
-        <AnimatedPressable
-          style={[styles.panel, panel, isBottom && { transform: [{ translateY: dragY }] }]}
-          onPress={() => {}}
-          accessibilityViewIsModal
-          onLayout={
-            isBottom
-              ? (e) => {
-                  sheetHeightRef.current = e.nativeEvent.layout.height;
-                }
-              : undefined
-          }
+      <Pressable style={styles.scrim} onPress={() => onClose?.()}>
+        {/* Keyboard avoidance (same pattern as the kit Select): the avoider
+            fills the scrim and pads itself by the iOS keyboard height, so an
+            input-bearing sheet rises above the keyboard instead of being
+            covered. `box-none` keeps scrim taps dismissing as before. */}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          pointerEvents="box-none"
+          style={[styles.avoider, align]}
         >
-          {isBottom ? (
-            <View
-              hitSlop={{ top: 8, bottom: 10, left: 16, right: 16 }}
-              {...panResponder.panHandlers}
-            >
-              <View style={styles.handle} pointerEvents="none" />
-              {title ? <Text style={styles.title}>{title}</Text> : null}
+          <AnimatedPressable
+            style={[styles.panel, panel, isBottom && { transform: [{ translateY: dragY }] }]}
+            onPress={() => {}}
+            accessibilityViewIsModal
+            onLayout={
+              isBottom
+                ? (e) => {
+                    sheetHeightRef.current = e.nativeEvent.layout.height;
+                  }
+                : undefined
+            }
+          >
+            {isBottom ? (
+              <View
+                hitSlop={{ top: 8, bottom: 10, left: 16, right: 16 }}
+                {...panResponder.panHandlers}
+              >
+                <View style={styles.handle} pointerEvents="none" />
+                {title ? <Text style={styles.title}>{title}</Text> : null}
+              </View>
+            ) : title ? (
+              <Text style={styles.title}>{title}</Text>
+            ) : null}
+            <View style={styles.body}>
+              {typeof children === 'string' ? <Text style={styles.bodyText}>{children}</Text> : children}
             </View>
-          ) : title ? (
-            <Text style={styles.title}>{title}</Text>
-          ) : null}
-          <View style={styles.body}>
-            {typeof children === 'string' ? <Text style={styles.bodyText}>{children}</Text> : children}
-          </View>
-        </AnimatedPressable>
+          </AnimatedPressable>
+        </KeyboardAvoidingView>
       </Pressable>
     </RNModal>
   );
@@ -121,6 +133,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.55)',
   },
+  // Fills the scrim so the panel's %-heights keep a definite parent; the
+  // side-alignment styles now live here (the avoider positions the panel).
+  avoider: { flex: 1 },
   scrimBottom: { justifyContent: 'flex-end' },
   scrimRight: { flexDirection: 'row', justifyContent: 'flex-end' },
   scrimLeft: { flexDirection: 'row', justifyContent: 'flex-start' },
