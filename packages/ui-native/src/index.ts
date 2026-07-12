@@ -311,6 +311,8 @@ export { PrCard } from './components/PrCard';
 export type { PrCardState, PrCardProps } from './components/PrCard';
 export { SessionBanner } from './components/SessionBanner';
 export type { SessionBannerStat, SessionBannerAction, SessionBannerProps } from './components/SessionBanner';
+export { SourceChip } from './components/SourceChip';
+export type { SourceChipSize, SourceChipProps } from './components/SourceChip';
 
 // Optional-haptics helpers — silent no-ops in apps without expo-haptics; use
 // these for custom interactions (drags, pickers) so binaries without the

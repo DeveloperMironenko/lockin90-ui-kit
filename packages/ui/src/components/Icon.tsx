@@ -3,6 +3,7 @@ import {
   ArrowDownWideNarrow,
   ArrowRight,
   Bell,
+  Bike,
   Bold,
   Bookmark,
   Calendar,
@@ -27,6 +28,7 @@ import {
   Database,
   Download,
   Droplet,
+  Dumbbell,
   Ellipsis,
   ExternalLink,
   Eye,
@@ -37,6 +39,7 @@ import {
   FlaskConical,
   Folder,
   FolderOpen,
+  Footprints,
   Funnel,
   Globe,
   GripVertical,
@@ -93,6 +96,8 @@ import {
   User,
   Utensils,
   Video,
+  Volleyball,
+  Waves,
   Weight,
   Wrench,
   X,
@@ -235,7 +240,22 @@ export type IconName =
   | 'smartphone'
   | 'laptop'
   // session
-  | 'logout';
+  | 'logout'
+  // training · activity glyphs (kit-reused Lucide, Aurora activity-icons board)
+  | 'dumbbell'
+  | 'footprints'
+  | 'bike'
+  | 'waves'
+  | 'zap'
+  | 'ball'
+  // training · custom Aurora activity glyphs (no clean Lucide match)
+  | 'activity-mobility'
+  | 'activity-rowing'
+  | 'activity-yoga'
+  | 'activity-pilates'
+  | 'activity-foam-roll'
+  | 'activity-sauna'
+  | 'activity-cold-plunge';
 
 export interface IconProps extends HTMLAttributes<HTMLSpanElement> {
   name: IconName;
@@ -293,7 +313,14 @@ type CustomIconName =
   | 'strava'
   | 'google'
   | 'apple'
-  | 'stripe';
+  | 'stripe'
+  | 'activity-mobility'
+  | 'activity-rowing'
+  | 'activity-yoga'
+  | 'activity-pilates'
+  | 'activity-foam-roll'
+  | 'activity-sauna'
+  | 'activity-cold-plunge';
 
 /**
  * IconName → Lucide component.
@@ -419,6 +446,13 @@ const LUCIDE: Record<Exclude<IconName, CustomIconName>, LucideIcon> = {
   laptop: Laptop,
   // session
   logout: LogOut,
+  // training · activity glyphs (kit-reused — see the Aurora activity-icons board)
+  dumbbell: Dumbbell,
+  footprints: Footprints,
+  bike: Bike,
+  waves: Waves,
+  zap: Zap,
+  ball: Volleyball,
 };
 
 /** Hand-drawn glyphs (currentColor strokes) for names Lucide can't cover. */
@@ -542,6 +576,56 @@ const CUSTOM_GLYPHS: Record<CustomIconName, ReactNode> = {
       fill="currentColor"
       stroke="none"
       d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 23.205 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305z"
+    />
+  ),
+
+  // ── training · custom Aurora activity glyphs (Aurora activity-icons board) ──
+  // Hand-drawn line glyphs for activities Lucide has no clean match for.
+  // Stroke pinned to 1.85 (the board's spec) via an explicit strokeWidth on
+  // each primitive — overriding the shared custom-glyph svg's 1.9 default.
+  'activity-mobility': (
+    <>
+      <circle cx="12" cy="4.5" r="1.8" strokeWidth="1.85" />
+      <path d="M12 8v5M6 21l3-5 3-3 3 3 3 5M8.5 12.5h7" strokeWidth="1.85" />
+    </>
+  ),
+  'activity-rowing': (
+    <>
+      <circle cx="16" cy="6.5" r="1.7" strokeWidth="1.85" />
+      <path
+        d="M4 17c1.6 0 1.6 1.2 3.2 1.2S9 17 10.6 17s1.6 1.3 3.3 1.3S15.6 17 17.3 17s1.6 1.3 3.3 1.3M6 13.5l4.5-2.2 3 1.2 2-3 2.5 2"
+        strokeWidth="1.85"
+      />
+    </>
+  ),
+  'activity-yoga': (
+    <>
+      <circle cx="12" cy="4.5" r="1.8" strokeWidth="1.85" />
+      <path d="M12 8v4M12 12c-3.5 0-6.5 1.5-6.5 4M12 12c3.5 0 6.5 1.5 6.5 4M8 15.5h8" strokeWidth="1.85" />
+    </>
+  ),
+  'activity-pilates': (
+    <>
+      <circle cx="12" cy="4.5" r="1.8" strokeWidth="1.85" />
+      <path d="M8 9l4 2 4-2M12 11v4M9 20l3-5 3 5" strokeWidth="1.85" />
+    </>
+  ),
+  'activity-foam-roll': (
+    <>
+      <rect x="3" y="9" width="18" height="6" rx="3" strokeWidth="1.85" />
+      <path d="M8 9v6M12 9v6M16 9v6" strokeWidth="1.85" />
+    </>
+  ),
+  'activity-sauna': (
+    <path
+      d="M4 20h16M6 20v-4a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v4M9 9.5c0-1.6 1-2.2 1-3.2M13 9.5c0-1.6 1-2.2 1-3.2M17 9.5c0-1.6 1-2.2 1-3.2"
+      strokeWidth="1.85"
+    />
+  ),
+  'activity-cold-plunge': (
+    <path
+      d="M12 3v18M4.2 7.5 19.8 16.5M19.8 7.5 4.2 16.5M12 6.5l2.6-1.6M12 6.5 9.4 4.9M12 17.5l2.6 1.6M12 17.5l-2.6 1.6M4.6 12H8M16 12h3.4"
+      strokeWidth="1.85"
     />
   ),
 };
