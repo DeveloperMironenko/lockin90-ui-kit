@@ -182,11 +182,16 @@ export function SetTable({
               <View style={styles.colValue}>
                 {/* three glance-distinct states: pending = plain mono text,
                     current = the ONE cyan-boxed emphasized value, done =
-                    dimmed plain text on the mint row wash */}
-                <View style={editable && s.isCurrent ? styles.valBox : null}>
-                  <Text style={[styles.valText, s.done ? styles.valDone : null]}>{formatValue(s)}</Text>
+                    dimmed plain text on the mint row wash. The PR badge sits
+                    in a content-hugging row NEXT TO the value (not pinned to
+                    the column's own right edge) so it hugs the number at any
+                    column width. */}
+                <View style={styles.valGroup}>
+                  <View style={editable && s.isCurrent ? styles.valBox : null}>
+                    <Text style={[styles.valText, s.done ? styles.valDone : null]}>{formatValue(s)}</Text>
+                  </View>
+                  {s.isPr && s.done ? <PrBadge size="sm" style={styles.pr} /> : null}
                 </View>
-                {s.isPr && s.done ? <PrBadge size="sm" style={styles.pr} /> : null}
               </View>
             )}
             {has('reference') && (
@@ -288,6 +293,10 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   valDone: { color: colors.textDim },
+  // Content-hugging row: the value box + its PR badge size to their own
+  // content, not the flexed column — this is what makes the badge HUG the
+  // number instead of pinning to the column's right edge.
+  valGroup: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   // The one accented box — editable CURRENT set only (mirrors the web valbox).
   valBox: {
     paddingVertical: 6,
@@ -297,7 +306,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(34,211,238,0.35)',
     backgroundColor: 'rgba(34,211,238,0.05)',
   },
-  pr: { position: 'absolute', right: 8 },
+  pr: {},
 
   refText: { fontFamily: fonts.mono, fontSize: 11, fontVariant: ['tabular-nums'] },
 

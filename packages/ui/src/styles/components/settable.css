@@ -69,10 +69,16 @@
 .lk-settable-set.lk-settable-drop { color: var(--violet); }
 .lk-settable-set.lk-settable-failure { color: var(--magenta); }
 
-/* value column — centered mono weight×reps; PR badge floats right of it */
+/* value column — centered mono weight×reps; PR badge hugs it directly */
 .lk-settable-val {
-  position: relative;
   text-align: center;
+}
+/* content-hugging group — sizes to the value + badge, not the flexed column,
+   so the PR badge hugs the number at any column width. */
+.lk-settable-valgroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .lk-settable-valtext {
   font-family: var(--font-mono);
@@ -94,13 +100,9 @@
   border: 1px solid rgba(34, 211, 238, 0.35);
   background: rgba(34, 211, 238, 0.05);
 }
-/* PR badge — absolutely positioned so the centered number never shifts */
-.lk-settable-pr {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-}
+/* PR badge (`.lk-settable-pr`) needs no overrides — `.lk-settable-valgroup`'s
+   inline-flex + gap already makes it hug the number; the class hook stays for
+   test/query targeting. */
 
 /* reference column — right-aligned mono; coach = mint, ai = violet accent */
 .lk-settable-ref {

@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, type ViewProps } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients } from '@lockin90/tokens';
 
-export type ChipTone = 'default' | 'neutral' | 'high' | 'mid' | 'low' | 'accent';
+export type ChipTone = 'default' | 'neutral' | 'high' | 'mid' | 'low' | 'accent' | 'pr';
 /** `md` (default) is the standard status pill; `sm` is the compact count/status
  *  badge — tighter box, 10px tabular mono, filled-gradient accent. With `dot`,
  *  `sm` collapses to a bare glowing circle. */
@@ -24,6 +24,10 @@ const TONE: Record<ChipTone, { color: string; border: string; bg: string }> = {
   mid: { color: colors.zoneMid, border: 'rgba(255,176,32,0.35)', bg: 'rgba(255,176,32,0.08)' },
   low: { color: colors.zoneLow, border: 'rgba(255,77,109,0.35)', bg: 'rgba(255,77,109,0.08)' },
   accent: { color: '#cbbcff', border: 'rgba(124,92,255,0.4)', bg: 'rgba(124,92,255,0.10)' },
+  // Dedicated PR red (design `.bd` — Finished's record pills) — NOT `low`'s
+  // zoneLow #FF4D6D (that's a spectrum/status color); a PR must scream a
+  // deliberately off-spectrum red, matching `PrBadge`'s `#FF4757`.
+  pr: { color: '#FF6B78', border: 'rgba(255,71,87,0.4)', bg: 'rgba(255,71,87,0.08)' },
 };
 
 /** `sm` tone overrides — the compact badge tweaks a few backgrounds vs the md
@@ -44,6 +48,7 @@ const DOT_COLOR: Record<ChipTone, string> = {
   mid: colors.zoneMid,
   low: colors.zoneLow,
   accent: colors.accent,
+  pr: '#FF4757',
 };
 
 /** Status pill — mono label, signal-colored tones. `size="sm"` is the compact badge. */

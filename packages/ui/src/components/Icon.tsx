@@ -253,6 +253,7 @@ export type IconName =
   | 'activity-rowing'
   | 'activity-yoga'
   | 'activity-pilates'
+  | 'activity-stretching'
   | 'activity-foam-roll'
   | 'activity-sauna'
   | 'activity-cold-plunge';
@@ -318,6 +319,7 @@ type CustomIconName =
   | 'activity-rowing'
   | 'activity-yoga'
   | 'activity-pilates'
+  | 'activity-stretching'
   | 'activity-foam-roll'
   | 'activity-sauna'
   | 'activity-cold-plunge';
@@ -589,14 +591,14 @@ const CUSTOM_GLYPHS: Record<CustomIconName, ReactNode> = {
       <path d="M12 8v5M6 21l3-5 3-3 3 3 3 5M8.5 12.5h7" strokeWidth="1.85" />
     </>
   ),
+  // Was an accidental duplicate of the swimming glyph (same wavy-water path) —
+  // redrawn as the oar stroke from the activity-icons board (`custom · oar`):
+  // a handle/feathering path + the diagonal oar shaft + blade + tip.
   'activity-rowing': (
-    <>
-      <circle cx="16" cy="6.5" r="1.7" strokeWidth="1.85" />
-      <path
-        d="M4 17c1.6 0 1.6 1.2 3.2 1.2S9 17 10.6 17s1.6 1.3 3.3 1.3S15.6 17 17.3 17s1.6 1.3 3.3 1.3M6 13.5l4.5-2.2 3 1.2 2-3 2.5 2"
-        strokeWidth="1.85"
-      />
-    </>
+    <path
+      d="M4 19c1.6 0 1.6 1.2 3.2 1.2S9 19 10.5 19M4.5 5l11 11M14 5l-2.2.6.7 2.4M15.5 16.5 20 12"
+      strokeWidth="1.85"
+    />
   ),
   'activity-yoga': (
     <>
@@ -608,6 +610,14 @@ const CUSTOM_GLYPHS: Record<CustomIconName, ReactNode> = {
     <>
       <circle cx="12" cy="4.5" r="1.8" strokeWidth="1.85" />
       <path d="M8 9l4 2 4-2M12 11v4M9 20l3-5 3 5" strokeWidth="1.85" />
+    </>
+  ),
+  // dedicated "reach" glyph — was silently sharing `activity-mobility`'s
+  // generic stretch pose (activity-icons board `custom · reach`).
+  'activity-stretching': (
+    <>
+      <circle cx="7" cy="5" r="1.7" strokeWidth="1.85" />
+      <path d="M7 7v4l5 2M12 13l6-1M18 12l-1.5-2M18 12l.5-2.4" strokeWidth="1.85" />
     </>
   ),
   'activity-foam-roll': (

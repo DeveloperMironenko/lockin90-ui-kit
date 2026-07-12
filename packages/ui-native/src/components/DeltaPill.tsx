@@ -46,7 +46,10 @@ const TONE: Record<'up' | 'down' | 'neutral' | 'downAmber', { color: string; bor
   up: { color: colors.zoneHigh, border: 'rgba(52,245,197,0.32)', bg: 'rgba(52,245,197,0.10)' },
   down: { color: colors.zoneLow, border: 'rgba(255,77,109,0.32)', bg: 'rgba(255,77,109,0.10)' },
   downAmber: { color: colors.zoneMid, border: 'rgba(255,176,32,0.35)', bg: 'rgba(255,176,32,0.08)' },
-  neutral: { color: colors.textDim, border: colors.border, bg: colors.glass },
+  // neutral (zero-delta) — bumped to the border-2/glass-2 tier so the zero
+  // chip reads as a deliberate flat state instead of washing out identically
+  // to the pill's own unstyled base chrome.
+  neutral: { color: colors.textDim, border: colors.border2, bg: colors.glass2 },
 };
 
 /** Arrow glyph drawn on a 24-unit viewBox; flat = dash, down = vertically flipped up arrow. */

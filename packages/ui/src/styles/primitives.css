@@ -128,6 +128,7 @@
 .lk-chip.lk-mid { color: var(--zone-mid); border-color: rgba(255, 176, 32, 0.35); background: rgba(255, 176, 32, 0.08); }
 .lk-chip.lk-low { color: var(--zone-low); border-color: rgba(255, 77, 109, 0.35); background: rgba(255, 77, 109, 0.08); }
 .lk-chip.lk-accent { color: #cbbcff; border-color: rgba(124, 92, 255, 0.4); background: rgba(124, 92, 255, 0.10); }
+.lk-chip.lk-pr { color: #FF6B78; border-color: rgba(255, 71, 87, 0.4); background: rgba(255, 71, 87, 0.08); }
 .lk-chip.lk-neutral { color: var(--text-faint); border-color: var(--border-2); background: var(--glass-2); }
 .lk-chip.lk-dot::before { content: ""; flex: none; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
 

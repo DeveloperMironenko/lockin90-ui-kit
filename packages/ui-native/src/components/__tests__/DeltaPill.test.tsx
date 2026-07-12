@@ -3,7 +3,7 @@
    → AMBER cost treatment), not lose its sign and paint the mint gain. */
 import { describe, expect, test } from 'vitest';
 import { DeltaPill } from '../DeltaPill';
-import { findByText, hasDeclaration, parse, render, type El } from './markup';
+import { ancestors, findByText, hasDeclaration, parse, render, type El } from './markup';
 
 /** The element carries the color, whether react-native-web serialized it as
  *  an atomic class or an inline style (dynamic style objects go inline). */
@@ -28,5 +28,14 @@ describe('DeltaPill sign inference', () => {
   test("ASCII '-3' stays down (default tone → coral)", () => {
     const root = parse(render(DeltaPill, { value: '-3' }));
     expect(carriesColor(findByText(root, '-3')!, '255,77,109')).toBe(true); // zoneLow
+  });
+
+  test('a zero value renders the neutral tone at the border-2/glass-2 tier (not the washed-out base chrome)', () => {
+    const root = parse(render(DeltaPill, { value: '0' }));
+    const val = findByText(root, '0')!;
+    expect(val).toBeDefined();
+    // ancestors carry the pill's background — glass-2 rgba(255,255,255,0.075),
+    // rendered by RN's color processing as '0.07' (2-decimal rounding).
+    expect([val, ...ancestors(val)].some((el) => carriesColor(el, '255,255,255,0.07'))).toBe(true);
   });
 });

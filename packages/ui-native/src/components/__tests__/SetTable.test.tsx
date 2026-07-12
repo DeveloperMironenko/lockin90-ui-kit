@@ -51,6 +51,20 @@ describe('SetTable', () => {
     expect(findByText(notDone, 'PR')).toBeUndefined();
   });
 
+  test('PR badge hugs the value (content-hugging row), not the flexed column edge', () => {
+    const root = parse(render(SetTable, { sets: SETS }));
+    const value = findByText(root, '80×5')!; // set b — done + isPr
+    const pr = findByText(root, 'PR')!;
+    const valueAncestors = ancestors(value);
+    const prAncestors = ancestors(pr);
+    const shared = valueAncestors.find((a) => prAncestors.includes(a));
+    expect(shared).toBeDefined();
+    // the nearest shared ancestor is the content-hugging `valGroup` row, so
+    // the badge sits directly beside the number instead of pinning to the
+    // flex:1 column's own right edge.
+    expect(hasDeclaration(shared!, 'flex-direction:row')).toBe(true);
+  });
+
   test('tones the reference column (coach mint / ai violet accent)', () => {
     const root = parse(render(SetTable, { sets: SETS }));
     expect(carriesColor(findByText(root, '42.5×10')!, '52,245,197')).toBe(true); // mint

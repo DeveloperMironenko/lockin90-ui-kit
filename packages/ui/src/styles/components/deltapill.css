@@ -43,10 +43,13 @@
   background: rgba(255, 176, 32, 0.08);
   border-color: rgba(255, 176, 32, 0.35);
 }
+/* neutral (zero-delta) — bumped to the border-2/glass-2 tier so the zero
+   chip reads as a deliberate flat state instead of washing out identically
+   to the pill's own unstyled base chrome. */
 .lk-deltapill.lk-delta-neutral {
   color: var(--text-dim);
-  background: var(--glass);
-  border-color: var(--border);
+  background: var(--glass-2);
+  border-color: var(--border-2);
 }
 
 /* sm size */

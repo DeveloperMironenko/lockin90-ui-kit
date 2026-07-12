@@ -23,4 +23,9 @@ describe('DeltaPill sign inference', () => {
     expect(html).toContain('lk-delta-down');
     expect(html).not.toContain('lk-delta-down-amber');
   });
+
+  it("a zero value renders the 'neutral' tone (border-2/glass-2 tier, not the washed-out base chrome)", () => {
+    const html = renderToStaticMarkup(<DeltaPill value="0" />);
+    expect(html).toContain('lk-delta-neutral');
+  });
 });

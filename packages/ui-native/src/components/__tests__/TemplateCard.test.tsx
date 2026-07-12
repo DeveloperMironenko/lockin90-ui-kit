@@ -48,6 +48,34 @@ describe('TemplateCard', () => {
     expect(findByText(parse(html), '~48m')).toBeDefined();
   });
 
+  test('leading renders the tinted icon tile instead of the edge bar', () => {
+    const withLeading = render(TemplateCard, {
+      name: 'A',
+      tint: '#22D3EE',
+      leading: createElement(Text, null, 'icon'),
+    });
+    expect(findByText(parse(withLeading), 'icon')).toBeDefined();
+    // RN's color processing resolves the 8-digit hex-alpha tint suffixes
+    // (1F ≈ 12%, 52 ≈ 32%) to rgba() — this is the app's existing tile
+    // convention (`${tint}1F` / `${tint}52`), e.g. catalog.tsx's type tiles.
+    expect(withLeading).toContain('rgba(34,211,238,0.12)'); // tile fill
+    expect(withLeading).toContain('rgba(34,211,238,0.32)'); // tile border
+    const noLeading = render(TemplateCard, { name: 'A', tint: '#22D3EE' });
+    expect(noLeading).not.toContain('rgba(34,211,238,0.12)');
+  });
+
+  test('metaCount bolds the count fragment after the meta line', () => {
+    const html = render(TemplateCard, { name: 'A', meta: 'Chest · Arms', metaCount: '5 ex' });
+    expect(html).toContain('Chest · Arms');
+    const root = parse(html);
+    const count = findByText(root, '5 ex');
+    expect(count).toBeDefined();
+    expect(hasDeclaration(count!, 'font-weight:700')).toBe(true);
+    // count-only (no meta) still renders
+    const countOnly = render(TemplateCard, { name: 'A', metaCount: '5 ex' });
+    expect(findByText(parse(countOnly), '5 ex')).toBeDefined();
+  });
+
   test('onPress renders a pressable card (button role)', () => {
     const html = render(TemplateCard, { name: 'A', onPress: () => {} });
     expect(html).toContain('role="button"');

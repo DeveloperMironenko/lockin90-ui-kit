@@ -33,6 +33,23 @@ describe('TemplateCard', () => {
     expect(plain).not.toContain('lk-templatecard-tint');
   });
 
+  it('leading renders the tinted icon tile INSTEAD of the edge bar', () => {
+    const html = renderToStaticMarkup(
+      <TemplateCard name="A" tint="var(--cyan)" leading={<span>icon</span>} />,
+    );
+    expect(html).toContain('lk-templatecard-lead');
+    expect(html).not.toContain('lk-templatecard-tint');
+    expect(html).toContain('icon');
+  });
+
+  it('metaCount bolds the count fragment after the meta line', () => {
+    const html = renderToStaticMarkup(<TemplateCard name="A" meta="Chest · Arms" metaCount="5 ex" />);
+    expect(html).toContain('Chest · Arms');
+    expect(html).toContain('<b class="lk-templatecard-meta-count">5 ex</b>');
+    const countOnly = renderToStaticMarkup(<TemplateCard name="A" metaCount="5 ex" />);
+    expect(countOnly).toContain('5 ex');
+  });
+
   it('onPress renders a <button>; without it a <div>', () => {
     const pressable = renderToStaticMarkup(<TemplateCard name="A" onPress={() => {}} />);
     expect(pressable).toMatch(/^<button/);

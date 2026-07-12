@@ -1,7 +1,7 @@
 import { forwardRef, type HTMLAttributes } from 'react';
 import { cn } from '../cn';
 
-export type ChipTone = 'default' | 'neutral' | 'high' | 'mid' | 'low' | 'accent';
+export type ChipTone = 'default' | 'neutral' | 'high' | 'mid' | 'low' | 'accent' | 'pr';
 export type ChipSize = 'sm' | 'md';
 
 export interface ChipProps extends HTMLAttributes<HTMLSpanElement> {
@@ -21,6 +21,9 @@ const TONE: Record<ChipTone, string> = {
   mid: 'lk-mid',
   low: 'lk-low',
   accent: 'lk-accent',
+  // dedicated PR red (design `.bd`) — NOT `low`'s zoneLow, a PR must scream
+  // its own off-spectrum red, matching `PrBadge`'s `#FF4757`.
+  pr: 'lk-pr',
 };
 
 /** Status pill — mono label, signal-colored tones. `size="sm"` is the compact badge. */

@@ -11,12 +11,25 @@ export interface TemplateCardProps {
   name: string;
   /** Dim summary line (e.g. `'Chest · Arms · 5 ex · ~48m'`). */
   meta?: string;
+  /** Bold emphasized fragment appended to the meta line after a `' · '`
+   *  separator (e.g. the exercise count `'5 ex'` — design `.tpl .mt b`,
+   *  reads slightly brighter than the rest of the meta line). */
+  metaCount?: string;
   /** Faint mono footer (e.g. `'Last used 2d ago'`). */
   lastUsed?: string;
   /** Authoring source — `coach` mint pill · `ai` violet pill · `manual` none (default). */
   source?: TemplateSource;
-  /** Accent color for the left edge bar (any token, e.g. `colors.cyan`). */
+  /** Accent color for the left edge bar (any token, e.g. `colors.cyan`) — the
+   *  edge bar renders only when `leading` is absent (see `leading`). */
   tint?: string;
+  /**
+   * Leading 34×34 tinted icon tile (design `.tpl .ti.tile` — the row's
+   * primary identifier, e.g. `<Icon name={workoutTypeIcon(type)} />`).
+   * Colored from `tint` (13%-fill / 33%-border, the app's tile convention).
+   * When set, this REPLACES the plain `tint` edge bar (the mockup never
+   * shows both together).
+   */
+  leading?: ReactNode;
   /** When set, the card becomes a `Pressable` (mirrors the web `onPress`). */
   onPress?: () => void;
   /** Trailing slot pinned right (chevron, menu, duration…). */
@@ -39,9 +52,11 @@ const SOURCE_PILL: Record<Exclude<TemplateSource, 'manual'>, { label: string; co
 export function TemplateCard({
   name,
   meta,
+  metaCount,
   lastUsed,
   source = 'manual',
   tint,
+  leading,
   onPress,
   trailing,
   style,
@@ -50,7 +65,19 @@ export function TemplateCard({
 
   const body = (
     <>
-      {tint ? <View style={[styles.tint, { backgroundColor: tint }]} /> : null}
+      {leading == null && tint ? <View style={[styles.tint, { backgroundColor: tint }]} /> : null}
+      {leading != null ? (
+        <View
+          style={[
+            styles.leadTile,
+            tint
+              ? { backgroundColor: `${tint}1F`, borderColor: `${tint}52` }
+              : { backgroundColor: colors.glass, borderColor: colors.border },
+          ]}
+        >
+          {leading}
+        </View>
+      ) : null}
       <View style={styles.main}>
         <View style={styles.top}>
           <Text style={styles.name} numberOfLines={1}>
@@ -62,7 +89,13 @@ export function TemplateCard({
             </View>
           ) : null}
         </View>
-        {meta != null && <Text style={styles.meta}>{meta}</Text>}
+        {(meta != null || metaCount != null) && (
+          <Text style={styles.meta}>
+            {meta}
+            {meta != null && metaCount != null ? ' · ' : null}
+            {metaCount != null ? <Text style={styles.metaCount}>{metaCount}</Text> : null}
+          </Text>
+        )}
         {lastUsed != null && <Text style={styles.last}>{lastUsed}</Text>}
       </View>
       {trailing != null && <View style={styles.trailing}>{trailing}</View>}
@@ -110,6 +143,16 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 3,
     borderBottomRightRadius: 3,
   },
+  // leading icon tile (design `.tpl .ti.tile`) — 34×34, tint-colored fill/border
+  leadTile: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    borderWidth: 1,
+    flexShrink: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   main: { flex: 1, minWidth: 0, gap: 3 },
   top: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   name: {
@@ -121,6 +164,9 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   meta: { fontSize: 12, color: colors.textDim },
+  // design `.tpl .mt b` — the bold count fragment reads one step brighter
+  // than the dim meta line (mirrors the design's faint→dim relationship).
+  metaCount: { color: colors.text, fontWeight: '700' },
   last: { fontFamily: fonts.mono, fontSize: 10.5, color: colors.textFaint, marginTop: 1 },
   trailing: { flexShrink: 0, flexDirection: 'row', alignItems: 'center' },
 

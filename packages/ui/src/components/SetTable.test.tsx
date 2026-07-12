@@ -53,6 +53,14 @@ describe('SetTable', () => {
     expect(notDonePr).not.toContain('lk-settable-pr');
   });
 
+  it('PR badge lives inside the content-hugging value group, not absolutely positioned', () => {
+    const html = renderToStaticMarkup(<SetTable sets={SETS} />);
+    // the value + badge share the `lk-settable-valgroup` wrapper (hugs the
+    // number at any column width) instead of the badge floating via its own
+    // absolute positioning against the full-width cell.
+    expect(html).toMatch(/<span class="lk-settable-valgroup"><span[^>]*>80×5<\/span><span[^>]*lk-settable-pr/);
+  });
+
   it('tones the reference column (coach mint / ai violet)', () => {
     const html = renderToStaticMarkup(<SetTable sets={SETS} />);
     expect(html).toContain('lk-settable-ref-coach');

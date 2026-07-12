@@ -152,16 +152,21 @@ export function SetTable({
                   <td className="lk-settable-val">
                     {/* three glance-distinct states: pending = plain mono text,
                         current = the ONE cyan-boxed emphasized value, done =
-                        dimmed plain text on the mint row wash */}
-                    <span
-                      className={cn(
-                        'lk-settable-valtext',
-                        editable && s.isCurrent && 'lk-settable-valbox',
-                      )}
-                    >
-                      {formatValue(s)}
+                        dimmed plain text on the mint row wash. The value +
+                        its PR badge share a content-hugging inline-flex group
+                        so the badge sits directly beside the number instead
+                        of pinning to the cell's own right edge. */}
+                    <span className="lk-settable-valgroup">
+                      <span
+                        className={cn(
+                          'lk-settable-valtext',
+                          editable && s.isCurrent && 'lk-settable-valbox',
+                        )}
+                      >
+                        {formatValue(s)}
+                      </span>
+                      {s.isPr && s.done ? <PrBadge size="sm" className="lk-settable-pr" /> : null}
                     </span>
-                    {s.isPr && s.done ? <PrBadge size="sm" className="lk-settable-pr" /> : null}
                   </td>
                 )}
                 {has('reference') && (

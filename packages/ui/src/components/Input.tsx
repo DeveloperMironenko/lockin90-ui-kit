@@ -12,6 +12,14 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
   inputSize?: 'sm' | 'md';
   /** optional leading icon inside the field shell */
   leading?: ReactNode;
+  /**
+   * `'default'` (default) is the standard left-aligned UI-font field.
+   * `'numeral'` is the design's large-readout variant (edit-set weight/reps,
+   * design `.strow .sv`): 20px bold display-font, centered, tabular-nums,
+   * with the field + its `unit` suffix hugging the value as one centered
+   * group instead of the unit pinning to the field's far edge.
+   */
+  variant?: 'default' | 'numeral';
 }
 
 /** Dark glassy text input — mono label, faint unit suffix, focus glow. When
@@ -24,9 +32,11 @@ export function Input({
   invalid = false,
   inputSize = 'md',
   leading,
+  variant = 'default',
   className,
   ...rest
 }: InputProps) {
+  const numeral = variant === 'numeral';
   return (
     <label className="lk-input-wrap">
       {label ? (
@@ -39,7 +49,14 @@ export function Input({
           ) : null}
         </span>
       ) : null}
-      <span className={cn('lk-input-field', inputSize === 'sm' && 'lk-input-sm', invalid && 'lk-input-invalid')}>
+      <span
+        className={cn(
+          'lk-input-field',
+          inputSize === 'sm' && 'lk-input-sm',
+          invalid && 'lk-input-invalid',
+          numeral && 'lk-input-numeral',
+        )}
+      >
         {leading ? <span className="lk-input-lead">{leading}</span> : null}
         <input className={cn('lk-input', className)} aria-invalid={invalid || undefined} {...rest} />
         {unit ? <span className="lk-input-unit">{unit}</span> : null}
