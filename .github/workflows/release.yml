@@ -9,11 +9,12 @@ concurrency: release
 jobs:
   release:
     runs-on: ubuntu-latest
-    # NPM_TOKEN lives in this environment, so only this job can read it
+    # npm Trusted Publishing trusts this repo + workflow + environment; no npm token is stored
     environment: NPM_TOKEN
     permissions:
       contents: write
       pull-requests: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -21,7 +22,10 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      # Trusted Publishing needs npm >= 11.5.1; pnpm publish hands off to this npm
+      - run: npx --yes semver@7 --range '>=11.5.1' "$(npm --version)"
+      # No install scripts: the job can mint an npm publish credential (id-token)
+      - run: pnpm install --frozen-lockfile --ignore-scripts
       # With pending changesets: opens or updates the "Version packages" PR.
       # Without (that PR merged): builds and publishes the new versions.
       - uses: changesets/action@v1
@@ -30,4 +34,3 @@ jobs:
           publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
