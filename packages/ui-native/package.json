@@ -2,6 +2,15 @@
   "name": "@lockin90/ui-native",
   "version": "0.0.0",
   "description": "LockIn90 \"Aurora Flux\" React Native component library — StyleSheet primitives driven by @lockin90/tokens.",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeveloperMironenko/lockin90-ui-kit.git",
+    "directory": "packages/ui-native"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",

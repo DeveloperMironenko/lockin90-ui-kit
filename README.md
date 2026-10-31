@@ -43,6 +43,10 @@ diverging. See [`Button.md`](docs/sdd/components/Button.md) (gold standard),
 
 ## Consuming in an app
 
+The packages are published publicly on [npm](https://www.npmjs.com/org/lockin90) by the release
+workflow (changesets: merging the "Version packages" PR publishes). No registry token is needed to
+install them. `UNLICENSED`: public to download, all rights reserved.
+
 ```bash
 pnpm add @lockin90/ui @lockin90/tokens   # (or @lockin90/ui-native for React Native)
 ```
