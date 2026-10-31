@@ -14,7 +14,7 @@
     "build-storybook": "pnpm --filter @lockin90/ui build-storybook",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm build && changeset publish"
+    "release": "pnpm build && node scripts/publish.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.0",
