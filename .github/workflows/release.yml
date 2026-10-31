@@ -22,9 +22,10 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      # Trusted Publishing needs npm >= 11.5.1
-      - run: npm install -g npm@11
-      - run: pnpm install --frozen-lockfile
+      # Trusted Publishing needs npm >= 11.5.1; pnpm publish hands off to this npm
+      - run: npx --yes semver@7 --range '>=11.5.1' "$(npm --version)"
+      # No install scripts: the job can mint an npm publish credential (id-token)
+      - run: pnpm install --frozen-lockfile --ignore-scripts
       # With pending changesets: opens or updates the "Version packages" PR.
       # Without (that PR merged): builds and publishes the new versions.
       - uses: changesets/action@v1
