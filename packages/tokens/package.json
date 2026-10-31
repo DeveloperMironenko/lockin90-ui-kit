@@ -2,6 +2,12 @@
   "name": "@lockin90/tokens",
   "version": "0.0.0",
   "description": "LockIn90 \"Aurora Flux\" design tokens — CSS custom properties (web) + typed raw values (native/JS).",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeveloperMironenko/lockin90-ui-kit.git",
+    "directory": "packages/tokens"
+  },
   "type": "module",
   "sideEffects": [
     "*.css"

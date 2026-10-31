@@ -43,6 +43,9 @@ diverging. See [`Button.md`](docs/sdd/components/Button.md) (gold standard),
 
 ## Consuming in an app
 
+The packages are public on npm (`@lockin90` org), so installing them needs no registry token.
+`UNLICENSED`: public to download, all rights reserved.
+
 ```bash
 pnpm add @lockin90/ui @lockin90/tokens   # (or @lockin90/ui-native for React Native)
 ```
@@ -81,4 +84,6 @@ pnpm version-packages     # bump versions + changelogs
 pnpm release              # build + publish
 ```
 
-Packages are published as **restricted** (private scope) by default.
+Packages are published **publicly** (`access` in `.changeset/config.json`). On `main`, the release
+workflow (`.github/workflows/release.yml`) opens a "Version packages" PR from the pending
+changesets; merging it publishes to npm with the `NPM_TOKEN` secret of the `NPM_TOKEN` environment.
