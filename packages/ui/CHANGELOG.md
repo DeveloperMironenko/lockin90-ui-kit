@@ -1,5 +1,12 @@
 # @lockin90/ui
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies [a881fa2]
+  - @lockin90/tokens@1.1.0
+
 ## 1.0.0
 
 ### Major Changes
