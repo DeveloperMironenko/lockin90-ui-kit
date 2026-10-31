@@ -1,4 +1,4 @@
-import { colors, radii, shadows, gradientCss } from './index';
+import { colors, radii, spacing, breakpoints, shadows, gradientCss } from './index';
 
 /**
  * Tailwind preset — an opt-in, token-driven theme for apps that use Tailwind
@@ -45,6 +45,11 @@ const preset = {
         ui: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['var(--font-jetbrains)', 'JetBrains Mono', 'monospace'],
       },
+      screens: {
+        phone: { max: `${breakpoints.phone}px` },
+        tablet: { max: `${breakpoints.tablet}px` },
+      },
+      spacing: Object.fromEntries(Object.entries(spacing).map(([k, v]) => [k, `${v}px`])),
       borderRadius: {
         sm: `${radii.sm}px`,
         md: `${radii.md}px`,

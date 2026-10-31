@@ -74,6 +74,22 @@ import { Button } from '@lockin90/ui-native';
 import { colors } from '@lockin90/tokens';
 ```
 
+## What the kit holds: primitives + rules
+
+The kit holds **primitive components** (Button, Card, Input, Icon…) and the **design rules** every app
+follows. Page layouts, shells and screen compositions live in each app, built from these.
+
+**Layout rules** (`@lockin90/tokens`):
+
+| Rule | Web (CSS) | Native / JS |
+|---|---|---|
+| Spacing: every padding, margin and gap is a step of the 4px scale: 0, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 64, 80, 96 | `--space-0` … `--space-24` | `spacing[0]` … `spacing[24]` |
+| Breakpoints (max-width): ≤ 540 one tight column; ≤ 980 side panels stack | `--bp-phone`, `--bp-tablet` (values only: CSS can't read vars in `@media`) | `breakpoints.phone`, `breakpoints.tablet` |
+| Corner radii | `--r-sm` 10 · `--r` 16 · `--r-lg` 22 · `--r-xl` 28 · `--r-pill` | `radii.*` |
+| Colours, glass, borders | `--bg-*`, `--glass*`, `--border*`, `--text*` | `colors.*` |
+
+A design value off the scale (e.g. 46px) snaps to the nearest step (48px).
+
 ## Releasing
 
 Versioned with [changesets](https://github.com/changesets/changesets):
