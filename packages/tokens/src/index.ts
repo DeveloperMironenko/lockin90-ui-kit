@@ -67,6 +67,31 @@ export const radii = {
   pill: 999,
 } as const;
 
+/** Spacing scale (px, 4px base): every padding, margin and gap in a layout uses one of these. */
+export const spacing = {
+  0: 0,
+  1: 4,
+  2: 8,
+  3: 12,
+  4: 16,
+  5: 20,
+  6: 24,
+  7: 28,
+  8: 32,
+  10: 40,
+  12: 48,
+  16: 64,
+  20: 80,
+  24: 96,
+} as const;
+
+/** Layout breakpoints (px, max-width): at or below `phone` one tight column; at or below
+ *  `tablet` side panels stack. From the web designs (auth, app shells). */
+export const breakpoints = {
+  phone: 540,
+  tablet: 980,
+} as const;
+
 /** Font families (load the actual fonts via your platform's font loader). */
 export const fonts = {
   display: 'Space Grotesk',
@@ -119,13 +144,16 @@ export const brand = {
 } as const;
 
 /** Everything, bundled. */
-export const tokens = { colors, gradients, radii, fonts, shadows, nativeShadows, motion, brand } as const;
+export const tokens = { colors, gradients, radii, spacing, breakpoints, fonts, shadows, nativeShadows, motion, brand } as const;
 
 export type Colors = typeof colors;
 export type ColorToken = keyof Colors;
 export type Gradients = typeof gradients;
 export type GradientToken = keyof Gradients;
 export type Radii = typeof radii;
+export type Spacing = typeof spacing;
+export type SpacingStep = keyof Spacing;
+export type Breakpoints = typeof breakpoints;
 export type Tokens = typeof tokens;
 
 /** Map a color token to its CSS custom property, e.g. `cssVar('zoneHigh')` → `var(--zone-high)`. */

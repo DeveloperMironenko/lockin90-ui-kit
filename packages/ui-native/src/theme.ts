@@ -4,6 +4,8 @@ export {
   colors,
   gradients,
   radii,
+  spacing,
+  breakpoints,
   fonts,
   shadows,
   nativeShadows,
@@ -11,4 +13,14 @@ export {
   brand,
   tokens,
 } from '@lockin90/tokens';
-export type { Colors, ColorToken, Gradients, GradientToken, Radii, Tokens } from '@lockin90/tokens';
+export type {
+  Colors,
+  ColorToken,
+  Gradients,
+  GradientToken,
+  Radii,
+  Spacing,
+  SpacingStep,
+  Breakpoints,
+  Tokens,
+} from '@lockin90/tokens';
