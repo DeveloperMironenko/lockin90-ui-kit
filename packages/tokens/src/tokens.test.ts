@@ -3,6 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { breakpoints, colors, cssVar, spacing } from './index';
+import preset from './tailwind-preset';
 
 describe('orange (recovery tint)', () => {
   it('is the design --orange in the typed palette', () => {
@@ -26,8 +27,21 @@ describe('spacing + breakpoints (layout rules)', () => {
     for (const [step, px] of Object.entries(spacing)) expect(px).toBe(Number(step) * 4);
   });
 
-  it('ships every step and breakpoint in tokens.css with the same value', () => {
-    for (const [step, px] of Object.entries(spacing)) expect(css).toContain(`--space-${step}: ${px}px;`);
-    for (const [name, px] of Object.entries(breakpoints)) expect(css).toContain(`--bp-${name}: ${px}px;`);
+  const vars = (prefix: string) =>
+    Object.fromEntries([...css.matchAll(new RegExp(`--${prefix}-([a-z0-9]+):\\s*(\\d+)px;`, 'g'))].map((m) => [m[1], Number(m[2])]));
+
+  it('tokens.css has exactly the typed steps and breakpoints, no more, no less', () => {
+    expect(vars('space')).toEqual(Object.fromEntries(Object.entries(spacing).map(([k, v]) => [k, v])));
+    expect(vars('bp')).toEqual({ ...breakpoints });
+  });
+
+  it('the Tailwind preset lists max-width screens widest first, in rem spacing', () => {
+    const { screens, spacing: tw } = preset.theme.extend as {
+      screens: Record<string, { max: string }>;
+      spacing: Record<string, string>;
+    };
+    expect(Object.keys(screens)).toEqual(['tablet', 'phone']);
+    expect(screens.phone.max).toBe('540px');
+    expect(tw['4']).toBe('1rem');
   });
 });

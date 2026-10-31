@@ -79,8 +79,10 @@
   --space-20: 80px;
   --space-24: 96px;
 
-  /* ---- breakpoints (max-width; CSS can't read vars in @media, so these document
-     the values for JS and for the apps' Tailwind @theme) ---- */
+  /* ---- breakpoints (MAX-width; CSS can't read vars in @media, so these document the
+     values). Tailwind 4 apps declare them as max-width variants, widest first:
+     @custom-variant tablet (@media (max-width: 980px)); then phone (540px).
+     Not @theme --breakpoint-*: those are min-width. ---- */
   --bp-phone: 540px;
   --bp-tablet: 980px;
 

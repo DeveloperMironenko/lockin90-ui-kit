@@ -88,7 +88,8 @@ follows. Page layouts, shells and screen compositions live in each app, built fr
 | Corner radii | `--r-sm` 10 · `--r` 16 · `--r-lg` 22 · `--r-xl` 28 · `--r-pill` | `radii.*` |
 | Colours, glass, borders | `--bg-*`, `--glass*`, `--border*`, `--text*` | `colors.*` |
 
-A design value off the scale (e.g. 46px) snaps to the nearest step (48px).
+A design value off the scale snaps to the nearest step, **rounding up on a tie** (46 → 48, 36 → 40,
+56 → 64). Kit components use the same breakpoints.
 
 ## Releasing
 

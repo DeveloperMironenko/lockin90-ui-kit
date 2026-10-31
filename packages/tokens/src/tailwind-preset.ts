@@ -45,11 +45,13 @@ const preset = {
         ui: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['var(--font-jetbrains)', 'JetBrains Mono', 'monospace'],
       },
+      // max-width screens must go widest first, or `tablet:` would win on phones
       screens: {
-        phone: { max: `${breakpoints.phone}px` },
         tablet: { max: `${breakpoints.tablet}px` },
+        phone: { max: `${breakpoints.phone}px` },
       },
-      spacing: Object.fromEntries(Object.entries(spacing).map(([k, v]) => [k, `${v}px`])),
+      // rem (16px root), like Tailwind's defaults, so spacing still scales with the font size
+      spacing: Object.fromEntries(Object.entries(spacing).map(([k, v]) => [k, `${v / 16}rem`])),
       borderRadius: {
         sm: `${radii.sm}px`,
         md: `${radii.md}px`,
