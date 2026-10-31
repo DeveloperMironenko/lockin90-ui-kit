@@ -8,9 +8,6 @@
     "url": "git+https://github.com/DeveloperMironenko/lockin90-ui-kit.git",
     "directory": "packages/ui-native"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
@@ -22,17 +19,13 @@
       "react-native": "./src/index.ts",
       "import": "./lib/module/index.js",
       "require": "./lib/commonjs/index.js"
-    },
-    "./stories": {
-      "types": "./lib/typescript/stories/index.d.ts",
-      "react-native": "./src/stories/index.ts",
-      "import": "./lib/module/stories/index.js",
-      "require": "./lib/commonjs/stories/index.js"
     }
   },
   "files": [
     "src",
-    "lib"
+    "lib",
+    "!src/stories",
+    "!lib/**/stories"
   ],
   "scripts": {
     "build": "node scripts/gen-stories-index.mjs && bob build",

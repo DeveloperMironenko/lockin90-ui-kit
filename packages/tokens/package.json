@@ -8,9 +8,6 @@
     "url": "git+https://github.com/DeveloperMironenko/lockin90-ui-kit.git",
     "directory": "packages/tokens"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "type": "module",
   "sideEffects": [
     "*.css"
