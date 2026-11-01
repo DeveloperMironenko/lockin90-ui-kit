@@ -19,6 +19,16 @@ describe('Select accessible name', () => {
     const html = renderToStaticMarkup(<Select label="Units" options={options} value="en" />);
     const labelledby = trigger(html).match(/aria-labelledby="([^"]+)"/)?.[1];
     expect(labelledby).toBeTruthy();
-    expect(html).toContain(`id="${labelledby}"`);
+    expect(html).toMatch(new RegExp(`<span id="${labelledby}" class="lk-select-label">Units`));
+  });
+
+  it('puts a caller aria-labelledby, aria-describedby and required on the trigger', () => {
+    const html = renderToStaticMarkup(
+      <Select aria-labelledby="h1" aria-describedby="err" required options={options} value="en" />,
+    );
+    expect(trigger(html)).toContain('aria-labelledby="h1"');
+    expect(trigger(html)).toContain('aria-describedby="err"');
+    expect(trigger(html)).toContain('aria-required="true"');
+    expect(html).not.toMatch(/<div[^>]*class="lk-select-wrap"[^>]*aria-(labelledby|describedby)=/);
   });
 });
