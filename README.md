@@ -106,5 +106,6 @@ workflow (`.github/workflows/release.yml`) opens a "Version packages" PR from th
 changesets; merging it publishes to npm with `scripts/publish.mjs` (pnpm packs, npm publishes) through npm
 Trusted Publishing (OIDC from this workflow in the
 `NPM_TOKEN` environment; no npm token is stored). The first version of a new package is published by
-hand, since Trusted Publishing can only be set on a package that exists, and its trusted publisher
+hand (`pnpm build && node scripts/publish.mjs --local`, which publishes every pending version
+without provenance), since Trusted Publishing can only be set on a package that exists, and its trusted publisher
 is added on npmjs.com (this repo, `release.yml`, environment `NPM_TOKEN`) before the next release.
