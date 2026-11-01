@@ -8,6 +8,8 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
 const dryRun = process.argv.includes('--dry-run')
+// Provenance needs a CI identity (GitHub Actions OIDC); a local publish from a laptop has none.
+const provenance = process.env.GITHUB_ACTIONS === 'true'
 const { access } = JSON.parse(readFileSync('.changeset/config.json', 'utf8'))
 const run = (cmd, args, opts = {}) => execFileSync(cmd, args, { encoding: 'utf8', ...opts })
 
@@ -40,7 +42,8 @@ try {
     const prerelease = version.split('-')[1]?.split('.')[0]
     const args = ['publish', tarball, '--access', access, '--loglevel', 'verbose']
     if (prerelease) args.push('--tag', prerelease)
-    args.push(dryRun ? '--dry-run' : '--provenance')
+    if (dryRun) args.push('--dry-run')
+    else if (provenance) args.push('--provenance')
     try {
       run('npm', args, { stdio: 'inherit' })
       if (!dryRun) console.log(`New tag: ${name}@${version}`)
