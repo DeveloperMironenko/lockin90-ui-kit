@@ -90,6 +90,7 @@ export function Select({
   leading,
   className,
   id,
+  'aria-label': ariaLabel,
   ...rest
 }: SelectProps) {
   const [open, setOpen] = useState(false);
@@ -106,6 +107,10 @@ export function Select({
 
   const reactId = useId();
   const base = reactId.replace(/[^a-zA-Z0-9]/g, '');
+  // The combobox (trigger, or the search input while open) is what screen readers
+  // announce: it carries `aria-label`, or is named by the visible `label`.
+  const labelId = `lksel-${base}-label`;
+  const comboName = { 'aria-label': ariaLabel, 'aria-labelledby': label && !ariaLabel ? labelId : undefined };
   const listboxId = `lksel-${base}-list`;
   const optionId = (i: number) => `lksel-${base}-opt-${i}`;
 
@@ -337,7 +342,7 @@ export function Select({
   return (
     <div ref={rootRef} className={cn('lk-select-wrap', className)} {...rest}>
       {label ? (
-        <span className="lk-select-label">
+        <span id={labelId} className="lk-select-label">
           {label}
           {required ? (
             <span className="lk-field-req" aria-hidden="true">
@@ -358,6 +363,7 @@ export function Select({
           disabled && 'lk-select-disabled',
         )}
         role="combobox"
+        {...comboName}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={open ? listboxId : undefined}
@@ -412,6 +418,7 @@ export function Select({
                   autoCapitalize="none"
                   spellCheck={false}
                   role="combobox"
+                  {...comboName}
                   aria-expanded={true}
                   aria-autocomplete="list"
                   aria-controls={listboxId}

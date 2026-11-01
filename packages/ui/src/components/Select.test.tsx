@@ -1,0 +1,24 @@
+/* Select — the combobox (the element screen readers announce) must have a name:
+   `aria-label` lands on the trigger, and a visible `label` names it via
+   aria-labelledby; neither goes only to the wrapper div. */
+import { describe, expect, it } from 'vitest';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Select } from './Select';
+
+const options = [{ value: 'en', label: 'English' }];
+const trigger = (html: string) => html.match(/<button[^>]*role="combobox"[^>]*>/)?.[0] ?? '';
+
+describe('Select accessible name', () => {
+  it('puts aria-label on the combobox trigger, not on the wrapper', () => {
+    const html = renderToStaticMarkup(<Select aria-label="Language" options={options} value="en" />);
+    expect(trigger(html)).toContain('aria-label="Language"');
+    expect(html).not.toMatch(/<div[^>]*class="lk-select-wrap"[^>]*aria-label=/);
+  });
+
+  it('names the trigger with the visible label via aria-labelledby', () => {
+    const html = renderToStaticMarkup(<Select label="Units" options={options} value="en" />);
+    const labelledby = trigger(html).match(/aria-labelledby="([^"]+)"/)?.[1];
+    expect(labelledby).toBeTruthy();
+    expect(html).toContain(`id="${labelledby}"`);
+  });
+});
