@@ -8,8 +8,17 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
 const dryRun = process.argv.includes('--dry-run')
-// Provenance needs a CI identity (GitHub Actions OIDC); a local publish from a laptop has none.
-const provenance = process.env.GITHUB_ACTIONS === 'true'
+// Provenance needs the CI's OIDC identity (release.yml has `id-token: write`). A publish
+// without it (a laptop) must be asked for explicitly with --local, since it publishes every
+// pending version unattested.
+const provenance = Boolean(process.env.ACTIONS_ID_TOKEN_REQUEST_URL)
+if (!dryRun && !provenance) {
+  if (!process.argv.includes('--local')) {
+    console.error('No CI identity: run `node scripts/publish.mjs --local` to publish from here (no provenance).')
+    process.exit(1)
+  }
+  console.warn('Publishing without provenance (local run).')
+}
 const { access } = JSON.parse(readFileSync('.changeset/config.json', 'utf8'))
 const run = (cmd, args, opts = {}) => execFileSync(cmd, args, { encoding: 'utf8', ...opts })
 
