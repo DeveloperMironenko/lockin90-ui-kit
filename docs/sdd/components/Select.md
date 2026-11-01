@@ -121,6 +121,8 @@ The overlay differences are expected substrate, not capability gaps that block u
 
 ## 7. Accessibility
 
+- **Web:** the combobox always has a name: `aria-label` goes on the trigger (and the search input), never
+  only on the wrapper; a visible `label` names it via `aria-labelledby`.
 - **Web:** trigger is `role="combobox"` with `aria-haspopup="listbox"`, `aria-expanded`, `aria-controls`,
   `aria-activedescendant`, and `aria-invalid` when invalid. The panel is `role="listbox"`; options are
   `role="option"` with `aria-selected` / `aria-disabled`. Full keyboard: arrows skip disabled, Home/End,

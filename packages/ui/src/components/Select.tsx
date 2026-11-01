@@ -90,6 +90,9 @@ export function Select({
   leading,
   className,
   id,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  'aria-describedby': ariaDescribedBy,
   ...rest
 }: SelectProps) {
   const [open, setOpen] = useState(false);
@@ -106,6 +109,14 @@ export function Select({
 
   const reactId = useId();
   const base = reactId.replace(/[^a-zA-Z0-9]/g, '');
+  // The combobox (trigger, or the search input while open) is what screen readers
+  // announce: it carries `aria-label`, or is named by the visible `label`.
+  const labelId = `lksel-${base}-label`;
+  const comboName = {
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy ?? (label && !ariaLabel ? labelId : undefined),
+  };
+  const comboProps = { ...comboName, 'aria-describedby': ariaDescribedBy, 'aria-required': required || undefined };
   const listboxId = `lksel-${base}-list`;
   const optionId = (i: number) => `lksel-${base}-opt-${i}`;
 
@@ -337,7 +348,7 @@ export function Select({
   return (
     <div ref={rootRef} className={cn('lk-select-wrap', className)} {...rest}>
       {label ? (
-        <span className="lk-select-label">
+        <span id={labelId} className="lk-select-label">
           {label}
           {required ? (
             <span className="lk-field-req" aria-hidden="true">
@@ -358,6 +369,7 @@ export function Select({
           disabled && 'lk-select-disabled',
         )}
         role="combobox"
+        {...comboProps}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={open ? listboxId : undefined}
@@ -412,13 +424,14 @@ export function Select({
                   autoCapitalize="none"
                   spellCheck={false}
                   role="combobox"
+                  {...comboProps}
                   aria-expanded={true}
                   aria-autocomplete="list"
                   aria-controls={listboxId}
                   aria-activedescendant={shown.length ? optionId(active) : undefined}
                   onKeyDown={onSearchKey}
                 />
-                <ul id={listboxId} role="listbox" aria-label={label} className="lk-select-list">
+                <ul id={listboxId} role="listbox" {...comboName} className="lk-select-list">
                   {rows}
                 </ul>
               </div>
@@ -429,7 +442,7 @@ export function Select({
                 }}
                 id={listboxId}
                 role="listbox"
-                aria-label={label}
+                {...comboName}
                 className={cn('lk-select-panel', pos && `lk-select-${pos.side}`, pos && 'is-open')}
                 style={panelStyle}
               >
