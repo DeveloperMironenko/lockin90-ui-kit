@@ -63,6 +63,30 @@ filters on native" rule; any SDD still citing it is stale. View elevation/glow *
 3. **New need → add to BOTH platforms** — same prop name, same tokens; never a one-off.
 4. **Parity gate** — web phone-width render ≡ native render before a screen ships.
 
+## One shape, one line (owner rule, 2026-11-02 — "the border has to be the same")
+
+Every bordered box in the kit has one of two corner radii and the same neutral line, on web and native.
+
+| Kind | Radius | Which primitives |
+| --- | --- | --- |
+| **Control**: something you press, type into or pick (a box holding text or icons) | `--r-sm` / `radii.sm` (**10**) | Button (every variant, primary included), SsoButton, SplitButton, FollowButton, BackLink, Input, PasswordInput, Select (`md` and `sm`), Combobox field, DateField, NoteField, CodeField cells, SearchInput (in `FormField`), TagInput (field and tags), Chip, ChoiceChip, Badge (native), DeltaPill, StateLabel, VersionBadge, TagCloud tags, SegmentedTabs (track and active segment), Pagination, Stepper buttons, Toolbar buttons |
+| **Container**: a surface that holds controls or content | `--r` / `radii.md` (**16**) | Card and every card surface (InsightCard, PrCard, TemplateCard, PricingTierCard, PendingPatternCard, MetricTile, StatTile, LeaderboardRow, Countdown, ShareCard, SessionBanner, AchievementBadge, MessageBubble), Alert, Toast, ForecastCallout, EmptyState, Modal, Sheet (top corners), Popover, Menu, Tooltip, Combobox / Select panels, CodeBlock, QRCode frame, VideoThumbnail |
+| **Shape, not a box** (unchanged) | as today | circles (Avatar, AvatarStack, StatusDot (native), Checkbox tick, Pulse), Toggle track and knob, Slider track and thumb, ProgressBar / Meter / PasswordStrengthMeter / ZoneBar / RangeBar / BarFill tracks and fills, chart marks, Ring, Gauge, the Sheet grab handle |
+
+- **The line:** every bordered control and container has `1px solid var(--border-2)` /
+  `borderWidth: 1, borderColor: colors.border2` (`rgba(255,255,255,.16)`). Fields already use it; cards,
+  chips and the small select move up from `--border` (`.09`), which was too faint to see a field's
+  edge. `--border` stays for dividers and table rules (lines inside a surface, not around it).
+- **States and tones still recolour the line:** focus (`--accent`), invalid (`--zone-low`), a chip or alert
+  tone, a selected ChoiceChip. They change the colour of the same 1px line, never its width or radius.
+- **No borderless control next to a bordered one:** a Button whose variant had no outline (primary's
+  gradient) keeps its fill; its radius is still 10.
+- A primitive's own SDD cites this rule instead of restating a radius; a new primitive picks its kind from the
+  table. A radius literal (`999`, `6`, `20`…) on a control or container is a bug.
+- **Order:** this rule (docs) → web PR (`@lockin90/ui`) → native PR (`@lockin90/ui-native`), each with
+  before/after screenshots of every changed primitive → one release → `lockin90-design` updated to the
+  same shapes (the mockups are what apps are compared with) → the apps bump the kit.
+
 ## One primitive per role (owner rule, 2026-07-09 — "they have to be the same")
 The SAME interaction role always renders through the SAME kit primitive, everywhere —
 including INSIDE other kit components. Concretely:
