@@ -4,7 +4,7 @@
   align-items: center;
   gap: 6px;
   padding: 7px 15px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-sm);
   border: 1px solid rgba(124, 92, 255, 0.45);
   background: rgba(124, 92, 255, 0.10);
   color: #cbbcff;
@@ -35,7 +35,7 @@
 /* ── following state: glass / outlined / dim ── */
 .lk-followbtn.lk-followbtn-following {
   color: var(--text-dim);
-  border-color: var(--border);
+  border-color: var(--border-2);
   background: var(--glass);
 }
 /* hover the "Following" pill → warn it will unfollow, in the bad tone */

@@ -43,8 +43,8 @@
 .lk-backlink--pill {
   gap: 7px;
   padding: 7px 13px;
-  border: 1px solid var(--border);
-  border-radius: var(--r-pill);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-sm);
   background: var(--glass);
   color: var(--text-dim);
   font-family: var(--font-mono);

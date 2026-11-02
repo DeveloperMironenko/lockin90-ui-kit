@@ -40,10 +40,10 @@ It is a **controlled** component: the parent owns `following` and flips it insid
 | Aspect | Not following | Following |
 | --- | --- | --- |
 | Text | `#cbbcff` (violet tint, both platforms) | `--text-dim` / `colors.textDim` |
-| Border | `rgba(124,92,255,.45)` | `--border` / `colors.border` |
+| Border | `rgba(124,92,255,.45)` | `--border-2` / `colors.border2` |
 | Background | `rgba(124,92,255,.10)` | `--glass` / `colors.glass` |
 | Glyph | `plus`, 13px (md) / 12px (sm) | `check`, same sizes |
-| Radius | `--r-pill` / `radii.pill` (999) | same |
+| Radius | `--r-sm` / `radii.sm` (10) | same |
 | Font | `--font-ui` / `fonts.ui`, 600, 12.5px (md) / 12px (sm) | same |
 
 - **Padding:** `md` = `7px / 15px`; `sm` = `6px / 13px` (web `.lk-followbtn-sm`, native `padSm`). Native `md` label is `12.5px`, `sm` is `12px`.
@@ -109,3 +109,7 @@ const [following, setFollowing] = useState(false);
 - **New state/variant?** If a surface needs e.g. a "Requested" pending state, add it to `FollowButton` on **both** platforms (same prop, same tokens) — never a local fork.
 - **Tokens only.** The violet/glass/`bad` colors and pill radius come from `@lockin90/tokens`; a hardcoded value is a bug even if it matches today.
 - **Parity gate.** Before shipping a profile/people surface, confirm web phone-width and native render the same two states; accept that the "Unfollow" hover preview is web-only.
+
+## Update — 2026-11-02 (one shape, one line)
+- Radius 10 (`--r-sm` / `radii.sm`) and the shared `1px --border-2` line, per CONVENTIONS "One shape, one
+  line". Web first; native follows in its own PR.

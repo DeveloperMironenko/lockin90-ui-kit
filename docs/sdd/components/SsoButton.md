@@ -10,7 +10,7 @@
 
 ## 1. Overview
 
-The kit's **social sign-in button**: a brand glyph (full-color Google "G" or monochrome Apple mark) + a `"Google"` / `"Apple"` label, in a glass pill that stretches to fill its grid cell. Auth screens lay two side by side ("Continue with …"). It is the single sanctioned SSO button — never hand-roll a provider button (the brand glyphs + the exact chrome live here).
+The kit's **social sign-in button**: a brand glyph (full-color Google "G" or monochrome Apple mark) + a `"Google"` / `"Apple"` label, in a glass box that stretches to fill its grid cell. Auth screens lay two side by side ("Continue with …"). It is the single sanctioned SSO button — never hand-roll a provider button (the brand glyphs + the exact chrome live here).
 
 Distinct from `Button variant='sso'` (a generic neutral button style): `SsoButton` carries the actual **brand icon** and provider label driven by a single `provider` prop.
 
@@ -36,8 +36,8 @@ Distinct from `Button variant='sso'` (a generic neutral button style): `SsoButto
 | Padding | `10px 12px` | `10 / 12` |
 | Radius | `--r-sm` (10) | `radii.sm` |
 | Background | `--glass` | `rgba(255,255,255,0.04)` |
-| Border | `1px --border` | `1px rgba(255,255,255,0.10)` |
-| Hover / pressed | `--glass-2` bg + `--border-2` border | `rgba(255,255,255,0.06)` bg + `.16` border |
+| Border | `1px --border-2` | `1px colors.border2` |
+| Hover / pressed | `--glass-2` bg (the line stays `--border-2`) | `rgba(255,255,255,0.06)` bg |
 | Disabled | `opacity 0.5`, `cursor: not-allowed` | `opacity 0.5` |
 | Icon slot | `16×16`, centered | `16×16`, centered |
 | Google glyph | 4-color brand "G" (fixed brand hex) | same 4-color brand "G" |
@@ -51,7 +51,7 @@ Distinct from `Button variant='sso'` (a generic neutral button style): `SsoButto
 | State | Web | Native |
 | --- | --- | --- |
 | Default | glass pill + brand glyph + label | same |
-| Hover / focus | `--glass-2` bg, `--border-2` border, `outline:none` on focus-visible | n/a (no hover on touch) |
+| Hover / focus | `--glass-2` bg, `outline:none` on focus-visible | n/a (no hover on touch) |
 | Pressed | (browser active) | `pressed` → `.06` bg, `.16` border |
 | Disabled | `opacity 0.5`, `cursor: not-allowed`, button inert | `opacity 0.5`, press inert |
 
@@ -107,3 +107,7 @@ No capability gap.
 - **New provider → add to BOTH platforms.** A third provider (e.g. GitHub) is a new `SsoProvider` value + glyph added to web AND native with the same prop API + tokens — never a one-off.
 - **Tokens only.** Every themeable surface is token-sourced; the only literals are the deliberate brand-glyph colors documented in §3.
 - **Parity gate.** Confirm the web phone-width button ≡ native button (same glyph, label, chrome) before shipping an auth screen.
+
+## Update — 2026-11-02 (one shape, one line)
+- Radius 10 (`--r-sm` / `radii.sm`) and the shared `1px --border-2` line, per CONVENTIONS "One shape, one
+  line". Web first; native follows in its own PR.

@@ -85,7 +85,7 @@
 
 /* ---- default variant: neutral glass ---- */
 .lk-split-default {
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-2);
 }
 .lk-split-default .lk-split-main,
 .lk-split-default .lk-menu-trigger {
