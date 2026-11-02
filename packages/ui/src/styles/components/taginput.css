@@ -66,16 +66,23 @@
    inputs. Focused box gets accent border + glow; filled box a subtle accent
    tint. Mirrors `.code-row`/`.code-box` from the auth design.
    ========================================================================== */
+/* fluid boxes: they share the row (an 8-digit code fits a sign-in card and a phone), capped at 60px wide */
 .lk-code {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   gap: 10px;
+  width: 100%;
 }
 
 .lk-code-box {
-  width: 44px;
-  height: 52px;
-  flex: none;
+  /* width 0 + grow: an input's intrinsic width never sets the row's minimum, so the row fits its
+     parent; min-width keeps a box usable in a fit-content container */
+  flex: 1 1 0;
+  width: 0;
+  min-width: 28px;
+  max-width: 60px;
+  aspect-ratio: 1 / 1.18;
+  padding: 0;
   text-align: center;
   font-family: var(--font-mono);
   font-weight: 700;
@@ -105,4 +112,15 @@
 .lk-code--invalid .lk-code-box:focus {
   border-color: var(--bad);
   box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.18);
+}
+
+/* phone (--bp-phone): no cap, the boxes fill the row; a tighter gap and digit, so 8 boxes fit a ~266px row */
+@media (max-width: 540px) {
+  .lk-code {
+    gap: 6px;
+  }
+  .lk-code-box {
+    max-width: none;
+    font-size: 20px;
+  }
 }
