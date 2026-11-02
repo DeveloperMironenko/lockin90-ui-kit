@@ -122,7 +122,7 @@ There is **no capability gap** that blocks use — the button is fully usable an
 ## 7. Accessibility
 
 - **Web:** real `<button>` (focusable, Enter/Space activate). `type="button"` by default — set `type="submit"` explicitly for form submits. Pass `aria-label` when the label is icon-only. Disabled via native `disabled`.
-- **Native:** `Pressable` — pass `accessibilityRole="button"` and `accessibilityLabel`/`accessibilityState={{ disabled }}` via rest props for screen readers.
+- **Native:** `Pressable` with `accessibilityRole="button"` built in (as the web `<button>`); pass `accessibilityLabel` / `accessibilityState={{ disabled }}` via rest props when needed.
 - **Hit target:** `md` padding yields a ≥44px height target; prefer `md` for touch. `sm` is for dense desktop/admin contexts.
 - **Contrast:** primary uses `#0A0A12` on the bright gradient — meets contrast on every gradient stop (chosen deliberately over white).
 
@@ -157,3 +157,6 @@ There is **no capability gap** that blocks use — the button is fully usable an
 ## Update — 2026-11-02 (one shape, one line)
 - Radius 10 (`--r-sm` / `radii.sm`) and the shared `1px --border-2` line, per CONVENTIONS "One shape, one
   line". Web first; native follows in its own PR.
+
+## Update — 2026-11-02 (accessibility)
+- **Native role built in:** every variant is announced as a button; apps no longer pass `accessibilityRole`.

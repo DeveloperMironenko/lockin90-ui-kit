@@ -50,7 +50,7 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
 
   if (variant === 'primary' && !danger) {
     return (
-      <Pressable onPress={press} {...rest}>
+      <Pressable accessibilityRole="button" onPress={press} {...rest}>
         {({ pressed }) => (
           <LinearGradient
             colors={gradients.cta.stops as unknown as [string, string]}
@@ -95,7 +95,7 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
   }
 
   return (
-    <Pressable onPress={press} {...rest}>
+    <Pressable accessibilityRole="button" onPress={press} {...rest}>
       {({ pressed }) => (
         <View
           style={[

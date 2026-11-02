@@ -26,7 +26,7 @@ Distinct from `Button variant='sso'` (a generic neutral button style): `SsoButto
 | _rest_ | web `Omit<ButtonHTMLAttributes<HTMLButtonElement>,'children'>` · native `Omit<PressableProps,'children'\|'style'>` | — | ✓ | ✓ | spread onto the root button/pressable |
 
 - **Web:** renders a real `<button type="button">` so it accepts `onClick`, `disabled`, `form`, etc. Label + `aria-label="Continue with {Google|Apple}"`.
-- **Native:** renders a `Pressable` with `accessibilityRole="button"` + `accessibilityLabel="Continue with {label}"`, pressed + disabled visual states.
+- **Native:** renders a `Pressable` with `accessibilityRole="button"` + `accessibilityLabel="Continue with {label}"` (English, for stories; an app's `accessibilityLabel` replaces it, as `aria-label` does on web), pressed + disabled visual states.
 
 ## 3. Visual spec (tokens — never hardcode)
 
@@ -111,3 +111,6 @@ No capability gap.
 ## Update — 2026-11-02 (one shape, one line)
 - Radius 10 (`--r-sm` / `radii.sm`) and the shared `1px --border-2` line, per CONVENTIONS "One shape, one
   line". Web first; native follows in its own PR.
+
+## Update — 2026-11-02 (accessibility)
+- **Native name replaceable:** the built-in English "Continue with …" was set after the rest props, so an app's translated `accessibilityLabel` was ignored. Rest props now come last.
