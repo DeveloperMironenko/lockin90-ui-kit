@@ -1,5 +1,15 @@
 # @lockin90/ui
 
+## 2.2.0
+
+### Minor Changes
+
+- 692867b: One shape, one line (buttons and chips): Button, Chip, BackLink and FollowButton corners go from pill to 10px (`--r-sm`); their outlines, and SplitButton's and SsoButton's, use the shared `--border-2` line.
+
+### Patch Changes
+
+- e91c4a0: CodeInput: each box's digit stays selected (on focus, on click, after writing), so typing always replaces it, the last box too; a changed `length` re-draws the boxes with each digit in its place (a `value` changed with it wins), as native.
+
 ## 2.1.0
 
 ### Minor Changes
