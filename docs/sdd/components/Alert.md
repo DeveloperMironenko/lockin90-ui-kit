@@ -58,8 +58,8 @@ It's the kit's single sanctioned inline-message surface (form errors, success co
 
 | Tone | Web | Native (`mobile/auth-onboarding.html` `.tz-note`; no `.note-safe` there, so web sizes) |
 | --- | --- | --- |
-| `neutral` | `align-items: center` when it is text only (no title, no dismiss; else `flex-start`), `gap 9px`, `padding 11px 13px`, bg `--glass`, border `--border`; icon 17px; text 12.5px, line-height 1.55 | ⏳ native PR: `center` when text only (else `flex-start`), `gap 8`, `padding 9 / 11`, bg `colors.glass`, border `colors.border`; icon 15; text 11, `lineHeight 15` |
-| `cyan` | `flex-start`, `gap 9px`, `padding 12px 14px`, bg `rgba(34,211,238,.05)`, border `rgba(34,211,238,.22)`; icon 17px, `margin-top 1px`; text 12.5px, line-height 1.5 | ⏳ native PR: `flex-start`, `gap 9`, `padding 12 / 14`, bg `rgba(34,211,238,0.05)`, border `rgba(34,211,238,0.22)`; icon 17, `marginTop 1`; text 12.5, `lineHeight 19` |
+| `neutral` | `align-items: center` when it is text only (no title, no dismiss; else `flex-start`), `gap 9px`, `padding 11px 13px`, bg `--glass`, border `--border`; icon 17px; text 12.5px, line-height 1.55 | `center` when text only (else `flex-start`), `gap 9`, `padding 11 / 13`, bg `colors.glass`, border `colors.border`; icon 17; text 12.5, `lineHeight 19` (the web's sizes: mobile auth screens match the web app) |
+| `cyan` | `flex-start`, `gap 9px`, `padding 12px 14px`, bg `rgba(34,211,238,.05)`, border `rgba(34,211,238,.22)`; icon 17px, `margin-top 1px`; text 12.5px, line-height 1.5 | `flex-start`, `gap 9`, `padding 12 / 14`, bg `rgba(34,211,238,0.05)`, border `rgba(34,211,238,0.22)`; icon 17, `marginTop 1`; text 12.5, `lineHeight 19` |
 
 ## 4. States
 
@@ -130,4 +130,4 @@ No capability gap — the alert is visually equivalent on both.
 - **Parity gate.** Before shipping a screen with an Alert, diff web phone-width vs native: same tone color, same title/body, same dismiss presence.
 
 ## Update — 2026-11-02 (minor)
-- **Tones `neutral` and `cyan`**, the sign-in designs' quiet notes (timezone, privacy): see §2 and the quiet-notes table in §3. Native: in its own PR.
+- **Tones `neutral` and `cyan`**, the sign-in designs' quiet notes (timezone, privacy): see §2 and the quiet-notes table in §3.

@@ -40,3 +40,16 @@ export const AllTones: Story = {
     </View>
   ),
 };
+
+/** A quiet note on a glass box (sign-up's timezone note): no accent bar, a cyan icon. */
+export const Neutral: Story = {
+  args: { tone: 'neutral', children: 'Timezone auto-detected: Europe/Warsaw — used to align your energy curve to your day.' },
+};
+
+/** A quiet note on a cyan tint (the forgot-password privacy note). */
+export const Cyan: Story = {
+  args: {
+    tone: 'cyan',
+    children: "For your security, we'll show the same confirmation whether or not an account exists for that address.",
+  },
+};
