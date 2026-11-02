@@ -63,8 +63,8 @@ single-char mono boxes that auto-advance on type and step back on Backspace. It 
 
 | CodeInput | Web (`.lk-code*`) | Native (`styles`) |
 | --- | --- | --- |
-| Row | `flex`, full width, `space-between`, `gap 10px` (`6px` at the `phone` breakpoint, ≤ 540px) | row, `gap 10` |
-| Box | fluid: `flex: 1 1 0`, `width 0`, `min-width 28px`, `max-width 60px` (none at ≤ 540px), `aspect-ratio 1 / 1.18`; `--font-mono` 700 22px (20px at ≤ 540px), `--glass-2`, `1px --border-2`, `--r-sm` | `44×52`, `fonts.mono` 700 22px, `colors.glass2`, `colors.border2`, `radii.sm` |
+| Row | `flex`, full width, `space-between`, `gap 10px` (`6px` at the `phone` breakpoint, ≤ 540px) | row, `space-between`, `gap 6` (as web on phones: 8 boxes at 28 + 7 gaps = 266pt fit a 272pt row) |
+| Box | fluid: `flex: 1 1 0`, `width 0`, `min-width 28px`, `max-width 60px` (none at ≤ 540px), `aspect-ratio 1 / 1.18`; `--font-mono` 700 22px (20px at ≤ 540px), `--glass-2`, `1px --border-2`, `--r-sm` | fluid: `flex 1`, `minWidth 28`, `maxWidth 60` (tablet, landscape), `aspectRatio 1 / 1.18`; `fonts.mono` 700 22px, `colors.glass2`, `colors.border2`, `radii.sm` |
 | Focus box | `--accent` border + `bg rgba(124,92,255,.06)` + ring | border `colors.accent`, `bg rgba(124,92,255,.06)` |
 | Filled box | border `rgba(34,211,238,.45)`, `bg rgba(34,211,238,.05)` | same |
 | Invalid | `--bad` border, `bg rgba(255,77,109,.06)` | `colors.zoneLow` border, same bg; precedence focused > invalid > filled |
@@ -182,3 +182,6 @@ limitation.
 
 ## Update — 2026-11-02 (minor)
 - **Web `CodeInput` boxes are fluid** (as `web/auth.html` draws them; sizes in §3), so an 8-digit code fits the sign-in card and a phone; the row now spans its parent. The font stays the kit's mono (the design draws display).
+
+## Update — 2026-11-02 (minor, native)
+- **Native `CodeInput` boxes are fluid** (as `mobile/auth-onboarding.html` draws them; sizes in §3), so an 8-digit code fits a phone. The font stays the kit's mono (the design draws display).

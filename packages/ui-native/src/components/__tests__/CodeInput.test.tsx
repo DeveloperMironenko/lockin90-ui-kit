@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { CodeInput, codeToBoxes, resizeBoxes, spreadDigits, typeIntoBox } from '../TagInput';
-import { findAll, parse, render } from './markup';
+import { findAll, hasDeclaration, parse, render } from './markup';
 
 /* Multi-char paste / iOS SMS autofill lands the whole code in ONE box; the component spreads it
  * across the remaining boxes and moves focus after the last written digit. The box math lives in
@@ -114,5 +114,16 @@ describe('CodeInput rendering', () => {
     const html = render(CodeInput, { length: 3, digitLabel: (p: number, l: number) => `Цифра ${p} из ${l}` });
     expect(html).toContain('aria-label="Цифра 2 из 3"');
     expect(html).not.toContain('Digit');
+  });
+
+  test('the boxes share the row instead of a fixed 44pt width (an 8-digit code fits a phone)', () => {
+    const inputs = findAll(parse(render(CodeInput, { length: 8 })), (e) => e.tag === 'input');
+    for (const box of inputs) {
+      expect(hasDeclaration(box, 'flex:1')).toBe(true);
+      expect(hasDeclaration(box, 'aspect-ratio:')).toBe(true);
+      expect(hasDeclaration(box, 'width:44px')).toBe(false);
+      expect(hasDeclaration(box, 'min-width:28px')).toBe(true);
+      expect(hasDeclaration(box, 'max-width:60px')).toBe(true);
+    }
   });
 });
