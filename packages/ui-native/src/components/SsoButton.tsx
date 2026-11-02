@@ -15,9 +15,9 @@ export function SsoButton({ provider, ...rest }: SsoButtonProps) {
   const label = provider === 'google' ? 'Google' : 'Apple';
   return (
     <Pressable
-      {...rest}
       accessibilityRole="button"
       accessibilityLabel={`Continue with ${label}`}
+      {...rest}
       style={({ pressed }) => [
         styles.btn,
         pressed && styles.pressed,

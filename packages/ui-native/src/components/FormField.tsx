@@ -20,6 +20,8 @@ export interface FormFieldProps extends ViewProps {
   error?: ReactNode;
   /** appends a small accent `*` after the label */
   required?: boolean;
+  /** a link or action at the end of the label row (e.g. "Forgot password?") */
+  labelAction?: ReactNode;
   /** the form control to wrap */
   children?: ReactNode;
 }
@@ -30,17 +32,23 @@ export function FormField({
   help,
   error,
   required = false,
+  labelAction,
   children,
   style,
   ...rest
 }: FormFieldProps) {
   return (
     <View style={[styles.field, style]} {...rest}>
-      {label ? (
-        <Text style={styles.fieldLabel}>
-          {label.toUpperCase()}
-          {required ? <Text style={styles.req}> *</Text> : null}
-        </Text>
+      {label || labelAction ? (
+        <View style={styles.labelRow}>
+          {label ? (
+            <Text style={styles.fieldLabel}>
+              {label.toUpperCase()}
+              {required ? <Text style={styles.req}> *</Text> : null}
+            </Text>
+          ) : null}
+          {labelAction}
+        </View>
       ) : null}
       <View style={styles.control}>{children}</View>
       {error ? (
@@ -160,6 +168,7 @@ export function SearchInput({
 const styles = StyleSheet.create({
   // FormField
   field: { gap: 6, minWidth: 0 },
+  labelRow: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: 10 },
   fieldLabel: {
     fontFamily: fonts.mono,
     fontSize: 10,
