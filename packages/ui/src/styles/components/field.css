@@ -11,6 +11,13 @@
   min-width: 0;
 }
 
+.lk-field-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 .lk-field-label {
   display: inline-flex;
   align-items: baseline;

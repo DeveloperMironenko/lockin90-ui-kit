@@ -31,6 +31,7 @@ sanctioned search box (lists, tables, command surfaces).
 | `error` | `ReactNode` | — | ✓ | ✓ | red error row; replaces `help` |
 | `required` | `boolean` | `false` | ✓ | ✓ | appends an accent `*` after the label |
 | `htmlFor` | `string` | — | ✓ | — | **web-only** — ties `<label htmlFor>` to the control `id` |
+| `labelAction` | `ReactNode` | — | ✓ | ✓ | a link or action at the end of the label row, baseline-aligned (e.g. "Forgot password?"); the app passes it translated and styled with the kit's link look |
 | `children` | `ReactNode` | — | ✓ | ✓ | the wrapped control |
 | `className` / `style` | — | — | `className` | `style` | web class · native `ViewStyle` |
 | _rest_ | `HTMLAttributes<HTMLDivElement>` (web, `children` omitted) / `ViewProps` (native) | — | ✓ | ✓ | spread onto the wrapper |
@@ -140,3 +141,8 @@ None block use; app code reads 1:1 (same `label`/`help`/`error`/`required`, same
   any of them will silently drift on the next Aurora-Flux rename.
 - **Parity gate.** Before shipping a form, confirm the web phone-width render and the native render show the same
   label, the same help-or-error, and the same search affordance.
+
+## Update — 2026-11-02
+- **`labelAction`** (web + native): the label row can end with a link or action, as the sign-in design's
+  "Forgot password?" (`auth.html`, `auth-onboarding.html`). Both apps had built the row by hand around the
+  kit's label; with the slot, they pass the link instead. Web first; native in its own PR.
