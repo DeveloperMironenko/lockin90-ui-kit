@@ -42,7 +42,7 @@ CMS/admin editors. For a single action use `Button`; for a pure menu use `Menu`.
 
 | Aspect | `primary` | `default` |
 | --- | --- | --- |
-| Group | `--r-sm` radius; web `--glow-accent` / native `nativeShadows.glowAccent` | `1px --border` / `colors.border` |
+| Group | `--r-sm` radius; web `--glow-accent` / native `nativeShadows.glowAccent` | `1px --border-2` / `colors.border2` |
 | Main bg | `--grad-cta` / `gradients.cta` (`LinearGradient` start `{0,0}`→end `{1,1}`) | `--glass-2` / `colors.glass2` |
 | Label color | `#0A0A12` (dark-on-bright, both platforms) | `--text` / `colors.text` |
 | Divider | `rgba(0,0,0,.22)` (web `border-left` / native `View`) | `--border` / `colors.border` |
@@ -136,3 +136,7 @@ No capability gap — fully usable and visually equivalent on both platforms.
   dark-on-bright constant). The `rgba(0,0,0,.22)` divider is the shared on-gradient hairline.
 - **Parity gate.** Confirm web phone-width and native renders match (variant, label, icon, menu alignment)
   before shipping.
+
+## Update — 2026-11-02 (one shape, one line)
+- Radius 10 (`--r-sm` / `radii.sm`) and the shared `1px --border-2` line, per CONVENTIONS "One shape, one
+  line". Web first; native follows in its own PR.

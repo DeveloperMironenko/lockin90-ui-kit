@@ -53,7 +53,7 @@ The **status pill** — a small, mono-label, signal-colored badge for state ("Ac
 | --- | --- | --- |
 | Layout | `inline-flex`, `gap: 7px`, `white-space: nowrap` | `flexDirection:row`, `gap: 7`, `alignSelf:flex-start` |
 | Padding | `5px 11px` | `5 / 11` |
-| Radius | `--r-pill` (999) | `radii.pill` (999) |
+| Radius | `--r-sm` (10) | `radii.sm` (10) |
 | Border | `1px` (tone-dependent) | `1` (tone-dependent) |
 | Font | `--font-mono`, `11px`, `500`, letter-spacing `0.04em` | `fonts.mono`, `11`, `'500'`, letterSpacing `0.4` |
 | Dot | `6×6px` circle, `flex: none`, `background currentColor`, `box-shadow 0 0 8px currentColor` | `6×6`, `shadowColor = tone color`, `shadowOpacity .9`, `shadowRadius 6` |
@@ -66,7 +66,7 @@ and dot are otherwise byte-unchanged.
 
 | Tone | Text | Border | Background |
 | --- | --- | --- | --- |
-| `default` | `--text-dim` / `colors.textDim` | `--border` / `colors.border` | `--glass` / `colors.glass` |
+| `default` | `--text-dim` / `colors.textDim` | `--border-2` / `colors.border2` | `--glass` / `colors.glass` |
 | `neutral` | `--text-faint` / `colors.textFaint` | `--border-2` / `colors.border2` | `--glass-2` / `colors.glass2` |
 | `high` | `--zone-high` / `colors.zoneHigh` | `rgba(52,245,197,.35)` | `rgba(52,245,197,.08)` |
 | `mid` | `--zone-mid` / `colors.zoneMid` | `rgba(255,176,32,.35)` | `rgba(255,176,32,.08)` |
@@ -182,3 +182,7 @@ No genuine (inherent) capability gap — `size="sm"` is buildable and now built 
 - **New size?** A third size (or a native `size` port) goes on `Chip` itself — never a wrapper-local hack (e.g. don't shrink `Badge` with inline `style`/`fontSize` overrides; extend `ChipSize` + the CSS/`StyleSheet` variant).
 - **Tokens only.** Tone colors come from `@lockin90/tokens`; the rgba tints are kept byte-identical between the CSS and the native `TONE` map — keep them in sync, never fork.
 - **Parity gate.** Before shipping, confirm the web phone-width and native chip read identically (same tone, dot, label); for `size="sm"` call sites, confirm against native `Badge` until native `Chip` gets the prop.
+
+## Update — 2026-11-02 (one shape, one line)
+- Radius 10 (`--r-sm` / `radii.sm`) and the shared `1px --border-2` line, per CONVENTIONS "One shape, one
+  line". Web first; native follows in its own PR.

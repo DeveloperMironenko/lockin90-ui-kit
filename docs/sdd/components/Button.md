@@ -11,7 +11,7 @@
 
 ## 1. Overview
 
-The primary **pill action button** of the kit. Three variants:
+The primary **action button** of the kit. Three variants:
 
 - `default` — glass surface, hairline border. The neutral/secondary action.
 - `primary` — the **animated energy-gradient CTA** (`grad-cta`, violet→cyan), glow shadow, slow 6s gradient drift on web. The single most-important action on a surface.
@@ -52,7 +52,7 @@ It is intentionally the *only* sanctioned way to render a button-shaped action i
 | Border | `1px --border-2` / `colors.border2` | none | `1px --border` / `colors.border` |
 | Text | `--text` / `colors.text` | `#0A0A12` (dark-on-bright, both platforms) | `--text-dim` / `colors.textDim` |
 | Shadow | none | `--glow-accent` / `nativeShadows.glowAccent` | none |
-| Radius | `--r-pill` / `radii.pill` (999) | same | same |
+| Radius | `--r-sm` / `radii.sm` (10), CONVENTIONS "One shape, one line" | same | same |
 | Font | `--font-ui` / `fonts.ui`, 600 | same | same |
 
 - **Padding:** `md` = `12px / 20px`; `sm` = `8px / 14px` (web `.lk-btn-sm`, native `padSm`). Label: `md` 14px, `sm` 13px.
@@ -153,3 +153,7 @@ There is **no capability gap** that blocks use — the button is fully usable an
 
 ## Update — 2026-07-10
 - **Haptics:** every press fires `hapticSelection()` before the handler (native, via `optionalHaptics`; no-op without expo-haptics).
+
+## Update — 2026-11-02 (one shape, one line)
+- Radius 10 (`--r-sm` / `radii.sm`) and the shared `1px --border-2` line, per CONVENTIONS "One shape, one
+  line". Web first; native follows in its own PR.

@@ -15,7 +15,7 @@
   padding: 10px 12px;
   border-radius: var(--r-sm);
   background: var(--glass);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-2);
   color: var(--text);
   font-family: var(--font-ui);
   cursor: pointer;
@@ -27,7 +27,6 @@
 .lk-sso:hover,
 .lk-sso:focus-visible {
   background: var(--glass-2);
-  border-color: var(--border-2);
   outline: none;
 }
 
