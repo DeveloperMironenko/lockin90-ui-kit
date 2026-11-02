@@ -135,6 +135,7 @@ const ALL: IconName[] = [
   'drop',
   'utensil',
   'barcode-scan',
+  'qr-code',
   'pill',
   'flask',
   'syringe',
