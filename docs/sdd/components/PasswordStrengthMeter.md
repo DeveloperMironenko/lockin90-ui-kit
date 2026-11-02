@@ -49,13 +49,13 @@ consumer (e.g. zxcvbn) and passed in as a `0–4` value — the component is pur
 
 | Aspect | Web (`.lk-pwstrength*`) | Native (`styles`) |
 | --- | --- | --- |
-| Layout | column, `gap: 8px`, `width: 100%` | `gap: 8`, `width: '100%'` |
+| Layout | column, `gap: 8px`, `width: 100%` | `width: '100%'`, no gap: meta row `marginTop 8`, rules `marginTop 11` |
 | Segments | grid `repeat(4, 1fr)`, `gap: 6px`, height `5px`, radius `--r-pill` | row, `gap: 6`, `flex: 1`, height `5`, radius `radii.pill` |
 | Empty segment | `background: --border` | `backgroundColor: colors.border` |
 | Filled segment | `background: --pw-color` + `box-shadow 0 0 8px color-mix(... 55%)` | `backgroundColor: color` + `shadowColor`, `shadowOpacity 0.55`, `shadowRadius 5` |
 | Label | `--font-mono`, weight 600, color `--pw-color`, 11px | `fonts.mono`, weight 600, `color`, 11px |
 | Hint | `--font-mono`, color `--text-faint`, 11px | `fonts.mono`, `colors.textFaint`, 11px |
-| Meta row | flex, `space-between`, baseline, `gap 12px` | row, `space-between`, baseline, `gap 12` |
+| Meta row | flex, `space-between`, baseline, `gap 12px` | row, `space-between`, baseline, `gap 12`, `flexWrap`; label and hint `flexShrink 1` (hint right-aligned), so long translations wrap |
 
 ## 4. States
 
@@ -102,8 +102,11 @@ There is no capability gap — fully equivalent on both platforms.
 
 - **Web:** `role="meter"` with `aria-valuemin=0`, `aria-valuemax=4`, `aria-valuenow={score}`, and an
   `aria-label` of `Password strength: <label>` — AT reads both the value and the human label.
-- **Native:** `accessibilityRole="progressbar"`, `accessibilityValue={{ min: 0, max: 4, now: score }}`, and
-  `accessibilityLabel` of `Password strength: <label>`.
+- **Native:** on the segment row (not the root): `accessibilityRole="progressbar"`, `accessibilityValue={{ min: 0,
+  max: 4, now: score }}`, `accessibilityLabel` = `accessibleLabel` (default `Password strength: <label>`) and the
+  hint as `accessibilityHint`. The visible meta row repeats those, so it is hidden from screen readers
+  (`accessibilityElementsHidden` + `importantForAccessibility="no-hide-descendants"`). The four
+  `accessibility*` props above are left out of the props type: name the meter with `accessibleLabel`.
 - **Not color-only:** the strength is conveyed by the **label text** (Weak/Fair/Good/Strong) as well as color —
   don't remove the label, or strength becomes color-only (fails for color-blind users).
 
@@ -171,5 +174,5 @@ up two by hand.
   accessible native parent would swallow them. The hint describes the meter (web `aria-describedby`, native
   `accessibilityHint`). So an `aria-*` / `accessibility*` prop passed as a rest prop lands on the
   container; the meter's name is `accessibleLabel`. The web root also applies `style` now (it was dropped).
-- **Parity:** ✅ still identical; every new prop on both platforms, sizes per each platform's design. Native: in its own PR.
+- **Parity:** ✅ still identical; every new prop on both platforms, sizes per each platform's design.
 
