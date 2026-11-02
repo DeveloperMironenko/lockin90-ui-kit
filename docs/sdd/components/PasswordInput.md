@@ -26,7 +26,8 @@ reauth, and settings.
 | `inputSize` | `'sm' \| 'md'` | `'md'` | ✓ | ✓ | density; mirrors `Input` |
 | `leading` | `ReactNode` | — | ✓ | ✓ | icon/node inside the shell, left of the input |
 | `defaultVisible` | `boolean` | `false` | ✓ | ✓ | start revealed |
-| `toggleLabel` | `string` | `'Show password'` / `'Hide password'` | ✓ | ✓ | a11y label for the eye button |
+| `showLabel` | `string` | `'Show password'` | ✓ | ✓ | a11y label of the eye button while masked (pass a localized string) |
+| `hideLabel` | `string` | `'Hide password'` | ✓ | ✓ | a11y label of the eye button while revealed (pass a localized string) |
 | `className` / `style` | — | — | `className` | `style` | web → `<input>` class · native → `TextInput` style |
 | **value/change** | — | — | `value` + `onChange(e)` | `value` + `onChangeText(t)` | **platform-shaped** — DOM event vs string callback |
 | _rest_ | `Omit<InputProps,'type'\|'unit'>` (web) / `Omit<TextInputProps,'secureTextEntry'>` (native) | — | ✓ | ✓ | `type`/`secureTextEntry` are owned internally |
@@ -65,7 +66,7 @@ Inherits the **`Input` shell** verbatim (see `Input.md` §3): `--glass-2` fill, 
 ## 5. Web ↔ native parity
 
 **Verdict: 🟡 same API, platform-shaped impl.** Same props, same glass shell, same eye toggle behavior (mask
-↔ reveal, `defaultVisible`, `toggleLabel`), same 18px eye/eyeOff glyphs, same invalid treatment. Differences are
+↔ reveal, `defaultVisible`, `showLabel`/`hideLabel`), same 18px eye/eyeOff glyphs, same invalid treatment. Differences are
 substrate-only:
 
 - **Masking mechanism** — web flips the input `type` (`text`/`password`); native flips `secureTextEntry`. Same effect.
@@ -98,11 +99,12 @@ No capability gap blocks use.
 ## 7. Accessibility
 
 - **Web:** real `<input type="password">`. The eye is a `<button type="button">` with `aria-label`
-  (`toggleLabel`) and `aria-pressed={visible}` so AT announces masked/revealed state. Provide a field label via
-  `FormField`/`aria-label`.
-- **Native:** the eye is a `Pressable` with `accessibilityRole="button"` + `accessibilityLabel` (`toggleLabel`)
-  and `hitSlop={8}` for an easy touch target.
-- **Toggle label:** defaults flip between `"Show password"` and `"Hide password"` to match current state — keep that semantic if you override `toggleLabel`.
+  (`showLabel` while masked, `hideLabel` while revealed) and `aria-pressed={visible}` so AT announces
+  masked/revealed state. Provide a field label via `FormField`/`aria-label`.
+- **Native:** the eye is a `Pressable` with `accessibilityRole="button"` + `accessibilityLabel` (`showLabel` /
+  `hideLabel` by state) and `hitSlop={8}` for an easy touch target.
+- **Toggle label:** always names the action the press does now (show while masked, hide while revealed). Apps
+  pass both strings translated; the English defaults are for stories only.
 
 ## 8. Usage rules — Do / Don't
 
@@ -110,7 +112,7 @@ No capability gap blocks use.
 - Use `PasswordInput` for every password field — never a plain `Input type="password"` without the toggle.
 - Let the component own masking; don't manage `type`/`secureTextEntry` yourself.
 - Wrap in `FormField` for the label + error; add `PasswordStrengthMeter` on creation flows.
-- Keep `toggleLabel` state-aware if customized (show vs hide).
+- Pass both `showLabel` and `hideLabel`, translated.
 
 **Don't**
 - ✗ Don't pass `type` (web) or `secureTextEntry` (native) — they're owned internally.
@@ -126,3 +128,9 @@ No capability gap blocks use.
   **and** native with the same prop name and tokens — never a one-off.
 - **Tokens only.** Shell + eye glyph colors come from `@lockin90/tokens`; hardcoded values are bugs.
 - **Parity gate.** Confirm the web phone-width password field and the native one match (same shell, eye glyph, toggle behavior, invalid state) before shipping.
+
+## Update — 2026-11-02 (breaking: major)
+- **`toggleLabel` → `showLabel` + `hideLabel`.** One string couldn't name both states: an app passing a
+  translated "Show password" left the revealed state announced as "Show password" too (web Log in, mobile Log in).
+  Two labels, chosen by state, on web and native. `toggleLabel` is removed, so `@lockin90/ui` and
+  `@lockin90/ui-native` go to the next major; the one caller (`frontend` LoginForm) switches in its bump PR.
