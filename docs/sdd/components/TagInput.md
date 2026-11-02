@@ -36,7 +36,7 @@ single-char mono boxes that auto-advance on type and step back on Backspace. It 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
 | `length` | `number` | `6` | ✓ | ✓ | number of boxes |
-| `value` | `string` | `''` | ✓ | ✓ | seeds internal state (sliced to `length`) |
+| `value` | `string` | `''` | ✓ | ✓ | seeds the boxes (digits only, sliced to `length`); web: a later different `value` (e.g. `''` after a wrong code) replaces them, the app echoing `onChange` back doesn't |
 | `onChange` | `(code: string) => void` | — | ✓ | ✓ | fires the joined code on every change |
 | `invalid` | `boolean` | `false` | ✓ | ✓ | every box reads red |
 | `digitLabel` | `(position: number, length: number) => string` | `` (p, l) => `Digit ${p} of ${l}` `` | ✓ | ✓ | each box's a11y label (`position` from 1); apps pass a translated one. A function, not a string like `PasswordInput`'s labels: the label has two numbers, and the app's i18n fills them in |
@@ -163,5 +163,9 @@ limitation.
 - **The row is a labelled group (web `role="group"`), `aria-invalid` on every box.** The row had no role, so an
   app's `aria-labelledby` named nothing and the screen reader never said what the code was for, and its
   `aria-invalid` wasn't announced.
+- **Web fixes (first real screens):** the code is kept one entry per box, so clearing a middle box leaves a gap
+  instead of shifting the later digits; box 0 takes a whole autofilled code (`maxLength = length`, as native) and
+  spreads it; paste and typing keep digits only ("Code: 1234-5678" → `12345678`); a box's text is selected on
+  focus, so typing replaces its digit; a new `value` replaces the boxes. Native gets the same in its PR.
 - **Known, not in this change:** `TagInput`'s `Remove <tag>` label and its `Add a tag…` placeholder default are
   built-in English too; they get the same treatment when an app first uses `TagInput`.

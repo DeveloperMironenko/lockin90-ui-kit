@@ -16,9 +16,9 @@ export const Invalid: StoryObj<typeof meta> = {
 };
 
 export const Code: StoryObj<typeof meta> = {
-  render: () => <CodeInput />,
+  render: () => <CodeInput aria-label="Verification code" />,
 };
 
 export const CodeInvalid: StoryObj<typeof meta> = {
-  render: () => <CodeInput value="123456" invalid />,
+  render: () => <CodeInput aria-label="Verification code" value="123456" invalid />,
 };
