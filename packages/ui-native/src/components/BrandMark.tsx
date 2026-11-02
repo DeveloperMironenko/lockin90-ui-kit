@@ -18,6 +18,9 @@ export type BrandMarkVariant = 'mark' | 'lockup' | 'icon' | 'mono';
 export interface BrandMarkProps {
   variant?: BrandMarkVariant;
   size?: number;
+  /** explicit wordmark font-size for the `lockup` — defaults to `size × 1.05`.
+   *  Lets the mark be larger than the text (the web logo's 30px mark + 19px text). Mirrors web. */
+  wordmarkSize?: number;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -42,16 +45,19 @@ function Glyph({ mono = false }: { mono?: boolean }) {
 }
 
 /** LockIn90 brand mark for native — energy line climbing to a glowing lime peak. */
-export function BrandMark({ variant = 'mark', size = 28, style }: BrandMarkProps) {
+export function BrandMark({ variant = 'mark', size = 28, wordmarkSize, style }: BrandMarkProps) {
   if (variant === 'lockup') {
     // Render the wordmark in SVG so the "90" can carry the energy-spectrum
     // gradient fill (matching the web `.lk-gradient-text`), with TSpans laying
     // "LockIn" + "90" out inline automatically.
-    const F = Math.round(size * 1.05);
+    const F = wordmarkSize ?? Math.round(size * 1.05);
+    // the web's gaps: the legacy one when the wordmark tracks the mark, a
+    // text-relative one when it's sized on its own
+    const gap = wordmarkSize != null ? Math.round(wordmarkSize * 0.52) : Math.round(size * 0.42);
     const wmW = Math.round(F * 4.7); // generous box for "LockIn90"
     const wmH = Math.round(F * 1.35);
     return (
-      <View style={[{ flexDirection: 'row', alignItems: 'center', gap: Math.round(size * 0.42) }, style]}>
+      <View style={[{ flexDirection: 'row', alignItems: 'center', gap }, style]}>
         <BrandMark variant="mark" size={size} />
         <Svg width={wmW} height={wmH}>
           <Defs>
@@ -61,7 +67,7 @@ export function BrandMark({ variant = 'mark', size = 28, style }: BrandMarkProps
               <Stop offset="1" stopColor="#7C5CFF" />
             </LinearGradient>
           </Defs>
-          <SvgText x={0} y={F} fontFamily={fonts.display} fontWeight="700" fontSize={F}>
+          <SvgText x={0} y={F} fontFamily={fonts.display} fontWeight="700" fontSize={F} letterSpacing={-0.02 * F}>
             <TSpan fill={colors.text}>LockIn</TSpan>
             <TSpan fill="url(#lkWm90)">90</TSpan>
           </SvgText>
