@@ -18,7 +18,7 @@ export interface ChipProps extends ViewProps {
 }
 
 const TONE: Record<ChipTone, { color: string; border: string; bg: string }> = {
-  default: { color: colors.textDim, border: colors.border, bg: colors.glass },
+  default: { color: colors.textDim, border: colors.border2, bg: colors.glass },
   neutral: { color: colors.textFaint, border: colors.border2, bg: colors.glass2 },
   high: { color: colors.zoneHigh, border: 'rgba(52,245,197,0.35)', bg: 'rgba(52,245,197,0.08)' },
   mid: { color: colors.zoneMid, border: 'rgba(255,176,32,0.35)', bg: 'rgba(255,176,32,0.08)' },
@@ -34,7 +34,7 @@ const TONE: Record<ChipTone, { color: string; border: string; bg: string }> = {
  *  pill (high/mid/low read slightly stronger; neutral reads dim on glass-2).
  *  The `accent` tone is handled specially (filled gradient). */
 const TONE_SM: Partial<Record<ChipTone, Partial<{ color: string; border: string; bg: string }>>> = {
-  neutral: { color: colors.textDim, border: colors.border, bg: colors.glass2 },
+  neutral: { color: colors.textDim, bg: colors.glass2 },
   high: { bg: 'rgba(52,245,197,0.10)' },
   mid: { bg: 'rgba(255,176,32,0.10)' },
   low: { bg: 'rgba(255,77,109,0.10)' },
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     gap: 7,
     paddingVertical: 5,
     paddingHorizontal: 11,
-    borderRadius: radii.pill,
+    borderRadius: radii.sm,
     borderWidth: 1,
     alignSelf: 'flex-start',
   },

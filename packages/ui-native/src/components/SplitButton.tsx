@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   groupPrimary: { ...nativeShadows.glowAccent },
-  groupDefault: { borderWidth: 1, borderColor: colors.border },
+  groupDefault: { borderWidth: 1, borderColor: colors.border2 },
   main: {
     flexDirection: 'row',
     alignItems: 'center',

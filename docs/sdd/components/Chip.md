@@ -185,4 +185,4 @@ No genuine (inherent) capability gap — `size="sm"` is buildable and now built 
 
 ## Update — 2026-11-02 (one shape, one line)
 - Radius 10 (`--r-sm` / `radii.sm`) and the shared `1px --border-2` line, per CONVENTIONS "One shape, one
-  line". Web first; native follows in its own PR.
+  line", on web and native.

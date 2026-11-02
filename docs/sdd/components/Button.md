@@ -156,7 +156,7 @@ There is **no capability gap** that blocks use — the button is fully usable an
 
 ## Update — 2026-11-02 (one shape, one line)
 - Radius 10 (`--r-sm` / `radii.sm`) and the shared `1px --border-2` line, per CONVENTIONS "One shape, one
-  line". Web first; native follows in its own PR.
+  line", on web and native.
 
 ## Update — 2026-11-02 (accessibility)
 - **Native role built in:** every variant is announced as a button; apps no longer pass `accessibilityRole`.
