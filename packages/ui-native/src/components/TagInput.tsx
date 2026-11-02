@@ -341,14 +341,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   /* ---- CodeInput ---- */
+  // fluid boxes (mobile design .code-row / .code-box): they share the row, so an 8-digit code fits a phone.
+  // gap 6 (the design's 7, as web at ≤ 540px): 8 × 28 + 7 × 6 = 266 fits a 272pt row on the smallest phones;
+  // maxWidth 60 (as web above 540px) keeps them boxes on a tablet or in landscape
   code: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 10,
+    gap: 6,
   },
   codeBox: {
-    width: 44,
-    height: 52,
+    flex: 1,
+    minWidth: 28,
+    maxWidth: 60,
+    aspectRatio: 1 / 1.18,
     textAlign: 'center',
     // vertical-center the digit: textAlignVertical (Android) + includeFontPadding:false
     // (drops Android's extra font padding that pushes the glyph up).
