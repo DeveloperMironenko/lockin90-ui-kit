@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/TagInput.tsx` · `packages/ui-native/src/components/TagInput.tsx` ·
 > web CSS `packages/ui/src/styles/components/taginput.css` (`.lk-taginput*`, `.lk-code*`).
 > **Exports:** `TagInput`, `CodeInput`, type `TagInputProps`, type `CodeInputProps`.
-> **Status:** Shipped. **Parity:** 🔵 capability gap — native `CodeInput` has no per-box clipboard-paste event. `invalid` now ships on both platforms (native `CodeInput` also keeps `error` as a legacy alias).
+> **Status:** Shipped. **Parity:** 🔵 capability gap — native `CodeInput` has no per-box clipboard-paste event. `invalid` now ships on both platforms (native `CodeInput` also keeps `error` as a legacy alias). `CodeInput` takes `digitLabel` (translated per-box labels) and is a labelled group (2026-11-01).
 > **Stories:** `packages/ui/src/stories/TagInput.stories.tsx` · `packages/ui-native/src/stories/TagInput.stories.tsx`.
 
 ---
@@ -39,6 +39,7 @@ single-char mono boxes that auto-advance on type and step back on Backspace. It 
 | `value` | `string` | `''` | ✓ | ✓ | seeds internal state (sliced to `length`) |
 | `onChange` | `(code: string) => void` | — | ✓ | ✓ | fires the joined code on every change |
 | `invalid` | `boolean` | `false` | ✓ | ✓ | every box reads red |
+| `digitLabel` | `(position: number, length: number) => string` | `` (p, l) => `Digit ${p} of ${l}` `` | ✓ | ✓ | each box's a11y label (`position` from 1); apps pass a translated one. A function, not a string like `PasswordInput`'s labels: the label has two numbers, and the app's i18n fills them in |
 | `error` | `boolean` | `false` | — | ✓ | **native-only legacy alias** of `invalid` (`isInvalid = invalid \|\| error`) — prefer `invalid` |
 | `className` / `style` | — | — | `className` + rest | `style` + rest | |
 | _rest_ | `Omit<HTMLAttributes<HTMLDivElement>,'onChange'>` (web) / `ViewProps` (native) | — | ✓ | ✓ | |
@@ -107,20 +108,26 @@ limitation.
 ```tsx
 // web
 <TagInput tags={tags} onChange={setTags} invalid={hasDupe} />
-<CodeInput length={6} value={code} onChange={setCode} invalid={wrongCode} />
+<CodeInput length={8} value={code} onChange={setCode} invalid={wrongCode}
+  aria-labelledby="reset-code-label" digitLabel={(p, l) => t('digit', { position: p, length: l })} />
 
 // native — identical, prefer `invalid` over the legacy `error`
 <TagInput tags={tags} onChange={setTags} invalid={hasDupe} />
-<CodeInput length={6} value={code} onChange={setCode} invalid={wrongCode} />
+<CodeInput length={8} value={code} onChange={setCode} invalid={wrongCode}
+  accessibilityLabel={t('resetCode')} digitLabel={(p, l) => t('digit', { position: p, length: l })} />
 ```
 
 ## 7. Accessibility
 
 - **Web:** each tag's × is a `<button>` with `aria-label="Remove <tag>"`; the input uses the placeholder as its
-  `aria-label`. `CodeInput` boxes carry `aria-label="Digit N"`, `inputMode="numeric"`, and `autoComplete="one-time-code"`
-  on box 0; `aria-invalid` is set when `invalid`.
+  `aria-label`. `CodeInput`'s row is `role="group"`, so the `aria-label` / `aria-labelledby` an app passes (rest props) names it
+  ("Reset code"); each box carries `aria-label={digitLabel(N, length)}`, `inputMode="numeric"`, and
+  `autoComplete="one-time-code"` on box 0; every box gets `aria-invalid` when `invalid` (a role-less wrapper's
+  `aria-invalid` isn't announced).
 - **Native:** the × is a `Pressable` with `accessibilityRole="button"` + `accessibilityLabel`; the tag input and
-  each code box carry `accessibilityLabel`. `CodeInput` boxes use `keyboardType="number-pad"`, `textContentType="oneTimeCode"`
+  each code box carry `accessibilityLabel` (`CodeInput`: `digitLabel(N, length)`; box 0, which also takes a pasted or
+  autofilled whole code, keeps `digitLabel(1, length)`). The row takes the app's `accessibilityLabel` (rest props).
+  `CodeInput` boxes use `keyboardType="number-pad"`, `textContentType="oneTimeCode"`
   on box 0, and `selectionColor={colors.accent}`.
 - **Hit target:** code boxes are 44×52 (comfortable); the × glyph has `hitSlop={6}` (TagInput) for an easy tap.
 
@@ -147,3 +154,14 @@ limitation.
   **and** native with the same prop names and tokens, never a one-off.
 - **Tokens only.** Pill, box, focus, and invalid colors come from `@lockin90/tokens`; hardcoded hexes drift.
 - **Parity gate.** Confirm the web phone-width tag/code field and the native one match (same pills/boxes, add/remove behavior, filled/focus/invalid states) before shipping — and note the paste gap until closed.
+
+## Update — 2026-11-01 (minor)
+- **`CodeInput` `digitLabel`.** Each box's label was a built-in English `Digit N`, so a screen reader read English
+  on every translated code screen. Now `digitLabel(position, length)` on web (`aria-label`) and native
+  (`accessibilityLabel`); the default becomes `Digit N of L`, still English, for stories only: apps pass a
+  translated one.
+- **The row is a labelled group (web `role="group"`), `aria-invalid` on every box.** The row had no role, so an
+  app's `aria-labelledby` named nothing and the screen reader never said what the code was for, and its
+  `aria-invalid` wasn't announced.
+- **Known, not in this change:** `TagInput`'s `Remove <tag>` label and its `Add a tag…` placeholder default are
+  built-in English too; they get the same treatment when an app first uses `TagInput`.
