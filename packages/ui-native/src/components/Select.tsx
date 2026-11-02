@@ -44,6 +44,11 @@ export interface SelectProps {
   searchPlaceholder?: string;
   /** title shown at the top of the option sheet (with a close button). */
   title?: string;
+  /** accessibility label of the sheet's close button (pass a localized string). @default 'Close' */
+  closeLabel?: string;
+  /** the field's name for screen readers when there is no visible `label`
+   *  (falls back to `label`). Mirrors web `aria-label`. */
+  accessibilityLabel?: string;
   /**
    * Field scale. `'md'` (default) is the standard form field. `'sm'` is the
    * design settings compact glass pill (`.pref-select`): mono 11px value,
@@ -114,6 +119,8 @@ export function Select({
   searchable = false,
   searchPlaceholder = 'Search…',
   title,
+  closeLabel = 'Close',
+  accessibilityLabel,
   size = 'md',
   leading,
 }: SelectProps) {
@@ -147,6 +154,8 @@ export function Select({
           disabled && styles.fieldDisabled,
         ]}
         accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel ?? label}
+        accessibilityValue={selected ? { text: selected.label } : undefined}
         accessibilityState={{ disabled, expanded: open }}
         disabled={disabled}
         onPress={() => { hapticSelection(); setOpen(true); }}
@@ -174,7 +183,7 @@ export function Select({
                   <Text style={styles.title}>{title.toUpperCase()}</Text>
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel="Close"
+                    accessibilityLabel={closeLabel}
                     hitSlop={8}
                     onPress={close}
                     style={styles.closeBtn}

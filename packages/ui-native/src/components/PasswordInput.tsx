@@ -14,9 +14,12 @@ export interface PasswordInputProps extends Omit<TextInputProps, 'secureTextEntr
   leading?: ReactNode;
   /** start with the password revealed @default false */
   defaultVisible?: boolean;
-  /** accessibility label for the show/hide toggle
-   *  (default "Show password" / "Hide password") */
-  toggleLabel?: string;
+  /** accessibility label of the toggle while masked (pass a localized string)
+   *  @default 'Show password' */
+  showLabel?: string;
+  /** accessibility label of the toggle while revealed (pass a localized string)
+   *  @default 'Hide password' */
+  hideLabel?: string;
 }
 
 /**
@@ -30,7 +33,8 @@ export function PasswordInput({
   inputSize = 'md',
   leading,
   defaultVisible = false,
-  toggleLabel,
+  showLabel = 'Show password',
+  hideLabel = 'Hide password',
   style,
   onFocus,
   onBlur,
@@ -40,7 +44,6 @@ export function PasswordInput({
   const [visible, setVisible] = useState(defaultVisible);
   const sm = inputSize === 'sm';
   const borderColor = invalid ? colors.zoneLow : focused ? colors.accent : colors.border2;
-  const aria = toggleLabel ?? (visible ? 'Hide password' : 'Show password');
 
   return (
     <View style={styles.wrap}>
@@ -63,7 +66,7 @@ export function PasswordInput({
         />
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={aria}
+          accessibilityLabel={visible ? hideLabel : showLabel}
           hitSlop={8}
           onPress={() => setVisible((v) => !v)}
           style={styles.trail}

@@ -8,7 +8,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Circle, Defs, Line, RadialGradient, Rect, Stop } from 'react-native-svg';
+import Svg, { Circle, Defs, G, Line, Mask, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { colors } from '@lockin90/tokens';
 
 export interface AuroraBackgroundProps {
@@ -76,7 +76,7 @@ export function AuroraBackground({
             <Blob key={i} blob={b} size={size} intensity={intensity} still={still} index={i} />
           ))}
 
-          {grid ? <GridVeil size={size} intensity={intensity} /> : null}
+          {grid ? <GridVeil size={size} opacity={GRID_OPACITY[variant]} /> : null}
         </>
       ) : null}
     </View>
@@ -165,26 +165,46 @@ function Blob({
   );
 }
 
-/** faint uniform grid, fading toward the bottom to mimic the web mask. */
-function GridVeil({ size, intensity }: { size: { w: number; h: number }; intensity: number }) {
-  const step = 40;
-  const stroke = `rgba(255,255,255,${0.03 * intensity})`;
-  const cols = Math.ceil(size.w / step);
-  const rows = Math.ceil(size.h / step);
+/** grid-veil opacity per variant — the web's `--lk-aurora-g` */
+const GRID_OPACITY = { default: 0.5, subtle: 0.32, vivid: 0.62 } as const;
+/** the web's cell size and line colour */
+const GRID_STEP = 56;
+const GRID_STROKE = 'rgba(255,255,255,0.025)';
+
+/**
+ * The web grid veil (`.lk-aurora-grid`): 56px cells, fading out by the web's
+ * mask `radial-gradient(ellipse at 50% 0%, #000 30%, transparent 75%)`. That
+ * ellipse is farthest-corner from the top centre: rx = w/√2, ry = h·√2.
+ */
+function GridVeil({ size, opacity }: { size: { w: number; h: number }; opacity: number }) {
+  const cols = Math.ceil(size.w / GRID_STEP);
+  const rows = Math.ceil(size.h / GRID_STEP);
   return (
     <Svg width={size.w} height={size.h} style={StyleSheet.absoluteFill}>
       <Defs>
-        <RadialGradient id="lk-aurora-grid-fade" cx="50%" cy="0%" r="120%">
-          <Stop offset="0" stopColor="#ffffff" stopOpacity={1} />
-          <Stop offset="1" stopColor="#ffffff" stopOpacity={0} />
+        <RadialGradient
+          id="lk-aurora-grid-fade"
+          gradientUnits="userSpaceOnUse"
+          cx={size.w / 2}
+          cy={0}
+          rx={size.w / Math.SQRT2}
+          ry={size.h * Math.SQRT2}
+        >
+          <Stop offset="0.3" stopColor="#ffffff" stopOpacity={1} />
+          <Stop offset="0.75" stopColor="#ffffff" stopOpacity={0} />
         </RadialGradient>
+        <Mask id="lk-aurora-grid-mask">
+          <Rect x={0} y={0} width={size.w} height={size.h} fill="url(#lk-aurora-grid-fade)" />
+        </Mask>
       </Defs>
-      {Array.from({ length: cols + 1 }, (_, i) => (
-        <Line key={`v${i}`} x1={i * step} y1={0} x2={i * step} y2={size.h} stroke={stroke} strokeWidth={1} />
-      ))}
-      {Array.from({ length: rows + 1 }, (_, i) => (
-        <Line key={`h${i}`} x1={0} y1={i * step} x2={size.w} y2={i * step} stroke={stroke} strokeWidth={1} />
-      ))}
+      <G mask="url(#lk-aurora-grid-mask)" opacity={opacity}>
+        {Array.from({ length: cols + 1 }, (_, i) => (
+          <Line key={`v${i}`} x1={i * GRID_STEP} y1={0} x2={i * GRID_STEP} y2={size.h} stroke={GRID_STROKE} strokeWidth={1} />
+        ))}
+        {Array.from({ length: rows + 1 }, (_, i) => (
+          <Line key={`h${i}`} x1={0} y1={i * GRID_STEP} x2={size.w} y2={i * GRID_STEP} stroke={GRID_STROKE} strokeWidth={1} />
+        ))}
+      </G>
     </Svg>
   );
 }

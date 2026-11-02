@@ -71,6 +71,7 @@ import {
   Pill,
   Play,
   Plus,
+  QrCode,
   Quote,
   RefreshCcw,
   Ruler,
@@ -231,6 +232,7 @@ export type IconName =
   | 'drop'
   | 'utensil'
   | 'barcode-scan'
+  | 'qr-code'
   | 'pill'
   | 'flask'
   | 'syringe'
@@ -422,6 +424,7 @@ const LUCIDE: Record<Exclude<IconName, CustomIconName>, LucideIcon> = {
   drop: Droplet,
   utensil: Utensils,
   'barcode-scan': ScanBarcode,
+  'qr-code': QrCode,
   pill: Pill,
   flask: FlaskConical,
   syringe: Syringe,
