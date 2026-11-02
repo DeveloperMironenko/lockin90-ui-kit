@@ -3,7 +3,7 @@
 > **Package:** `@lockin90/ui` (web) · `@lockin90/ui-native` (native) — root cross-platform primitive.
 > **Source:** `packages/ui/src/components/PasswordStrengthMeter.tsx` · `packages/ui-native/src/components/PasswordStrengthMeter.tsx` ·
 > web CSS `packages/ui/src/styles/components/pwstrength.css` (`.lk-pwstrength*`).
-> **Exports:** `PasswordStrengthMeter`, type `PasswordStrengthMeterProps`, type `PasswordStrengthScore`.
+> **Exports:** `PasswordStrengthMeter`, type `PasswordStrengthMeterProps`, type `PasswordStrengthScore`, type `PasswordRule`.
 > **Status:** Shipped. **Parity:** ✅ identical API, 4-segment model, colors & labels; substrate-only (CSS `color-mix` glow vs RN shadow, `role=meter` vs `progressbar`).
 > **Stories:** `packages/ui/src/stories/PasswordStrengthMeter.stories.tsx` · `packages/ui-native/src/stories/PasswordStrengthMeter.stories.tsx`.
 
@@ -25,6 +25,10 @@ consumer (e.g. zxcvbn) and passed in as a `0–4` value — the component is pur
 | `score` | `PasswordStrengthScore` (`0\|1\|2\|3\|4`) | — (required) | ✓ | ✓ | `0` = empty/weakest … `4` = strongest |
 | `label` | `string` | derived (`LABELS[score]`) | ✓ | ✓ | override the derived label |
 | `hint` | `string` | — | ✓ | ✓ | optional helper line under the meter |
+| `labelPrefix` | `string` | — | ✓ | ✓ | faint text before the label ("Strength:"), as the sign-in designs draw it |
+| `accessibleLabel` | `string` | `` `Password strength: ${label}` `` | ✓ | ✓ | the meter's screen-reader name (web `aria-label`, native `accessibilityLabel`); pass a translated one |
+| `rules` | `PasswordRule[]` | — | ✓ | ✓ | the checklist under the meter (below); omit for a bare meter |
+| `metLabel` / `unmetLabel` | `string` | — (required with `rules`) | ✓ | ✓ | read after each rule ("10+ characters, done"): web visually hidden, native in the rule's `accessibilityLabel` |
 | `className` / `style` | — | — | `className` + `style` | `style` | web class + style · native `ViewStyle` |
 | _rest_ | `Omit<HTMLAttributes<HTMLDivElement>,'children'>` (web) / `Omit<ViewProps,'children'\|'style'>` (native) | — | ✓ | ✓ | spread onto the root |
 
@@ -126,3 +130,36 @@ There is no capability gap — fully equivalent on both platforms.
 - **Tokens only.** The score colors are `--bad/--warn/--cyan/--ok` (`colors.bad/warn/cyan/ok`); hardcoding the
   hexes will drift on the next Aurora-Flux rename.
 - **Parity gate.** Confirm the web phone-width meter and the native meter show the same fill, color, and label for the same score before shipping.
+
+## Update — 2026-11-02 (minor): rules, translatable labels, an empty state
+
+The sign-in designs (`web/auth.html` states 02 and 05, `mobile/auth-onboarding.html`) draw a rule checklist
+under the meter, and the mobile design's kit map asks for it here: "`.pw-meter + .pw-rules →
+PasswordStrengthMeter` (kit renders bars, label & rule checklist in one)". One component, so screens don't line
+up two by hand.
+
+- **`rules`** (`PasswordRule = { id: string; label: string; met: boolean }`): a list under the meta row; each
+  rule a round tick that fills mint when `met`, with the label beside it. Presentational: the app decides the
+  rules and whether each is met (they advise; the backend decides what it accepts).
+  - **Web** (`.lk-pwstrength-rules`): a `<ul>`, grid 2 columns, `gap: 6px 16px`, `margin-top: 12px`; 1 column at
+    the `phone` breakpoint (≤ 540px). Rule: flex, centered, `gap: 8px`, 12px, `--text-faint`; met `--text`.
+    Tick: 16px circle, `flex: 0 0 16px` (never squashed by a long label), `1.5px solid --border-2`; met: fill and
+    border `--zone-high`. Check glyph 10px, stroke `--bg-0`, width 3, always rendered, `opacity` 0 → 1 when met.
+    Motion: colour, background and border-colour `.25s var(--ease)`, glyph opacity `.2s var(--ease)`.
+  - **Native** (sizes from `mobile/auth-onboarding.html`): rows of two, each rule `flex: 1`, `columnGap 12`,
+    `rowGap 6`, `marginTop 11`; always 2 columns (the mobile design never stacks). Rule: `gap 7`, 10.5,
+    `colors.textFaint`; met `colors.text`. Tick: 15, `flexShrink 0`, `borderWidth 1.5`, `colors.border2`; met
+    `colors.zoneHigh`. Glyph 9, `react-native-svg`. No animation.
+  - **A11y:** web: each `<li>` reads its label, then the visually hidden `metLabel` / `unmetLabel`; the tick is
+    `aria-hidden`; not `aria-live` (every keystroke would be announced; the meter's label is the summary).
+    Native: each rule is one `accessible` element, `accessibilityLabel={`${label}, ${met ? metLabel :
+    unmetLabel}`}` (no checkbox role: it isn't a control). The two labels are required whenever `rules` is
+    passed (the type says so), so no screen reader ever hears a kit default.
+- **`accessibleLabel`**: the meter's own name was the built-in English `Password strength: <label>`; an app
+  passes a translated one. The default stays, for stories.
+- **`labelPrefix`**: the designs show "Strength: —" with only the level tinted; the prefix is `--text-faint` /
+  `colors.textFaint`, the level keeps the score colour.
+- **Empty state:** at `score` 0 the label is `--text-faint` / `colors.textFaint` (not red): nothing typed yet is
+  not "weak". Apps pass `label="—"` for it, as the designs draw.
+- **Parity:** ✅ still identical; every new prop on both platforms, sizes per each platform's design.
+
