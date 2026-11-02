@@ -1,6 +1,8 @@
+import { createElement } from 'react';
+import { Text } from 'react-native';
 import { describe, expect, test } from 'vitest';
 import { Alert } from '../Alert';
-import { findAll, findByText, hasDeclaration, inlineStyle, parse, render } from './markup';
+import { ancestors, findAll, findByText, hasDeclaration, inlineStyle, parse, render } from './markup';
 
 /* The quiet note tones (docs/sdd/components/Alert.md §3): `neutral` / `cyan` drop the 3px accent bar
  * that the signal tones draw, and their body text is the note size. */
@@ -36,5 +38,16 @@ describe('Alert note tones', () => {
     expect(inlineStyle(cyan)['font-size']).toBe('12.5px');
     const neutral = findByText(parse(render(Alert, { tone: 'neutral', children: 'Note' })), 'Note')!;
     expect(inlineStyle(neutral)['font-size']).toBe('12.5px');
+  });
+});
+
+/* Any text in the alert gets its text style, as on web: a sentence with a styled part (an i18n Trans). */
+describe('Alert text', () => {
+  test('styles a sentence with a styled part as the alert text', () => {
+    const sentence = createElement(Text, null, 'Timezone detected: ', createElement(Text, { style: { fontWeight: '600' } }, 'Europe/Kyiv'));
+    const own = findByText(parse(render(Alert, { tone: 'info', children: sentence })), 'Timezone detected:');
+    expect(own).toBeDefined();
+    // the alert's text style wraps the app's sentence
+    expect(ancestors(own!).some((el) => hasDeclaration(el, 'font-size:13px'))).toBe(true);
   });
 });
