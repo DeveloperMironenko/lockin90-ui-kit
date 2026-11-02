@@ -19,7 +19,7 @@ It's the kit's single sanctioned inline-message surface (form errors, success co
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `tone` | `'info' \| 'success' \| 'warn' \| 'danger'` | `'info'` | ✓ | ✓ | accent color + default icon |
+| `tone` | `'info' \| 'success' \| 'warn' \| 'danger' \| 'neutral' \| 'cyan'` | `'info'` | ✓ | ✓ | accent color + default icon; `neutral` / `cyan` are quiet notes (no bar) |
 | `title` | `string` | — | ✓ | ✓ | bold heading (`font-display`) |
 | `children` | `ReactNode` | — | ✓ | ✓ | body text under the title |
 | `icon` | `ReactNode` | tone default | ✓ | ✓ | override the leading glyph |
@@ -30,7 +30,7 @@ It's the kit's single sanctioned inline-message surface (form errors, success co
 
 - **Web:** `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` (so `title` is the heading prop, not the HTML tooltip attr); root has `role="status"`.
 - **Native:** `Omit<ViewProps, 'children'>` (so `children` is the body prop). A string `children` is wrapped in a styled `Text`; a non-string node renders as-is.
-- **Default icons** (`DEFAULT_ICON` / `defaultIcon`): `info`→info "i", `success`→check, `warn`/`danger`→warning triangle.
+- **Default icons** (`DEFAULT_ICON` / `defaultIcon`): `info`/`neutral`/`cyan`→info "i", `success`→check, `warn`/`danger`→warning triangle.
 
 ## 3. Visual spec (tokens — never hardcode)
 
@@ -52,6 +52,14 @@ It's the kit's single sanctioned inline-message surface (form errors, success co
 | `success` | `--mint` `colors.mint` | `rgba(52,245,197,.08)` | `rgba(52,245,197,.3)` |
 | `warn` | `--zone-mid` `colors.zoneMid` | `rgba(255,176,32,.08)` | `rgba(255,176,32,.3)` |
 | `danger` | `--zone-low` `colors.zoneLow` | `rgba(255,77,109,.08)` | `rgba(255,77,109,.3)` |
+
+**Quiet notes** (`neutral` = design `.tz-note`, `cyan` = `.note-safe`): no left bar; icon `--accent-2` /
+`colors.accent2`, stroke 1.6; body `--text-dim`; title unchanged. Every tone's `<b>` / `<strong>` in the body reads `--text` 600 (web).
+
+| Tone | Web | Native (`mobile/auth-onboarding.html` `.tz-note`; no `.note-safe` there, so web sizes) |
+| --- | --- | --- |
+| `neutral` | `align-items: center` when it is text only (no title, no dismiss; else `flex-start`), `gap 9px`, `padding 11px 13px`, bg `--glass`, border `--border`; icon 17px; text 12.5px, line-height 1.55 | ⏳ native PR: `center` when text only (else `flex-start`), `gap 8`, `padding 9 / 11`, bg `colors.glass`, border `colors.border`; icon 15; text 11, `lineHeight 15` |
+| `cyan` | `flex-start`, `gap 9px`, `padding 12px 14px`, bg `rgba(34,211,238,.05)`, border `rgba(34,211,238,.22)`; icon 17px, `margin-top 1px`; text 12.5px, line-height 1.5 | ⏳ native PR: `flex-start`, `gap 9`, `padding 12 / 14`, bg `rgba(34,211,238,0.05)`, border `rgba(34,211,238,0.22)`; icon 17, `marginTop 1`; text 12.5, `lineHeight 19` |
 
 ## 4. States
 
@@ -120,3 +128,6 @@ No capability gap — the alert is visually equivalent on both.
 - **New tone → both platforms.** Add to `AlertTone` + the `TONE` maps on web **and** native (same rgba, same token), never a local one-off.
 - **Tokens only.** Accent colors (`--accent`/`--mint`/`--zone-mid`/`--zone-low`), `--glass-2`, `--r-sm` come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping a screen with an Alert, diff web phone-width vs native: same tone color, same title/body, same dismiss presence.
+
+## Update — 2026-11-02 (minor)
+- **Tones `neutral` and `cyan`**, the sign-in designs' quiet notes (timezone, privacy): see §2 and the quiet-notes table in §3. Native: in its own PR.

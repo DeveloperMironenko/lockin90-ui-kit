@@ -2,10 +2,11 @@ import { type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
 import { Icon } from './Icon';
 
-export type AlertTone = 'info' | 'success' | 'warn' | 'danger';
+export type AlertTone = 'info' | 'success' | 'warn' | 'danger' | 'neutral' | 'cyan';
 
 export interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
-  /** signal color + default icon (info=accent, success=mint, warn=amber, danger=red) */
+  /** signal color + default icon (info=accent, success=mint, warn=amber, danger=red);
+   *  `neutral` (glass box) and `cyan` (cyan-tinted box) are quiet notes: no left bar, a cyan icon */
   tone?: AlertTone;
   /** bold heading line (font-display) */
   title?: string;
@@ -22,6 +23,8 @@ const TONE: Record<AlertTone, string> = {
   success: 'lk-alert-success',
   warn: 'lk-alert-warn',
   danger: 'lk-alert-danger',
+  neutral: 'lk-alert-neutral',
+  cyan: 'lk-alert-cyan',
 };
 
 /** Warning-triangle glyph — shared between warn + danger tones. */
@@ -50,9 +53,12 @@ const DEFAULT_ICON: Record<AlertTone, ReactNode> = {
   success: <Icon name="check" size={18} />,
   warn: WARNING,
   danger: WARNING,
+  // the notes' 17px glyph size is set in alert.css (for app icons too)
+  neutral: <Icon name="info" />,
+  cyan: <Icon name="info" />,
 };
 
-/** Tinted callout box — info / success / warn / danger banner with optional dismiss. */
+/** Tinted callout box — info / success / warn / danger banner (or a quiet neutral / cyan note) with optional dismiss. */
 export function Alert({
   tone = 'info',
   title,
@@ -63,7 +69,11 @@ export function Alert({
   ...rest
 }: AlertProps) {
   return (
-    <div className={cn('lk-alert', TONE[tone], className)} role="status" {...rest}>
+    <div
+      className={cn('lk-alert', TONE[tone], !title && !onDismiss && 'lk-alert--text-only', className)}
+      role="status"
+      {...rest}
+    >
       <span className="lk-alert-icon" aria-hidden="true">
         {icon ?? DEFAULT_ICON[tone]}
       </span>

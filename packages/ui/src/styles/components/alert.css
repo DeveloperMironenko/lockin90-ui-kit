@@ -3,7 +3,8 @@
    A tone-tinted background + 1px tone border + a 3px left accent bar (::before),
    a tone-colored leading icon, a font-display title + font-ui dim body, and an
    optional × dismiss button top-right. Mirrors the design `.callout` vocab.
-   Key: .lk-alert — the box; .lk-alert-{info,success,warn,danger} — tone tints.
+   Key: .lk-alert — the box; .lk-alert-{info,success,warn,danger} — tone tints;
+   .lk-alert-{neutral,cyan} — quiet notes (design auth .tz-note / .note-safe), no bar.
    ========================================================================== */
 .lk-alert {
   position: relative;
@@ -59,6 +60,11 @@
   font-size: 13px;
   line-height: 1.5;
   color: var(--text-dim);
+}
+/* emphasis in the body reads in full text colour */
+.lk-alert-text :is(b, strong) {
+  font-weight: 600;
+  color: var(--text);
 }
 /* 3px nudge only when a title sits above the body — otherwise the text is the
    only content and should align flush with the leading icon. */
@@ -117,4 +123,46 @@
   --lk-alert-c: var(--zone-low);
   background: rgba(255, 77, 109, 0.08);
   border-color: rgba(255, 77, 109, 0.3);
+}
+
+/* ---- quiet notes (design auth .tz-note / .note-safe): no accent bar, cyan icon,
+   17px glyph at stroke 1.6, 12.5px dim text ---- */
+.lk-alert-neutral,
+.lk-alert-cyan {
+  --lk-alert-c: var(--accent-2);
+  gap: 9px;
+}
+.lk-alert-neutral::before,
+.lk-alert-cyan::before {
+  content: none;
+}
+.lk-alert-neutral .lk-alert-icon svg,
+.lk-alert-cyan .lk-alert-icon svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.6;
+}
+.lk-alert-neutral .lk-alert-text,
+.lk-alert-cyan .lk-alert-text {
+  font-size: 12.5px;
+}
+.lk-alert-neutral {
+  padding: 11px 13px;
+  background: var(--glass);
+  border-color: var(--border);
+}
+.lk-alert-neutral .lk-alert-text {
+  line-height: 1.55;
+}
+/* a one-line text note centres its icon; with a title or a dismiss it top-aligns like every tone */
+.lk-alert-neutral.lk-alert--text-only {
+  align-items: center;
+}
+.lk-alert-neutral.lk-alert--text-only .lk-alert-icon {
+  margin-top: 0;
+}
+.lk-alert-cyan {
+  padding: 12px 14px;
+  background: rgba(34, 211, 238, 0.05);
+  border-color: rgba(34, 211, 238, 0.22);
 }
