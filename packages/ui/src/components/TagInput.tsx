@@ -120,10 +120,14 @@ export interface CodeInputProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
 
 const defaultDigitLabel = (position: number, length: number) => `Digit ${position} of ${length}`;
 
+/** The boxes at another `length`: each keeps its place (a gap stays a gap), the extra ones dropped. */
+export function resizeBoxes(boxes: readonly string[], length: number): string[] {
+  return Array.from({ length }, (_, i) => boxes[i] ?? '');
+}
+
 /** The boxes for a code string: one digit each, non-digits dropped, padded with '' to `length`. */
 export function codeToBoxes(value: string, length: number): string[] {
-  const digits = value.replace(/\D/g, '');
-  return Array.from({ length }, (_, i) => digits[i] ?? '');
+  return resizeBoxes(value.replace(/\D/g, '').split(''), length);
 }
 
 /** Spread typed / pasted / autofilled text across the boxes from `index` on: digits only, the ones past
@@ -139,6 +143,22 @@ export function spreadDigits(
   return { boxes: next, focusIndex: Math.min(index + digits.length, next.length - 1) };
 }
 
+/** What a box's new text does (its digit is always selected, so typing replaces it): one digit fills
+ *  the box; more digits (paste, autofill) spread; no digit at all (a letter) is ignored (`null`);
+ *  empty clears the box. Focus moves on after a written digit. */
+export function typeIntoBox(
+  boxes: readonly string[],
+  index: number,
+  raw: string,
+): { boxes: string[]; focusIndex: number } | null {
+  const digits = raw.replace(/\D/g, '');
+  if (raw && !digits) return null;
+  if (digits.length > 1) return spreadDigits(boxes, index, raw);
+  const next = boxes.slice();
+  next[index] = digits;
+  return { boxes: next, focusIndex: digits ? Math.min(index + 1, next.length - 1) : index };
+}
+
 /** Segmented N-digit verification code — auto-advance, backspace, paste, one-time-code autofill. */
 export function CodeInput({
   length = 6,
@@ -152,38 +172,41 @@ export function CodeInput({
   // One entry per box, so clearing a middle box leaves a gap instead of shifting later digits.
   const [boxes, setBoxes] = useState<string[]>(() => codeToBoxes(value, length));
   // A new `value` from the app (e.g. cleared after a wrong code) replaces what's shown; the app echoing
-  // back what `onChange` gave it doesn't (it would close up a gap the user left).
-  const [prevValue, setPrevValue] = useState(value);
-  if (value !== prevValue) {
-    setPrevValue(value);
-    if (value !== boxes.join('')) setBoxes(codeToBoxes(value, length));
+  // back what `onChange` gave it doesn't (it would close up a gap the user left). Another `length`
+  // re-draws the boxes, each digit in its place; a `value` changed with it wins.
+  const [prev, setPrev] = useState({ value, length });
+  if (value !== prev.value || length !== prev.length) {
+    setPrev({ value, length });
+    if (value !== prev.value && value !== boxes.join('')) setBoxes(codeToBoxes(value, length));
+    else if (length !== prev.length) setBoxes(resizeBoxes(boxes, length));
   }
   const refs = useRef<Array<HTMLInputElement | null>>([]);
+  // Whether the box under the mouse already had focus: only then does a click need re-selecting.
+  const hadFocus = useRef(false);
 
   const commit = (next: string[]) => {
     setBoxes(next);
     onChange?.(next.join(''));
   };
 
+  // Focus a box with its digit selected, so the next key replaces it. After the re-render: setting the
+  // value moves the caret to the end.
   const focusBox = (index: number) => {
-    refs.current[Math.max(0, Math.min(length - 1, index))]?.focus();
+    const box = refs.current[Math.max(0, Math.min(length - 1, index))];
+    box?.focus();
+    // Only if the user is still there (fast typing may have moved on).
+    requestAnimationFrame(() => {
+      if (box && document.activeElement === box) box.select();
+    });
   };
 
   // Typing replaces the box's digit (its text is selected on focus); box 0 also takes a whole
   // autofilled code (`one-time-code`), spread like a paste.
   const onBoxChange = (index: number, raw: string) => {
-    if (raw.replace(/\D/g, '').length > 1) {
-      const spread = spreadDigits(boxes, index, raw);
-      commit(spread.boxes);
-      focusBox(spread.focusIndex);
-      return;
-    }
-    const ch = raw.replace(/\D/g, '');
-    if (raw && !ch) return; // a letter: ignored
-    const next = boxes.slice();
-    next[index] = ch;
-    commit(next);
-    if (ch) focusBox(index + 1);
+    const typed = typeIntoBox(boxes, index, raw);
+    if (!typed) return; // a letter: ignored
+    commit(typed.boxes);
+    focusBox(typed.focusIndex);
   };
 
   const onKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
@@ -231,6 +254,15 @@ export function CodeInput({
           maxLength={i === 0 ? length : 1}
           value={ch}
           onFocus={(e) => e.target.select()}
+          // A click on a box that already had focus would put the caret beside the digit: keep it selected.
+          onMouseDown={(e) => {
+            hadFocus.current = document.activeElement === e.currentTarget;
+          }}
+          onMouseUp={(e) => {
+            if (!hadFocus.current) return;
+            e.preventDefault();
+            e.currentTarget.select();
+          }}
           aria-label={digitLabel(i + 1, length)}
           // On every box: a role-less wrapper's aria-invalid isn't announced.
           aria-invalid={invalid || undefined}

@@ -3,7 +3,7 @@
    (typing, paste, autofill) as pure helpers, since press events can't be dispatched without a DOM. */
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { CodeInput, codeToBoxes, spreadDigits } from './TagInput';
+import { CodeInput, codeToBoxes, resizeBoxes, spreadDigits, typeIntoBox } from './TagInput';
 
 describe('CodeInput', () => {
   it('labels each box "Digit N of L" by default', () => {
@@ -65,6 +65,42 @@ describe('spreadDigits (paste, autofill)', () => {
 
   it('drops digits past the last box', () => {
     expect(spreadDigits(['', '', ''], 1, '789')).toEqual({ boxes: ['', '7', '8'], focusIndex: 2 });
+  });
+});
+
+describe('typeIntoBox (typing)', () => {
+  it('a digit fills the box and moves on', () => {
+    expect(typeIntoBox(['1', '', ''], 1, '2')).toEqual({ boxes: ['1', '2', ''], focusIndex: 2 });
+  });
+
+  it("a digit replaces the box's one (it is selected)", () => {
+    expect(typeIntoBox(['1', '5', ''], 0, '2')).toEqual({ boxes: ['2', '5', ''], focusIndex: 1 });
+  });
+
+  it('two digits into box 0 (a short autofill) spread, not collapse', () => {
+    expect(typeIntoBox(['', '', ''], 0, '34')).toEqual({ boxes: ['3', '4', ''], focusIndex: 2 });
+  });
+
+  it('a letter is ignored', () => {
+    expect(typeIntoBox(['1', '', ''], 1, 'a')).toBeNull();
+  });
+
+  it('clearing a middle box leaves a gap, later digits stay put', () => {
+    expect(typeIntoBox(['1', '2', '3'], 1, '')).toEqual({ boxes: ['1', '', '3'], focusIndex: 1 });
+  });
+
+  it('a whole code spreads like a paste', () => {
+    expect(typeIntoBox(['', '', ''], 0, '987')).toEqual({ boxes: ['9', '8', '7'], focusIndex: 2 });
+  });
+});
+
+describe('resizeBoxes (another length)', () => {
+  it('keeps each digit in its place, a gap stays a gap', () => {
+    expect(resizeBoxes(['1', '', '3', '4'], 6)).toEqual(['1', '', '3', '4', '', '']);
+  });
+
+  it('drops the boxes past the new length', () => {
+    expect(resizeBoxes(['1', '2', '3', '4'], 2)).toEqual(['1', '2']);
   });
 });
 
