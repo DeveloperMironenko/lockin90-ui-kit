@@ -1,5 +1,17 @@
 # @lockin90/ui
 
+## 3.0.0
+
+### Major Changes
+
+- 8e7b86b: PasswordStrengthMeter: `rules` (a checklist under the meter: a round tick that fills mint when met, 2 columns, 1 at ≤ 540px, long labels wrap; each rule reads the required `metLabel` / `unmetLabel` exactly as given, so include the leading punctuation, e.g. ", done"), `accessibleLabel` (a translated name for the meter, default `Password strength: <label>`), `labelPrefix` (faint text before the label, e.g. "Strength:"), and a faint label at score 0. The hint now describes the meter (`aria-describedby`).
+
+  Breaking: `role="meter"` moved from the root to the segment row (a meter's children are presentational, so the label row and the rules sit beside it). An `aria-*` prop passed to the component now lands on the plain root container, not on the meter; name the meter with `accessibleLabel`. The root also applies `style` now (it was dropped).
+
+### Minor Changes
+
+- 11d59ca: CodeInput: the boxes are fluid, as the sign-in design draws them, so an 8-digit code fits a sign-in card and a phone. They share the row's width (aspect 1 : 1.18, 28–60px wide; at ≤ 540px no upper cap, a 6px gap and 20px digits) instead of a fixed 44×52. This changes the layout of every existing CodeInput: the row is now full width with the boxes spread across it, not a centred group of fixed boxes.
+
 ## 2.3.0
 
 ### Minor Changes
