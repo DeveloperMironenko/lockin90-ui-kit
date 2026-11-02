@@ -8,9 +8,12 @@ import type { InputProps } from './Input';
 export interface PasswordInputProps extends Omit<InputProps, 'type' | 'unit'> {
   /** start with the password revealed @default false */
   defaultVisible?: boolean;
-  /** accessibility label for the show/hide toggle
-   *  (default "Show password" / "Hide password") */
-  toggleLabel?: string;
+  /** accessibility label of the toggle while masked (pass a localized string)
+   *  @default 'Show password' */
+  showLabel?: string;
+  /** accessibility label of the toggle while revealed (pass a localized string)
+   *  @default 'Hide password' */
+  hideLabel?: string;
 }
 
 /**
@@ -24,12 +27,12 @@ export function PasswordInput({
   inputSize = 'md',
   leading,
   defaultVisible = false,
-  toggleLabel,
+  showLabel = 'Show password',
+  hideLabel = 'Hide password',
   className,
   ...rest
 }: PasswordInputProps) {
   const [visible, setVisible] = useState(defaultVisible);
-  const aria = toggleLabel ?? (visible ? 'Hide password' : 'Show password');
 
   return (
     <label className="lk-input-wrap">
@@ -45,7 +48,7 @@ export function PasswordInput({
         <button
           type="button"
           className="lk-input-trail"
-          aria-label={aria}
+          aria-label={visible ? hideLabel : showLabel}
           aria-pressed={visible}
           onClick={() => setVisible((v) => !v)}
         >
