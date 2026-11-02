@@ -1,5 +1,11 @@
 # @lockin90/ui-native
 
+## 2.4.1
+
+### Patch Changes
+
+- 3c77421: Divider: the label looks as on web (mono 11px / 500, uppercase, 0.14em, line height 17).
+
 ## 2.4.0
 
 ### Minor Changes
