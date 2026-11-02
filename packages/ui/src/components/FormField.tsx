@@ -13,6 +13,8 @@ export interface FormFieldProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ch
   required?: boolean;
   /** ties the label to the control via `htmlFor` */
   htmlFor?: string;
+  /** a link or action at the end of the label row (e.g. "Forgot password?") */
+  labelAction?: ReactNode;
   /** the form control to wrap */
   children?: ReactNode;
 }
@@ -24,6 +26,7 @@ export function FormField({
   error,
   required = false,
   htmlFor,
+  labelAction,
   children,
   className,
   ...rest
@@ -31,10 +34,13 @@ export function FormField({
   return (
     <div className={cn('lk-field', className)} {...rest}>
       {label ? (
-        <label className="lk-field-label" htmlFor={htmlFor}>
-          {label}
-          {required ? <span className="lk-field-req" aria-hidden="true">*</span> : null}
-        </label>
+        <div className="lk-field-label-row">
+          <label className="lk-field-label" htmlFor={htmlFor}>
+            {label}
+            {required ? <span className="lk-field-req" aria-hidden="true">*</span> : null}
+          </label>
+          {labelAction}
+        </div>
       ) : null}
       <div className="lk-field-control">{children}</div>
       {error ? (
