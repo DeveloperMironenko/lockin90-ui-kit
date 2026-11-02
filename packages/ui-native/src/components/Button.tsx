@@ -4,6 +4,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, gradients, fonts, nativeShadows } from '@lockin90/tokens';
 import { hapticSelection } from '../internal/optionalHaptics';
 
+// the web's body line height (1.55): the md button is 12 + 14 × 1.55 + 12 = 45.7, as on web
+const LINE = 1.55;
+
 export type ButtonVariant = 'default' | 'primary' | 'ghost';
 export type ButtonTone = 'danger';
 
@@ -59,7 +62,7 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
             style={[styles.base, pad, styles.primary, pressed && styles.pressed, style]}
           >
             {leading}
-            <Text style={[styles.label, { fontSize: labelSize, color: '#0A0A12' }]}>{title}</Text>
+            <Text style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: '#0A0A12' }]}>{title}</Text>
             {trailing}
           </LinearGradient>
         )}
@@ -108,7 +111,7 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
           ]}
         >
           {leading}
-          <Text style={[styles.label, { fontSize: labelSize, color: textColor }]}>{title}</Text>
+          <Text style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: textColor }]}>{title}</Text>
           {trailing}
         </View>
       )}

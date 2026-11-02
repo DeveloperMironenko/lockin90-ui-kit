@@ -172,3 +172,6 @@ The overlay differences are expected substrate, not capability gaps that block u
   `accessibilityLabel` (falls back to `label`) and reports the selected option as `accessibilityValue`, as the web
   trigger's `aria-label` does since 1.0.2.
 - `title` (native sheet caption) was shipped but undocumented; now in §2.
+
+## Update — 2026-11-02 (native sizes match web)
+- **Native label caption** matches FormField's (11px / 500 mono, `text-dim`, line height 17).

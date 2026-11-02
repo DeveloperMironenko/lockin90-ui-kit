@@ -123,3 +123,6 @@ No capability gap blocks use — the field is fully usable and visually equivale
 - **Tokens only.** Every color/space/radius comes from `@lockin90/tokens`; hardcoded equivalents are bugs even
   when they "look the same" today.
 - **Parity gate.** Confirm the web phone-width field and the native field match (same label, unit, leading, size, invalid state) before shipping.
+
+## Update — 2026-11-02 (native sizes match web)
+- **Native height = web height:** the field has `minHeight` 39.6 (sm 31.5), the web box `9 + 14×1.4 + 9 + 2`, so it matches the web field to the point (it was 36). The `label` caption is 11px / 500 `text-dim`, line height 17, as the web shows.

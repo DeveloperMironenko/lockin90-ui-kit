@@ -80,25 +80,29 @@ export function PasswordInput({
 
 const styles = StyleSheet.create({
   wrap: { gap: 6, minWidth: 0 },
+  // the same caption as FormField's label (11px / 500, text-dim, line height 17), as the web shows
   label: {
     fontFamily: fonts.mono,
-    fontSize: 10,
+    fontSize: 11,
+    lineHeight: 17,
     fontWeight: '500',
-    letterSpacing: 1.2,
-    color: colors.textFaint,
+    letterSpacing: 1.32,
+    color: colors.textDim,
   },
   field: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     minWidth: 0,
+    minHeight: 39.6,
     paddingVertical: 9,
     paddingHorizontal: 12,
     borderRadius: radii.sm,
     borderWidth: 1,
     backgroundColor: colors.glass2,
   },
-  fieldSm: { paddingVertical: 6, paddingHorizontal: 10 },
+  // the web box: 9 + 14 × 1.4 + 9 + 2 borders = 39.6 (sm: 6 + 12.5 × 1.4 + 6 + 2 = 31.5)
+  fieldSm: { minHeight: 31.5, paddingVertical: 6, paddingHorizontal: 10 },
   lead: { flexShrink: 0 },
   input: {
     flex: 1,
@@ -107,7 +111,9 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: fonts.ui,
     fontSize: 14,
-    lineHeight: 20,
+    // centred by the field's height, as Input (an explicit lineHeight biases the glyph)
+    textAlignVertical: 'center',
+    includeFontPadding: false,
   },
   inputSm: { fontSize: 12.5 },
   trail: { flexShrink: 0 },
