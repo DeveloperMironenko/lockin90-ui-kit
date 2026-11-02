@@ -114,51 +114,90 @@ export interface CodeInputProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   onChange?: (code: string) => void;
   /** error state — red boxes (e.g. an incorrect / expired code) */
   invalid?: boolean;
+  /** each box's a11y label, `position` from 1 — pass a translated one (the default is English, for stories) */
+  digitLabel?: (position: number, length: number) => string;
 }
 
-/** Segmented N-digit verification code — auto-advance, backspace, paste. */
+const defaultDigitLabel = (position: number, length: number) => `Digit ${position} of ${length}`;
+
+/** The boxes for a code string: one digit each, non-digits dropped, padded with '' to `length`. */
+export function codeToBoxes(value: string, length: number): string[] {
+  const digits = value.replace(/\D/g, '');
+  return Array.from({ length }, (_, i) => digits[i] ?? '');
+}
+
+/** Spread typed / pasted / autofilled text across the boxes from `index` on: digits only, the ones past
+ *  the last box dropped, earlier boxes kept. Focus goes after the last digit written (clamped). */
+export function spreadDigits(
+  boxes: readonly string[],
+  index: number,
+  text: string,
+): { boxes: string[]; focusIndex: number } {
+  const digits = text.replace(/\D/g, '');
+  const next = boxes.slice();
+  for (let i = 0; i < digits.length && index + i < next.length; i++) next[index + i] = digits[i];
+  return { boxes: next, focusIndex: Math.min(index + digits.length, next.length - 1) };
+}
+
+/** Segmented N-digit verification code — auto-advance, backspace, paste, one-time-code autofill. */
 export function CodeInput({
   length = 6,
   value = '',
   onChange,
   invalid = false,
+  digitLabel = defaultDigitLabel,
   className,
   ...rest
 }: CodeInputProps) {
-  const [code, setCode] = useState<string>(value.slice(0, length));
+  // One entry per box, so clearing a middle box leaves a gap instead of shifting later digits.
+  const [boxes, setBoxes] = useState<string[]>(() => codeToBoxes(value, length));
+  // A new `value` from the app (e.g. cleared after a wrong code) replaces what's shown; the app echoing
+  // back what `onChange` gave it doesn't (it would close up a gap the user left).
+  const [prevValue, setPrevValue] = useState(value);
+  if (value !== prevValue) {
+    setPrevValue(value);
+    if (value !== boxes.join('')) setBoxes(codeToBoxes(value, length));
+  }
   const refs = useRef<Array<HTMLInputElement | null>>([]);
 
-  const chars = Array.from({ length }, (_, i) => code[i] ?? '');
-
-  const commit = (next: string) => {
-    const clamped = next.slice(0, length);
-    setCode(clamped);
-    onChange?.(clamped);
+  const commit = (next: string[]) => {
+    setBoxes(next);
+    onChange?.(next.join(''));
   };
 
   const focusBox = (index: number) => {
     refs.current[Math.max(0, Math.min(length - 1, index))]?.focus();
   };
 
+  // Typing replaces the box's digit (its text is selected on focus); box 0 also takes a whole
+  // autofilled code (`one-time-code`), spread like a paste.
   const onBoxChange = (index: number, raw: string) => {
-    const ch = raw.slice(-1);
-    const next = chars.slice();
+    if (raw.replace(/\D/g, '').length > 1) {
+      const spread = spreadDigits(boxes, index, raw);
+      commit(spread.boxes);
+      focusBox(spread.focusIndex);
+      return;
+    }
+    const ch = raw.replace(/\D/g, '');
+    if (raw && !ch) return; // a letter: ignored
+    const next = boxes.slice();
     next[index] = ch;
-    commit(next.join(''));
+    commit(next);
     if (ch) focusBox(index + 1);
   };
 
   const onKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace') {
-      if (chars[index]) {
-        const next = chars.slice();
+      if (boxes[index]) {
+        e.preventDefault();
+        const next = boxes.slice();
         next[index] = '';
-        commit(next.join(''));
+        commit(next);
       } else if (index > 0) {
         e.preventDefault();
-        const next = chars.slice();
+        const next = boxes.slice();
         next[index - 1] = '';
-        commit(next.join(''));
+        commit(next);
         focusBox(index - 1);
       }
     } else if (e.key === 'ArrowLeft') {
@@ -172,23 +211,15 @@ export function CodeInput({
 
   const onPaste = (index: number, e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const pasted = e.clipboardData.getData('text').replace(/\s/g, '');
-    if (!pasted) return;
-    const next = chars.slice();
-    for (let i = 0; i < pasted.length && index + i < length; i++) {
-      next[index + i] = pasted[i];
-    }
-    commit(next.join(''));
-    focusBox(Math.min(index + pasted.length, length - 1));
+    const spread = spreadDigits(boxes, index, e.clipboardData.getData('text'));
+    commit(spread.boxes);
+    focusBox(spread.focusIndex);
   };
 
   return (
-    <div
-      className={cn('lk-code', invalid && 'lk-code--invalid', className)}
-      aria-invalid={invalid || undefined}
-      {...rest}
-    >
-      {chars.map((ch, i) => (
+    // A group, so the aria-label / aria-labelledby an app passes names the code ("Reset code").
+    <div role="group" className={cn('lk-code', invalid && 'lk-code--invalid', className)} {...rest}>
+      {boxes.map((ch, i) => (
         <input
           key={i}
           ref={(el) => {
@@ -197,9 +228,12 @@ export function CodeInput({
           className={cn('lk-code-box', ch && 'lk-code-filled')}
           inputMode="numeric"
           autoComplete={i === 0 ? 'one-time-code' : 'off'}
-          maxLength={1}
+          maxLength={i === 0 ? length : 1}
           value={ch}
-          aria-label={`Digit ${i + 1}`}
+          onFocus={(e) => e.target.select()}
+          aria-label={digitLabel(i + 1, length)}
+          // On every box: a role-less wrapper's aria-invalid isn't announced.
+          aria-invalid={invalid || undefined}
           onChange={(e) => onBoxChange(i, e.target.value)}
           onKeyDown={(e) => onKeyDown(i, e)}
           onPaste={(e) => onPaste(i, e)}
