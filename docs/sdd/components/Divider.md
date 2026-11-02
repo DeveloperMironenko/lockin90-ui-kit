@@ -113,3 +113,9 @@ There is **no capability gap**.
 - **New need → add to BOTH platforms.** If a screen needs a vertical rule or a thicker divider, add a prop (e.g. `orientation`/`weight`) to `Divider` on web AND native with the same name + tokens — never a one-off.
 - **Tokens only.** The fill is `--border` / `--border-2`; never a literal.
 - **Parity gate.** Both forms render identically at phone width and on native — confirm before shipping a screen that relies on the gradient fade.
+
+## Update — 2026-11-02 (native label = web label)
+- The native label was 12px UI text as written, while the web `.lk-hr-label` is mono 11px / 500, uppercase,
+  0.14em, line height 1.55 ("OR CONTINUE WITH"), so the "identical" parity above wasn't true. Native now uses
+  the web's values (`textTransform: 'uppercase'`, so the text stays as translated and only its look changes).
+  Measured against the web Log in at 402×874 (owner: "the divider has a different font case").
