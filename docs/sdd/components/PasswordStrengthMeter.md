@@ -173,3 +173,11 @@ up two by hand.
   container; the meter's name is `accessibleLabel`. The web root also applies `style` now (it was dropped).
 - **Parity:** ✅ still identical; every new prop on both platforms, sizes per each platform's design. Native: in its own PR.
 
+
+## Update — 2026-11-02 (native parity with the web's rules)
+- Native takes the same new props as web (#45): `rules` (one column, as the web at phone width) with the
+  required `metLabel` / `unmetLabel` (each rule is one accessible element named `<label><met|unmet>`),
+  `labelPrefix`, `accessibleLabel`, and the faint label at score 0. `PasswordRule` is exported. The mobile
+  Set a new password and Create account screens use it (lockin90-v2 1.19a).
+- Rest props now go on the root (the container), as on web; the meter is the inner segment row. Name the
+  meter with `accessibleLabel`, not `accessibilityLabel` through rest.
