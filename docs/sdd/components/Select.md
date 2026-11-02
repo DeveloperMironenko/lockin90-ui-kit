@@ -32,6 +32,9 @@ mirrors the `Input` field look (glass shell, accent focus, invalid red). Each op
 | `disabled` | `boolean` | `false` | ✓ | ✓ | dims field, blocks open |
 | `name` | `string` | — | ✓ | — | **web-only** — renders a hidden `<input>` so the value posts in a native form |
 | `size` | `'md' \| 'sm'` | `'md'` | ✓ | ✓ | `'md'` = standard form field (unchanged); `'sm'` = the design settings `.pref-select` compact mono glass pill: `--glass-2` fill, `--border` hairline (not border-2), content-hugging, mono value (web 13px p8×14 · native 11px p6×9), 13px `--text-faint` chevron |
+| `title` | `string` | — | — | ✓ | **native only** — caption of the option sheet; with it the sheet header shows a close button |
+| `closeLabel` | `string` | `'Close'` | — | ✓ | **native only** — a11y label of the sheet's close button (pass a localized string); web's panel has no close button |
+| `accessibilityLabel` | `string` | — | `aria-label` | ✓ | the field's name for screen readers when no visible `label` (e.g. the language picker); web takes it as `aria-label` (rest) |
 | `leading` | `ReactNode` | — | ✓ | ✓ | optional leading icon inside the field before the value (design `.lang-wrap` globe on the Language select); web wraps it in `.lk-select-lead` |
 | `id` | `string` | — | ✓ | — | **web-only** — on the trigger `<button>` |
 | `className` / `style` | — | — | `className` + rest | — | **web-only** — native takes no `style`/rest |
@@ -127,7 +130,9 @@ The overlay differences are expected substrate, not capability gaps that block u
   `aria-activedescendant`, and `aria-invalid` when invalid. The panel is `role="listbox"`; options are
   `role="option"` with `aria-selected` / `aria-disabled`. Full keyboard: arrows skip disabled, Home/End,
   type-ahead, Enter/Space choose, Esc/Tab close.
-- **Native:** trigger is `accessibilityRole="button"` with `accessibilityState={{ disabled, expanded }}`; each
+- **Native:** trigger is `accessibilityRole="button"` with `accessibilityState={{ disabled, expanded }}`, named by
+  `accessibilityLabel` (else `label`) and valued by the selected option (`accessibilityValue`); the sheet's close
+  button is named by `closeLabel`. Each
   option row is a `button` with `accessibilityState={{ selected, disabled }}`. Selection is touch-driven.
 - **Contrast:** option `--text-dim` on `--bg-1` and the selected accent both clear contrast on the void surfaces.
 
@@ -159,3 +164,11 @@ The overlay differences are expected substrate, not capability gaps that block u
 
 ## Update — 2026-07-10
 - **Haptics:** the primary interaction (segment change / row press / panel open) fires `hapticSelection()` (native `optionalHaptics`; no-op without expo-haptics).
+
+## Update — 2026-11-02
+- **Native `closeLabel`:** the sheet's close button was hard-coded "Close" in English. It takes `closeLabel`
+  (default `'Close'` for stories; apps pass it translated).
+- **Native `accessibilityLabel`:** the trigger announced only the value ("English"). It now takes
+  `accessibilityLabel` (falls back to `label`) and reports the selected option as `accessibilityValue`, as the web
+  trigger's `aria-label` does since 1.0.2.
+- `title` (native sheet caption) was shipped but undocumented; now in §2.

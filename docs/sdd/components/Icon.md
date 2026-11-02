@@ -59,7 +59,7 @@ platforms); `apple` and `stripe` are filled silhouettes rendered in the resolved
 `size` is unitless px; pass e.g. `16`/`17`/`14` to match a row's type (the `Button` row auto-sizes its leading
 `svg` via CSS, but standalone you set `size`).
 
-### IconName categories (117 names — 102 Lucide-mapped + 15 custom; representative, not exhaustive)
+### IconName categories (118 names — 103 Lucide-mapped + 15 custom; representative, not exhaustive)
 
 | Category | Notable names |
 | --- | --- |
@@ -73,7 +73,7 @@ platforms); `apple` and `stripe` are filled silhouettes rendered in the resolved
 | Navigation | `chevronDown` `chevronUp` `bell` `user` `home` `activity` |
 | Domain / nav (web rebuild) | `energy` `sleep` `insights` `billing` `globe` `heart` `flame` `height` `weight` `arrow-right` `shield` |
 | Mobile domain | `mail` `caffeine` `meal` `mood` `scale` `ruler` `card` `data-source` |
-| Consumer screens | `send` `attach` `emoji` `mic` `comment` `bookmark` `target` `medal` `drop` `utensil` `barcode-scan` `pill` `flask` `syringe` `camera` |
+| Consumer screens | `send` `attach` `emoji` `mic` `comment` `bookmark` `target` `medal` `drop` `utensil` `barcode-scan` `qr-code` `pill` `flask` `syringe` `camera` |
 | Devices / tools | `wrench` `monitor` `smartphone` `laptop` (account sub-pages: security sessions · changelog change-groups) |
 | Mood faces (escalating, **custom**) | `mood-rough` `mood-low` `mood-ok` `mood-good` `mood-great` |
 | Provider marks (mono silhouette, **custom**) | `oura` `whoop` `garmin` `polar` `apple-health` `dexcom` `strava` |
@@ -157,3 +157,7 @@ No capability gap — the same icon renders the same on both platforms; only the
   hardcoding a hex on an icon breaks theming.
 - **Parity gate.** Before shipping, confirm the same `name` renders identically web vs native (same size, same
   inherited color, brand fills intact).
+
+## Update — 2026-11-02
+- **`qr-code`** (Lucide `QrCode`), web + native: the mobile auth top row's Scan chip
+  (`lockin90-design/mobile/auth-onboarding.html` `.qr-chip`, 14px, `--accent-2`). Consumer screens category.
