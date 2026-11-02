@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, type ViewProps } from 'react-native'
 import Svg, { Path, Rect } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { OptionalBlurView } from '../internal/optionalBlur';
+import { absoluteFill } from '../internal/absoluteFill';
 
 export interface ProGateProps extends Omit<ViewProps, 'children'> {
   /** Lock-card heading. */
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
     opacity: 0.35,
   },
   frost: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
   },
   contentEmpty: {
     minHeight: 150,

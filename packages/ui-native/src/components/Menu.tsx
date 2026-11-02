@@ -2,6 +2,7 @@ import { useRef, useState, type ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet, Modal, Dimensions } from 'react-native';
 import { colors, radii, fonts, nativeShadows } from '@lockin90/tokens';
 import { Icon } from './Icon';
+import { absoluteFill } from '../internal/absoluteFill';
 
 /** A single row in a {@link Menu}. A `divider` row renders a hairline
  *  separator instead of an action (its `label` is ignored). */
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  backdrop: { ...StyleSheet.absoluteFillObject },
+  backdrop: { ...absoluteFill },
   panel: {
     position: 'absolute',
     minWidth: 160,

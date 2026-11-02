@@ -2,6 +2,7 @@ import { useId, type ReactNode } from 'react';
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, LinearGradient, Stop } from 'react-native-svg';
 import { colors, fonts, radii } from '@lockin90/tokens';
+import { absoluteFill } from '../internal/absoluteFill';
 
 /** Zone verdict color for a 0–100 value (same thresholds as the chart catalog). */
 function zoneColor(v: number): string {
@@ -238,7 +239,7 @@ export function Ring({
 const styles = StyleSheet.create({
   root: { position: 'relative', alignItems: 'center', justifyContent: 'center' },
   center: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
   },

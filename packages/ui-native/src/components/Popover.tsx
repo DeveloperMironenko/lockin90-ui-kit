@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, Modal, Dimensions } from 'react-nati
 import Svg, { Rect, Path } from 'react-native-svg';
 import { colors, radii, fonts, nativeShadows } from '@lockin90/tokens';
 import { Icon } from './Icon';
+import { absoluteFill } from '../internal/absoluteFill';
 
 /* expo-clipboard is an optional dependency — not a hard dep of this kit.
  * Resolve it lazily and guard usage; if it's absent we keep the visual
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  backdrop: { ...StyleSheet.absoluteFillObject },
+  backdrop: { ...absoluteFill },
   panel: {
     position: 'absolute',
     maxWidth: 260,

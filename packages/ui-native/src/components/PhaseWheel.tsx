@@ -2,6 +2,7 @@ import { useId, type ReactNode } from 'react';
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts, radii } from '@lockin90/tokens';
+import { absoluteFill } from '../internal/absoluteFill';
 
 /** A colored phase band on the 24h ring, drawn CLOCKWISE from `from` to `to`
  *  (hours 0..24). When `from > to` the band wraps through midnight (e.g. 23→7). */
@@ -694,7 +695,7 @@ export function PhaseWheel({
 const styles = StyleSheet.create({
   root: { position: 'relative', alignItems: 'center', justifyContent: 'center' },
   center: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',

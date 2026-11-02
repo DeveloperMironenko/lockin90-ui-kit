@@ -1,6 +1,7 @@
 import { useRef, useState, type ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet, Modal, Dimensions, type ViewStyle } from 'react-native';
 import { colors, radii, fonts, nativeShadows } from '@lockin90/tokens';
+import { absoluteFill } from '../internal/absoluteFill';
 
 export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
 
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   badgeText: { fontFamily: fonts.ui, fontSize: 11, fontWeight: '600', color: colors.textDim },
-  backdrop: { ...StyleSheet.absoluteFillObject },
+  backdrop: { ...absoluteFill },
   bubble: {
     position: 'absolute',
     maxWidth: 220,

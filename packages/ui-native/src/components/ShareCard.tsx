@@ -5,6 +5,7 @@ import { BrandMark } from './BrandMark';
 import { GradientText } from './GradientText';
 import { Ring } from './Ring';
 import { Stat } from './Stat';
+import { absoluteFill } from '../internal/absoluteFill';
 
 export type ShareCardGradient = 'flux' | 'cta' | 'mint' | 'violet';
 export type ShareCardSize = 'sm' | 'md' | 'lg';
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
   },
   // aurora wash — a subtle token-gradient over the void surface (kept low so the
   // void dominates the center and light --text stays legible, ~matching the web mesh)
-  wash: { ...StyleSheet.absoluteFillObject, opacity: 0.32 },
+  wash: { ...absoluteFill, opacity: 0.32 },
   top: { position: 'relative' },
   body: { flex: 1, position: 'relative', alignItems: 'center', justifyContent: 'center', gap: 10 },
   eyebrow: { fontFamily: fonts.mono, letterSpacing: 2, textTransform: 'uppercase', color: colors.textDim },

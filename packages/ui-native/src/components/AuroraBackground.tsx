@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Svg, { Circle, Defs, G, Line, Mask, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { colors } from '@lockin90/tokens';
+import { absoluteFill } from '../internal/absoluteFill';
 
 export interface AuroraBackgroundProps {
   /** Intensity of the drifting blobs + grid veil. Default `'default'`. */
@@ -211,7 +212,7 @@ function GridVeil({ size, opacity }: { size: { w: number; h: number }; opacity: 
 
 const styles = StyleSheet.create({
   root: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     overflow: 'hidden',
     backgroundColor: colors.void,
   },

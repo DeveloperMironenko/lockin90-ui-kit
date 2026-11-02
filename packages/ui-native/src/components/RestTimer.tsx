@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-na
 import Svg, { Circle, Defs, FeGaussianBlur, Filter, G } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
 import { Button } from './Button';
+import { absoluteFill } from '../internal/absoluteFill';
 
 export interface RestTimerProps {
   /** Seconds left (drives the arc + the centered readout). */
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
   ring: { width: SIZE, height: SIZE },
   ringCompact: { width: SIZE_COMPACT, height: SIZE_COMPACT },
   center: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 2,

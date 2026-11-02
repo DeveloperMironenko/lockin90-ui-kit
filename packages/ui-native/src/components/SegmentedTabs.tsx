@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
 import { hapticSelection } from "../internal/optionalHaptics";
 import { Icon, type IconName } from './Icon';
+import { absoluteFill } from '../internal/absoluteFill';
 
 /**
  * Per-segment tone — mirrors the web `SegmentedTone`. Two families:
@@ -347,7 +348,7 @@ const styles = StyleSheet.create({
   // absolutely positioned behind the label) + glow, mirroring web
   // `[data-tone='mint'|'gradient'] .is-active`. The label paints dark-on-bright.
   tabActiveFill: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     borderRadius: radii.pill,
   },
   glowMint: { ...nativeShadows.glowMint },
