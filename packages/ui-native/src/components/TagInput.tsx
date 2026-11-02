@@ -156,22 +156,25 @@ export function spreadDigits(
   return { boxes: next, focusIndex: Math.min(index + digits.length, next.length - 1) };
 }
 
-/** What a box's new text does: one digit replaces the box's digit (also typed beside the digit it
- *  had, when its text isn't selected); more digits spread like a paste; no digit at all (a letter)
- *  is ignored (`null`); empty clears the box. Focus moves on after a written digit. */
+/** What a box's new text does (its digit is always selected, so typing replaces it): one digit fills
+ *  the box; more digits (paste, autofill) spread; no digit at all (a letter) is ignored (`null`);
+ *  empty clears the box. Focus moves on after a written digit. */
 export function typeIntoBox(
   boxes: readonly string[],
   index: number,
   raw: string,
 ): { boxes: string[]; focusIndex: number } | null {
-  let digits = raw.replace(/\D/g, '');
+  const digits = raw.replace(/\D/g, '');
   if (raw && !digits) return null;
-  const old = boxes[index];
-  if (digits.length === 2 && old && digits.includes(old)) digits = digits[0] === old ? digits[1] : digits[0];
   if (digits.length > 1) return spreadDigits(boxes, index, digits);
   const next = boxes.slice();
   next[index] = digits;
   return { boxes: next, focusIndex: digits ? Math.min(index + 1, next.length - 1) : index };
+}
+
+/** The boxes at another `length`: each keeps its place (a gap stays a gap), the extra ones dropped. */
+export function resizeBoxes(boxes: readonly string[], length: number): string[] {
+  return Array.from({ length }, (_, i) => boxes[i] ?? '');
 }
 
 /** Segmented N-digit verification code — auto-advance + backspace + paste / autofill into box 0. */
@@ -190,16 +193,13 @@ export function CodeInput({
   const [boxes, setBoxes] = useState<string[]>(() => codeToBoxes(value, length));
   // A new `value` from the app (e.g. cleared after a wrong code) replaces what's shown; the app echoing
   // back what `onChange` gave it doesn't (it would close up a gap the user left).
-  const [prevValue, setPrevValue] = useState(value);
-  if (value !== prevValue) {
-    setPrevValue(value);
-    if (value !== boxes.join('')) setBoxes(codeToBoxes(value, length));
-  }
-  // Another `length` (another kind of code): as many boxes, the digits kept.
-  const [prevLength, setPrevLength] = useState(length);
-  if (length !== prevLength) {
-    setPrevLength(length);
-    setBoxes(codeToBoxes(boxes.join(''), length));
+  // Another `length` (another kind of code) re-draws the boxes, each digit in its place; an app that
+  // changes it passes the matching `value` too, which wins.
+  const [prev, setPrev] = useState({ value, length });
+  if (value !== prev.value || length !== prev.length) {
+    setPrev({ value, length });
+    if (value !== prev.value && value !== boxes.join('')) setBoxes(codeToBoxes(value, length));
+    else if (length !== prev.length) setBoxes(resizeBoxes(boxes, length));
   }
   const [focused, setFocused] = useState<number | null>(null);
   const refs = useRef<Array<TextInput | null>>([]);
@@ -267,8 +267,9 @@ export function CodeInput({
             // spreads across boxes; the rest stay single-char for clean typing.
             maxLength={i === 0 ? length : 1}
             value={ch}
-            // Typing into a filled box replaces its digit.
+            // The digit stays selected, so typing replaces it (also after a tap on a focused box).
             selectTextOnFocus
+            selection={{ start: 0, end: ch.length }}
             accessibilityLabel={digitLabel(i + 1, length)}
             selectionColor={colors.accent}
             onChangeText={(t) => onBoxChange(i, t)}

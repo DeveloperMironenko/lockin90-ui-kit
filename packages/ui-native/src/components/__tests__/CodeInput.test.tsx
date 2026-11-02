@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { CodeInput, codeToBoxes, spreadDigits, typeIntoBox } from '../TagInput';
+import { CodeInput, codeToBoxes, resizeBoxes, spreadDigits, typeIntoBox } from '../TagInput';
 import { findAll, parse, render } from './markup';
 
 /* Multi-char paste / iOS SMS autofill lands the whole code in ONE box; the component spreads it
@@ -57,9 +57,12 @@ describe('typeIntoBox (typing)', () => {
     expect(typeIntoBox(['1', '', ''], 1, '2')).toEqual({ boxes: ['1', '2', ''], focusIndex: 2 });
   });
 
-  test('a digit typed beside the one a box had replaces it (box 0 takes a whole code)', () => {
-    expect(typeIntoBox(['1', '5', ''], 0, '12')).toEqual({ boxes: ['2', '5', ''], focusIndex: 1 });
-    expect(typeIntoBox(['1', '5', ''], 0, '21')).toEqual({ boxes: ['2', '5', ''], focusIndex: 1 });
+  test('a digit replaces the box\'s one (it is selected)', () => {
+    expect(typeIntoBox(['1', '5', ''], 0, '2')).toEqual({ boxes: ['2', '5', ''], focusIndex: 1 });
+  });
+
+  test('two digits into box 0 (a short autofill) spread, not collapse', () => {
+    expect(typeIntoBox(['', '', ''], 0, '34')).toEqual({ boxes: ['3', '4', ''], focusIndex: 2 });
   });
 
   test('a letter is ignored', () => {
@@ -72,6 +75,16 @@ describe('typeIntoBox (typing)', () => {
 
   test('a whole code spreads like a paste', () => {
     expect(typeIntoBox(['', '', ''], 0, '987')).toEqual({ boxes: ['9', '8', '7'], focusIndex: 2 });
+  });
+});
+
+describe('resizeBoxes (another length)', () => {
+  test('keeps each digit in its place, a gap stays a gap', () => {
+    expect(resizeBoxes(['1', '', '3', '4'], 6)).toEqual(['1', '', '3', '4', '', '']);
+  });
+
+  test('drops the boxes past the new length', () => {
+    expect(resizeBoxes(['1', '2', '3', '4'], 2)).toEqual(['1', '2']);
   });
 });
 

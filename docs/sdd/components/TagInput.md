@@ -35,7 +35,7 @@ single-char mono boxes that auto-advance on type and step back on Backspace. It 
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `length` | `number` | `6` | ✓ | ✓ | number of boxes |
+| `length` | `number` | `6` | ✓ | ✓ | number of boxes; a change re-draws them, each digit in its place (pass the matching `value` with it) |
 | `value` | `string` | `''` | ✓ | ✓ | seeds the boxes (digits only, sliced to `length`); a later different `value` (e.g. `''` after a wrong code) replaces them, the app echoing `onChange` back doesn't |
 | `onChange` | `(code: string) => void` | — | ✓ | ✓ | fires the joined code on every change |
 | `invalid` | `boolean` | `false` | ✓ | ✓ | every box reads red |
@@ -77,7 +77,7 @@ single-char mono boxes that auto-advance on type and step back on Backspace. It 
 | Tag remove | × button or Backspace on empty input | × Pressable or Backspace on empty |
 | Tag duplicate/blank | rejected, draft cleared | rejected, draft cleared |
 | TagInput invalid | `.lk-taginput--invalid` red | `taginputInvalid` red border + glow |
-| Code typing | digits only, auto-advance, a digit replaces the box's one (text selected on focus), Backspace steps back and leaves a gap, ←/→ move | the same, without ←/→ (`selectTextOnFocus`) |
+| Code typing | digits only, auto-advance, the box's digit always selected so typing replaces it, Backspace steps back and leaves a gap, ←/→ move | the same, without ←/→ (`selectTextOnFocus` + controlled `selection`) |
 | Code box focus | accent border + glow ring | accent border (`focused` index) |
 | Code filled | cyan-tint box | cyan-tint box |
 | Code invalid | every box red | every box red (`invalid` or legacy `error`) |
@@ -173,7 +173,9 @@ limitation.
   `value` replaces the boxes. Not the web's group and per-box invalid state: RN has no group role or invalid
   state for a `TextInput` that VoiceOver / TalkBack announce, so the app's error text under the field (`FormField`)
   says the code was wrong, and the app's `accessibilityLabel` on the row names it where the platform reads it.
-- **Both:** a digit typed beside a filled box's one (its text not selected) replaces it, instead of spreading
-  into the next box; a changed `length` re-draws the boxes, digits kept (web: follow-up PR).
+- **Both:** each box's digit stays selected, so typing always replaces it (web: selected on focus, on click and
+  after writing; native: `selectTextOnFocus` plus a controlled `selection`), with no guessing which character was
+  new. A changed `length` re-draws the boxes with each digit in its place; when `value` changes at the same time
+  it wins, so an app that changes `length` passes the matching `value` (web: follow-up PR).
 - **Known, not in this change:** `TagInput`'s `Remove <tag>` label and its `Add a tag…` placeholder default are
   built-in English too; they get the same treatment when an app first uses `TagInput`.
