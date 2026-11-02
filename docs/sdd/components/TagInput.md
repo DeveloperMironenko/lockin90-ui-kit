@@ -35,8 +35,8 @@ single-char mono boxes that auto-advance on type and step back on Backspace. It 
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `length` | `number` | `6` | ✓ | ✓ | number of boxes |
-| `value` | `string` | `''` | ✓ | ✓ | seeds the boxes (digits only, sliced to `length`); web: a later different `value` (e.g. `''` after a wrong code) replaces them, the app echoing `onChange` back doesn't |
+| `length` | `number` | `6` | ✓ | ✓ | number of boxes; a change re-draws them, each digit in its place (pass the matching `value` with it) |
+| `value` | `string` | `''` | ✓ | ✓ | seeds the boxes (digits only, sliced to `length`); a later different `value` (e.g. `''` after a wrong code) replaces them, the app echoing `onChange` back doesn't |
 | `onChange` | `(code: string) => void` | — | ✓ | ✓ | fires the joined code on every change |
 | `invalid` | `boolean` | `false` | ✓ | ✓ | every box reads red |
 | `digitLabel` | `(position: number, length: number) => string` | `` (p, l) => `Digit ${p} of ${l}` `` | ✓ | ✓ | each box's a11y label (`position` from 1); apps pass a translated one. A function, not a string like `PasswordInput`'s labels: the label has two numbers, and the app's i18n fills them in |
@@ -45,7 +45,9 @@ single-char mono boxes that auto-advance on type and step back on Backspace. It 
 | _rest_ | `Omit<HTMLAttributes<HTMLDivElement>,'onChange'>` (web) / `ViewProps` (native) | — | ✓ | ✓ | |
 
 - **State:** both are **internally stateful** — `tags`/`value` seed `useState` and the component manages edits,
-  emitting through `onChange`. They are not fully controlled (re-feeding a new `tags`/`value` prop won't reset state).
+  emitting through `onChange`. `TagInput` isn't controlled (a new `tags` won't reset it). `CodeInput` keeps one entry
+  per box and follows a **changed** `value` (to clear after a wrong code, the app stores `onChange`'s code as
+  `value` and sets `''`; a `value` that never changes can't clear it) and a changed `length` (digits kept).
 - **Native TagInput** rejects blanks/dupes and commits the same way; Enter is replaced by `onSubmitEditing`.
 
 ## 3. Visual spec (tokens — never hardcode)
@@ -75,7 +77,7 @@ single-char mono boxes that auto-advance on type and step back on Backspace. It 
 | Tag remove | × button or Backspace on empty input | × Pressable or Backspace on empty |
 | Tag duplicate/blank | rejected, draft cleared | rejected, draft cleared |
 | TagInput invalid | `.lk-taginput--invalid` red | `taginputInvalid` red border + glow |
-| Code typing | auto-advance, Backspace steps back, ←/→ move | auto-advance, Backspace steps back |
+| Code typing | digits only, auto-advance, the box's digit always selected so typing replaces it, Backspace steps back and leaves a gap, ←/→ move | the same, without ←/→ (`selectTextOnFocus` + controlled `selection`) |
 | Code box focus | accent border + glow ring | accent border (`focused` index) |
 | Code filled | cyan-tint box | cyan-tint box |
 | Code invalid | every box red | every box red (`invalid` or legacy `error`) |
@@ -142,7 +144,7 @@ limitation.
 **Don't**
 - ✗ Don't use the native `error` prop in new code — it's the legacy alias; `invalid` is the cross-platform name.
 - ✗ Don't rely on mid-box paste on native — only box-0 autofill/paste fills the code.
-- ✗ Don't re-feed `value`/`tags` expecting a reset — they only seed initial state.
+- ✗ Don't re-feed `tags` expecting a reset — it only seeds `TagInput`'s state. (`CodeInput` follows a changed `value`.)
 - ✗ Don't hardcode the pill/box colors — they're tokens.
 
 ## 9. Anti-patterns & lookalike ban
@@ -166,6 +168,14 @@ limitation.
 - **Web fixes (first real screens):** the code is kept one entry per box, so clearing a middle box leaves a gap
   instead of shifting the later digits; box 0 takes a whole autofilled code (`maxLength = length`, as native) and
   spreads it; paste and typing keep digits only ("Code: 1234-5678" → `12345678`); a box's text is selected on
-  focus, so typing replaces its digit; a new `value` replaces the boxes. Native gets the same in its PR.
+  focus, so typing replaces its digit; a new `value` replaces the boxes.
+- **Native:** `digitLabel` (`accessibilityLabel`), one entry per box, digits only, `selectTextOnFocus`, a new
+  `value` replaces the boxes. Not the web's group and per-box invalid state: RN has no group role or invalid
+  state for a `TextInput` that VoiceOver / TalkBack announce, so the app's error text under the field (`FormField`)
+  says the code was wrong, and the app's `accessibilityLabel` on the row names it where the platform reads it.
+- **Both:** each box's digit stays selected, so typing always replaces it (web: selected on focus, on click and
+  after writing; native: `selectTextOnFocus` plus a controlled `selection`), with no guessing which character was
+  new. A changed `length` re-draws the boxes with each digit in its place; when `value` changes at the same time
+  it wins, so an app that changes `length` passes the matching `value` (web: follow-up PR).
 - **Known, not in this change:** `TagInput`'s `Remove <tag>` label and its `Add a tag…` placeholder default are
   built-in English too; they get the same treatment when an app first uses `TagInput`.
