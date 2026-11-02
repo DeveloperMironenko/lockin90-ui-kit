@@ -155,8 +155,10 @@ function Blob({
       <Svg width={d} height={d}>
         <Defs>
           <RadialGradient id={id} cx="50%" cy="50%" r="50%">
-            <Stop offset="0" stopColor={blob.color} stopOpacity={0.8 * intensity} />
-            <Stop offset="0.5" stopColor={blob.color} stopOpacity={0.28 * intensity} />
+            {/* peaks calibrated to the web's blurred blobs (opacity × blur(70px)) at
+                the same variant, measured side by side with the web app at 402×874 */}
+            <Stop offset="0" stopColor={blob.color} stopOpacity={0.18 * intensity} />
+            <Stop offset="0.5" stopColor={blob.color} stopOpacity={0.06 * intensity} />
             <Stop offset="1" stopColor={blob.color} stopOpacity={0} />
           </RadialGradient>
         </Defs>

@@ -138,3 +138,9 @@ Ambient-decoration deltas only; the two shells read as one design.
   without applying it, so the grid covered the whole screen evenly. It now matches the web (§3 native values,
   §5): 56px, `.025`, the variant's `--lk-aurora-g` opacity, masked by the top-centred ellipse (opaque to 30%, clear
   at 75%). Owner, 2026-11-01: mobile auth screens use the web app's look, grid included.
+
+## Update — 2026-11-02 (calibration)
+- **Native blobs as bright as the web's.** Native blob gradients peaked at `0.8×intensity` (0.62 at `default`),
+  so the native aurora read several times louder than the web, where `blur(70px)` spreads each blob and lowers its
+  peak. The gradient stops are now `0.18` / `0.06` × intensity, measured against the running web app's Log in at
+  402×874 (background sampled at the same spots: top-left web `24,21,50` / native `25,26,58`).
