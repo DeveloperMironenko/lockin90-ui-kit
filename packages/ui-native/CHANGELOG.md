@@ -1,5 +1,11 @@
 # @lockin90/ui-native
 
+## 2.1.0
+
+### Minor Changes
+
+- 1c29087: BrandMark: `wordmarkSize` for the `lockup` (as on web), with the web's gap and letter-spacing.
+
 ## 2.0.0
 
 ### Major Changes
