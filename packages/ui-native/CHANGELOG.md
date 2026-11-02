@@ -1,5 +1,18 @@
 # @lockin90/ui-native
 
+## 2.2.0
+
+### Minor Changes
+
+- 7e2ac06: CodeInput, as on web:
+  - `digitLabel(position, length)` for each box's `accessibilityLabel`. The default changes from `Digit N` to `Digit N of L` (English, for stories: pass a translated one).
+  - Fixed: clearing a middle box no longer shifts the later digits left; paste / autofill and typing keep digits only (a typed letter disappears); typing into a filled box replaces its digit (it stays selected: `selectTextOnFocus` + a controlled `selection`); a new `value` from the app (e.g. `''` after a wrong code) replaces what's shown; a changed `length` re-draws the boxes, each digit in its place.
+
+### Patch Changes
+
+- 933702f: Absolute fills spread a plain internal style object: React Native 0.88 removed `absoluteFillObject`, so AuroraBackground, Modal, Sheet, Popover, Menu, Tooltip, TabBar, Toggle and 10 more lost their positioning there.
+- 2f5917d: AuroraBackground: native blobs are as bright as the web's (they read several times louder).
+
 ## 2.1.0
 
 ### Minor Changes
