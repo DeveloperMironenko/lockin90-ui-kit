@@ -146,3 +146,6 @@ None block use; app code reads 1:1 (same `label`/`help`/`error`/`required`, same
 - **`labelAction`** (web + native): the label row can end with a link or action, as the sign-in design's
   "Forgot password?" (`auth.html`, `auth-onboarding.html`). Both apps had built the row by hand around the
   kit's label; with the slot, they pass the link instead. Web first; native in its own PR.
+
+## Update — 2026-11-02 (native sizes match web)
+- **Native label = the label the web shows:** 11px / 500, `text-dim`, 0.12em, line height 17 (was 10px `text-faint`). On web this look comes from a rule that leaks out of the marketing `Field`; FormField's own web CSS adopts it in a following web PR.

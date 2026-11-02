@@ -134,3 +134,6 @@ No capability gap blocks use.
   translated "Show password" left the revealed state announced as "Show password" too (web Log in, mobile Log in).
   Two labels, chosen by state, on web and native. `toggleLabel` is removed, so `@lockin90/ui` and
   `@lockin90/ui-native` go to the next major; the one caller (`frontend` LoginForm) switches in its bump PR.
+
+## Update — 2026-11-02 (native sizes match web)
+- **Native height = web height:** `minHeight` 39.6 (sm 31.5) like `Input`; the input's explicit `lineHeight: 20` is gone (it made this field 3pt taller than `Input`). The `label` caption matches FormField's.

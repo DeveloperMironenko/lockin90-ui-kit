@@ -160,3 +160,6 @@ There is **no capability gap** that blocks use — the button is fully usable an
 
 ## Update — 2026-11-02 (accessibility)
 - **Native role built in:** every variant is announced as a button; apps no longer pass `accessibilityRole`.
+
+## Update — 2026-11-02 (native sizes match web)
+- **Native height = web height:** the label's line height is the web's 1.55, so md is `12 + 14×1.55 + 12` = 45.7 (was 41).

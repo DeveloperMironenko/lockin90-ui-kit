@@ -87,6 +87,8 @@ const styles = StyleSheet.create({
     fontFamily: fonts.ui,
     fontWeight: '600',
     fontSize: 12.5,
+    // the web's 1.55 line height: 10 + 19.4 + 10 + 2 borders = 41.4, as on web
+    lineHeight: 12.5 * 1.55,
     letterSpacing: 0.1,
   },
 });

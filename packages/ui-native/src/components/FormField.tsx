@@ -169,12 +169,14 @@ const styles = StyleSheet.create({
   // FormField
   field: { gap: 6, minWidth: 0 },
   labelRow: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: 10 },
+  // the label the web shows (11px / 500, text-dim, 0.12em, line height 1.55 = 17)
   fieldLabel: {
     fontFamily: fonts.mono,
-    fontSize: 10,
+    fontSize: 11,
+    lineHeight: 17,
     fontWeight: '500',
-    letterSpacing: 1.2,
-    color: colors.textFaint,
+    letterSpacing: 1.32,
+    color: colors.textDim,
   },
   req: { color: colors.accent, fontSize: 11 },
   control: { minWidth: 0 },

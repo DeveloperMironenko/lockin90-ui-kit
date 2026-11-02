@@ -248,12 +248,14 @@ const styles = StyleSheet.create({
   wrap: { flexDirection: 'column', gap: 6, alignSelf: 'stretch' },
   // sm hugs its content instead of stretching (design `.pref-select` pill)
   wrapSm: { alignSelf: 'auto' },
+  // the same caption as FormField's label (11px / 500, text-dim, line height 17), as the web shows
   label: {
-    fontFamily: fonts.ui,
-    fontSize: 10,
+    fontFamily: fonts.mono,
+    fontSize: 11,
+    lineHeight: 17,
     fontWeight: '500',
-    letterSpacing: 1.2,
-    color: colors.textFaint,
+    letterSpacing: 1.32,
+    color: colors.textDim,
   },
   field: {
     flexDirection: 'row',

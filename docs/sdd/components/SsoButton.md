@@ -114,3 +114,6 @@ No capability gap.
 
 ## Update — 2026-11-02 (accessibility)
 - **Native name replaceable:** the built-in English "Continue with …" was set after the rest props, so an app's translated `accessibilityLabel` was ignored. Rest props now come last.
+
+## Update — 2026-11-02 (native sizes match web)
+- **Native height = web height:** label line height 1.55, so the button is 41.4 as on web (was 37).
