@@ -1,5 +1,13 @@
 # @lockin90/ui-native
 
+## 2.6.1
+
+### Patch Changes
+
+- 92749ad: CodeInput: digits 20 (was 22), as the web at phone width — mobile auth screens match the running web app at 402×874.
+- 04c5746: Alert: a sentence with styled parts gets the alert's text style, as on web (only a plain string did).
+- b26d392: Select: the value sits left and fills the row, and the field is the web's height (39.6), as on web.
+
 ## 2.6.0
 
 ### Minor Changes
