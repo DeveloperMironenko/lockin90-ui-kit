@@ -175,3 +175,8 @@ The overlay differences are expected substrate, not capability gaps that block u
 
 ## Update — 2026-11-02 (native sizes match web)
 - **Native label caption** matches FormField's (11px / 500 mono, `text-dim`, line height 17).
+
+## Update — 2026-11-02 (native field = web field)
+- **Native `md` field:** the value takes the row (`flex: 1`) and sits left after the leading icon, as on web;
+  the three parts were spread with `space-between`, which put the value in the middle. The field has the web's
+  height (`minHeight` 39.6, as `Input`). `sm` (the language chip) keeps hugging its content and its height.

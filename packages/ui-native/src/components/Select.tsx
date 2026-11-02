@@ -266,6 +266,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border2,
     backgroundColor: colors.glass2,
+    // the web field's height (as Input): 9 + 14 × 1.4 + 9 + 2 borders = 39.6
+    minHeight: 39.6,
     paddingVertical: 9,
     paddingLeft: 12,
     paddingRight: 11,
@@ -273,6 +275,7 @@ const styles = StyleSheet.create({
   // sm — design settings `.pref-select`: mono glass pill, `--border` hairline,
   // r10, padding 6×9 (lead icon → text gap 5, mock `.lang-wrap` geometry)
   fieldSm: {
+    minHeight: 0,
     gap: 5,
     borderColor: colors.border,
     paddingVertical: 6,
@@ -282,8 +285,9 @@ const styles = StyleSheet.create({
   fieldInvalid: { borderColor: colors.zoneLow },
   fieldDisabled: { opacity: 0.55 },
   leading: { flexShrink: 0, alignItems: 'center', justifyContent: 'center' },
-  value: { flexShrink: 1, fontFamily: fonts.ui, fontSize: 14, color: colors.text },
-  valueSm: { fontFamily: fonts.mono, fontSize: 11 },
+  // the value takes the row and sits left after the icon, as on web; `sm` hugs its content
+  value: { flex: 1, fontFamily: fonts.ui, fontSize: 14, color: colors.text },
+  valueSm: { flex: 0, flexShrink: 1, fontFamily: fonts.mono, fontSize: 11 },
   placeholder: { color: colors.textFaint },
   backdrop: {
     flex: 1,
