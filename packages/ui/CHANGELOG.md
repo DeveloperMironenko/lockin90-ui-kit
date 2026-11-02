@@ -1,5 +1,11 @@
 # @lockin90/ui
 
+## 2.3.0
+
+### Minor Changes
+
+- ff16baf: FormField: `labelAction`, a link or action at the end of the label row (e.g. "Forgot password?").
+
 ## 2.2.0
 
 ### Minor Changes
