@@ -35,7 +35,7 @@ export function FollowButton({
   const labelSize = size === 'sm' ? 12 : 12.5;
 
   const tone = following
-    ? { color: colors.textDim, border: colors.border, bg: colors.glass }
+    ? { color: colors.textDim, border: colors.border2, bg: colors.glass }
     : { color: '#cbbcff', border: 'rgba(124,92,255,0.45)', bg: 'rgba(124,92,255,0.10)' };
 
   return (
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    borderRadius: radii.pill,
+    borderRadius: radii.sm,
     borderWidth: 1,
     alignSelf: 'flex-start',
   },

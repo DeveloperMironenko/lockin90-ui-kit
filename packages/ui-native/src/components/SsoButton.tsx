@@ -75,11 +75,10 @@ const styles = StyleSheet.create({
     borderRadius: radii.sm,
     backgroundColor: 'rgba(255,255,255,0.04)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.10)',
+    borderColor: colors.border2,
   },
   pressed: {
     backgroundColor: 'rgba(255,255,255,0.06)',
-    borderColor: 'rgba(255,255,255,0.16)',
   },
   disabled: { opacity: 0.5 },
   iconSlot: { width: 16, height: 16, alignItems: 'center', justifyContent: 'center' },

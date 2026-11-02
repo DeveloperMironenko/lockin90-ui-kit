@@ -90,7 +90,7 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
     textColor = colors.bad;
   } else {
     backgroundColor = ghost ? 'transparent' : colors.glass2;
-    borderColor = ghost ? colors.border : colors.border2;
+    borderColor = colors.border2;
     textColor = ghost ? colors.textDim : colors.text;
   }
 
@@ -117,7 +117,7 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
 }
 
 const styles = StyleSheet.create({
-  base: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, borderRadius: radii.pill },
+  base: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, borderRadius: radii.sm },
   padMd: { paddingVertical: 12, paddingHorizontal: 20 },
   padSm: { paddingVertical: 8, paddingHorizontal: 14 },
   primary: { ...nativeShadows.glowAccent },
