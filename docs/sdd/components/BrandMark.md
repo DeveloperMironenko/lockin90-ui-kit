@@ -26,13 +26,14 @@ It's the only sanctioned way to render the logo. Line color `#78CEDF`, dot color
 | --- | --- | --- | --- | --- | --- |
 | `variant` | `'mark' \| 'lockup' \| 'icon' \| 'mono'` | `'mark'` | ✓ | ✓ | identical union both sides |
 | `size` | `number` | `28` | ✓ | ✓ | px height of the mark; lockup wordmark scales with it |
+| `wordmarkSize` | `number` | `round(size*1.05)` | ✓ | ✓ | `lockup` only: the wordmark's own font size, so the mark can be larger than the text (web logo: `size={30} wordmarkSize={19}`); the gap becomes `round(wordmarkSize*0.52)` |
 | `title` | `string` | `'LockIn90'` | ✓ | — | **web only** — svg `aria-label` / accessible name |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |
 | _rest_ | `Omit<SVGProps<SVGSVGElement>, 'height' \| 'width'>` (web) | — | ✓ | — | spread onto the `<svg>` (web); native props are explicit |
 
 - **Web:** extends `Omit<SVGProps<SVGSVGElement>, 'height' | 'width'>` (size controls dimensions); `title` becomes the svg `aria-label`. Uses `useId()` (de-colon'd) to namespace the `icon` gradient `id`s.
 - **Native:** explicit `{ variant, size, style }` — no SVGProps spread, no `title` prop. `icon`/`lockup` gradient ids are fixed string literals (`lkNbg`/`lkNgl`/`lkWm90`).
-- **Geometry:** `mark`/`mono` viewBox `"30 28 320 248"`, height `round(size*248/320)`; `icon` viewBox `"0 0 343 302"`, height `round(size*302/343)`, corner radius `round(size*0.22)`; `lockup` gap `round(size*0.42)`, wordmark font `round(size*1.05)`.
+- **Geometry:** `mark`/`mono` viewBox `"30 28 320 248"`, height `round(size*248/320)`; `icon` viewBox `"0 0 343 302"`, height `round(size*302/343)`, corner radius `round(size*0.22)`; `lockup` gap `round(size*0.42)` (with `wordmarkSize`: `round(wordmarkSize*0.52)`), wordmark font `wordmarkSize ?? round(size*1.05)`, letter-spacing −0.02em.
 
 ## 3. Visual spec (tokens — never hardcode)
 
@@ -113,3 +114,7 @@ No capability gap blocks use.
 - **New variant → both platforms.** A new lockup orientation goes on `BrandMark` web **and** native (same variant name, same glyph), never a one-off SVG.
 - **Brand constants + tokens.** Line `#78CEDF` / dot `#C6F84E` are fixed brand values; `mono` and the wordmark base text use `--text`/`colors.text`. Don't fork either per app.
 - **Parity gate.** Before shipping a header/auth/marketing surface, diff web phone-width vs native: same variant, same size, same wordmark treatment.
+
+## Update — 2026-11-02
+- **Native `wordmarkSize`** (web had it, undocumented): the lockup's text sized apart from the mark, with the web's
+  gap rule and the web's −0.02em letter-spacing. The mobile auth top row shows the web logo (30px mark, 19px text).
