@@ -1,5 +1,11 @@
 # @lockin90/ui
 
+## 2.0.0
+
+### Major Changes
+
+- e87bb00: PasswordInput: `toggleLabel` is replaced by `showLabel` + `hideLabel`, so the eye toggle names the action it does in each state. Icon: new `qr-code` glyph.
+
 ## 1.0.2
 
 ### Patch Changes
