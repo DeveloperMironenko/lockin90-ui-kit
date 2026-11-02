@@ -43,6 +43,9 @@ Inter (UI), JetBrains Mono (data).
   `<table>`), portals + collision math for overlays, `backdrop-filter` blur, CSS animations.
 - **Native** uses `StyleSheet` + `react-native-svg` + `expo-linear-gradient`, `Pressable`/`Modal`,
   `PanResponder` for drag, `theme.ts`. No hover; press feedback instead.
+- **Native absolute fill:** spread `absoluteFill` from `src/internal/absoluteFill.ts`, never
+  `StyleSheet.absoluteFillObject`: React Native 0.88 removed it, and spreading the missing value silently
+  drops the positioning.
 
 ### Native glow/shadow substrate (current rule)
 Native SVG glows/shines are **real Gaussian blurs**: a duplicate of the crisp shape drawn behind it with

@@ -11,6 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { absoluteFill } from '../internal/absoluteFill';
 
 export interface SheetProps {
   /** Show the sheet. When false, nothing renders. */
@@ -129,7 +130,7 @@ export function Sheet({ open = true, onClose, side = 'bottom', title, children }
 
 const styles = StyleSheet.create({
   scrim: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.55)',
   },

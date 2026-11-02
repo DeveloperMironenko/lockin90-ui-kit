@@ -5,6 +5,7 @@ import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens
 import { Icon, type IconName } from './Icon';
 import { OptionalBlurView } from '../internal/optionalBlur';
 import { hapticSelection } from '../internal/optionalHaptics';
+import { absoluteFill } from '../internal/absoluteFill';
 
 /* ============================================================================
    Mobile atoms — TabBar (bottom navigation) + FAB (floating action button).
@@ -223,7 +224,7 @@ const styles = StyleSheet.create({
   // the frosted/translucent background, clipped to the capsule independently
   // of the content so the FAB overhang survives
   capsuleFill: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     borderRadius: radii.pill,
     overflow: 'hidden',
     backgroundColor: 'rgba(12,15,26,0.82)',

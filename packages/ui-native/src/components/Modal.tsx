@@ -2,6 +2,7 @@ import { type ReactNode } from 'react';
 import { Modal as RNModal, View, Text, Pressable, StyleSheet } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { absoluteFill } from '../internal/absoluteFill';
 
 export interface ModalProps {
   /** Show the modal. When false, nothing renders. */
@@ -61,7 +62,7 @@ export function Modal({ open = true, onClose, title, children, footer, size = 'm
 
 const styles = StyleSheet.create({
   scrim: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

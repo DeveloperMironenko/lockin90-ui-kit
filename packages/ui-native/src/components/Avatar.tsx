@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { View, Text, Image, Animated, Easing, StyleSheet, type ViewProps } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, fonts, gradients, nativeShadows } from '@lockin90/tokens';
+import { absoluteFill } from '../internal/absoluteFill';
 
 export interface AvatarProps extends ViewProps {
   /** Display name — used to derive monogram initials when `initials` is omitted. */
@@ -160,5 +161,5 @@ const styles = StyleSheet.create({
   monoText: { fontFamily: fonts.display, fontWeight: '700', color: '#07080d', letterSpacing: -0.3 },
   // backgroundColor anchors the glow's shape on iOS; it's fully hidden by the orb
   auraGlow: { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.void, ...nativeShadows.glowAccent },
-  auraOrb: { ...StyleSheet.absoluteFillObject, overflow: 'hidden' },
+  auraOrb: { ...absoluteFill, overflow: 'hidden' },
 });

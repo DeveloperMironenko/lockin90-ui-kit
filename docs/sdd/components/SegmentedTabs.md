@@ -69,7 +69,7 @@ The **iOS-style segmented control** — a glass pill *track* of equal-width segm
 | Locked | `opacity 0.5`, non-interactive, `Icon name="lock" size={12}` |
 
 - **Hover (web):** idle segment text brightens to `--text`.
-- **Mint tone (web):** `.lk-seg[data-tone='mint'] .lk-seg-tab.is-active` swaps the active pill to `var(--grad-mint)` + `var(--glow-mint)` + dark label; idle segments unchanged. **Native:** a `gradients.mint` `LinearGradient` fills the active segment behind the label (`StyleSheet.absoluteFillObject`, `radii.pill`, `nativeShadows.glowMint`). The dark-on-bright `#0A0A12` label matches `Button` `primary`.
+- **Mint tone (web):** `.lk-seg[data-tone='mint'] .lk-seg-tab.is-active` swaps the active pill to `var(--grad-mint)` + `var(--glow-mint)` + dark label; idle segments unchanged. **Native:** a `gradients.mint` `LinearGradient` fills the active segment behind the label (an absolute fill, `radii.pill`, `nativeShadows.glowMint`). The dark-on-bright `#0A0A12` label matches `Button` `primary`.
 - **Rich form (both platforms):** count badge `.lk-seg-count` / native count pill — `--font-mono`/`fonts.mono` `10px` (native `lineHeight 12`), `--glass-2`/`colors.glass2` pill, tabular-nums; per-item tone dot `.lk-seg-dot` / native 6×6 `View` — in `--ok`/`--warn`/`--bad` (`colors.ok/warn/bad`); active toned segments tint label + badge toward the tone (web `color-mix(tone 16%)`, native the flattened `rgba(…,0.16)` literals). Native labels additionally guard overflow with `numberOfLines={2}` + `adjustsFontSizeToFit` (min scale 0.8).
 
 ## 4. States

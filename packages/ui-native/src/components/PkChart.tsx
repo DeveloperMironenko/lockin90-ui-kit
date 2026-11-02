@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Svg, { Path, Line, Rect, Defs, LinearGradient, Stop, ClipPath } from 'react-native-svg';
 import { colors, fonts, radii } from '@lockin90/tokens';
+import { absoluteFill } from '../internal/absoluteFill';
 
 /** A single dose taken at `at` hours from t0, of `mg` of substance. */
 export interface PkDose {
@@ -326,7 +327,7 @@ export function PkChart({
           {beatAnim && line && canvasW > 0 ? (
             <Animated.View
               pointerEvents="none"
-              style={[StyleSheet.absoluteFillObject, { opacity: beatAnim.glowOpacity }]}
+              style={[StyleSheet.absoluteFill, { opacity: beatAnim.glowOpacity }]}
             >
               <Svg width={canvasW} height={height} viewBox={`0 0 ${VB_W} ${height}`} preserveAspectRatio="none">
                 <Path d={line} fill="none" stroke={color} strokeWidth={7} strokeLinecap="round" strokeLinejoin="round" />

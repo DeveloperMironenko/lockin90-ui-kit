@@ -10,6 +10,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { colors, radii } from '@lockin90/tokens';
+import { absoluteFill } from '../internal/absoluteFill';
 
 /** A normalized focal point — `x`/`y` each in the `0..1` range (top-left origin). */
 export interface FocalPoint {
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg1,
   },
   img: { width: '100%', height: '100%' },
-  grid: { ...StyleSheet.absoluteFillObject },
+  grid: { ...absoluteFill },
   vLine: {
     position: 'absolute',
     top: 0,

@@ -2,6 +2,7 @@ import { View, Text, Pressable, StyleSheet, type StyleProp, type ViewStyle } fro
 import { hapticSelection } from '../internal/optionalHaptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients } from '@lockin90/tokens';
+import { absoluteFill } from '../internal/absoluteFill';
 
 export type ToggleSize = 'sm' | 'md';
 
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
     boxShadow: '0 0 14px rgba(124,92,255,0.45)',
   },
   trackFill: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     borderRadius: radii.pill,
   },
   knob: {

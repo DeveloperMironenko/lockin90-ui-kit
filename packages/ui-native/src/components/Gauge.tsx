@@ -2,6 +2,7 @@ import { useId, type ReactNode } from 'react';
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Path, Line, Circle, Defs, FeGaussianBlur, Filter, LinearGradient, Stop } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
+import { absoluteFill } from '../internal/absoluteFill';
 
 /** Zone verdict color for a normalized 0..1 value (catalog thresholds). */
 function zoneColor01(t: number): string {
@@ -304,7 +305,7 @@ export function Gauge({
 const styles = StyleSheet.create({
   root: { position: 'relative', alignItems: 'center', justifyContent: 'center' },
   center: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 2,
