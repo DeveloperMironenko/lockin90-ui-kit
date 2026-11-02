@@ -52,10 +52,15 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: colors.border,
   },
+  // the web `.lk-hr-label`: mono 11px / 500, uppercase, 0.14em, line height 1.55
   label: {
     flexShrink: 0,
-    fontFamily: fonts.ui,
-    fontSize: 12,
+    fontFamily: fonts.mono,
+    fontSize: 11,
+    fontWeight: '500',
+    lineHeight: 17,
+    letterSpacing: 1.54,
+    textTransform: 'uppercase',
     color: colors.textFaint,
   },
 });
