@@ -1,5 +1,15 @@
 # @lockin90/ui-native
 
+## 2.4.0
+
+### Minor Changes
+
+- 6f6c709: One shape, one line (buttons and chips), as on web: Button, Chip, BackLink and FollowButton corners go from pill to 10 (`radii.sm`); their outlines, and SplitButton's and SsoButton's, use the shared `colors.border2` line.
+
+### Patch Changes
+
+- a4d8b02: Native controls are the web's height: Input and PasswordInput 39.6 (sm 31.5), Button md 45.7, SsoButton 41.4; field labels are 11px text-dim with line height 17, as the web shows.
+
 ## 2.3.0
 
 ### Minor Changes
