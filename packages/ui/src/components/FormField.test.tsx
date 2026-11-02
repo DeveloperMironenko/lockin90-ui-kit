@@ -12,4 +12,13 @@ describe('FormField labelAction', () => {
     );
     expect(html).toMatch(/lk-field-label-row.*<label[^>]*>Password<\/label><a href="\/forgot">Forgot password\?<\/a><\/div>/);
   });
+
+  it('renders the action without a label', () => {
+    const html = renderToStaticMarkup(
+      <FormField labelAction={<a href="/forgot">Forgot password?</a>}>
+        <input />
+      </FormField>,
+    );
+    expect(html).toContain('Forgot password?');
+  });
 });

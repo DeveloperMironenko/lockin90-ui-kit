@@ -33,12 +33,14 @@ export function FormField({
 }: FormFieldProps) {
   return (
     <div className={cn('lk-field', className)} {...rest}>
-      {label ? (
+      {label || labelAction ? (
         <div className="lk-field-label-row">
-          <label className="lk-field-label" htmlFor={htmlFor}>
-            {label}
-            {required ? <span className="lk-field-req" aria-hidden="true">*</span> : null}
-          </label>
+          {label ? (
+            <label className="lk-field-label" htmlFor={htmlFor}>
+              {label}
+              {required ? <span className="lk-field-req" aria-hidden="true">*</span> : null}
+            </label>
+          ) : null}
           {labelAction}
         </div>
       ) : null}
