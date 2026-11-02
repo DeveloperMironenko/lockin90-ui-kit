@@ -54,7 +54,7 @@ The **native twin** renders the same idea without CSS filters: an absolute-fill 
 
 - Blob colors fall back to literals via `var(--accent, #7c5cff)` etc. so the layer renders even without the token sheet loaded.
 
-**Native values** (same palette, SVG substrate): wash = `RadialGradient` violet `#7C5CFF` → cyan `#22D3EE` → transparent (2-color vs web's 4-anchor wash); blobs = `Circle`s filled with radial gradients — `#7C5CFF` (r 0.62, 17s), `#22D3EE` (r 0.54, 21s), `#FF3D81` (r 0.66, 25s) — drifting via `Animated` translate loops (`Easing.inOut(sin)`, `useNativeDriver: true`; web loops are 26/30/34s); grid veil = SVG lines at **56px** step, `rgba(255,255,255,.024)`, layer opacity = the web's `--lk-aurora-g` for the variant (0.5 / 0.32 / 0.62), under an SVG `Mask` with the web's fade: an ellipse centred at the top edge (farthest-corner), opaque to 30%, clear at 75%. **No blur filter** — soft edges come from the gradient falloff.
+**Native values** (same palette, SVG substrate): wash = `RadialGradient` violet `#7C5CFF` → cyan `#22D3EE` → transparent (2-color vs web's 4-anchor wash); blobs = `Circle`s filled with radial gradients — `#7C5CFF` (r 0.62, 17s), `#22D3EE` (r 0.54, 21s), `#FF3D81` (r 0.66, 25s) — drifting via `Animated` translate loops (`Easing.inOut(sin)`, `useNativeDriver: true`; web loops are 26/30/34s); grid veil = SVG lines at **56px** step, `rgba(255,255,255,.025)`, layer opacity = the web's `--lk-aurora-g` for the variant (0.5 / 0.32 / 0.62), under an SVG `Mask` with the web's fade: an ellipse centred at the top edge (farthest-corner), opaque to 30%, clear at 75%. **No blur filter** — soft edges come from the gradient falloff.
 
 ## 4. States
 
@@ -76,7 +76,7 @@ No hover/focus/disabled — it's a non-interactive decorative layer.
   **radial-gradient circles** whose falloff supplies the softness (no blur pass — scroll-perf safe).
 - **Motion opt-out:** web honors `prefers-reduced-motion`; native exposes **`still`** (no OS hook).
 - **Timings/values:** blob loops 17/21/25s (native) vs 26/30/34s (web); wash 2-color vs 4-anchor; blob intensity is a
-  scalar (0.55/0.78/1) vs `--lk-aurora-i`. The **grid is the same** on both: 56px cells, `.024` lines, `--lk-aurora-g`
+  scalar (0.55/0.78/1) vs `--lk-aurora-i`. The **grid is the same** on both: 56px cells, `.025` lines, `--lk-aurora-g`
   opacity, top-centred fade (SVG lines + `Mask` vs CSS gradients + `mask-image`).
 - **Props:** native adds `style`, drops `className`/rest.
 
@@ -136,5 +136,5 @@ Ambient-decoration deltas only; the two shells read as one design.
 ## Update — 2026-11-02
 - **Native grid = web grid.** The native veil drew 40px cells at `.03×intensity` and defined its fade gradient
   without applying it, so the grid covered the whole screen evenly. It now matches the web (§3 native values,
-  §5): 56px, `.024`, the variant's `--lk-aurora-g` opacity, masked by the top-centred ellipse (opaque to 30%, clear
+  §5): 56px, `.025`, the variant's `--lk-aurora-g` opacity, masked by the top-centred ellipse (opaque to 30%, clear
   at 75%). Owner, 2026-11-01: mobile auth screens use the web app's look, grid included.
