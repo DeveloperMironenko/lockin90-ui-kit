@@ -131,3 +131,9 @@ No capability gap — the alert is visually equivalent on both.
 
 ## Update — 2026-11-02 (minor)
 - **Tones `neutral` and `cyan`**, the sign-in designs' quiet notes (timezone, privacy): see §2 and the quiet-notes table in §3.
+
+## Update — 2026-11-02 (native rich text)
+- Native wrapped only a plain string in the alert's text style, so a sentence with a styled part (an i18n
+  `Trans`) rendered raw, which React Native refuses. Now a string **or a `<Text>` element** gets the alert's
+  text style (the app puts its sentence in a plain `<Text>`, which inherits it), as any text inside the web alert
+  does. Views, fragments and components still render as given. Needed by the mobile Create account timezone note.

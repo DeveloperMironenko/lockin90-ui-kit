@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { isValidElement, type ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet, type TextStyle, type ViewProps, type ViewStyle } from 'react-native';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
@@ -74,6 +74,13 @@ function CheckIcon({ color }: { color: string }) {
   );
 }
 
+/** Text children (a string, or a `<Text>` holding a sentence with styled parts, such as an i18n `Trans`) get
+ *  the alert's text style, as any text inside the web alert does; anything else (views, fragments, components)
+ *  renders as given. */
+function isText(children: ReactNode): boolean {
+  return typeof children === 'string' || typeof children === 'number' || (isValidElement(children) && children.type === Text);
+}
+
 function defaultIcon(tone: AlertTone, color: string): ReactNode {
   if (tone === 'success') return <CheckIcon color={color} />;
   if (tone === 'warn' || tone === 'danger') return <WarningIcon color={color} />;
@@ -97,7 +104,7 @@ export function Alert({ tone = 'info', title, children, icon, onDismiss, style, 
       <View style={[styles.icon, centred && styles.iconCentered]}>{icon ?? defaultIcon(tone, t.c)}</View>
       <View style={styles.body}>
         {title != null && <Text style={styles.title}>{title}</Text>}
-        {children != null && (typeof children === 'string'
+        {children != null && (isText(children)
           ? <Text style={[styles.text, note?.text, note && title == null && styles.textAlone]}>{children}</Text>
           : children)}
       </View>
