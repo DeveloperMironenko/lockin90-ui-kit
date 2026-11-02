@@ -231,7 +231,7 @@ export type { MuscleDiagramProps, MuscleTarget, MuscleRole, MuscleGroup, BodyTyp
 export { DayTimelineBlocks } from './components/DayTimelineBlocks';
 export type { DayTimelineBlocksProps, DayBlock } from './components/DayTimelineBlocks';
 export { PasswordStrengthMeter } from './components/PasswordStrengthMeter';
-export type { PasswordStrengthMeterProps, PasswordStrengthScore } from './components/PasswordStrengthMeter';
+export type { PasswordStrengthMeterProps, PasswordStrengthScore, PasswordRule } from './components/PasswordStrengthMeter';
 export { Combobox } from './components/Combobox';
 export type { ComboboxProps, ComboboxOption } from './components/Combobox';
 export { CreditCardVisual } from './components/CreditCardVisual';

@@ -28,7 +28,7 @@ consumer (e.g. zxcvbn) and passed in as a `0–4` value — the component is pur
 | `labelPrefix` | `string` | — | ✓ | ✓ | faint text before the label ("Strength:"), as the sign-in designs draw it |
 | `accessibleLabel` | `string` | `` `Password strength: ${label}` `` | ✓ | ✓ | the meter's screen-reader name (web `aria-label`, native `accessibilityLabel`); pass a translated one |
 | `rules` | `PasswordRule[]` | — | ✓ | ✓ | the checklist under the meter (below); omit for a bare meter |
-| `metLabel` / `unmetLabel` | `string` | — (required with `rules`) | ✓ | ✓ | read after each rule ("10+ characters, done"): web visually hidden, native in the rule's `accessibilityLabel` |
+| `metLabel` / `unmetLabel` | `string` | — (required with `rules`) | ✓ | ✓ | read right after each rule's label, as given: the app includes its own leading punctuation and space (`", done"`, `"，已满足"`); web visually hidden, native in the rule's `accessibilityLabel` |
 | `className` / `style` | — | — | `className` + `style` | `style` | web class + style · native `ViewStyle` |
 | _rest_ | `Omit<HTMLAttributes<HTMLDivElement>,'children'>` (web) / `Omit<ViewProps,'children'\|'style'>` (native) | — | ✓ | ✓ | spread onto the root |
 
@@ -141,18 +141,21 @@ up two by hand.
 - **`rules`** (`PasswordRule = { id: string; label: string; met: boolean }`): a list under the meta row; each
   rule a round tick that fills mint when `met`, with the label beside it. Presentational: the app decides the
   rules and whether each is met (they advise; the backend decides what it accepts).
-  - **Web** (`.lk-pwstrength-rules`): a `<ul>`, grid 2 columns, `gap: 6px 16px`, `margin-top: 12px`; 1 column at
-    the `phone` breakpoint (≤ 540px). Rule: flex, centered, `gap: 8px`, 12px, `--text-faint`; met `--text`.
+  - **Web** (`.lk-pwstrength-rules`): a `<ul>` (not rendered when `rules` is empty), grid
+    `repeat(2, minmax(0, 1fr))`, `gap: 6px 16px`, `margin-top: 12px`; 1 column at
+    the `phone` breakpoint (≤ 540px). Rule: flex, centered, `gap: 8px`, 12px, `--text-faint`; met `--text`;
+    `min-width: 0` and `overflow-wrap: anywhere`, so a long translated label wraps instead of widening the card.
     Tick: 16px circle, `flex: 0 0 16px` (never squashed by a long label), `1.5px solid --border-2`; met: fill and
     border `--zone-high`. Check glyph 10px, stroke `--bg-0`, width 3, always rendered, `opacity` 0 → 1 when met.
     Motion: colour, background and border-colour `.25s var(--ease)`, glyph opacity `.2s var(--ease)`.
   - **Native** (sizes from `mobile/auth-onboarding.html`): rows of two, each rule `flex: 1`, `columnGap 12`,
     `rowGap 6`, `marginTop 11`; always 2 columns (the mobile design never stacks). Rule: `gap 7`, 10.5,
-    `colors.textFaint`; met `colors.text`. Tick: 15, `flexShrink 0`, `borderWidth 1.5`, `colors.border2`; met
+    `colors.textFaint`; met `colors.text`; the label `flexShrink 1`, so it wraps. Tick: 15, `flexShrink 0`, `borderWidth 1.5`, `colors.border2`; met
     `colors.zoneHigh`. Glyph 9, `react-native-svg`. No animation.
-  - **A11y:** web: each `<li>` reads its label, then the visually hidden `metLabel` / `unmetLabel`; the tick is
+  - **A11y:** web: each `<li>` reads its label, then the visually hidden `metLabel` / `unmetLabel` as given (no
+    separator added: the app's string carries its own, e.g. `", done"`); the tick is
     `aria-hidden`; not `aria-live` (every keystroke would be announced; the meter's label is the summary).
-    Native: each rule is one `accessible` element, `accessibilityLabel={`${label}, ${met ? metLabel :
+    Native: each rule is one `accessible` element, `accessibilityLabel={`${label}${met ? metLabel :
     unmetLabel}`}` (no checkbox role: it isn't a control). The two labels are required whenever `rules` is
     passed (the type says so), so no screen reader ever hears a kit default.
 - **`accessibleLabel`**: the meter's own name was the built-in English `Password strength: <label>`; an app
@@ -160,6 +163,13 @@ up two by hand.
 - **`labelPrefix`**: the designs show "Strength: —" with only the level tinted; the prefix is `--text-faint` /
   `colors.textFaint`, the level keeps the score colour.
 - **Empty state:** at `score` 0 the label is `--text-faint` / `colors.textFaint` (not red): nothing typed yet is
-  not "weak". Apps pass `label="—"` for it, as the designs draw.
-- **Parity:** ✅ still identical; every new prop on both platforms, sizes per each platform's design.
+  not "weak". Apps pass `label="—"` for it, as the designs draw, and then an `accessibleLabel` too (the default
+  would read "Password strength: —").
+- **Where the role sits:** the root is a plain container (it takes `className`, `style` and the rest
+  props); the `meter` (web) / `progressbar` (native) role and its value props move to the segment row, with
+  the label row and the rules beside it, not inside: a meter's children are presentational under ARIA, and an
+  accessible native parent would swallow them. The hint describes the meter (web `aria-describedby`, native
+  `accessibilityHint`). So an `aria-*` / `accessibility*` prop passed as a rest prop lands on the
+  container; the meter's name is `accessibleLabel`. The web root also applies `style` now (it was dropped).
+- **Parity:** ✅ still identical; every new prop on both platforms, sizes per each platform's design. Native: in its own PR.
 
