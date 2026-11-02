@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
     fontFamily: fonts.mono,
     fontWeight: '700',
-    fontSize: 22,
+    fontSize: 20, // as the web at phone width (≤ 540px): mobile auth screens match it
     color: colors.text,
     borderWidth: 1,
     borderRadius: radii.sm,
