@@ -118,27 +118,39 @@ export function PasswordStrengthMeter({
       </View>
       {rules?.length ? (
         <View style={styles.rules}>
-          {rules.map((rule) => (
-            <View
-              key={rule.id}
-              style={styles.rule}
-              accessible
-              accessibilityLabel={`${rule.label}${rule.met ? metLabel : unmetLabel}`}
-            >
-              <View style={[styles.tick, rule.met && styles.tickMet]}>
-                {rule.met ? (
-                  <Svg width={10} height={10} viewBox="0 0 24 24" fill="none" stroke={colors.bg0} strokeWidth={3}>
-                    <Path d="M5 12l5 5L20 6" />
-                  </Svg>
-                ) : null}
-              </View>
-              <Text style={[styles.ruleText, rule.met && styles.ruleTextMet]}>{rule.label}</Text>
+          {pairs(rules).map((pair) => (
+            <View key={pair[0].id} style={styles.rulesRow}>
+              {pair.map((rule) => (
+                <View
+                  key={rule.id}
+                  style={styles.rule}
+                  accessible
+                  accessibilityLabel={`${rule.label}${rule.met ? metLabel : unmetLabel}`}
+                >
+                  <View style={[styles.tick, rule.met && styles.tickMet]}>
+                    {rule.met ? (
+                      <Svg width={10} height={10} viewBox="0 0 24 24" fill="none" stroke={colors.bg0} strokeWidth={3}>
+                        <Path d="M5 12l5 5L20 6" />
+                      </Svg>
+                    ) : null}
+                  </View>
+                  <Text style={[styles.ruleText, rule.met && styles.ruleTextMet]}>{rule.label}</Text>
+                </View>
+              ))}
+              {pair.length === 1 ? <View style={styles.rule} /> : null}
             </View>
           ))}
         </View>
       ) : null}
     </View>
   );
+}
+
+// the rules two by two (an odd last rule gets an empty cell beside it, so it keeps its column's width)
+function pairs<T>(items: T[]): T[][] {
+  const rows: T[][] = [];
+  items.forEach((item, i) => (i % 2 ? rows[rows.length - 1].push(item) : rows.push([item])));
+  return rows;
 }
 
 const styles = StyleSheet.create({
@@ -171,10 +183,11 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: colors.textFaint,
   },
-  // the web `.lk-pwstrength-rules` at phone width: one column, 6px apart, 12px under the meta row
-  // (the root's 8px gap + 4)
+  // the web `.lk-pwstrength-rules`: 2 equal columns at every width (`gap: 6px 16px`), 12px under the
+  // meta row (the root's 8px gap + 4); a row is as tall as its taller rule, a long label wraps
   rules: { gap: 6, marginTop: 4 },
-  rule: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  rulesRow: { flexDirection: 'row', gap: 16 },
+  rule: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
   tick: {
     width: 16,
     height: 16,
