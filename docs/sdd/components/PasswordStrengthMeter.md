@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/PasswordStrengthMeter.tsx` · `packages/ui-native/src/components/PasswordStrengthMeter.tsx` ·
 > web CSS `packages/ui/src/styles/components/pwstrength.css` (`.lk-pwstrength*`).
 > **Exports:** `PasswordStrengthMeter`, type `PasswordStrengthMeterProps`, type `PasswordStrengthScore`, type `PasswordRule`.
-> **Status:** Shipped. **Parity:** 🟡 the rules' 2 columns at phone width are web-only until the native PR (2026-11-05 update); otherwise ✅ identical API, 4-segment model, colors & labels; substrate-only (CSS `color-mix` glow vs RN shadow, `role=meter` vs `progressbar`).
+> **Status:** Shipped. **Parity:** ✅ identical API, 4-segment model, colors & labels; substrate-only (CSS `color-mix` glow vs RN shadow, `role=meter` vs `progressbar`).
 > **Stories:** `packages/ui/src/stories/PasswordStrengthMeter.stories.tsx` · `packages/ui-native/src/stories/PasswordStrengthMeter.stories.tsx`.
 
 ---
@@ -190,6 +190,7 @@ up two by hand.
   `overflow-wrap: break-word`: inside a word only when one word alone is too wide); the tick stays on the first
   line (`align-items: flex-start`, `margin-top: (1.55em − 16px) / 2`); a row is as tall as its taller rule. Owner (lockin90-v2, 2026-11-05): "the criteria
   has to be in 2 columns", wrapping allowed.
-- **Native: pending its own PR.** It will be the same: two equal columns (`columnGap 16`, `rowGap 6`, as web's
-  `gap: 6px 16px`), the tick on the first line, each label wrapping in its column. Until it ships, native stays
-  one column. Apps bump the kit only once both are published, so web and mobile never differ.
+- **Native:** the same: two equal columns (rows of two, `gap 16`; `rowGap 6`, as web's `gap: 6px 16px`; an odd
+  last rule beside an empty cell keeps its column's width), the tick on the first line (`alignItems:
+  'flex-start'`, `marginTop: (12 × 1.55 − 16) / 2`), each label wrapping in its column. Apps bump both kits
+  together, so web and mobile never differ.
