@@ -1,5 +1,11 @@
 # @lockin90/ui-native
 
+## 2.8.0
+
+### Minor Changes
+
+- e13587d: PasswordStrengthMeter: the rules in 2 equal columns at every width, as on web (was one column); a long label wraps inside its column.
+
 ## 2.7.0
 
 ### Minor Changes
