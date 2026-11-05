@@ -7,7 +7,7 @@ import { hapticSelection } from '../internal/optionalHaptics';
 // the web's body line height (1.55): the md button is 12 + 14 × 1.55 + 12 = 45.7, as on web
 const LINE = 1.55;
 
-export type ButtonVariant = 'default' | 'primary' | 'ghost';
+export type ButtonVariant = 'default' | 'primary' | 'ghost' | 'text';
 export type ButtonTone = 'danger';
 
 // `--bad` (#FF4D6D) as alpha tints — the sanctioned paired literal for the web
@@ -33,7 +33,8 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
   style?: StyleProp<ViewStyle>;
 }
 
-/** Pill button. `primary` paints the energy-gradient CTA. `tone="danger"` composes
+/** Pill button. `primary` paints the energy-gradient CTA. `text` is a bare mono
+ *  accent action inside a line of text ("Resend code"), with no surface. `tone="danger"` composes
  *  with `variant` for destructive actions (solid red on `default`, red-tinted on
  *  `ghost`). `leading`/`trailing` render an icon before/after the label (the row is
  *  `gap: 9`-spaced). */
@@ -50,6 +51,23 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
         onPress(e);
       }
     : undefined;
+
+  if (variant === 'text') {
+    // no surface: the label is the button (web `.lk-btn-text`); faint when disabled
+    return (
+      <Pressable accessibilityRole="button" onPress={press} style={style} {...rest}>
+        {({ pressed }) => (
+          <View style={[styles.textRow, pressed && styles.textPressed]}>
+            {leading}
+            <Text numberOfLines={1} style={[styles.textLabel, rest.disabled && styles.textDisabled]}>
+              {title}
+            </Text>
+            {trailing}
+          </View>
+        )}
+      </Pressable>
+    );
+  }
 
   if (variant === 'primary' && !danger) {
     return (
@@ -127,4 +145,8 @@ const styles = StyleSheet.create({
   dangerGlow: { shadowColor: colors.bad, shadowOpacity: 0.4, shadowRadius: 24, shadowOffset: { width: 0, height: 0 }, elevation: 8 },
   pressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },
   label: { fontFamily: fonts.ui, fontWeight: '600' },
+  textRow: { flexDirection: 'row', alignItems: 'center', gap: 9 },
+  textPressed: { opacity: 0.85 },
+  textLabel: { fontFamily: fonts.mono, fontSize: 11.5, lineHeight: 17, color: colors.accent2 },
+  textDisabled: { color: colors.textFaint },
 });
