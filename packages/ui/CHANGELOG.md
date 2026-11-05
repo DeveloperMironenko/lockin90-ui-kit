@@ -1,5 +1,11 @@
 # @lockin90/ui
 
+## 3.2.0
+
+### Minor Changes
+
+- 7dd3407: Button: `variant="text"`, a bare mono accent action inside a line of text ("Resend code"): no surface or padding, `--accent-2`, underlined on hover, `--text-faint` when disabled.
+
 ## 3.1.0
 
 ### Minor Changes
