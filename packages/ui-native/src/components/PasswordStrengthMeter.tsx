@@ -57,7 +57,7 @@ const SCORE_COLOR = [colors.bad, colors.bad, colors.warn, colors.cyan, colors.ok
  * PasswordStrengthMeter — a row of 4 equal segments that fill left→right up to
  * `score`, colored by strength (red → amber → cyan → mint), with a small label
  * (derived or overridden) tinted in the score color, an optional hint line and
- * an optional rule checklist (one column, as the web at phone width).
+ * an optional rule checklist (2 columns at every width, as the web).
  */
 export function PasswordStrengthMeter({
   score,
@@ -187,8 +187,10 @@ const styles = StyleSheet.create({
   // meta row (the root's 8px gap + 4); a row is as tall as its taller rule, a long label wraps
   rules: { gap: 6, marginTop: 4 },
   rulesRow: { flexDirection: 'row', gap: 16 },
-  rule: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  rule: { flex: 1, flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
   tick: {
+    // on the label's first line (12 × 1.55), not between two lines of a wrapped label, as web
+    marginTop: (12 * 1.55 - 16) / 2,
     width: 16,
     height: 16,
     borderRadius: 8,
