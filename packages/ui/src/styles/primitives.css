@@ -87,6 +87,15 @@
 .lk-btn-ghost { background: transparent; border-color: var(--border-2); color: var(--text-dim); }
 .lk-btn-ghost:hover { color: var(--text); }
 .lk-btn-sm { padding: 8px 14px; font-size: 13px; }
+/* text: a bare action inside a line of mono meta text ("Resend code" beside the code's hint):
+   no surface, no padding, `--accent-2`; underlined on hover, `--text-faint` when disabled. */
+.lk-btn-text {
+  padding: 0; border: 0; border-radius: 0; background: none;
+  font-family: var(--font-mono); font-weight: 400; font-size: 11.5px; color: var(--accent-2);
+}
+.lk-btn-text:hover { transform: none; text-decoration: underline; }
+.lk-btn-text:active { transform: none; }
+.lk-btn-text:disabled { opacity: 1; cursor: default; color: var(--text-faint); text-decoration: none; }
 .lk-btn-sm svg { width: 14px; height: 14px; }
 /* SSO / social sign-in: full-width, roomy rounded-square (not the pill) with a
    brand logo left of the label. Sits in a 2-up SSO grid. */

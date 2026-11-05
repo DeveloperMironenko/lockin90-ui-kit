@@ -16,6 +16,7 @@ The primary **action button** of the kit. Three variants:
 - `default` — glass surface, hairline border. The neutral/secondary action.
 - `primary` — the **animated energy-gradient CTA** (`grad-cta`, violet→cyan), glow shadow, slow 6s gradient drift on web. The single most-important action on a surface.
 - `ghost` — transparent, dimmed label. Tertiary / inline action.
+- `text` — no surface at all: a mono accent label inside a line of meta text ("Resend code" beside the code's hint, auth.html `.code-meta`). See §3.
 - `sso` (web only) — full-width rounded-square social sign-in button (see §3).
 
 An orthogonal **`tone="danger"`** flag composes with any variant for **destructive actions** (delete / remove / revoke), using the `--bad` status token:
@@ -31,7 +32,7 @@ It is intentionally the *only* sanctioned way to render a button-shaped action i
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `variant` | web `'default' \| 'primary' \| 'ghost' \| 'sso'` · native `'default' \| 'primary' \| 'ghost'` | `'default'` | ✓ | ✓ | `sso` is web-only (2-up social grid) |
+| `variant` | web `'default' \| 'primary' \| 'ghost' \| 'text' \| 'sso'` · native `'default' \| 'primary' \| 'ghost' \| 'text'` | `'default'` | ✓ | ✓ | `sso` is web-only (2-up social grid) |
 | `tone` | `'danger'` | — | ✓ | ✓ | destructive; **composes with `variant`** — solid `--bad` on `default`, red-tinted on `ghost`. Emits `.lk-btn--tone-danger` |
 | `size` | `'sm' \| 'md'` | `'md'` | ✓ | ✓ | `sm` = tighter padding + 13px label |
 | `leading` | `ReactNode` | — | ✓ | ✓ | icon/node before the label |
@@ -163,3 +164,16 @@ There is **no capability gap** that blocks use — the button is fully usable an
 
 ## Update — 2026-11-02 (native sizes match web)
 - **Native height = web height:** the label's line height is the web's 1.55, so md is `12 + 14×1.55 + 12` = 45.7 (was 41).
+
+## Update — 2026-11-05 (`text` variant)
+- **Why:** the design's text actions (auth.html `.code-meta a`: "Resend in 0:42" / "Resend code") had no kit
+  primitive, so the web and mobile apps each hand-rolled a transparent button. Per §9, a missing style is a new
+  `variant` on both platforms.
+- **Look** (both platforms, tokens only): no background, border, radius or padding; `--font-mono` /
+  `fonts.mono`, 400, 11.5px; label `--accent-2` / `colors.accent2`; one line (`nowrap`). Native line height 17
+  (the apps' measured meta line). `size` and `tone` don't apply.
+- **States:** hover (web) underlines, no lift; pressed (native) opacity .85, no scale; disabled paints the label
+  `--text-faint` / `colors.textFaint` at full opacity (not the dimmed `.5`), with no hover.
+- **Not for navigation:** a link that changes the route stays a link (`<a>` / router `Link`); `text` is for an
+  action on the current screen.
+- **Ships as two PRs:** web (`.lk-btn-text`), then native.
