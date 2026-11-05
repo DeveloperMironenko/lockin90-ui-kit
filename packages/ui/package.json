@@ -1,6 +1,6 @@
 {
   "name": "@lockin90/ui",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "LockIn90 \"Aurora Flux\" web component library (React) — emits plain lk-* classes + ships styles.css.",
   "license": "UNLICENSED",
   "repository": {
