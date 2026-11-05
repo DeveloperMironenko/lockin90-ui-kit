@@ -4,7 +4,7 @@
 > **Source:** `packages/ui/src/components/PasswordStrengthMeter.tsx` · `packages/ui-native/src/components/PasswordStrengthMeter.tsx` ·
 > web CSS `packages/ui/src/styles/components/pwstrength.css` (`.lk-pwstrength*`).
 > **Exports:** `PasswordStrengthMeter`, type `PasswordStrengthMeterProps`, type `PasswordStrengthScore`, type `PasswordRule`.
-> **Status:** Shipped. **Parity:** ✅ identical API, 4-segment model, colors & labels; substrate-only (CSS `color-mix` glow vs RN shadow, `role=meter` vs `progressbar`).
+> **Status:** Shipped. **Parity:** 🟡 the rules' 2 columns at phone width are web-only until the native PR (2026-11-05 update); otherwise ✅ identical API, 4-segment model, colors & labels; substrate-only (CSS `color-mix` glow vs RN shadow, `role=meter` vs `progressbar`).
 > **Stories:** `packages/ui/src/stories/PasswordStrengthMeter.stories.tsx` · `packages/ui-native/src/stories/PasswordStrengthMeter.stories.tsx`.
 
 ---
@@ -142,8 +142,8 @@ up two by hand.
   rule a round tick that fills mint when `met`, with the label beside it. Presentational: the app decides the
   rules and whether each is met (they advise; the backend decides what it accepts).
   - **Web** (`.lk-pwstrength-rules`): a `<ul>` (not rendered when `rules` is empty), grid
-    `repeat(2, minmax(0, 1fr))`, `gap: 6px 16px`, `margin-top: 12px`; 1 column at
-    the `phone` breakpoint (≤ 540px). Rule: flex, centered, `gap: 8px`, 12px, `--text-faint`; met `--text`;
+    `repeat(2, minmax(0, 1fr))`, `gap: 6px 16px`, `margin-top: 12px`; 2 columns at every width (see the
+    2026-11-05 update). Rule: flex, centered, `gap: 8px`, 12px, `--text-faint`; met `--text`;
     `min-width: 0` and `overflow-wrap: anywhere`, so a long translated label wraps instead of widening the card.
     Tick: 16px circle, `flex: 0 0 16px` (never squashed by a long label), `1.5px solid --border-2`; met: fill and
     border `--zone-high`. Check glyph 10px, stroke `--bg-0`, width 3, always rendered, `opacity` 0 → 1 when met.
@@ -151,7 +151,8 @@ up two by hand.
   - **Native** (sizes from `mobile/auth-onboarding.html`): rows of two, each rule `flex: 1`, `columnGap 12`,
     `rowGap 6`, `marginTop 11`; always 2 columns (the mobile design never stacks). Rule: `gap 7`, 10.5,
     `colors.textFaint`; met `colors.text`; the label `flexShrink 1`, so it wraps. Tick: 15, `flexShrink 0`, `borderWidth 1.5`, `colors.border2`; met
-    `colors.zoneHigh`. Glyph 9, `react-native-svg`. No animation.
+    `colors.zoneHigh`. Glyph 9, `react-native-svg`. No animation. (Columns and gaps: replaced by the 2026-11-05
+    update.)
   - **A11y:** web: each `<li>` reads its label, then the visually hidden `metLabel` / `unmetLabel` as given (no
     separator added: the app's string carries its own, e.g. `", done"`); the tick is
     `aria-hidden`; not `aria-live` (every keystroke would be announced; the meter's label is the summary).
@@ -175,9 +176,20 @@ up two by hand.
 
 
 ## Update — 2026-11-02 (native parity with the web's rules)
-- Native takes the same new props as web (#45): `rules` (one column, as the web at phone width) with the
+- Native takes the same new props as web (#45): `rules` (one column, as the web at phone width then; 2 columns
+  since the 2026-11-05 update) with the
   required `metLabel` / `unmetLabel` (each rule is one accessible element named `<label><met|unmet>`),
   `labelPrefix`, `accessibleLabel`, and the faint label at score 0. `PasswordRule` is exported. The mobile
   Set a new password and Create account screens use it (lockin90-v2 1.19a).
 - Rest props now go on the root (the container), as on web; the meter is the inner segment row. Name the
   meter with `accessibleLabel`, not `accessibilityLabel` through rest.
+
+## Update — 2026-11-05 (2 columns at every width)
+- **Web:** the rules stay in 2 columns at phone width too (the `≤ 540px` one-column rule is gone). A label too
+  long for its half wraps onto a second line inside its column, at spaces (`.lk-pwstrength-rule-label`,
+  `overflow-wrap: break-word`: inside a word only when one word alone is too wide); the tick stays on the first
+  line (`align-items: flex-start`, `margin-top: (1.55em − 16px) / 2`); a row is as tall as its taller rule. Owner (lockin90-v2, 2026-11-05): "the criteria
+  has to be in 2 columns", wrapping allowed.
+- **Native: pending its own PR.** It will be the same: two equal columns (`columnGap 16`, `rowGap 6`, as web's
+  `gap: 6px 16px`), the tick on the first line, each label wrapping in its column. Until it ships, native stays
+  one column. Apps bump the kit only once both are published, so web and mobile never differ.

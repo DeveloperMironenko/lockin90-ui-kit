@@ -122,7 +122,7 @@ export function PasswordStrengthMeter({
                   <path d="M5 12l5 5L20 6" />
                 </svg>
               </span>
-              {rule.label}
+              <span className="lk-pwstrength-rule-label">{rule.label}</span>
               <span className="lk-sr-only">{rule.met ? metLabel : unmetLabel}</span>
             </li>
           ))}

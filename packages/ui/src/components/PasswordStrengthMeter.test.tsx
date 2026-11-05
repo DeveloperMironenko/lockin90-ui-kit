@@ -31,9 +31,9 @@ describe('PasswordStrengthMeter', () => {
     expect(html).toMatch(/<ul class="lk-pwstrength-rules">/);
     expect(html.match(/<li /g)).toHaveLength(2);
     expect(html).toMatch(
-      /<li class="lk-pwstrength-rule is-met"><span class="lk-pwstrength-tick" aria-hidden="true">.*?<\/span>10\+ characters<span class="lk-sr-only">, done<\/span><\/li>/,
+      /<li class="lk-pwstrength-rule is-met"><span class="lk-pwstrength-tick" aria-hidden="true">.*?<\/span><span class="lk-pwstrength-rule-label">10\+ characters<\/span><span class="lk-sr-only">, done<\/span><\/li>/,
     );
-    expect(html).toMatch(/<li class="lk-pwstrength-rule">.*?A number<span class="lk-sr-only">, not yet<\/span>/);
+    expect(html).toMatch(/<li class="lk-pwstrength-rule">.*?A number<\/span><span class="lk-sr-only">, not yet<\/span>/);
     expect(html).not.toContain('aria-live');
   });
 
@@ -48,7 +48,7 @@ describe('PasswordStrengthMeter', () => {
     const html = renderToStaticMarkup(
       <PasswordStrengthMeter score={2} rules={RULES} metLabel="，已满足" unmetLabel="，未满足" />,
     );
-    expect(html).toContain('10+ characters<span class="lk-sr-only">，已满足</span>');
+    expect(html).toContain('10+ characters</span><span class="lk-sr-only">，已满足</span>');
   });
 
   it('keeps the label row and the hint out of the meter, the hint describing it', () => {
