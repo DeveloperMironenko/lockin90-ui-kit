@@ -14,6 +14,8 @@ export type ButtonTone = 'danger';
 // `color-mix(in srgb, var(--bad) x%, transparent)` (matches Alert/Badge danger).
 const DANGER_TINT = 'rgba(255,77,109,0.10)';
 const DANGER_BORDER = 'rgba(255,77,109,0.42)';
+// (44 − 17) / 2 above and below the text variant's line
+const TEXT_SLOP = { top: 14, bottom: 14, left: 8, right: 8 };
 
 export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> {
   variant?: ButtonVariant;
@@ -53,13 +55,14 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
     : undefined;
 
   if (variant === 'text') {
-    // no surface: the label is the button (web `.lk-btn-text`); faint when disabled
+    // no surface: the label is the button (web `.lk-btn-text`); faint when disabled. The
+    // 17-tall line gets a slop to the 44pt touch target.
     return (
-      <Pressable accessibilityRole="button" onPress={press} style={style} {...rest}>
+      <Pressable accessibilityRole="button" onPress={press} hitSlop={TEXT_SLOP} {...rest}>
         {({ pressed }) => (
-          <View style={[styles.textRow, pressed && styles.textPressed]}>
+          <View style={[styles.textRow, pressed && styles.textPressed, style]}>
             {leading}
-            <Text numberOfLines={1} style={[styles.textLabel, rest.disabled && styles.textDisabled]}>
+            <Text style={[styles.textLabel, rest.disabled && styles.textDisabled]}>
               {title}
             </Text>
             {trailing}
@@ -145,8 +148,9 @@ const styles = StyleSheet.create({
   dangerGlow: { shadowColor: colors.bad, shadowOpacity: 0.4, shadowRadius: 24, shadowOffset: { width: 0, height: 0 }, elevation: 8 },
   pressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },
   label: { fontFamily: fonts.ui, fontWeight: '600' },
-  textRow: { flexDirection: 'row', alignItems: 'center', gap: 9 },
+  textRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9 },
   textPressed: { opacity: 0.85 },
-  textLabel: { fontFamily: fonts.mono, fontSize: 11.5, lineHeight: 17, color: colors.accent2 },
+  // never shrinks to wrap or cut: one line, as web's nowrap
+  textLabel: { flexShrink: 0, fontFamily: fonts.mono, fontSize: 11.5, lineHeight: 17, color: colors.accent2 },
   textDisabled: { color: colors.textFaint },
 });

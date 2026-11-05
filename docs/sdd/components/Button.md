@@ -176,5 +176,9 @@ There is **no capability gap** that blocks use — the button is fully usable an
   `--text-faint` / `colors.textFaint` at full opacity (not the dimmed `.5`), with no hover.
 - **Not for navigation:** a link that changes the route stays a link (`<a>` / router `Link`); `text` is for an
   action on the current screen.
-- **Shipped as two PRs:** web (`.lk-btn-text`), then native (the label `Text` is the button: no padded
-  surface, `numberOfLines={1}`).
+- **Shipped as two PRs:** web (`.lk-btn-text`), then native: the label is the button (no padded surface),
+  with a `hitSlop` up to the 44pt touch target; the label never shrinks. `style` goes on the row, as on the
+  other variants' surface.
+- **Native layout:** a `Pressable` can't sit inside a `Text` run, so on native the button goes in a row
+  `View` beside the meta text (as the code row does). Icons in `leading`/`trailing` take their own `color`
+  (native has no `currentColor`).
