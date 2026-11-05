@@ -13,12 +13,13 @@ describe('Button text variant', () => {
     expect(html).toContain('Resend code');
   });
 
-  it('keeps disabled on the element (the faint colour comes from :disabled)', () => {
+  it('takes no size or tone: it has no surface to resize or paint', () => {
     const html = renderToStaticMarkup(
-      <Button variant="text" disabled>
-        Resend code
+      <Button variant="text" size="sm" tone="danger">
+        Remove
       </Button>,
     );
-    expect(html).toContain('disabled=""');
+    expect(html).not.toContain('lk-btn-sm');
+    expect(html).not.toContain('lk-btn--tone-danger');
   });
 });

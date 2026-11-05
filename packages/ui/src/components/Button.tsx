@@ -29,6 +29,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   { variant = 'default', tone, size = 'md', leading, trailing, className, type = 'button', children, ...rest },
   ref,
 ) {
+  // `text` has no surface: size and tone don't apply (Button.md, `text` variant)
+  const surface = variant !== 'text';
   return (
     <button
       ref={ref}
@@ -39,8 +41,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         variant === 'ghost' && 'lk-btn-ghost',
         variant === 'text' && 'lk-btn-text',
         variant === 'sso' && 'lk-btn-sso',
-        tone === 'danger' && 'lk-btn--tone-danger',
-        size === 'sm' && 'lk-btn-sm',
+        surface && tone === 'danger' && 'lk-btn--tone-danger',
+        surface && size === 'sm' && 'lk-btn-sm',
         className,
       )}
       {...rest}

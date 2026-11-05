@@ -170,10 +170,11 @@ There is **no capability gap** that blocks use — the button is fully usable an
   primitive, so the web and mobile apps each hand-rolled a transparent button. Per §9, a missing style is a new
   `variant` on both platforms.
 - **Look** (both platforms, tokens only): no background, border, radius or padding; `--font-mono` /
-  `fonts.mono`, 400, 11.5px; label `--accent-2` / `colors.accent2`; one line (`nowrap`). Native line height 17
-  (the apps' measured meta line). `size` and `tone` don't apply.
-- **States:** hover (web) underlines, no lift; pressed (native) opacity .85, no scale; disabled paints the label
+  `fonts.mono`, 400, 11.5px, line height 17 (the apps' measured meta line); label `--accent-2` /
+  `colors.accent2`; one line (`nowrap`). `size` and `tone` don't apply (web emits neither class).
+- **States:** hover (web, pointer devices only) underlines, no lift; pressed opacity .85, no scale, on both; disabled paints the label
   `--text-faint` / `colors.textFaint` at full opacity (not the dimmed `.5`), with no hover.
 - **Not for navigation:** a link that changes the route stays a link (`<a>` / router `Link`); `text` is for an
   action on the current screen.
-- **Ships as two PRs:** web (`.lk-btn-text`), then native.
+- **Ships as two PRs:** web (`.lk-btn-text`), then native. Until the native PR is published, `text` is web
+  only (`@lockin90/ui`); the API table lists native for the finished state.
