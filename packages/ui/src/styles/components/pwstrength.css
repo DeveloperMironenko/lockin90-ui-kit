@@ -55,15 +55,21 @@
 }
 .lk-pwstrength-rule {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   min-width: 0;
-  overflow-wrap: anywhere;
   font-size: 12px;
+  line-height: 1.55;
   color: var(--text-faint);
   transition: color 0.25s var(--ease);
 }
+.lk-pwstrength-rule-label {
+  min-width: 0;
+  overflow-wrap: break-word; /* at spaces first; inside a word only when one alone is too wide */
+}
 .lk-pwstrength-tick {
+  /* centred on the label's first line (12px × 1.55), not between two lines of a wrapped label */
+  margin-top: calc((1.55em - 16px) / 2);
   display: grid;
   place-items: center;
   width: 16px;
