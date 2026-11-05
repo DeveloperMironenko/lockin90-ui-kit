@@ -176,5 +176,5 @@ There is **no capability gap** that blocks use — the button is fully usable an
   `--text-faint` / `colors.textFaint` at full opacity (not the dimmed `.5`), with no hover.
 - **Not for navigation:** a link that changes the route stays a link (`<a>` / router `Link`); `text` is for an
   action on the current screen.
-- **Ships as two PRs:** web (`.lk-btn-text`), then native. Until the native PR is published, `text` is web
-  only (`@lockin90/ui`); the API table lists native for the finished state.
+- **Shipped as two PRs:** web (`.lk-btn-text`), then native (the label `Text` is the button: no padded
+  surface, `numberOfLines={1}`).
