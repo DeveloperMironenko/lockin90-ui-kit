@@ -1,7 +1,7 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
 
-export type ButtonVariant = 'default' | 'primary' | 'ghost' | 'sso';
+export type ButtonVariant = 'default' | 'primary' | 'ghost' | 'text' | 'sso';
 export type ButtonTone = 'danger';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -20,7 +20,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   trailing?: ReactNode;
 }
 
-/** Pill button. `primary` = animated energy-gradient CTA. `tone="danger"` composes
+/** Pill button. `primary` = animated energy-gradient CTA. `text` = a bare mono accent
+ *  action inside a line of text ("Resend code"), with no surface. `tone="danger"` composes
  *  with `variant` for destructive actions (solid red on `default`, red-tinted on
  *  `ghost`). `leading`/`trailing` render an icon before/after the label (auto-spaced
  *  + sized by the `.lk-btn` flex gap). */
@@ -28,6 +29,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   { variant = 'default', tone, size = 'md', leading, trailing, className, type = 'button', children, ...rest },
   ref,
 ) {
+  // `text` has no surface: size and tone don't apply (Button.md, `text` variant)
+  const surface = variant !== 'text';
   return (
     <button
       ref={ref}
@@ -36,9 +39,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         'lk-btn',
         variant === 'primary' && 'lk-btn-primary',
         variant === 'ghost' && 'lk-btn-ghost',
+        variant === 'text' && 'lk-btn-text',
         variant === 'sso' && 'lk-btn-sso',
-        tone === 'danger' && 'lk-btn--tone-danger',
-        size === 'sm' && 'lk-btn-sm',
+        surface && tone === 'danger' && 'lk-btn--tone-danger',
+        surface && size === 'sm' && 'lk-btn-sm',
         className,
       )}
       {...rest}
