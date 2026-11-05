@@ -44,7 +44,7 @@ const RULES = [
   { id: 'common', label: 'Not common / breached', met: false },
 ];
 
-/** As the sign-in designs draw it: a prefix, a hint and the rule checklist (1 column on phones). */
+/** As the sign-in designs draw it: a prefix, a hint and the rule checklist (2 columns at every width). */
 export const WithRules: Story = {
   args: {
     score: 2,

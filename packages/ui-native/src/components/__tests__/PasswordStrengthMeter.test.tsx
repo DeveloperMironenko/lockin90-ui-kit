@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { PasswordStrengthMeter } from '../PasswordStrengthMeter';
-import { findAll, parse, render } from './markup';
+import { findAll, hasDeclaration, parse, render } from './markup';
 
 const RULES = [
   { id: 'length', label: '10+ characters', met: true },
@@ -48,8 +48,15 @@ describe('PasswordStrengthMeter rules', () => {
     expect(rules[0].parent).not.toBe(rules[2].parent);
   });
 
-  test('keeps an odd last rule in its column', () => {
+  test('keeps an odd last rule in its column, beside an empty cell of the same width', () => {
     const rules = named(3);
-    expect(rules[2].parent?.children).toHaveLength(2);
+    const [rule, cell] = rules[2].parent?.children ?? [];
+    expect(rule).toBe(rules[2]);
+    expect(hasDeclaration(rule, 'flex:1')).toBe(true);
+    expect(hasDeclaration(cell, 'flex:1')).toBe(true);
+  });
+
+  test('puts the tick on the first line of a wrapped label', () => {
+    expect(hasDeclaration(named(2)[0], 'align-items:flex-start')).toBe(true);
   });
 });

@@ -46,3 +46,27 @@ export const WithHint: Story = {
     </View>
   ),
 };
+
+const RULES = [
+  { id: 'len', label: '10+ characters', met: true },
+  { id: 'case', label: 'Upper & lowercase', met: true },
+  { id: 'num', label: 'A number or symbol', met: false },
+  { id: 'common', label: 'Not a common password', met: true },
+  { id: 'odd', label: 'An odd last rule keeps its column', met: false },
+];
+
+/** The rules in 2 columns at phone width (as web): a long label wraps, the tick on its first line. */
+export const WithRules: Story = {
+  render: () => (
+    <View style={{ width: 300 }}>
+      <PasswordStrengthMeter
+        score={3}
+        labelPrefix="Strength:"
+        hint="2 rules to go"
+        rules={RULES}
+        metLabel=", done"
+        unmetLabel=", not yet"
+      />
+    </View>
+  ),
+};

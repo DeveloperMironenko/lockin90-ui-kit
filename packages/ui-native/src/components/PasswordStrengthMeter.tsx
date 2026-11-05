@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, type StyleProp, type ViewStyle, type ViewProps } from 'react-native';
+import { View, Text, StyleSheet, useWindowDimensions, type StyleProp, type ViewStyle, type ViewProps } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { colors, fonts, radii } from '@lockin90/tokens';
 
@@ -71,6 +71,10 @@ export function PasswordStrengthMeter({
   style,
   ...rest
 }: PasswordStrengthMeterProps) {
+  // the tick on the label's first line (12 × 1.55, grown with the system text size), not between two
+  // lines of a wrapped label, as web's `(1.55em − 16px) / 2`
+  const { fontScale } = useWindowDimensions();
+  const tickTop = (12 * 1.55 * fontScale - 16) / 2;
   const s = Math.max(0, Math.min(SEGMENTS, score)) as PasswordStrengthScore;
   const color = SCORE_COLOR[s];
   const text = label ?? LABELS[s];
@@ -127,7 +131,7 @@ export function PasswordStrengthMeter({
                   accessible
                   accessibilityLabel={`${rule.label}${rule.met ? metLabel : unmetLabel}`}
                 >
-                  <View style={[styles.tick, rule.met && styles.tickMet]}>
+                  <View style={[styles.tick, { marginTop: tickTop }, rule.met && styles.tickMet]}>
                     {rule.met ? (
                       <Svg width={10} height={10} viewBox="0 0 24 24" fill="none" stroke={colors.bg0} strokeWidth={3}>
                         <Path d="M5 12l5 5L20 6" />
@@ -137,7 +141,7 @@ export function PasswordStrengthMeter({
                   <Text style={[styles.ruleText, rule.met && styles.ruleTextMet]}>{rule.label}</Text>
                 </View>
               ))}
-              {pair.length === 1 ? <View style={styles.rule} /> : null}
+              {pair.length === 1 ? <View style={styles.cell} /> : null}
             </View>
           ))}
         </View>
@@ -149,7 +153,7 @@ export function PasswordStrengthMeter({
 // the rules two by two (an odd last rule gets an empty cell beside it, so it keeps its column's width)
 function pairs<T>(items: T[]): T[][] {
   const rows: T[][] = [];
-  items.forEach((item, i) => (i % 2 ? rows[rows.length - 1].push(item) : rows.push([item])));
+  for (let i = 0; i < items.length; i += 2) rows.push(items.slice(i, i + 2));
   return rows;
 }
 
@@ -188,9 +192,8 @@ const styles = StyleSheet.create({
   rules: { gap: 6, marginTop: 4 },
   rulesRow: { flexDirection: 'row', gap: 16 },
   rule: { flex: 1, flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
+  cell: { flex: 1 },
   tick: {
-    // on the label's first line (12 × 1.55), not between two lines of a wrapped label, as web
-    marginTop: (12 * 1.55 - 16) / 2,
     width: 16,
     height: 16,
     borderRadius: 8,

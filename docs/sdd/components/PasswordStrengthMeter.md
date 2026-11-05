@@ -143,16 +143,19 @@ up two by hand.
   rules and whether each is met (they advise; the backend decides what it accepts).
   - **Web** (`.lk-pwstrength-rules`): a `<ul>` (not rendered when `rules` is empty), grid
     `repeat(2, minmax(0, 1fr))`, `gap: 6px 16px`, `margin-top: 12px`; 2 columns at every width (see the
-    2026-11-05 update). Rule: flex, centered, `gap: 8px`, 12px, `--text-faint`; met `--text`;
-    `min-width: 0` and `overflow-wrap: anywhere`, so a long translated label wraps instead of widening the card.
+    2026-11-05 update). Rule: flex, `align-items: flex-start` (the tick on the first line), `gap: 8px`, 12px,
+    line height 1.55, `--text-faint`; met `--text`;
+    the label a `.lk-pwstrength-rule-label` span (`min-width: 0`, `overflow-wrap: break-word`), so a long
+    translated label wraps at spaces instead of widening the card.
     Tick: 16px circle, `flex: 0 0 16px` (never squashed by a long label), `1.5px solid --border-2`; met: fill and
     border `--zone-high`. Check glyph 10px, stroke `--bg-0`, width 3, always rendered, `opacity` 0 → 1 when met.
     Motion: colour, background and border-colour `.25s var(--ease)`, glyph opacity `.2s var(--ease)`.
-  - **Native** (sizes from `mobile/auth-onboarding.html`): rows of two, each rule `flex: 1`, `columnGap 12`,
-    `rowGap 6`, `marginTop 11`; always 2 columns (the mobile design never stacks). Rule: `gap 7`, 10.5,
-    `colors.textFaint`; met `colors.text`; the label `flexShrink 1`, so it wraps. Tick: 15, `flexShrink 0`, `borderWidth 1.5`, `colors.border2`; met
-    `colors.zoneHigh`. Glyph 9, `react-native-svg`. No animation. (Columns and gaps: replaced by the 2026-11-05
-    update.)
+  - **Native** (the same as web, to match the web app at 402): rows of two, each rule `flex: 1`, `gap 16`
+    between the columns, `rowGap 6`, `marginTop 4` (12 under the meta row with the root's 8); an odd last
+    rule beside an empty `flex: 1` cell keeps its column's width. Rule: `alignItems: 'flex-start'`, `gap 8`;
+    label 12 on a 12 × 1.55 line, `colors.textFaint`, met `colors.text`, `flexShrink 1` so it wraps. Tick:
+    16, `borderWidth 1.5`, `colors.border2`, met `colors.zoneHigh`, `marginTop` `(12 × 1.55 × fontScale −
+    16) / 2` (on the first line at any system text size). Glyph 10, `react-native-svg`. No animation.
   - **A11y:** web: each `<li>` reads its label, then the visually hidden `metLabel` / `unmetLabel` as given (no
     separator added: the app's string carries its own, e.g. `", done"`); the tick is
     `aria-hidden`; not `aria-live` (every keystroke would be announced; the meter's label is the summary).
