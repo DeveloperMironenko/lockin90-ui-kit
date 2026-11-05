@@ -142,8 +142,8 @@ up two by hand.
   rule a round tick that fills mint when `met`, with the label beside it. Presentational: the app decides the
   rules and whether each is met (they advise; the backend decides what it accepts).
   - **Web** (`.lk-pwstrength-rules`): a `<ul>` (not rendered when `rules` is empty), grid
-    `repeat(2, minmax(0, 1fr))`, `gap: 6px 16px`, `margin-top: 12px`; 1 column at
-    the `phone` breakpoint (≤ 540px). Rule: flex, centered, `gap: 8px`, 12px, `--text-faint`; met `--text`;
+    `repeat(2, minmax(0, 1fr))`, `gap: 6px 16px`, `margin-top: 12px`; 2 columns at every width (see the
+    2026-11-05 update). Rule: flex, centered, `gap: 8px`, 12px, `--text-faint`; met `--text`;
     `min-width: 0` and `overflow-wrap: anywhere`, so a long translated label wraps instead of widening the card.
     Tick: 16px circle, `flex: 0 0 16px` (never squashed by a long label), `1.5px solid --border-2`; met: fill and
     border `--zone-high`. Check glyph 10px, stroke `--bg-0`, width 3, always rendered, `opacity` 0 → 1 when met.
@@ -181,3 +181,11 @@ up two by hand.
   Set a new password and Create account screens use it (lockin90-v2 1.19a).
 - Rest props now go on the root (the container), as on web; the meter is the inner segment row. Name the
   meter with `accessibleLabel`, not `accessibilityLabel` through rest.
+
+## Update — 2026-11-05 (2 columns at every width)
+- **Web:** the rules stay in 2 columns at phone width too (the `≤ 540px` one-column rule is gone). At 402 each
+  column is about 142px, so a long label wraps onto a second line inside its column (`overflow-wrap: anywhere`,
+  the tick centred on it); a row is as tall as its taller rule. Owner (lockin90-v2, 2026-11-05): "the criteria
+  has to be in 2 columns", wrapping allowed.
+- **Native:** the same, in its own PR: two equal columns, `columnGap 16`, `rowGap 6`, each label wrapping in
+  its column (it was one column, to match the web's phone width).

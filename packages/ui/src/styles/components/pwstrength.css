@@ -44,7 +44,7 @@
   color: var(--text-faint);
 }
 
-/* rule checklist: 2 columns, 1 at the phone breakpoint (--bp-phone) */
+/* rule checklist: 2 columns at every width; a long label wraps inside its column */
 .lk-pwstrength-rules {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -91,9 +91,4 @@
 }
 .lk-pwstrength-rule.is-met .lk-pwstrength-tick svg {
   opacity: 1;
-}
-@media (max-width: 540px) {
-  .lk-pwstrength-rules {
-    grid-template-columns: 1fr;
-  }
 }
