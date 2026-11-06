@@ -1,5 +1,11 @@
 # @lockin90/ui
 
+## 3.3.1
+
+### Patch Changes
+
+- 2f0f949: PasswordStrengthMeter: a hint too long to sit beside the label moves to its own line below it; the label ("Strength: Good") never breaks.
+
 ## 3.3.0
 
 ### Minor Changes
