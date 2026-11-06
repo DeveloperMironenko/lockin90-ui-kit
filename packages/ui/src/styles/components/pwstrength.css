@@ -23,9 +23,11 @@
 /* label (score color; faint at score 0) + optional prefix + hint */
 .lk-pwstrength-meta {
   display: flex;
+  /* a hint too long to sit beside the label moves to its own line below it; the label never breaks */
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
+  gap: 2px 12px;
   margin-top: 8px;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -33,6 +35,7 @@
 .lk-pwstrength-label {
   font-weight: 600;
   color: var(--pw-color);
+  white-space: nowrap;
 }
 .lk-pwstrength-hint {
   color: var(--text-faint);
@@ -42,6 +45,7 @@
 }
 .lk-pwstrength-prefix {
   color: var(--text-faint);
+  white-space: nowrap;
 }
 
 /* rule checklist: 2 columns at every width; a long label wraps inside its column */
