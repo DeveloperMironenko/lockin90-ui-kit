@@ -166,26 +166,33 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     backgroundColor: colors.border,
   },
+  // the web `.lk-pwstrength-meta`: a hint too long to sit beside the label moves to its own line under it
+  // (`gap: 2px 12px`); the label with its prefix never breaks
   meta: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'baseline',
     justifyContent: 'space-between',
-    gap: 12,
+    rowGap: 2,
+    columnGap: 12,
   },
   label: {
     fontFamily: fonts.mono,
     fontSize: 11,
     fontWeight: '600',
+    flexShrink: 0,
   },
   prefix: {
     fontFamily: fonts.mono,
     fontSize: 11,
     color: colors.textFaint,
+    flexShrink: 0,
   },
   hint: {
     fontFamily: fonts.mono,
     fontSize: 11,
     color: colors.textFaint,
+    flexShrink: 1,
   },
   // the web `.lk-pwstrength-rules`: 2 equal columns at every width (`gap: 6px 16px`), 12px under the
   // meta row (the root's 8px gap + 4); a row is as tall as its taller rule, a long label wraps

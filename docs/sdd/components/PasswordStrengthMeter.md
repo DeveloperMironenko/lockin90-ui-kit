@@ -87,7 +87,7 @@ There is no capability gap — fully equivalent on both platforms.
 - **Pairs with `PasswordInput`** directly below the field on sign-up / change-password.
 - Consumer computes `score` (e.g. zxcvbn `0–4`) and passes it in; the meter renders, nothing more.
 - **A long hint** (a translated piece of advice): it sits beside the label while both fit; otherwise it moves to
-  its own line under the label (web `flex-wrap`; native ⬜ next, as its own PR), and the label with its
+  its own line under the label (web `flex-wrap`; native `flexWrap`, the label and prefix `flexShrink: 0`), and the label with its
   prefix never breaks. The hint may itself wrap on that line.
 - Use `hint` for a short requirement reminder (e.g. `"Use 12+ chars"`); override `label` only for localized copy.
 
