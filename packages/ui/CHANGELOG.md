@@ -1,5 +1,11 @@
 # @lockin90/ui
 
+## 3.4.0
+
+### Minor Changes
+
+- 1063906: Onboarding primitives (design web/onboarding.html): `StepIndex` (the step number tile, or a check once done), `IconTile` (an icon on a bordered tile), `ListRow` `boxed`, `Alert` tone `violet` (the "why we ask" note), `Button` tone `muted` for the `text` variant (the faint "Skip setup") and `size="lg"` (a flow's closing CTA); `SegmentedTabs` `fill` (equal segments that fit a phone row) and `invalid`; `AlertStrong`.
+
 ## 3.3.1
 
 ### Patch Changes
