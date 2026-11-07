@@ -51,3 +51,14 @@ describe('Alert text', () => {
     expect(ancestors(own!).some((el) => hasDeclaration(el, 'font-size:13px'))).toBe(true);
   });
 });
+
+describe('Alert violet note', () => {
+  test('an accent-tinted box on the 4px scale, the container radius', () => {
+    const box = inlineStyle(parse(render(Alert, { tone: 'violet', children: 'Why we ask' })).children[0]!);
+    // the accent tint and its line (cyan's would be 34,211,238 at 0.22)
+    expect(box['border-top-color']).toBe('rgba(124,92,255,0.20)');
+    expect(box.gap).toBe('12px');
+    expect(box['padding-left']).toBe('16px');
+    expect(box['border-top-left-radius']).toBe('16px');
+  });
+});

@@ -58,6 +58,7 @@ import * as HeatmapStories from './Heatmap.stories';
 import * as HighlightStories from './Highlight.stories';
 import * as HypnogramStories from './Hypnogram.stories';
 import * as IconStories from './Icon.stories';
+import * as IconTileStories from './IconTile.stories';
 import * as InputStories from './Input.stories';
 import * as InsightCardStories from './InsightCard.stories';
 import * as KeyValueStories from './KeyValue.stories';
@@ -118,6 +119,7 @@ import * as StatStories from './Stat.stories';
 import * as StatTileStories from './StatTile.stories';
 import * as StateLabelStories from './StateLabel.stories';
 import * as StatusDotStories from './StatusDot.stories';
+import * as StepIndexStories from './StepIndex.stories';
 import * as StepperStories from './Stepper.stories';
 import * as SupplementChartStories from './SupplementChart.stories';
 import * as TabBarStories from './TabBar.stories';
@@ -209,6 +211,7 @@ export const STORY_MODULES: Record<string, StoryModule> = {
   "Highlight": HighlightStories,
   "Hypnogram": HypnogramStories,
   "Icon": IconStories,
+  "IconTile": IconTileStories,
   "Input": InputStories,
   "InsightCard": InsightCardStories,
   "KeyValue": KeyValueStories,
@@ -269,6 +272,7 @@ export const STORY_MODULES: Record<string, StoryModule> = {
   "StatTile": StatTileStories,
   "StateLabel": StateLabelStories,
   "StatusDot": StatusDotStories,
+  "StepIndex": StepIndexStories,
   "Stepper": StepperStories,
   "SupplementChart": SupplementChartStories,
   "TabBar": TabBarStories,

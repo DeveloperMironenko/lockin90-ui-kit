@@ -3,7 +3,7 @@
 > **Package:** `@lockin90/ui` (web) · `@lockin90/ui-native` (native) — root cross-platform primitive.
 > **Source:** `packages/ui/src/components/Alert.tsx` · `packages/ui-native/src/components/Alert.tsx` ·
 > web CSS `packages/ui/src/styles/components/alert.css` (`.lk-alert*`).
-> **Exports:** `Alert`, `AlertStrong` (a note sentence's bold part: `<b>` on web; the `violet` note colours it), type `AlertTone`, type `AlertProps`.
+> **Exports:** `Alert`, `AlertStrong` (a note sentence's bold part: `<b>` on web, a 600 `<Text>` on native; the `violet` note colours it), type `AlertTone`, type `AlertProps`.
 > **Status:** Shipped. **Parity:** 🟡 same API & visuals; native draws its own inline svg glyphs (web uses `Icon` for info/check).
 > **Stories:** `packages/ui/src/stories/Alert.stories.tsx` · `packages/ui-native/src/stories/Alert.stories.tsx`.
 
@@ -19,7 +19,7 @@ It's the kit's single sanctioned inline-message surface (form errors, success co
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `tone` | `'info' \| 'success' \| 'warn' \| 'danger' \| 'neutral' \| 'cyan' \| 'violet'` | `'info'` | ✓ | ✓ | accent color + default icon; `neutral` / `cyan` / `violet` are quiet notes (no bar); `violet` on native comes in the next PR |
+| `tone` | `'info' \| 'success' \| 'warn' \| 'danger' \| 'neutral' \| 'cyan' \| 'violet'` | `'info'` | ✓ | ✓ | accent color + default icon; `neutral` / `cyan` / `violet` are quiet notes (no bar) |
 | `title` | `string` | — | ✓ | ✓ | bold heading (`font-display`) |
 | `children` | `ReactNode` | — | ✓ | ✓ | body text under the title |
 | `icon` | `ReactNode` | tone default | ✓ | ✓ | override the leading glyph |
@@ -60,7 +60,7 @@ It's the kit's single sanctioned inline-message surface (form errors, success co
 | --- | --- | --- |
 | `neutral` | `align-items: center` when it is text only (no title, no dismiss; else `flex-start`), `gap 9px`, `padding 11px 13px`, bg `--glass`, border `--border`; icon 17px; text 12.5px, line-height 1.55 | `center` when text only (else `flex-start`), `gap 9`, `padding 11 / 13`, bg `colors.glass`, border `colors.border`; icon 17; text 12.5, `lineHeight 19` (the web's sizes: mobile auth screens match the web app) |
 | `cyan` | `flex-start`, `gap 9px`, `padding 12px 14px`, bg `rgba(34,211,238,.05)`, border `rgba(34,211,238,.22)`; icon 17px, `margin-top 1px`; text 12.5px, line-height 1.5 | `flex-start`, `gap 9`, `padding 12 / 14`, bg `rgba(34,211,238,0.05)`, border `rgba(34,211,238,0.22)`; icon 17, `marginTop 1`; text 12.5, `lineHeight 19` |
-| `violet` | the onboarding "why we ask" note (design `web/onboarding.html` `.why`): `flex-start`, `gap` `--space-3`, `padding` `--space-3` `--space-4` (the design's 11 / 13 / 15 snapped to the 4px scale), radius `--r`, bg `--accent` @5.5%, the line `--accent` @20%; icon 18px in `--accent`, stroke 1.7; text 13.5px (12.5px ≤ 540px), line-height 1.5; `b` / `strong` 600 in `--accent` mixed 40% with white (the design's `#cbbcff`) | native: next PR |
+| `violet` | the onboarding "why we ask" note (design `web/onboarding.html` `.why`): `flex-start`, `gap` `--space-3`, `padding` `--space-3` `--space-4` (the design's 11 / 13 / 15 snapped to the 4px scale), radius `--r`, bg `--accent` @5.5%, the line `--accent` @20%; icon 18px in `--accent`, stroke 1.7; text 13.5px (12.5px ≤ 540px), line-height 1.5; `b` / `strong` 600 in `--accent` mixed 40% with white (the design's `#cbbcff`) | the same, at the phone size: `gap 12`, `padding 12 / 16`, `radii.md`, bg `rgba(124,92,255,0.055)`, line `rgba(124,92,255,0.2)`; icon 18 stroke 1.7; text 12.5, `lineHeight 19`. RN can't style a child by tag: the bold part is `AlertStrong` (600, `#CBBEFF`), passed as the i18n `Trans` `b` component |
 
 ## 4. States
 

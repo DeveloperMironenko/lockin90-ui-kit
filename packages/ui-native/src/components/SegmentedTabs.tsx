@@ -123,6 +123,10 @@ export interface SegmentedTabsProps {
    * `appearance="tint"`.
    */
   appearance?: 'raised' | 'tint';
+  /** Equal segments that fit a phone row: 12.5 labels, padding 8 / 4 (web `fill` at phone width). */
+  fill?: boolean;
+  /** The track's line in `colors.zoneLow`: a required choice not made (web `invalid`). */
+  invalid?: boolean;
 }
 
 /**
@@ -139,12 +143,14 @@ export function SegmentedTabs({
   tone = 'accent',
   size = 'md',
   appearance = 'raised',
+  fill = false,
+  invalid = false,
 }: SegmentedTabsProps) {
   const isSm = size === 'sm';
   const isTint = appearance === 'tint';
   return (
     <View
-      style={[styles.track, isSm && styles.trackSm, isTint && styles.trackTint]}
+      style={[styles.track, isSm && styles.trackSm, isTint && styles.trackTint, invalid && styles.trackInvalid]}
       accessibilityRole="tablist"
     >
       {tabs.map((item, i) => {
@@ -191,6 +197,7 @@ export function SegmentedTabs({
               styles.tab,
               isSm && styles.tabSm,
               isTint && styles.tabTint,
+              fill && styles.tabFill,
               // color-tone tabs always carry a transparent hairline so the
               // active border doesn't shift layout (same trick as tabTint)
               isColorTone && styles.tabColorTone,
@@ -227,7 +234,7 @@ export function SegmentedTabs({
               numberOfLines={2}
               adjustsFontSizeToFit
               minimumFontScale={0.8}
-              style={[styles.label, isSm && styles.labelSm, { color: labelColor }]}
+              style={[styles.label, isSm && styles.labelSm, fill && styles.labelFill, { color: labelColor }]}
             >
               {label}
             </Text>
@@ -297,6 +304,13 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     backgroundColor: 'transparent',
   },
+  // fill — web `.lk-seg--fill` at phone width: padding 8 / 4
+  tabFill: {
+    paddingHorizontal: 4,
+  },
+  trackInvalid: {
+    borderColor: colors.zoneLow,
+  },
   // sm segments hug their label (design `.seg button`: padding 5px 11px)
   tabSm: {
     flex: 0,
@@ -354,6 +368,9 @@ const styles = StyleSheet.create({
   glowMint: { ...nativeShadows.glowMint },
   // design `.seg button[aria-pressed="true"]`: 0 0 14px rgba(124,92,255,.4)
   glowCta: { boxShadow: '0 0 14px rgba(124,92,255,0.4)' },
+  labelFill: {
+    fontSize: 12.5,
+  },
   label: {
     fontFamily: fonts.ui,
     fontSize: 11,

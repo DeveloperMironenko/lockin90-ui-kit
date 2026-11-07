@@ -278,6 +278,8 @@ export interface IconProps {
    * for the web's parent-driven `currentColor`. @default colors.text
    */
   color?: string;
+  /** Stroke width of a line glyph (web: CSS `stroke-width` on the svg). @default 1.9 */
+  strokeWidth?: number;
 }
 
 /**
@@ -658,10 +660,10 @@ const WORDMARK_BAND: Partial<Record<IconName, { y: number; h: number }>> = {
   polar: { y: 9.3, h: 5.4 },
 };
 
-export function Icon({ name, size = 18, width, height, color = colors.text }: IconProps) {
+export function Icon({ name, size = 18, width, height, color = colors.text, strokeWidth = 1.9 }: IconProps) {
   const LucideGlyph = (LUCIDE as Partial<Record<IconName, LucideIcon>>)[name];
   if (LucideGlyph) {
-    return <LucideGlyph size={size} color={color} strokeWidth={1.9} />;
+    return <LucideGlyph size={size} color={color} strokeWidth={strokeWidth} />;
   }
   const custom = (CUSTOM_GLYPHS as Partial<Record<IconName, (c: string) => ReactNode>>)[name];
   const band = width != null || height != null ? WORDMARK_BAND[name] : undefined;
@@ -673,7 +675,7 @@ export function Icon({ name, size = 18, width, height, color = colors.text }: Ic
       preserveAspectRatio={band ? 'xMinYMid meet' : 'xMidYMid meet'}
       fill="none"
       stroke={color}
-      strokeWidth={1.9}
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
     >

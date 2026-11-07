@@ -33,6 +33,7 @@ platforms); `apple` and `stripe` are filled silhouettes rendered in the resolved
 | `name` | `IconName` | — (required) | ✓ | ✓ | which glyph to render — identical union both sides |
 | `size` | `number` | `18` | ✓ | ✓ | px width = height |
 | `color` | `string` | — | ✗ | ✓ | **native only** — stands in for `currentColor`; defaults to `colors.text` |
+| `strokeWidth` | `number` | `1.9` | — | ✓ | **native only**: a line glyph's stroke (web sets it with CSS `stroke-width` on the svg, e.g. `.lk-stepindex--done svg`); StepIndex's check 2.6, IconTile's glyph 1.7 |
 | `className` | `string` | — | ✓ | ✗ | web only (on the wrapper span) |
 | _rest_ | `HTMLAttributes<HTMLSpanElement>` | — | ✓ | ✗ | **web only** — spread onto the wrapper span |
 

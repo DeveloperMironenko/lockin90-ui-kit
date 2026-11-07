@@ -3,11 +3,12 @@ import { View, Text, Pressable, StyleSheet, type TextStyle, type ViewProps, type
 import Svg, { Path, Circle } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 
-export type AlertTone = 'info' | 'success' | 'warn' | 'danger' | 'neutral' | 'cyan';
+export type AlertTone = 'info' | 'success' | 'warn' | 'danger' | 'neutral' | 'cyan' | 'violet';
 
 export interface AlertProps extends Omit<ViewProps, 'children'> {
   /** signal color + default icon (info=accent, success=mint, warn=amber, danger=red);
-   *  `neutral` (glass box) and `cyan` (cyan-tinted box) are quiet notes: no left bar, a cyan icon */
+   *  `neutral` (glass box) and `cyan` (cyan-tinted box) are quiet notes: no left bar, a cyan icon;
+   *  `violet` (accent-tinted box, accent icon) is the onboarding "why we ask" note */
   tone?: AlertTone;
   /** bold heading line */
   title?: string;
@@ -26,6 +27,7 @@ const TONE: Record<AlertTone, { c: string; bg: string; border: string }> = {
   danger: { c: colors.zoneLow, bg: 'rgba(255,77,109,0.08)', border: 'rgba(255,77,109,0.3)' },
   neutral: { c: colors.accent2, bg: colors.glass, border: colors.border },
   cyan: { c: colors.accent2, bg: 'rgba(34,211,238,0.05)', border: 'rgba(34,211,238,0.22)' },
+  violet: { c: colors.accent, bg: 'rgba(124,92,255,0.055)', border: 'rgba(124,92,255,0.2)' },
 };
 
 /** Quiet notes (design .tz-note / .note-safe): no bar, their own box, glyph and text sizes. */
@@ -41,7 +43,19 @@ const NOTE: Partial<Record<AlertTone, { box: ViewStyle; text: TextStyle; iconSiz
     text: { fontSize: 12.5, lineHeight: 19 },
     iconSize: 17,
   },
+  // the web's phone-width .lk-alert-violet sizes (on the 4px scale)
+  violet: {
+    box: { gap: 12, paddingTop: 12, paddingBottom: 12, paddingLeft: 16, paddingRight: 16, borderRadius: radii.md },
+    text: { fontSize: 12.5, lineHeight: 19 },
+    iconSize: 18,
+  },
 };
+
+/** The bold part of a `violet` note's sentence (web: `<b>` inside it), in the light accent. Pass it as an
+ *  i18n `Trans` component: `components={{ b: <AlertStrong /> }}`. */
+export function AlertStrong({ children }: { children?: ReactNode }) {
+  return <Text style={styles.strong}>{children}</Text>;
+}
 
 /** Warning-triangle glyph — shared between warn + danger tones. */
 function WarningIcon({ color }: { color: string }) {
@@ -85,7 +99,7 @@ function defaultIcon(tone: AlertTone, color: string): ReactNode {
   if (tone === 'success') return <CheckIcon color={color} />;
   if (tone === 'warn' || tone === 'danger') return <WarningIcon color={color} />;
   const note = NOTE[tone];
-  if (note) return <InfoIcon color={color} size={note.iconSize} strokeWidth={1.6} />;
+  if (note) return <InfoIcon color={color} size={note.iconSize} strokeWidth={tone === 'violet' ? 1.7 : 1.6} />;
   return <InfoIcon color={color} />;
 }
 
@@ -126,6 +140,8 @@ export function Alert({ tone = 'info', title, children, icon, onDismiss, style, 
 }
 
 const styles = StyleSheet.create({
+  // web: --accent mixed 40% with white
+  strong: { fontWeight: '600', color: '#CBBEFF' },
   alert: {
     position: 'relative',
     flexDirection: 'row',

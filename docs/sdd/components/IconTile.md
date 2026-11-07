@@ -1,10 +1,10 @@
 # SDD — `IconTile`
 
 > **Package:** `@lockin90/ui` (web) · `@lockin90/ui-native` (native) — root cross-platform primitive.
-> **Source:** `packages/ui/src/components/IconTile.tsx` · web CSS `packages/ui/src/styles/components/icontile.css` (`.lk-icontile`) · native `packages/ui-native/src/components/IconTile.tsx` (next PR).
+> **Source:** `packages/ui/src/components/IconTile.tsx` · web CSS `packages/ui/src/styles/components/icontile.css` (`.lk-icontile`) · native `packages/ui-native/src/components/IconTile.tsx`.
 > **Exports:** `IconTile`, type `IconTileProps`.
-> **Status:** Web shipped; native in the following PR. **Parity:** ✅ identical API (once native ships).
-> **Stories:** `packages/ui/src/stories/IconTile.stories.tsx`.
+> **Status:** Shipped. **Parity:** ✅ identical API.
+> **Stories:** `packages/ui/src/stories/IconTile.stories.tsx` · `packages/ui-native/src/stories/IconTile.stories.tsx`.
 
 ---
 
@@ -16,8 +16,8 @@ A kit `Icon` on a small bordered tile: the leading mark of a summary row (design
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `icon` | `IconName` | — | ✓ | next PR | the kit icon |
-| `color` | `string` | text colour | ✓ | next PR | the glyph's colour, a token (`var(--accent)` / `colors.accent`) |
+| `icon` | `IconName` | — | ✓ | ✓ | the kit icon |
+| `color` | `string` | text colour | ✓ | ✓ | the glyph's colour, a token (`var(--accent)` / `colors.accent`) |
 | _rest_ | `HTMLAttributes<HTMLSpanElement>` (no `children`) | — | ✓ | — | |
 
 ## 3. Visual spec
@@ -30,7 +30,7 @@ None (not interactive).
 
 ## 5. Web ↔ native parity
 
-Native draws the same tile in the next PR.
+Native: the same 38 tile, `radii.sm`, `colors.border2`, `colors.bg1`; the icon 18 in `color` (default `colors.text`). Hidden from screen readers.
 
 ## 6. Composition & usage
 
