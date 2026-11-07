@@ -83,6 +83,12 @@ export interface SegmentedTabsProps extends Omit<HTMLAttributes<HTMLDivElement>,
    * `appearance="tint"`.
    */
   appearance?: 'raised' | 'tint';
+  /**
+   * Segments share the track's width equally and may shrink below their padding: on phones
+   * (≤ 540px) the labels drop to 12.5px with 4px side padding, so five choices fit one row
+   * (design onboarding `.seg` at phone width: activity level, sex, chronotype).
+   */
+  fill?: boolean;
 }
 
 /** iOS-style segmented control — a pill track of equal-width segments; the
@@ -96,12 +102,13 @@ export function SegmentedTabs({
   tone = 'accent',
   size = 'md',
   appearance = 'raised',
+  fill = false,
   className,
   ...rest
 }: SegmentedTabsProps) {
   return (
     <div
-      className={cn('lk-seg', size === 'sm' && 'lk-seg-sm', className)}
+      className={cn('lk-seg', size === 'sm' && 'lk-seg-sm', fill && 'lk-seg--fill', className)}
       role="tablist"
       data-tone={tone !== 'accent' ? tone : undefined}
       data-appearance={appearance !== 'raised' ? appearance : undefined}

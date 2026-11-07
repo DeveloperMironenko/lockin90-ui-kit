@@ -56,3 +56,10 @@ describe('SegmentedTabs color tones', () => {
     expect(html).not.toContain('lk-seg-dot');
   });
 });
+
+describe('SegmentedTabs fill', () => {
+  it('marks the track whose segments share its width', () => {
+    expect(renderToStaticMarkup(<SegmentedTabs fill tabs={['A', 'B']} />)).toContain('lk-seg--fill');
+    expect(renderToStaticMarkup(<SegmentedTabs tabs={['A', 'B']} />)).not.toContain('lk-seg--fill');
+  });
+});
