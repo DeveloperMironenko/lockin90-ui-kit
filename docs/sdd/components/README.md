@@ -56,7 +56,7 @@ Parity legend: ✅ identical API · 🟡 same API, platform-shaped impl · 🔵 
 
 ## Overlays & feedback
 [Modal](./Modal.md) · [Sheet](./Sheet.md) · [Popover](./Popover.md) (+ CopyButton) ·
-[Menu](./Menu.md) · [Tooltip](./Tooltip.md) · [Toast](./Toast.md) (+ Badge) · [Alert](./Alert.md) ·
+[Menu](./Menu.md) · [Tooltip](./Tooltip.md) · [Toast](./Toast.md) (+ Badge) · [Alert](./Alert.md) · [StepIndex](./StepIndex.md) · [IconTile](./IconTile.md) ·
 [EmptyState](./EmptyState.md) · [ProGate](./ProGate.md) · [LockedRow](./LockedRow.md) ·
 [NotificationRow](./NotificationRow.md) · [ReauthDialog](./ReauthDialog.md) ·
 [Spinner](./Spinner.md) · [DotsLoader](./DotsLoader.md)

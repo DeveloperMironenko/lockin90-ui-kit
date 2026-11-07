@@ -1,0 +1,17 @@
+/* ============================================================================
+   IconTile — a kit icon on a 38px bordered tile (design web/onboarding.html .recap .rico).
+   ========================================================================== */
+.lk-icontile {
+  display: grid;
+  place-items: center;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  border: 1px solid var(--border);
+  background: var(--bg-1);
+  color: var(--text);
+}
+.lk-icontile svg {
+  stroke-width: 1.7;
+}

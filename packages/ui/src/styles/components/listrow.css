@@ -96,3 +96,22 @@
 .lk-listrow-danger .lk-listrow-trailing {
   color: var(--zone-low);
 }
+
+/* ---- boxed: a row of its own (design onboarding .recap li) ---- */
+.lk-listrow.lk-listrow-boxed {
+  gap: 13px;
+  padding: 13px 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--glass);
+}
+.lk-listrow.lk-listrow-boxed + .lk-listrow-boxed {
+  border-top: 1px solid var(--border);
+}
+.lk-listrow-boxed .lk-listrow-title {
+  font-weight: 600;
+  font-size: 15px;
+}
+.lk-listrow-boxed .lk-listrow-subtitle {
+  font-size: 13px;
+}

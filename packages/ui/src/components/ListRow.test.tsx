@@ -19,3 +19,11 @@ describe('ListRow activeTint', () => {
     expect(html).not.toContain('--lk-listrow-active-bg');
   });
 });
+
+describe('ListRow boxed', () => {
+  it('marks a row of its own', () => {
+    const html = renderToStaticMarkup(<ListRow boxed title="Profile" subtitle="32 yrs" />);
+    expect(html).toContain('lk-listrow-boxed');
+    expect(renderToStaticMarkup(<ListRow title="Profile" />)).not.toContain('lk-listrow-boxed');
+  });
+});

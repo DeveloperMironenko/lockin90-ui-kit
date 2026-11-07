@@ -31,6 +31,7 @@ It is the *only* sanctioned list-row primitive; hand-rolling a flex row with the
 | **handler** | `() => void` | — | `onClick` | `onPress` | **platform-shaped** — presence makes the row interactive |
 | `active` | `boolean` | `false` | ✓ | ✓ | accent-tinted selected state |
 | `danger` | `boolean` | `false` | ✓ | ✓ | tints title (and web trailing) `--zone-low` |
+| `boxed` | `boolean` | `false` | ✓ | ✓ | a row of its own (design onboarding `.recap li`): `padding 13px 15px`, `gap 13px`, 1px `--border`, radius `--r-sm`, bg `--glass`; title 600 15px, subtitle 13px; boxed rows keep their own border, no shared hairline |
 | `divider` | `boolean` | `true` | — | ✓ | **native only** — opt-out the top hairline on the FIRST row of a stack |
 | `className` | `string` | — | ✓ | — | web only |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |

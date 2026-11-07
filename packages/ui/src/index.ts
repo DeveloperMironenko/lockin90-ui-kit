@@ -63,6 +63,10 @@ export type { KeyValueRow, KeyValueProps, StatusDotTone, StatusDotProps } from '
 export { LineChart } from './components/LineChart';
 export type { LineMarker, LineChartProps, LineChartVariant, LineCurve, LinePattern, GradientStop, LineSeries, LineLabel } from './components/LineChart';
 export { ListRow } from './components/ListRow';
+export { StepIndex } from './components/StepIndex';
+export type { StepIndexProps } from './components/StepIndex';
+export { IconTile } from './components/IconTile';
+export type { IconTileProps } from './components/IconTile';
 export type { ListRowProps } from './components/ListRow';
 export { Menu } from './components/Menu';
 export type { MenuItemData, MenuProps } from './components/Menu';

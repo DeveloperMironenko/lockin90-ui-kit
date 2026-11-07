@@ -2,11 +2,12 @@ import { type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
 import { Icon } from './Icon';
 
-export type AlertTone = 'info' | 'success' | 'warn' | 'danger' | 'neutral' | 'cyan';
+export type AlertTone = 'info' | 'success' | 'warn' | 'danger' | 'neutral' | 'cyan' | 'violet';
 
 export interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   /** signal color + default icon (info=accent, success=mint, warn=amber, danger=red);
-   *  `neutral` (glass box) and `cyan` (cyan-tinted box) are quiet notes: no left bar, a cyan icon */
+   *  `neutral` (glass box) and `cyan` (cyan-tinted box) are quiet notes: no left bar, a cyan icon;
+   *  `violet` (accent-tinted box, accent icon) is the onboarding "why we ask" note */
   tone?: AlertTone;
   /** bold heading line (font-display) */
   title?: string;
@@ -25,6 +26,7 @@ const TONE: Record<AlertTone, string> = {
   danger: 'lk-alert-danger',
   neutral: 'lk-alert-neutral',
   cyan: 'lk-alert-cyan',
+  violet: 'lk-alert-violet',
 };
 
 /** Warning-triangle glyph — shared between warn + danger tones. */
@@ -56,6 +58,7 @@ const DEFAULT_ICON: Record<AlertTone, ReactNode> = {
   // the notes' 17px glyph size is set in alert.css (for app icons too)
   neutral: <Icon name="info" />,
   cyan: <Icon name="info" />,
+  violet: <Icon name="info" />,
 };
 
 /** Tinted callout box — info / success / warn / danger banner (or a quiet neutral / cyan note) with optional dismiss. */

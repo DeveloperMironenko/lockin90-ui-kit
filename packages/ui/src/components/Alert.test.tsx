@@ -42,3 +42,12 @@ describe('Alert note tones', () => {
     );
   });
 });
+
+describe('Alert violet note', () => {
+  it('is a quiet note of its own: its tone class, a glyph, no signal tone', () => {
+    const { classes, iconSlot } = view(<Alert tone="violet">Why we ask</Alert>);
+    expect(classes).toContain('lk-alert-violet');
+    expect(classes.filter((c) => /^lk-alert-(info|success|warn|danger)$/.test(c))).toEqual([]);
+    expect(iconSlot).toContain('<svg');
+  });
+});
