@@ -36,3 +36,10 @@ describe('Button muted tone', () => {
     expect(hasDeclaration(label, 'color:rgba(130,139,159,1.00)')).toBe(true);
   });
 });
+
+describe('Button lg', () => {
+  test('the 17 label', () => {
+    const label = findByText(parse(render(Button, { variant: 'primary', size: 'lg', title: 'Enter' })), 'Enter')!;
+    expect(label.attrs.style ?? '').toContain('font-size:17px');
+  });
+});

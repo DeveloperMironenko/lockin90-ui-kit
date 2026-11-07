@@ -19,7 +19,7 @@ export function IconTile({ icon, color = colors.text, style, ...rest }: IconTile
       style={[styles.tile, style]}
       {...rest}
     >
-      <Icon name={icon} size={18} color={color} />
+      <Icon name={icon} size={18} color={color} strokeWidth={1.7} />
     </View>
   );
 }

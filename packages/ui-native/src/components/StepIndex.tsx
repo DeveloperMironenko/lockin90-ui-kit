@@ -22,7 +22,7 @@ export function StepIndex({ step, done, style, ...rest }: StepIndexProps) {
         style={[styles.tile, styles.done, style]}
         {...rest}
       >
-        <Icon name="check" size={20} color={colors.zoneHigh} />
+        <Icon name="check" size={20} color={colors.zoneHigh} strokeWidth={2.6} />
       </View>
     );
   return (

@@ -34,7 +34,8 @@ describe('ListRow boxed', () => {
     expect(hasDeclaration(row, 'radius:16px')).toBe(true);
     const subtitle = findAll(root, (el) => el.text === '32 yrs · male · 86 kg')[0]!;
     expect(hasDeclaration(subtitle, 'font-size:13px')).toBe(true);
-    // a one-line text carries -webkit-line-clamp; a boxed summary wraps
-    expect(hasDeclaration(subtitle, 'line-clamp')).toBe(false);
+    // numberOfLines={1} is nowrap + ellipsis on react-native-web; a boxed summary wraps
+    expect(hasDeclaration(subtitle, 'white-space:nowrap')).toBe(false);
+    expect(hasDeclaration(subtitle, 'text-overflow:ellipsis')).toBe(false);
   });
 });

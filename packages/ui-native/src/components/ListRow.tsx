@@ -38,9 +38,9 @@ export interface ListRowProps extends ViewProps {
 }
 
 /** Title/subtitle helpers: render strings as <Text>, pass nodes through. */
-function asText(node: ReactNode, textStyle: object, lines: number | undefined = 1): ReactNode {
+function asText(node: ReactNode, textStyle: object, oneLine = true): ReactNode {
   return typeof node === 'string' || typeof node === 'number' ? (
-    <Text style={textStyle} numberOfLines={lines}>
+    <Text style={textStyle} numberOfLines={oneLine ? 1 : undefined}>
       {node}
     </Text>
   ) : (
@@ -73,7 +73,7 @@ export function ListRow({
       <View style={styles.main}>
         {asText(title, titleStyle)}
         {/* a boxed row's summary wraps, as on web */}
-        {subtitle != null && asText(subtitle, [styles.subtitle, boxed && styles.subtitleBoxed], boxed ? undefined : 1)}
+        {subtitle != null && asText(subtitle, [styles.subtitle, boxed && styles.subtitleBoxed], !boxed)}
       </View>
       {trailing != null && <View style={styles.trailing}>{trailing}</View>}
     </>
@@ -90,7 +90,7 @@ export function ListRow({
     return (
       <Pressable
         onPress={onPress ? () => { hapticSelection(); onPress(); } : undefined}
-        style={({ pressed }) => [...rowStyle, pressed && styles.pressed]}
+        style={({ pressed }) => [...rowStyle, pressed && (boxed ? styles.pressedBoxed : styles.pressed)]}
         {...rest}
       >
         {body}
@@ -143,6 +143,10 @@ const styles = StyleSheet.create({
   },
   pressed: {
     backgroundColor: colors.glass,
+  },
+  // a boxed row is glass already: pressing lifts it to glass2 (web hover)
+  pressedBoxed: {
+    backgroundColor: colors.glass2,
   },
   active: {
     // accent tint ~12% — RN has no color-mix; use a translucent accent fill.
