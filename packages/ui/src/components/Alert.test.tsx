@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import type { ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Alert } from './Alert';
+import { Alert, AlertStrong } from './Alert';
 
 /** The root's classes, and the icon slot's markup. */
 const view = (el: ReactElement) => {
@@ -49,5 +49,11 @@ describe('Alert violet note', () => {
     expect(classes).toContain('lk-alert-violet');
     expect(classes.filter((c) => /^lk-alert-(info|success|warn|danger)$/.test(c))).toEqual([]);
     expect(iconSlot).toContain('<svg');
+  });
+});
+
+describe('AlertStrong', () => {
+  it('is the note sentence\'s bold part', () => {
+    expect(renderToStaticMarkup(<AlertStrong>Why it matters:</AlertStrong>)).toBe('<b>Why it matters:</b>');
   });
 });

@@ -3,7 +3,7 @@
 > **Package:** `@lockin90/ui` (web) · `@lockin90/ui-native` (native) — root cross-platform primitive.
 > **Source:** `packages/ui/src/components/Alert.tsx` · `packages/ui-native/src/components/Alert.tsx` ·
 > web CSS `packages/ui/src/styles/components/alert.css` (`.lk-alert*`).
-> **Exports:** `Alert`, type `AlertTone`, type `AlertProps`.
+> **Exports:** `Alert`, `AlertStrong` (a note sentence's bold part: `<b>` on web; the `violet` note colours it), type `AlertTone`, type `AlertProps`.
 > **Status:** Shipped. **Parity:** 🟡 same API & visuals; native draws its own inline svg glyphs (web uses `Icon` for info/check).
 > **Stories:** `packages/ui/src/stories/Alert.stories.tsx` · `packages/ui-native/src/stories/Alert.stories.tsx`.
 

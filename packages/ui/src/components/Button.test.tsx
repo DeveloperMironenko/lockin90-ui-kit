@@ -39,3 +39,10 @@ describe('Button muted tone', () => {
     expect(renderToStaticMarkup(<Button tone="muted">Save</Button>)).not.toContain('lk-btn--tone-muted');
   });
 });
+
+describe('Button lg', () => {
+  it('is the large closing CTA, on surface variants only', () => {
+    expect(renderToStaticMarkup(<Button variant="primary" size="lg">Enter</Button>)).toContain('lk-btn-lg');
+    expect(renderToStaticMarkup(<Button variant="text" size="lg">Enter</Button>)).not.toContain('lk-btn-lg');
+  });
+});

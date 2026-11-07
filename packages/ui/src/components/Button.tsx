@@ -14,7 +14,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
    * faint mono link that brightens on hover, for a quiet way out ("Skip setup").
    */
   tone?: ButtonTone;
-  size?: 'sm' | 'md';
+  /** `lg`: the closing CTA of a flow ("Enter LockIn90", design onboarding `.enter-cta`) */
+  size?: 'sm' | 'md' | 'lg';
   /** optional icon/node rendered before the label (e.g. an SSO brand logo) */
   leading?: ReactNode;
   /** optional icon/node rendered after the label (e.g. a trailing arrow) */
@@ -45,6 +46,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         surface && tone === 'danger' && 'lk-btn--tone-danger',
         !surface && tone === 'muted' && 'lk-btn--tone-muted',
         surface && size === 'sm' && 'lk-btn-sm',
+        surface && size === 'lg' && 'lk-btn-lg',
         className,
       )}
       {...rest}

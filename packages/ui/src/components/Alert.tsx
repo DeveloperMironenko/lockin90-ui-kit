@@ -29,6 +29,12 @@ const TONE: Record<AlertTone, string> = {
   violet: 'lk-alert-violet',
 };
 
+/** The bold part of a note's sentence (a `violet` note colours it light accent). The same name as the
+ *  native twin, so an i18n `Trans` reads alike on both: `components={{ b: <AlertStrong /> }}`. */
+export function AlertStrong({ children }: { children?: ReactNode }) {
+  return <b>{children}</b>;
+}
+
 /** Warning-triangle glyph — shared between warn + danger tones. */
 const WARNING = (
   <span className="lk-icon" aria-hidden="true">
