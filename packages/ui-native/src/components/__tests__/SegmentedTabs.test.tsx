@@ -56,3 +56,11 @@ describe('SegmentedTabs color tones', () => {
     expect(carriesColor(findByText(root, 'OK')!, '52,245,197')).toBe(false);
   });
 });
+
+describe('SegmentedTabs fill and invalid', () => {
+  test('fill: 12.5 labels; invalid: the zone-low line', () => {
+    const root = parse(render(SegmentedTabs, { tabs: ['Early', 'Late'], fill: true, invalid: true, active: -1 }));
+    expect(hasDeclaration(findByText(root, 'Early')!, 'font-size:12.5px')).toBe(true);
+    expect(hasDeclaration(root.children[0]!, 'border-top-color:rgba(255,77,109,1.00)')).toBe(true);
+  });
+});
