@@ -20,6 +20,9 @@ export interface ListRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'titl
   activeTint?: string;
   /** Danger tone — tints the title `--zone-low`. */
   danger?: boolean;
+  /** A row of its own: bordered glass box, no hairline to its neighbours (a summary list,
+   *  design onboarding `.recap li`). */
+  boxed?: boolean;
 }
 
 /** Generic tappable list item — leading + title/subtitle + trailing. Used for
@@ -27,7 +30,7 @@ export interface ListRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'titl
  *  hairline between them (handled in CSS). With `onClick` it renders an
  *  interactive `<button>`; otherwise a static `<div>`. */
 export const ListRow = forwardRef<HTMLDivElement, ListRowProps>(function ListRow(
-  { leading, title, subtitle, trailing, onClick, active, activeTint, danger, className, style, ...rest },
+  { leading, title, subtitle, trailing, onClick, active, activeTint, danger, boxed, className, style, ...rest },
   ref,
 ) {
   const classes = cn(
@@ -35,6 +38,7 @@ export const ListRow = forwardRef<HTMLDivElement, ListRowProps>(function ListRow
     onClick && 'lk-listrow-tappable',
     active && 'lk-listrow-active',
     danger && 'lk-listrow-danger',
+    boxed && 'lk-listrow-boxed',
     className,
   );
   /* activeTint rides a CSS custom property the .lk-listrow-active bg reads */

@@ -88,6 +88,9 @@
 .lk-btn-ghost:hover { color: var(--text); }
 .lk-btn-sm { padding: 8px 14px; font-size: 13px; }
 .lk-btn-sm svg { width: 14px; height: 14px; }
+/* lg — a flow's closing CTA (design onboarding .enter-cta: 17px, padding 17 / 28 on the 4px scale) */
+.lk-btn-lg { padding: var(--space-4) var(--space-7); font-size: 17px; }
+.lk-btn-lg svg { width: 19px; height: 19px; }
 /* text: a bare action inside a line of mono meta text ("Resend code" beside the code's hint):
    no surface, no padding, `--accent-2`; underlined on hover, `--text-faint` when disabled.
    Two classes, so it wins over the surface rules wherever they sit (Button skips size/tone). */
@@ -100,6 +103,9 @@
 .lk-btn.lk-btn-text:active { opacity: .85; }
 @media (hover: hover) { .lk-btn.lk-btn-text:hover { text-decoration: underline; } }
 .lk-btn.lk-btn-text:disabled { opacity: 1; cursor: default; color: var(--text-faint); text-decoration: none; }
+/* muted text — a quiet way out (design onboarding .step-skip): faint, brighter on hover, no underline */
+.lk-btn.lk-btn-text.lk-btn--tone-muted { padding: var(--space-2); font-size: 12.5px; color: var(--text-faint); }
+@media (hover: hover) { .lk-btn.lk-btn-text.lk-btn--tone-muted:hover { color: var(--text-dim); text-decoration: none; } }
 /* SSO / social sign-in: full-width, roomy rounded-square (not the pill) with a
    brand logo left of the label. Sits in a 2-up SSO grid. */
 .lk-btn-sso {

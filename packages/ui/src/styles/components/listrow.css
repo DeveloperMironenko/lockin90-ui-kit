@@ -96,3 +96,36 @@
 .lk-listrow-danger .lk-listrow-trailing {
   color: var(--zone-low);
 }
+
+/* ---- boxed: a row of its own (design onboarding .recap li): a container (One shape, one line:
+   --r, the --border-2 line), 12px between stacked boxed rows, no hairline to a neighbour; hover,
+   focus and active still show ---- */
+.lk-listrow.lk-listrow-boxed {
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r);
+  background: var(--glass);
+}
+.lk-listrow-boxed + .lk-listrow-boxed {
+  margin-top: var(--space-3);
+}
+.lk-listrow-boxed + .lk-listrow:not(.lk-listrow-boxed) {
+  border-top: 0;
+}
+.lk-listrow-boxed.lk-listrow-tappable:hover {
+  background: var(--glass-2);
+}
+.lk-listrow-boxed.lk-listrow-tappable:focus-visible {
+  border-color: var(--accent);
+}
+.lk-listrow-boxed.lk-listrow-active {
+  background: var(--lk-listrow-active-bg, color-mix(in srgb, var(--accent) 12%, transparent));
+}
+.lk-listrow-boxed .lk-listrow-title {
+  font-weight: 600;
+  font-size: 15px;
+}
+.lk-listrow-boxed .lk-listrow-subtitle {
+  font-size: 13px;
+}

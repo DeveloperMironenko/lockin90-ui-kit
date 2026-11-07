@@ -213,3 +213,21 @@
   letter-spacing: normal;
   padding: 6px 14px;
 }
+
+/* fill — equal segments that may shrink (design onboarding .seg at phone width: 12.5px, padding
+   8 / 4 on the 4px scale), so five choices fit one row of a phone */
+.lk-seg.lk-seg--fill .lk-seg-tab {
+  flex: 1 1 0;
+  min-width: 0;
+}
+@media (max-width: 540px) {
+  .lk-seg.lk-seg--fill .lk-seg-tab {
+    padding: var(--space-2) var(--space-1);
+    font-size: 12.5px;
+  }
+}
+
+/* invalid — a required choice not made: the line in --zone-low, as an invalid Input */
+.lk-seg.lk-seg--invalid {
+  border-color: var(--zone-low);
+}

@@ -23,3 +23,26 @@ describe('Button text variant', () => {
     expect(html).not.toContain('lk-btn--tone-danger');
   });
 });
+
+describe('Button muted tone', () => {
+  it('makes a text button the faint way out', () => {
+    const html = renderToStaticMarkup(
+      <Button variant="text" tone="muted">
+        Skip setup
+      </Button>,
+    );
+    expect(html).toContain('lk-btn-text');
+    expect(html).toContain('lk-btn--tone-muted');
+  });
+
+  it('does nothing on a surface variant', () => {
+    expect(renderToStaticMarkup(<Button tone="muted">Save</Button>)).not.toContain('lk-btn--tone-muted');
+  });
+});
+
+describe('Button lg', () => {
+  it('is the large closing CTA, on surface variants only', () => {
+    expect(renderToStaticMarkup(<Button variant="primary" size="lg">Enter</Button>)).toContain('lk-btn-lg');
+    expect(renderToStaticMarkup(<Button variant="text" size="lg">Enter</Button>)).not.toContain('lk-btn-lg');
+  });
+});
