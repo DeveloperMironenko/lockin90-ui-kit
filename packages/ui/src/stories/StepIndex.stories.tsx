@@ -10,5 +10,5 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Number: Story = { args: { step: 1 } };
+export const Step: Story = { args: { step: 1 } };
 export const Done: Story = { args: { step: 2, done: true } };

@@ -169,12 +169,12 @@
 }
 
 /* ---- the onboarding "why we ask" note (design web/onboarding.html .why): no accent bar, an
-   accent-tinted box, the accent info glyph (18px, stroke 1.7), 13.5px dim text, bold in a light
-   accent ---- */
+   accent-tinted box (the container radius, the line in the tone), the accent info glyph (18px,
+   stroke 1.7), 13.5px dim text, emphasis in a light accent; spacing on the 4px scale ---- */
 .lk-alert-violet {
   --lk-alert-c: var(--accent);
-  gap: 11px;
-  padding: 13px 15px;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--r);
   border-color: color-mix(in srgb, var(--accent) 20%, transparent);
   background: color-mix(in srgb, var(--accent) 5.5%, transparent);
@@ -191,9 +191,9 @@
   font-size: 13.5px;
   line-height: 1.5;
 }
-.lk-alert-violet .lk-alert-text b {
+.lk-alert-violet .lk-alert-text :is(b, strong) {
   font-weight: 600;
-  color: color-mix(in srgb, var(--accent) 45%, #fff);
+  color: color-mix(in srgb, var(--accent) 40%, white);
 }
 @media (max-width: 540px) {
   .lk-alert-violet .lk-alert-text {

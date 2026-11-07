@@ -16,17 +16,17 @@ The step's number beside a step's title in a guided flow (design `web/onboarding
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `step` | `number` | — | ✓ | ✓ | the number shown while not done |
-| `done` | `boolean` | `false` | ✓ | ✓ | a check instead of the number |
+| `step` | `number` | — | ✓ | next PR | the number shown while not done |
+| `done` | `boolean` | `false` | ✓ | next PR | a check instead of the number |
 | _rest_ | `HTMLAttributes<HTMLSpanElement>` (no `children`) | — | ✓ | — | `className`, `style`… |
 
 ## 3. Visual spec
 
 | Aspect | Value |
 | --- | --- |
-| Size | 44×44, radius 13px; ≤ 540px 38×38, radius 12px |
+| Size | 44×44; ≤ 540px 38×38. Radius `--r-sm`: a box holding text is a control (CONVENTIONS, One shape, one line) |
 | Fill | `--grad-cta`, `--glow-accent`, 1px transparent border |
-| Number | `--font-display` 700, 18px (16px ≤ 540px), `#07080d` (dark on the gradient, as the design) |
+| Number | `--font-display` 700, 18px (16px ≤ 540px), `#0a0a12`: the CTA's dark ink, as `Button` primary |
 | Done | bg `--zone-high` @12%, border `--zone-high` @35%, no glow; the kit `check` icon 20px, stroke 2.6, `--zone-high` |
 
 ## 4. States

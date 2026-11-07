@@ -31,7 +31,7 @@ It is the *only* sanctioned list-row primitive; hand-rolling a flex row with the
 | **handler** | `() => void` | — | `onClick` | `onPress` | **platform-shaped** — presence makes the row interactive |
 | `active` | `boolean` | `false` | ✓ | ✓ | accent-tinted selected state |
 | `danger` | `boolean` | `false` | ✓ | ✓ | tints title (and web trailing) `--zone-low` |
-| `boxed` | `boolean` | `false` | ✓ | ✓ | a row of its own (design onboarding `.recap li`): `padding 13px 15px`, `gap 13px`, 1px `--border`, radius `--r-sm`, bg `--glass`; title 600 15px, subtitle 13px; boxed rows keep their own border, no shared hairline |
+| `boxed` | `boolean` | `false` | ✓ | next PR | a row of its own (design onboarding `.recap li`), a **container** (One shape, one line): radius `--r`, `1px solid var(--border-2)`, bg `--glass`, `padding` `--space-3` `--space-4`, `gap` `--space-3`; title 600 15px, subtitle 13px (wraps); stacked boxed rows sit `--space-3` apart with no shared hairline; hover `--glass-2`, focus the `--accent` line, active the accent tint |
 | `divider` | `boolean` | `true` | — | ✓ | **native only** — opt-out the top hairline on the FIRST row of a stack |
 | `className` | `string` | — | ✓ | — | web only |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |

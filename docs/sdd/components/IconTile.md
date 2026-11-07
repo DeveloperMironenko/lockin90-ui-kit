@@ -16,13 +16,13 @@ A kit `Icon` on a small bordered tile: the leading mark of a summary row (design
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `icon` | `IconName` | — | ✓ | ✓ | the kit icon |
-| `color` | `string` | text colour | ✓ | ✓ | the glyph's colour, a token (`var(--accent)` / `colors.accent`) |
+| `icon` | `IconName` | — | ✓ | next PR | the kit icon |
+| `color` | `string` | text colour | ✓ | next PR | the glyph's colour, a token (`var(--accent)` / `colors.accent`) |
 | _rest_ | `HTMLAttributes<HTMLSpanElement>` (no `children`) | — | ✓ | — | |
 
 ## 3. Visual spec
 
-38×38, radius 11px, 1px `--border`, bg `--bg-1`; the icon 18px, stroke 1.7.
+38×38, radius `--r-sm` and the `--border-2` line (a control-sized tile: CONVENTIONS, One shape, one line), bg `--bg-1`; the icon 18px, stroke 1.7.
 
 ## 4. States
 

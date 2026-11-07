@@ -1,7 +1,8 @@
 /* ============================================================================
    StepIndex — the step number beside a step's title (design web/onboarding.html .ob-index).
-   A CTA-gradient tile with the number in dark display type; `--done` turns it mint-tinted with a
-   mint check. 44px (38px at phone width).
+   A CTA-gradient tile with the number in the CTA's dark ink (as Button primary); `--done` turns it
+   mint-tinted with a mint check. 44px (38px at phone width). A box holding text: the control
+   radius (One shape, one line).
    ========================================================================== */
 .lk-stepindex {
   display: grid;
@@ -9,14 +10,14 @@
   flex: 0 0 44px;
   width: 44px;
   height: 44px;
-  border-radius: 13px;
+  border-radius: var(--r-sm);
   border: 1px solid transparent;
   background: var(--grad-cta);
   box-shadow: var(--glow-accent);
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 18px;
-  color: #07080d;
+  color: #0a0a12;
 }
 .lk-stepindex--done {
   background: color-mix(in srgb, var(--zone-high) 12%, transparent);
@@ -32,7 +33,6 @@
     flex-basis: 38px;
     width: 38px;
     height: 38px;
-    border-radius: 12px;
     font-size: 16px;
   }
 }

@@ -33,7 +33,7 @@ It is intentionally the *only* sanctioned way to render a button-shaped action i
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
 | `variant` | web `'default' \| 'primary' \| 'ghost' \| 'text' \| 'sso'` · native `'default' \| 'primary' \| 'ghost' \| 'text'` | `'default'` | ✓ | ✓ | `sso` is web-only (2-up social grid) |
-| `tone` | `'danger' \| 'muted'` | — | ✓ | ✓ | `danger`: destructive; **composes with `variant`** — solid `--bad` on `default`, red-tinted on `ghost`. Emits `.lk-btn--tone-danger`. `muted`: **`text` variant only** — the faint mono way out (design onboarding `.step-skip`: 12.5px, `--text-faint`, `padding 8px 6px`, `--text-dim` on hover, no underline). Emits `.lk-btn--tone-muted`; ignored on surface variants |
+| `tone` | `'danger' \| 'muted'` | — | ✓ | ✓ | `danger`: destructive; **composes with `variant`** — solid `--bad` on `default`, red-tinted on `ghost`. Emits `.lk-btn--tone-danger`. `muted`: **`text` variant only** — the faint mono way out (design onboarding `.step-skip`: 12.5px, `--text-faint`, `padding` `--space-2` (the design's 8 / 6 snapped), `--text-dim` on hover, no underline). Emits `.lk-btn--tone-muted`; ignored on surface variants; native: next PR |
 | `size` | `'sm' \| 'md'` | `'md'` | ✓ | ✓ | `sm` = tighter padding + 13px label |
 | `leading` | `ReactNode` | — | ✓ | ✓ | icon/node before the label |
 | `trailing` | `ReactNode` | — | ✓ | ✓ | icon/node after the label — symmetric with `leading` (e.g. a trailing arrow) |
