@@ -89,6 +89,8 @@ export interface SegmentedTabsProps extends Omit<HTMLAttributes<HTMLDivElement>,
    * (design onboarding `.seg` at phone width: activity level, sex, chronotype).
    */
   fill?: boolean;
+  /** the line in `--zone-low`, as an invalid `Input`: a required choice not made (onboarding Profile) */
+  invalid?: boolean;
 }
 
 /** iOS-style segmented control — a pill track of equal-width segments; the
@@ -103,12 +105,14 @@ export function SegmentedTabs({
   size = 'md',
   appearance = 'raised',
   fill = false,
+  invalid = false,
   className,
   ...rest
 }: SegmentedTabsProps) {
   return (
     <div
-      className={cn('lk-seg', size === 'sm' && 'lk-seg-sm', fill && 'lk-seg--fill', className)}
+      className={cn('lk-seg', size === 'sm' && 'lk-seg-sm', fill && 'lk-seg--fill', invalid && 'lk-seg--invalid', className)}
+      aria-invalid={invalid || undefined}
       role="tablist"
       data-tone={tone !== 'accent' ? tone : undefined}
       data-appearance={appearance !== 'raised' ? appearance : undefined}

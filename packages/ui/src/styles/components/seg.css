@@ -226,3 +226,8 @@
     font-size: 12.5px;
   }
 }
+
+/* invalid — a required choice not made: the line in --zone-low, as an invalid Input */
+.lk-seg.lk-seg--invalid {
+  border-color: var(--zone-low);
+}

@@ -25,6 +25,7 @@ The **iOS-style segmented control** — a glass pill *track* of equal-width segm
 | `tabs` | `SegmentedTabItem[]` | `['Stats','History','Guide','Ranks']` | ✓ | ✓ | `string \| { label, count?, tone?, icon? }` mixed — **both platforms** (strings normalized by `toTab()`); `icon` renders a leading 13px kit `Icon` before the label (changelog service filter) |
 | `appearance` | `'raised' \| 'tint'` | `'raised'` | ✓ | ✓ | `'tint'` = the design changelog `.svc-toggle` treatment: glass track, hairline-bordered 11px segments, ACTIVE = accent tint `rgba(124,92,255,.14)` + accent border `.32` (no raised shadow); count badges shrink to mono 8.5 (pad 1×5, `--border` hairline) and tint cyan (`--accent-2` on `rgba(34,211,238,.1)`) when active |
 | `fill` | `boolean` | `false` | ✓ | ✓ | equal segments that may shrink; ≤ 540px labels 12.5px, padding `--space-2` `--space-1` (design onboarding `.seg` at phone width), so five choices fit a phone row. Native: `flex: 1` segments, 12.5 labels, padding 8 / 4 |
+| `invalid` | `boolean` | `false` | ✓ | ✓ | the track's line in `--zone-low` + `aria-invalid`, as an invalid `Input` (a required choice not made). Native: `borderColor: colors.zoneLow` |
 | `active` | `number` | `0` | ✓ | ✓ | index of the active segment |
 | `onChange` | `(index: number) => void` | — | ✓ | ✓ | fires with the pressed index; never fires for `locked` |
 | `locked` | `number[]` | — | ✓ | ✓ | indices dimmed + non-interactive + lock glyph |
