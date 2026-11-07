@@ -44,7 +44,8 @@ export function FormField({
           {label ? (
             <Text style={styles.fieldLabel}>
               {label.toUpperCase()}
-              {required ? <Text style={styles.req}> *</Text> : null}
+              {/* a thin space, as the web's 3px gap (a full space read twice as wide) */}
+              {required ? <Text style={styles.req}>{'\u2009*'}</Text> : null}
             </Text>
           ) : null}
           {labelAction}
