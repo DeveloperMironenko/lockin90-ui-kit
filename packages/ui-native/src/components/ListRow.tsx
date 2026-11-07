@@ -32,12 +32,15 @@ export interface ListRowProps extends ViewProps {
    * sibling selectors, so the divider is opt-out per row instead.)
    */
   divider?: boolean;
+  /** A row of its own: bordered glass box, no divider (a summary list, design onboarding
+   *  `.recap li`); stack boxed rows with a gap. */
+  boxed?: boolean;
 }
 
 /** Title/subtitle helpers: render strings as <Text>, pass nodes through. */
-function asText(node: ReactNode, textStyle: object): ReactNode {
+function asText(node: ReactNode, textStyle: object, lines: number | undefined = 1): ReactNode {
   return typeof node === 'string' || typeof node === 'number' ? (
-    <Text style={textStyle} numberOfLines={1}>
+    <Text style={textStyle} numberOfLines={lines}>
       {node}
     </Text>
   ) : (
@@ -58,17 +61,19 @@ export function ListRow({
   activeTint,
   danger,
   divider = true,
+  boxed,
   style,
   ...rest
 }: ListRowProps) {
-  const titleStyle = [styles.title, danger && styles.titleDanger];
+  const titleStyle = [styles.title, boxed && styles.titleBoxed, danger && styles.titleDanger];
 
   const body = (
     <>
       {leading != null && <View style={styles.leading}>{leading}</View>}
       <View style={styles.main}>
         {asText(title, titleStyle)}
-        {subtitle != null && asText(subtitle, styles.subtitle)}
+        {/* a boxed row's summary wraps, as on web */}
+        {subtitle != null && asText(subtitle, [styles.subtitle, boxed && styles.subtitleBoxed], boxed ? undefined : 1)}
       </View>
       {trailing != null && <View style={styles.trailing}>{trailing}</View>}
     </>
@@ -76,7 +81,7 @@ export function ListRow({
 
   const rowStyle = [
     styles.row,
-    divider && styles.divider,
+    boxed ? styles.boxed : divider && styles.divider,
     active && (activeTint != null ? { backgroundColor: activeTint } : styles.active),
     style,
   ];
@@ -115,6 +120,26 @@ const styles = StyleSheet.create({
   divider: {
     borderTopWidth: 1,
     borderTopColor: colors.border,
+  },
+  // web `.lk-listrow-boxed`: a container (radius md, the border2 line); stack boxed rows with a 12 gap
+  boxed: {
+    minHeight: 0,
+    gap: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border2,
+    backgroundColor: colors.glass,
+  },
+  titleBoxed: {
+    fontWeight: '600',
+    fontSize: 15,
+    lineHeight: 19,
+  },
+  subtitleBoxed: {
+    fontSize: 13,
+    lineHeight: 17,
   },
   pressed: {
     backgroundColor: colors.glass,

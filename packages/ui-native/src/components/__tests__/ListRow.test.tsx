@@ -26,3 +26,15 @@ describe('ListRow activeTint', () => {
     expect(findAll(root, (el) => paintsBg(el, 'rgba(34,211,238,0.09')).length).toBe(0);
   });
 });
+
+describe('ListRow boxed', () => {
+  test('a bordered glass box whose summary wraps', () => {
+    const root = parse(render(ListRow, { title: 'Profile', subtitle: '32 yrs · male · 86 kg', boxed: true }));
+    const row = root.children[0]!;
+    expect(hasDeclaration(row, 'radius:16px')).toBe(true);
+    const subtitle = findAll(root, (el) => el.text === '32 yrs · male · 86 kg')[0]!;
+    expect(hasDeclaration(subtitle, 'font-size:13px')).toBe(true);
+    // a one-line text carries -webkit-line-clamp; a boxed summary wraps
+    expect(hasDeclaration(subtitle, 'line-clamp')).toBe(false);
+  });
+});

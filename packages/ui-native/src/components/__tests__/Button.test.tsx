@@ -27,3 +27,12 @@ describe('Button text variant', () => {
     expect(hasDeclaration(label(true), 'color:rgba(130,139,159,1.00)')).toBe(true);
   });
 });
+
+/* `muted`: the faint way out on a text button ("Skip setup", web `.lk-btn--tone-muted`). */
+describe('Button muted tone', () => {
+  test('faint 12.5 mono', () => {
+    const label = findByText(parse(render(Button, { variant: 'text', tone: 'muted', title: 'Skip setup' })), 'Skip setup')!;
+    expect(hasDeclaration(label, 'font-size:12.5px')).toBe(true);
+    expect(hasDeclaration(label, 'color:rgba(130,139,159,1.00)')).toBe(true);
+  });
+});

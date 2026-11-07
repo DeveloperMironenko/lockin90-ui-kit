@@ -1,10 +1,10 @@
 # SDD — `StepIndex`
 
 > **Package:** `@lockin90/ui` (web) · `@lockin90/ui-native` (native) — root cross-platform primitive.
-> **Source:** `packages/ui/src/components/StepIndex.tsx` · web CSS `packages/ui/src/styles/components/stepindex.css` (`.lk-stepindex`) · native `packages/ui-native/src/components/StepIndex.tsx` (next PR).
+> **Source:** `packages/ui/src/components/StepIndex.tsx` · web CSS `packages/ui/src/styles/components/stepindex.css` (`.lk-stepindex`) · native `packages/ui-native/src/components/StepIndex.tsx`.
 > **Exports:** `StepIndex`, type `StepIndexProps`.
-> **Status:** Web shipped; native in the following PR. **Parity:** ✅ identical API (once native ships).
-> **Stories:** `packages/ui/src/stories/StepIndex.stories.tsx`.
+> **Status:** Shipped. **Parity:** ✅ identical API; native is the phone size (38) only.
+> **Stories:** `packages/ui/src/stories/StepIndex.stories.tsx` · `packages/ui-native/src/stories/StepIndex.stories.tsx`.
 
 ---
 
@@ -16,8 +16,8 @@ The step's number beside a step's title in a guided flow (design `web/onboarding
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `step` | `number` | — | ✓ | next PR | the number shown while not done |
-| `done` | `boolean` | `false` | ✓ | next PR | a check instead of the number |
+| `step` | `number` | — | ✓ | ✓ | the number shown while not done |
+| `done` | `boolean` | `false` | ✓ | ✓ | a check instead of the number |
 | _rest_ | `HTMLAttributes<HTMLSpanElement>` (no `children`) | — | ✓ | — | `className`, `style`… |
 
 ## 3. Visual spec
@@ -35,7 +35,7 @@ Default (number) and done (check). Not interactive.
 
 ## 5. Web ↔ native parity
 
-Native draws the same tile at the mobile size (38) in the next PR.
+Native draws the web's phone-width tile: 38, `radii.sm`, `gradients.cta` (expo-linear-gradient), `nativeShadows.glowAccent`, the number `fonts.display` 700 16 in `#0A0A12`; done: `rgba(52,245,197,0.12)` fill, `rgba(52,245,197,0.35)` line, the `check` icon 20 in `colors.zoneHigh`. Hidden from screen readers (`accessibilityElementsHidden`, `importantForAccessibility="no-hide-descendants"`).
 
 ## 6. Composition & usage
 

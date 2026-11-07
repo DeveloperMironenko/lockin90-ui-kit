@@ -8,7 +8,7 @@ import { hapticSelection } from '../internal/optionalHaptics';
 const LINE = 1.55;
 
 export type ButtonVariant = 'default' | 'primary' | 'ghost' | 'text';
-export type ButtonTone = 'danger';
+export type ButtonTone = 'danger' | 'muted';
 
 // `--bad` (#FF4D6D) as alpha tints — the sanctioned paired literal for the web
 // `color-mix(in srgb, var(--bad) x%, transparent)` (matches Alert/Badge danger).
@@ -23,7 +23,8 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
    * Destructive tone — composes with `variant`. On the `default` variant it
    * paints a solid `colors.bad` fill (the primary destructive action); on
    * `ghost` it becomes a red-tinted transparent button (the account "danger
-   * zone" delete). Mirrors the web `tone="danger"`.
+   * zone" delete). Mirrors the web `tone="danger"`. `muted` is for the `text` variant only: the
+   * faint mono way out ("Skip setup"), as the web's.
    */
   tone?: ButtonTone;
   size?: 'sm' | 'md';
@@ -62,7 +63,7 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
         {({ pressed }) => (
           <View style={[styles.textRow, pressed && styles.textPressed, style]}>
             {leading}
-            <Text style={[styles.textLabel, rest.disabled && styles.textDisabled]}>
+            <Text style={[styles.textLabel, tone === 'muted' && styles.textMuted, rest.disabled && styles.textDisabled]}>
               {title}
             </Text>
             {trailing}
@@ -153,4 +154,6 @@ const styles = StyleSheet.create({
   // never shrinks to wrap or cut: one line, as web's nowrap
   textLabel: { flexShrink: 0, fontFamily: fonts.mono, fontSize: 11.5, lineHeight: 17, color: colors.accent2 },
   textDisabled: { color: colors.textFaint },
+  // web `.lk-btn--tone-muted` (design onboarding .step-skip): faint, 12.5, padding 8
+  textMuted: { fontSize: 12.5, lineHeight: 17, color: colors.textFaint, padding: 8 },
 });
