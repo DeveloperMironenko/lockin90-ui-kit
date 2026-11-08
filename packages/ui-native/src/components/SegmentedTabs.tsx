@@ -230,8 +230,9 @@ export function SegmentedTabs({
               <View style={[styles.dot, { backgroundColor: toneColor }]} />
             )}
             {icon != null && <Icon name={icon} size={13} color={labelColor} />}
+            {/* fill: one line that shrinks to fit (web `fill` keeps labels on one line); else up to two */}
             <Text
-              numberOfLines={2}
+              numberOfLines={fill ? 1 : 2}
               adjustsFontSizeToFit
               minimumFontScale={0.8}
               style={[styles.label, isSm && styles.labelSm, fill && styles.labelFill, { color: labelColor }]}

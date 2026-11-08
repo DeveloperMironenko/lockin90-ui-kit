@@ -64,3 +64,12 @@ describe('SegmentedTabs fill and invalid', () => {
     expect(hasDeclaration(root.children[0]!, 'border-top-color:rgba(255,77,109,1.00)')).toBe(true);
   });
 });
+
+describe('SegmentedTabs fill keeps labels on one line', () => {
+  test('a long label shrinks instead of wrapping', () => {
+    const root = parse(render(SegmentedTabs, { tabs: ['Sedentary', 'Light'], fill: true }))
+    const label = findByText(root, 'Sedentary')!
+    // numberOfLines={1} is nowrap on react-native-web
+    expect(hasDeclaration(label, 'white-space:nowrap')).toBe(true)
+  })
+})
