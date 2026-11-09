@@ -23,6 +23,8 @@ export interface MenuItemData {
   onClick?: () => void;
   /** Render the row in the danger tone (`--zone-low`). */
   danger?: boolean;
+  /** Shown but unavailable (e.g. "coming soon"): dimmed, announced disabled, does nothing. */
+  disabled?: boolean;
   /** Render a 1px separator instead of an action row. */
   divider?: boolean;
 }
@@ -140,7 +142,9 @@ export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right', bare = f
                     key={i}
                     type="button"
                     role="menuitem"
-                    className={cn('lk-menu-item', item.danger && 'lk-menu-danger')}
+                    className={cn('lk-menu-item', item.danger && 'lk-menu-danger', item.disabled && 'lk-menu-disabled')}
+                    disabled={item.disabled}
+                    aria-disabled={item.disabled || undefined}
                     onClick={() => {
                       item.onClick?.();
                       setOpen(false);

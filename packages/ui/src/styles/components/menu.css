@@ -132,3 +132,11 @@
   margin: 5px 6px;
   background: var(--border);
 }
+
+/* disabled: shown but unavailable — dimmed, no hover */
+.lk-menu-item.lk-menu-disabled,
+.lk-menu-item.lk-menu-disabled:hover {
+  opacity: .45;
+  cursor: default;
+  background: transparent;
+}

@@ -129,3 +129,9 @@
 .lk-listrow-boxed .lk-listrow-subtitle {
   font-size: 13px;
 }
+
+/* disabled: shown but unavailable — dimmed */
+.lk-listrow.lk-listrow-disabled {
+  opacity: .45;
+  cursor: default;
+}
