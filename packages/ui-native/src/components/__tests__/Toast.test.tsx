@@ -31,4 +31,10 @@ describe('Toast filled', () => {
     const plain = render(Toast, { tone: 'success', title: 'Saved' });
     expect(has(plain, colors.bg0)).toBe(false);
   });
+
+  test('a filled default toast is opaque (bg2), its ink unchanged', () => {
+    const html = render(Toast, { title: 'Saved', filled: true });
+    expect(has(html, colors.bg2)).toBe(true);
+    expect(has(html, colors.bg0)).toBe(false);
+  });
 });

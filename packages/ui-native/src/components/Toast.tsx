@@ -49,8 +49,9 @@ export function Toast({
   ...rest
 }: ToastProps) {
   const t = TONE[tone];
-  // filled: the tone's color is the card (default: the raised glass), the ink dark on it
-  const fill = filled ? { backgroundColor: tone === 'default' ? colors.glass2 : t.rail, borderColor: 'transparent' } : undefined;
+  // filled: the tone's color is the card (default: the opaque bg2), the ink dark on it; a custom icon or
+  // a node message carries the app's own colour (no colour inheritance outside Text)
+  const fill = filled ? { backgroundColor: tone === 'default' ? colors.bg2 : t.rail, borderColor: 'transparent' } : undefined;
   const ink = filled && tone !== 'default' ? colors.bg0 : undefined;
   return (
     <View
