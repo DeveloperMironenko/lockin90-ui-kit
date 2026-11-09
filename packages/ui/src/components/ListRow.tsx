@@ -68,8 +68,9 @@ export const ListRow = forwardRef<HTMLDivElement, ListRowProps>(function ListRow
         type="button"
         className={classes}
         style={rowStyle}
-        onClick={onClick}
-        disabled={disabled}
+        // focusable and announced; a click does nothing
+        onClick={disabled ? undefined : onClick}
+        aria-disabled={disabled || undefined}
         aria-pressed={active || undefined}
         {...(rest as HTMLAttributes<HTMLButtonElement>)}
       >
@@ -79,7 +80,14 @@ export const ListRow = forwardRef<HTMLDivElement, ListRowProps>(function ListRow
   }
 
   return (
-    <div ref={ref} className={classes} style={rowStyle} aria-disabled={disabled || undefined} {...rest}>
+    <div
+      ref={ref}
+      className={classes}
+      style={rowStyle}
+      // a role that carries the state, so screen readers say the row is unavailable
+      {...(disabled ? { role: 'group', 'aria-disabled': true } : {})}
+      {...rest}
+    >
       {body}
     </div>
   );

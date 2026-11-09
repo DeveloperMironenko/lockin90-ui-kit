@@ -143,9 +143,11 @@ export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right', bare = f
                     type="button"
                     role="menuitem"
                     className={cn('lk-menu-item', item.danger && 'lk-menu-danger', item.disabled && 'lk-menu-disabled')}
-                    disabled={item.disabled}
+                    // focusable and announced, as the WAI-ARIA menu pattern keeps unavailable items;
+                    // a click does nothing and the menu stays open
                     aria-disabled={item.disabled || undefined}
                     onClick={() => {
+                      if (item.disabled) return;
                       item.onClick?.();
                       setOpen(false);
                     }}

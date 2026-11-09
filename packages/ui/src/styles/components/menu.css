@@ -88,7 +88,7 @@
   cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease;
 }
-.lk-menu-item:hover,
+.lk-menu-item:not(.lk-menu-disabled):hover,
 .lk-menu-item:focus-visible {
   background: var(--glass-2);
   color: var(--text);
@@ -101,7 +101,7 @@
   flex-shrink: 0;
   color: var(--text-faint);
 }
-.lk-menu-item:hover .lk-menu-icon {
+.lk-menu-item:not(.lk-menu-disabled):hover .lk-menu-icon {
   color: var(--text-dim);
 }
 
@@ -133,10 +133,8 @@
   background: var(--border);
 }
 
-/* disabled: shown but unavailable — dimmed, no hover */
-.lk-menu-item.lk-menu-disabled,
-.lk-menu-item.lk-menu-disabled:hover {
-  opacity: .45;
+/* disabled: shown but unavailable — dimmed (the kit's .5), no hover; still focusable */
+.lk-menu-item.lk-menu-disabled {
+  opacity: .5;
   cursor: default;
-  background: transparent;
 }

@@ -130,8 +130,8 @@
   font-size: 13px;
 }
 
-/* disabled: shown but unavailable — dimmed */
+/* disabled: shown but unavailable — dimmed (the kit's .5) */
 .lk-listrow.lk-listrow-disabled {
-  opacity: .45;
+  opacity: .5;
   cursor: default;
 }
