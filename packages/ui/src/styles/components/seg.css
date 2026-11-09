@@ -219,13 +219,11 @@
 .lk-seg.lk-seg--fill .lk-seg-tab {
   flex: 1 1 0;
   min-width: 0;
-  /* --lk-seg-fit: set by the component on a label wider than its segment (0.8–1) */
-  font-size: calc(13.5px * var(--lk-seg-fit, 1));
 }
 @media (max-width: 540px) {
   .lk-seg.lk-seg--fill .lk-seg-tab {
     padding: var(--space-2) var(--space-1);
-    font-size: calc(12.5px * var(--lk-seg-fit, 1));
+    font-size: 12.5px;
   }
 }
 

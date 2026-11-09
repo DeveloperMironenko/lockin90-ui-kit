@@ -1,6 +1,7 @@
 import { type HTMLAttributes, useLayoutEffect, useRef } from 'react';
 import { cn } from '../cn';
 import { Icon, type IconName } from './Icon';
+import { segFitPercent } from './segFit';
 
 /** Per-segment tone. Two families:
  *  - SEMANTIC tones (`ok`/`canary`/`danger`) — a leading dot + active-only
@@ -113,34 +114,50 @@ export function SegmentedTabs({
   const labels = tabs.map((item) => toTab(item).label).join('\u0000');
 
   // fill: a label wider than its segment shrinks to fit, down to 80% (native's adjustsFontSizeToFit
-  // with minimumFontScale 0.8) — long words in uk / ru / es on a phone row. Labels that fit are untouched.
+  // with minimumFontScale 0.8) — long words in uk / ru / es on a phone row. Labels that fit keep their
+  // size (the stylesheet's, for every size and appearance: the fit only ever sets an inline size).
   useLayoutEffect(() => {
     const track = ref.current;
     if (!fill || !track) return;
     const fit = () => {
       for (const tab of track.querySelectorAll<HTMLElement>('.lk-seg-tab')) {
-        tab.style.removeProperty('--lk-seg-fit');
-        // the padding doesn't shrink with the text: step down until the label fits, or 80%
-        for (let scale = 0.98; tab.scrollWidth > tab.clientWidth && scale >= 0.8; scale -= 0.02)
-          tab.style.setProperty('--lk-seg-fit', scale.toFixed(2));
+        tab.style.removeProperty('font-size');
+        if (tab.scrollWidth <= tab.clientWidth) continue;
+        const style = getComputedStyle(tab);
+        const base = parseFloat(style.fontSize);
+        const padding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+        // one measure, then whole-percent steps for what rounding leaves over
+        for (let percent = segFitPercent(tab.clientWidth, tab.scrollWidth, padding); percent >= 80; percent -= 2) {
+          tab.style.fontSize = `${(base * percent) / 100}px`;
+          if (tab.scrollWidth <= tab.clientWidth) break;
+        }
       }
     };
     fit();
-    // again when the row's width changes (not its height, which the fit itself can move), next frame
+    // again once the webfonts arrive (labels widen), and when the row's width changes (not its height,
+    // which the fit itself can move), next frame; without ResizeObserver (jsdom, old browsers) only
+    // the first fit
     let width = track.clientWidth;
     let frame = 0;
-    const observer = new ResizeObserver(() => {
-      if (track.clientWidth === width) return;
-      width = track.clientWidth;
+    const refit = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(fit);
-    });
-    observer.observe(track);
+    };
+    void document.fonts?.ready.then(refit);
+    const observer =
+      typeof ResizeObserver === 'undefined'
+        ? undefined
+        : new ResizeObserver(() => {
+            if (track.clientWidth === width) return;
+            width = track.clientWidth;
+            refit();
+          });
+    observer?.observe(track);
     return () => {
-      observer.disconnect();
+      observer?.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [fill, labels]);
+  }, [fill, labels, size, appearance]);
 
   return (
     <div

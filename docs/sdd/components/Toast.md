@@ -80,6 +80,21 @@ These web values are literally `Chip.tsx`'s `.lk-chip.lk-chip-sm*` rules in `pri
 retired standalone `Badge` rendered; this was a real visual delta between `md` and the old badge
 (filled accent, bare dot, tighter box) that got preserved by scoping it to `Chip`'s `size="sm"`.
 
+
+### `filled` (both platforms)
+
+| Part | Spec |
+| --- | --- |
+| Card | the tone's colour: `success` `--zone-high`, `warn` `--zone-mid`, `danger` `--zone-low`; `default` the opaque `--bg-2`. Border transparent |
+| Left rail | none |
+| Icon, title, `×` | `--bg-0` (on `default`: unchanged) |
+| Message | `--bg-0` at 75 % (on `default`: unchanged) |
+
+Web colours the icon and message wrappers, so a custom `icon` or a node `message` inherits the ink.
+**Native** has no colour inheritance outside `Text`: the default glyph and a string `message` get the
+ink, a custom `icon` or a node `message` carries the colour the app gives it (pass `colors.bg0` on a
+filled toast).
+
 ## 4. States
 
 | State | Web Toast | Native Toast |
