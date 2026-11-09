@@ -1,5 +1,11 @@
 # @lockin90/ui
 
+## 3.5.0
+
+### Minor Changes
+
+- 45e8ee4: Toast: `filled` — the tone's color fills the card (no rail), its title, message, icon and dismiss dark on it. SegmentedTabs `fill`: a label wider than its segment shrinks to fit, to 80 % (native already does).
+
 ## 3.4.0
 
 ### Minor Changes

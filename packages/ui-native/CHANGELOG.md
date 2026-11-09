@@ -1,5 +1,11 @@
 # @lockin90/ui-native
 
+## 2.10.0
+
+### Minor Changes
+
+- 79ce620: Toast: `filled` — the tone's color fills the card (no rail), its title, message, icon and dismiss dark on it.
+
 ## 2.9.1
 
 ### Patch Changes
