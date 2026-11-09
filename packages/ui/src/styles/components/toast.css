@@ -86,3 +86,13 @@
 
 .lk-toast-danger .lk-toast-icon { color: var(--zone-low); }
 .lk-toast-danger::before { background: var(--zone-low); }
+
+/* filled: the tone's color is the card, no rail; the ink dark on it (default: the opaque --bg-2) */
+.lk-toast-filled { border-color: transparent; }
+.lk-toast-filled::before { display: none; }
+.lk-toast-filled.lk-toast-success { background: var(--zone-high); }
+.lk-toast-filled.lk-toast-warn { background: var(--zone-mid); }
+.lk-toast-filled.lk-toast-danger { background: var(--zone-low); }
+.lk-toast-filled:is(.lk-toast-success, .lk-toast-warn, .lk-toast-danger) :is(.lk-toast-icon, .lk-toast-title, .lk-toast-x) { color: var(--bg-0); }
+.lk-toast-filled:is(.lk-toast-success, .lk-toast-warn, .lk-toast-danger) .lk-toast-msg { color: var(--bg-0); opacity: .75; }
+.lk-toast-filled:not(.lk-toast-success, .lk-toast-warn, .lk-toast-danger) { background: var(--bg-2); }

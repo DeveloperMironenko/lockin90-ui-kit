@@ -20,6 +20,8 @@ export interface ToastProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   icon?: ReactNode;
   /** show a × button; called when it's clicked */
   onDismiss?: () => void;
+  /** fill the card with the tone's color (no rail), its text and icons dark on it */
+  filled?: boolean;
 }
 
 const TOAST_TONE: Record<ToastTone, string> = {
@@ -39,11 +41,11 @@ const TONE_ICON: Record<ToastTone, IconName> = {
 
 /** Compact floating notification card — tone-tinted icon + title/message + optional dismiss. */
 export const Toast = forwardRef<HTMLDivElement, ToastProps>(function Toast(
-  { tone = 'default', title = 'Saved', message, icon, onDismiss, className, ...rest },
+  { tone = 'default', title = 'Saved', message, icon, onDismiss, filled = false, className, ...rest },
   ref,
 ) {
   return (
-    <div ref={ref} role="status" className={cn('lk-toast', TOAST_TONE[tone], className)} {...rest}>
+    <div ref={ref} role="status" className={cn('lk-toast', TOAST_TONE[tone], filled && 'lk-toast-filled', className)} {...rest}>
       <span className="lk-toast-icon" aria-hidden="true">
         {icon ?? <Icon name={TONE_ICON[tone]} size={17} />}
       </span>

@@ -29,6 +29,7 @@ The kit provides only the toast **card** — queueing/positioning/auto-dismiss i
 | `message` | `ReactNode` | — | ✓ | ✓ | dimmer second line; native styles a bare `string` as `Text` |
 | `icon` | `ReactNode` | per-tone glyph | ✓ | ✓ | overrides the default tone icon |
 | `onDismiss` | `() => void` | — | ✓ | ✓ | shows a `×`; fired on click/press |
+| `filled` | `boolean` | `false` | ✓ | ✓ | the tone's color fills the card (no rail); title, message (75%), icon and `×` in `--bg-0` on it. `default` stays the raised glass |
 | `className` | `string` | — | ✓ | — | web only |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |
 | _rest_ | web `Omit<HTMLAttributes,'title'>` / native `Omit<ViewProps,'children'>` | — | ✓ | ✓ | spread onto the card |
@@ -78,6 +79,21 @@ These web values are literally `Chip.tsx`'s `.lk-chip.lk-chip-sm*` rules in `pri
 `.lk-badge*` selector (that class was removed). Every number above is byte-identical to what the
 retired standalone `Badge` rendered; this was a real visual delta between `md` and the old badge
 (filled accent, bare dot, tighter box) that got preserved by scoping it to `Chip`'s `size="sm"`.
+
+
+### `filled` (both platforms)
+
+| Part | Spec |
+| --- | --- |
+| Card | the tone's colour: `success` `--zone-high`, `warn` `--zone-mid`, `danger` `--zone-low`; `default` the opaque `--bg-2`. Border transparent |
+| Left rail | none |
+| Icon, title, `×` | `--bg-0` (on `default`: unchanged) |
+| Message | `--bg-0` at 75 % (on `default`: unchanged) |
+
+Web colours the icon and message wrappers, so a custom `icon` or a node `message` inherits the ink.
+**Native** has no colour inheritance outside `Text`: the default glyph and a string `message` get the
+ink, a custom `icon` or a node `message` carries the colour the app gives it (pass `colors.bg0` on a
+filled toast).
 
 ## 4. States
 
