@@ -15,6 +15,8 @@ export interface MenuItemData {
   onClick?: () => void;
   /** Render the row in the danger tone (`zoneLow`). */
   danger?: boolean;
+  /** Shown but unavailable (e.g. "coming soon"): dimmed, announced disabled, does nothing. */
+  disabled?: boolean;
   /** Render a 1px separator instead of an action row. */
   divider?: boolean;
 }
@@ -100,7 +102,9 @@ export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right' }: MenuPr
                 <Pressable
                   key={i}
                   accessibilityRole="menuitem"
-                  style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
+                  disabled={item.disabled}
+                  accessibilityState={{ disabled: !!item.disabled }}
+                  style={({ pressed }) => [styles.item, pressed && styles.itemPressed, item.disabled && styles.disabled]}
                   onPress={() => {
                     item.onClick?.();
                     setOpen(false);
@@ -121,6 +125,8 @@ export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right' }: MenuPr
 }
 
 const styles = StyleSheet.create({
+  // shown but unavailable
+  disabled: { opacity: 0.45 },
   root: { alignSelf: 'flex-start' },
   trigger: {
     minWidth: 30,

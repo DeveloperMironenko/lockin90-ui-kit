@@ -17,6 +17,8 @@ export interface ListRowProps extends ViewProps {
    * Native uses `onPress`; the web uses `onClick` — otherwise the same API.
    */
   onPress?: () => void;
+  /** Shown but unavailable (e.g. "coming soon"): dimmed, announced disabled, not pressable. */
+  disabled?: boolean;
   /** Accent-tinted selected state (used in pickers). */
   active?: boolean;
   /** Overrides the ACTIVE-state background — a translucent color string
@@ -57,6 +59,7 @@ export function ListRow({
   subtitle,
   trailing,
   onPress,
+  disabled = false,
   active,
   activeTint,
   danger,
@@ -83,12 +86,15 @@ export function ListRow({
     styles.row,
     boxed ? styles.boxed : divider && styles.divider,
     active && (activeTint != null ? { backgroundColor: activeTint } : styles.active),
+    disabled && styles.disabled,
     style,
   ];
 
   if (onPress) {
     return (
       <Pressable
+        disabled={disabled}
+        accessibilityState={{ disabled }}
         onPress={onPress ? () => { hapticSelection(); onPress(); } : undefined}
         style={({ pressed }) => [...rowStyle, pressed && (boxed ? styles.pressedBoxed : styles.pressed)]}
         {...rest}
@@ -99,7 +105,7 @@ export function ListRow({
   }
 
   return (
-    <View style={rowStyle} {...rest}>
+    <View style={rowStyle} aria-disabled={disabled || undefined} {...rest}>
       {body}
     </View>
   );
@@ -117,6 +123,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: radii.sm,
   },
+  // shown but unavailable
+  disabled: { opacity: 0.45 },
   divider: {
     borderTopWidth: 1,
     borderTopColor: colors.border,
