@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { Button } from '../Button';
-import { findByText, hasDeclaration, parse, render } from './markup';
+import { Button, type ButtonProps } from '../Button';
+import { ancestors, findByText, hasDeclaration, parse, render } from './markup';
 
 /* Screen readers announce every variant as a button. */
 describe('Button role', () => {
@@ -41,5 +41,36 @@ describe('Button lg', () => {
   test('the 17 label', () => {
     const label = findByText(parse(render(Button, { variant: 'primary', size: 'lg', title: 'Enter' })), 'Enter')!;
     expect(label.attrs.style ?? '').toContain('font-size:17px');
+  });
+});
+
+/* Disabled dims the whole surface to .5, as web `.lk-btn:disabled` (the `text` variant fades its label instead). */
+describe('Button disabled', () => {
+  const dimmed = (props: Partial<ButtonProps>) => {
+    const label = findByText(parse(render(Button, { title: 'Save', ...props })), 'Save')!;
+    return [label, ...ancestors(label)].some((el) => hasDeclaration(el, 'opacity:0.5'));
+  };
+
+  const cases: [string, Partial<ButtonProps>][] = [
+    ['default', {}],
+    ['primary', { variant: 'primary' }],
+    ['ghost', { variant: 'ghost' }],
+    ['solid danger', { tone: 'danger' }],
+    ['ghost danger', { variant: 'ghost', tone: 'danger' }],
+  ];
+  for (const [name, props] of cases) {
+    test(`${name} at half strength when disabled, full otherwise`, () => {
+      expect(dimmed({ ...props, disabled: true })).toBe(true);
+      expect(dimmed(props)).toBe(false);
+    });
+  }
+
+  test('an announced-only disabled state stays at full strength: the button still takes presses', () => {
+    expect(dimmed({ variant: 'primary', accessibilityState: { disabled: true } })).toBe(false);
+    expect(dimmed({ variant: 'primary', 'aria-disabled': true })).toBe(false);
+  });
+
+  test('the text variant stays at full strength', () => {
+    expect(dimmed({ variant: 'text', disabled: true })).toBe(false);
   });
 });
