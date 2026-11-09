@@ -25,6 +25,7 @@ It is the only sanctioned centered-dialog primitive. For an edge-anchored drawer
 | `children` | `ReactNode` | — | ✓ | ✓ | body; native wraps a bare `string` child in a styled `Text` |
 | `footer` | `ReactNode` | — | ✓ | ✓ | right-aligned actions under a hairline; omitted when absent |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | ✓ | ✓ | max-width 380 / 460 / 620 |
+| `closeLabel` | `string` | `'Close'` | — | ✓ | native: the close button's accessibility label (pass a localized string) |
 | `className` | `string` | — | ✓ | — | web only (merged onto `.lk-modal`) |
 | _rest_ | `HTMLAttributes<HTMLDivElement>` | — | ✓ | — | web only — spread onto the dialog `<div>` |
 
@@ -96,7 +97,7 @@ No capability gap blocks use — the dialog is fully usable and visually equival
 ## 7. Accessibility
 
 - **Web:** `role="dialog"` + `aria-modal="true"` on the card; scrim is `role="presentation"`. Close button has `aria-label="Close"`. ESC closes. (Focus-trapping/return-focus is not built in — the consumer should manage initial focus for long-lived dialogs.)
-- **Native:** `accessibilityViewIsModal` on the card traps assistive focus; close button has `accessibilityRole="button"` + `accessibilityLabel="Close"` and `hitSlop={6}` for a comfortable target.
+- **Native:** `accessibilityViewIsModal` on the card traps assistive focus; the title is a header; close button has `accessibilityRole="button"` + `accessibilityLabel={closeLabel}` and `hitSlop={6}` for a comfortable target. The scrim `Pressable` is `accessible={false}` and the card a plain view that claims the touch, so the title, body and buttons stay separate items for VoiceOver; VoiceOver's escape gesture (`onAccessibilityEscape`) closes it.
 - **Hit target:** the × is 30×30 (native adds `hitSlop`). Footer actions inherit `Button` sizing (≥44px at `md`).
 
 ## 8. Usage rules — Do / Don't
