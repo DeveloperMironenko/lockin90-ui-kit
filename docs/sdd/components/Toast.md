@@ -29,6 +29,7 @@ The kit provides only the toast **card** — queueing/positioning/auto-dismiss i
 | `message` | `ReactNode` | — | ✓ | ✓ | dimmer second line; native styles a bare `string` as `Text` |
 | `icon` | `ReactNode` | per-tone glyph | ✓ | ✓ | overrides the default tone icon |
 | `onDismiss` | `() => void` | — | ✓ | ✓ | shows a `×`; fired on click/press |
+| `filled` | `boolean` | `false` | ✓ | ✓ | the tone's color fills the card (no rail); title, message (75%), icon and `×` in `--bg-0` on it. `default` stays the raised glass |
 | `className` | `string` | — | ✓ | — | web only |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |
 | _rest_ | web `Omit<HTMLAttributes,'title'>` / native `Omit<ViewProps,'children'>` | — | ✓ | ✓ | spread onto the card |

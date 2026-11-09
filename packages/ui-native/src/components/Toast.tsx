@@ -17,6 +17,8 @@ export interface ToastProps extends Omit<ViewProps, 'children'> {
   icon?: ReactNode;
   /** show a × button; called when it's pressed */
   onDismiss?: () => void;
+  /** fill the card with the tone's color (no rail), its text and icons dark on it */
+  filled?: boolean;
 }
 
 /** Per-tone icon color + left accent rail color. `default` keeps the neutral rail. */
@@ -42,25 +44,29 @@ export function Toast({
   message,
   icon,
   onDismiss,
+  filled = false,
   style,
   ...rest
 }: ToastProps) {
   const t = TONE[tone];
+  // filled: the tone's color is the card (default: the raised glass), the ink dark on it
+  const fill = filled ? { backgroundColor: tone === 'default' ? colors.glass2 : t.rail, borderColor: 'transparent' } : undefined;
+  const ink = filled && tone !== 'default' ? colors.bg0 : undefined;
   return (
     <View
       accessibilityRole="alert"
       accessibilityLiveRegion="polite"
-      style={[styles.toast, style]}
+      style={[styles.toast, fill, style]}
       {...rest}
     >
-      <View style={[styles.rail, { backgroundColor: t.rail }]} pointerEvents="none" />
+      {!filled && <View style={[styles.rail, { backgroundColor: t.rail }]} pointerEvents="none" />}
       <View style={styles.icon}>
-        {icon ?? <Icon name={TONE_ICON[tone]} size={17} color={t.icon} />}
+        {icon ?? <Icon name={TONE_ICON[tone]} size={17} color={ink ?? t.icon} />}
       </View>
       <View style={styles.body}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, ink && { color: ink }]}>{title}</Text>
         {message != null && (typeof message === 'string'
-          ? <Text style={styles.msg}>{message}</Text>
+          ? <Text style={[styles.msg, ink && { color: ink, opacity: 0.75 }]}>{message}</Text>
           : message)}
       </View>
       {onDismiss && (
@@ -71,7 +77,7 @@ export function Toast({
           hitSlop={6}
           style={styles.x}
         >
-          <Svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke={colors.textFaint} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <Svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke={ink ?? colors.textFaint} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
             <Path d="m6 6 12 12M18 6 6 18" />
           </Svg>
         </Pressable>
