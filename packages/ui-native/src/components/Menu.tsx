@@ -126,7 +126,7 @@ export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right' }: MenuPr
 
 const styles = StyleSheet.create({
   // shown but unavailable
-  disabled: { opacity: 0.45 },
+  disabled: { opacity: 0.5 },
   root: { alignSelf: 'flex-start' },
   trigger: {
     minWidth: 30,

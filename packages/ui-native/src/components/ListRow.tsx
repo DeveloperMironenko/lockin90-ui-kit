@@ -94,10 +94,10 @@ export function ListRow({
     return (
       <Pressable
         disabled={disabled}
-        accessibilityState={{ disabled }}
         onPress={onPress ? () => { hapticSelection(); onPress(); } : undefined}
         style={({ pressed }) => [...rowStyle, pressed && (boxed ? styles.pressedBoxed : styles.pressed)]}
         {...rest}
+        accessibilityState={{ ...rest.accessibilityState, disabled }}
       >
         {body}
       </Pressable>
@@ -105,7 +105,18 @@ export function ListRow({
   }
 
   return (
-    <View style={rowStyle} aria-disabled={disabled || undefined} {...rest}>
+    <View
+      style={rowStyle}
+      {...rest}
+      // disabled: one accessibility element announced unavailable (a plain View isn't one)
+      {...(disabled
+        ? {
+            accessible: true,
+            'aria-disabled': true,
+            accessibilityState: { ...rest.accessibilityState, disabled: true },
+          }
+        : {})}
+    >
       {body}
     </View>
   );
@@ -124,7 +135,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.sm,
   },
   // shown but unavailable
-  disabled: { opacity: 0.45 },
+  disabled: { opacity: 0.5 },
   divider: {
     borderTopWidth: 1,
     borderTopColor: colors.border,
