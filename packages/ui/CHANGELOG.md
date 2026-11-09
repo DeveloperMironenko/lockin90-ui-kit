@@ -1,5 +1,11 @@
 # @lockin90/ui
 
+## 3.6.0
+
+### Minor Changes
+
+- 5c52465: Menu items and ListRow: `disabled` — shown but unavailable (e.g. "coming soon"): dimmed, announced disabled, not pressable.
+
 ## 3.5.0
 
 ### Minor Changes
