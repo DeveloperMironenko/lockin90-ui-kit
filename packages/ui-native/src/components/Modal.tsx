@@ -17,29 +17,41 @@ export interface ModalProps {
   footer?: ReactNode;
   /** Card max-width: sm ~380px, md ~460px, lg ~620px. */
   size?: 'sm' | 'md' | 'lg';
+  /** accessibility label of the close button (pass a localized string). @default 'Close' */
+  closeLabel?: string;
 }
 
 const MAX_WIDTH = { sm: 380, md: 460, lg: 620 } as const;
 
 /** Centered glass dialog over a dimmed scrim. Closes on scrim tap + Android
  *  back; the card stops propagation. */
-export function Modal({ open = true, onClose, title, children, footer, size = 'md' }: ModalProps) {
+export function Modal({ open = true, onClose, title, children, footer, size = 'md', closeLabel = 'Close' }: ModalProps) {
   return (
     <RNModal transparent visible={open} animationType="fade" onRequestClose={onClose} statusBarTranslucent>
-      <Pressable style={styles.scrim} onPress={() => onClose?.()}>
-        <Pressable
+      {/* The scrim is a container for screen readers and the card a plain view that claims the touch:
+          as accessible elements they would group the title, body and buttons into one item VoiceOver
+          can't enter. VoiceOver's escape gesture closes it. */}
+      <Pressable style={styles.scrim} onPress={() => onClose?.()} accessible={false}>
+        <View
           style={[styles.card, { maxWidth: MAX_WIDTH[size] }]}
-          onPress={() => {}}
+          onStartShouldSetResponder={() => true}
           accessibilityViewIsModal
+          onAccessibilityEscape={() => onClose?.()}
         >
           {(title || onClose) && (
             <View style={styles.head}>
-              {title ? <Text style={styles.title}>{title}</Text> : <View />}
+              {title ? (
+                <Text style={styles.title} accessibilityRole="header">
+                  {title}
+                </Text>
+              ) : (
+                <View />
+              )}
               {onClose && (
                 <Pressable
                   onPress={onClose}
                   accessibilityRole="button"
-                  accessibilityLabel="Close"
+                  accessibilityLabel={closeLabel}
                   hitSlop={6}
                   style={styles.close}
                 >
@@ -54,7 +66,7 @@ export function Modal({ open = true, onClose, title, children, footer, size = 'm
             {typeof children === 'string' ? <Text style={styles.bodyText}>{children}</Text> : children}
           </View>
           {footer && <View style={styles.foot}>{footer}</View>}
-        </Pressable>
+        </View>
       </Pressable>
     </RNModal>
   );

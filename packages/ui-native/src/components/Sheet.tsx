@@ -27,7 +27,6 @@ export interface SheetProps {
   children?: ReactNode;
 }
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 /** Fraction of the sheet height the user must drag past to dismiss. */
 const DISMISS_FRACTION = 0.25;
@@ -85,7 +84,10 @@ export function Sheet({ open = true, onClose, side = 'bottom', title, children }
 
   return (
     <RNModal transparent visible={open} animationType="slide" onRequestClose={onClose} statusBarTranslucent>
-      <Pressable style={styles.scrim} onPress={() => onClose?.()}>
+      {/* The scrim is a container for screen readers (accessible={false}): as an accessible element it
+          would swallow the title, fields and buttons inside (VoiceOver read the whole sheet as one item
+          and could reach none of them). It stays tappable to close. */}
+      <Pressable style={styles.scrim} onPress={() => onClose?.()} accessible={false}>
         {/* Keyboard avoidance (same pattern as the kit Select): the avoider
             fills the scrim and pads itself by the iOS keyboard height, so an
             input-bearing sheet rises above the keyboard instead of being
@@ -95,10 +97,14 @@ export function Sheet({ open = true, onClose, side = 'bottom', title, children }
           pointerEvents="box-none"
           style={[styles.avoider, align]}
         >
-          <AnimatedPressable
+          {/* the panel claims the touch, so a tap on it never reaches the scrim (a plain view: as a
+              Pressable it would be an accessible element grouping everything inside) */}
+          <Animated.View
             style={[styles.panel, panel, isBottom && { transform: [{ translateY: dragY }] }]}
-            onPress={() => {}}
+            onStartShouldSetResponder={() => true}
             accessibilityViewIsModal
+            // VoiceOver's escape gesture (two-finger Z) closes it, the scrim not being an element
+            onAccessibilityEscape={() => onClose?.()}
             onLayout={
               isBottom
                 ? (e) => {
@@ -113,15 +119,21 @@ export function Sheet({ open = true, onClose, side = 'bottom', title, children }
                 {...panResponder.panHandlers}
               >
                 <View style={styles.handle} pointerEvents="none" />
-                {title ? <Text style={styles.title}>{title}</Text> : null}
+                {title ? (
+                  <Text style={styles.title} accessibilityRole="header">
+                    {title}
+                  </Text>
+                ) : null}
               </View>
             ) : title ? (
-              <Text style={styles.title}>{title}</Text>
+              <Text style={styles.title} accessibilityRole="header">
+                {title}
+              </Text>
             ) : null}
             <View style={styles.body}>
               {typeof children === 'string' ? <Text style={styles.bodyText}>{children}</Text> : children}
             </View>
-          </AnimatedPressable>
+          </Animated.View>
         </KeyboardAvoidingView>
       </Pressable>
     </RNModal>
