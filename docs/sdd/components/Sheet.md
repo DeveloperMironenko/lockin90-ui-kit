@@ -105,7 +105,7 @@ No gap blocks use — the sheet/drawer is fully usable and visually equivalent (
 ## 7. Accessibility
 
 - **Web:** panel is `role="dialog"` + `aria-modal="true"`; scrim is `role="presentation"`. ESC + scrim click dismiss. The drag handle is `aria-hidden` (decorative). Manage initial focus for long forms.
-- **Native:** `accessibilityViewIsModal` traps assistive focus; the handle is `pointerEvents="none"` decoration. Android back dismisses via `onRequestClose`.
+- **Native:** `accessibilityViewIsModal` traps assistive focus; the handle is `pointerEvents="none"` decoration. Android back dismisses via `onRequestClose`. The scrim and the card `Pressable`s are `accessible={false}` (containers): as accessible elements they would group the title, fields and buttons into one item VoiceOver can't enter.
 - **Touch:** the bottom sheet's handle/title strip is a real drag surface — drag down past 25% (or fling) to
   dismiss; scrim tap, ESC (web) and Android back (native) remain as non-gesture dismissals for AT users. Body
   scrolls when content exceeds the cap (the body itself is not a drag surface, so scrolling never fights the gesture).

@@ -85,7 +85,10 @@ export function Sheet({ open = true, onClose, side = 'bottom', title, children }
 
   return (
     <RNModal transparent visible={open} animationType="slide" onRequestClose={onClose} statusBarTranslucent>
-      <Pressable style={styles.scrim} onPress={() => onClose?.()}>
+      {/* Both pressables are containers for screen readers (accessible={false}): as one accessible
+          element each, they would swallow the title, fields and buttons inside (VoiceOver read the whole
+          sheet as one item and could reach none of them). The scrim stays tappable to close. */}
+      <Pressable style={styles.scrim} onPress={() => onClose?.()} accessible={false}>
         {/* Keyboard avoidance (same pattern as the kit Select): the avoider
             fills the scrim and pads itself by the iOS keyboard height, so an
             input-bearing sheet rises above the keyboard instead of being
@@ -98,6 +101,7 @@ export function Sheet({ open = true, onClose, side = 'bottom', title, children }
           <AnimatedPressable
             style={[styles.panel, panel, isBottom && { transform: [{ translateY: dragY }] }]}
             onPress={() => {}}
+            accessible={false}
             accessibilityViewIsModal
             onLayout={
               isBottom
