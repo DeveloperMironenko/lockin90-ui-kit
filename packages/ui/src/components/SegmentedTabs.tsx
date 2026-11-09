@@ -1,4 +1,4 @@
-import { type HTMLAttributes } from 'react';
+import { type HTMLAttributes, useLayoutEffect, useRef } from 'react';
 import { cn } from '../cn';
 import { Icon, type IconName } from './Icon';
 
@@ -109,8 +109,42 @@ export function SegmentedTabs({
   className,
   ...rest
 }: SegmentedTabsProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const labels = tabs.map((item) => toTab(item).label).join('\u0000');
+
+  // fill: a label wider than its segment shrinks to fit, down to 80% (native's adjustsFontSizeToFit
+  // with minimumFontScale 0.8) — long words in uk / ru / es on a phone row. Labels that fit are untouched.
+  useLayoutEffect(() => {
+    const track = ref.current;
+    if (!fill || !track) return;
+    const fit = () => {
+      for (const tab of track.querySelectorAll<HTMLElement>('.lk-seg-tab')) {
+        tab.style.removeProperty('--lk-seg-fit');
+        // the padding doesn't shrink with the text: step down until the label fits, or 80%
+        for (let scale = 0.98; tab.scrollWidth > tab.clientWidth && scale >= 0.8; scale -= 0.02)
+          tab.style.setProperty('--lk-seg-fit', scale.toFixed(2));
+      }
+    };
+    fit();
+    // again when the row's width changes (not its height, which the fit itself can move), next frame
+    let width = track.clientWidth;
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      if (track.clientWidth === width) return;
+      width = track.clientWidth;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(fit);
+    });
+    observer.observe(track);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, [fill, labels]);
+
   return (
     <div
+      ref={ref}
       className={cn('lk-seg', size === 'sm' && 'lk-seg-sm', fill && 'lk-seg--fill', invalid && 'lk-seg--invalid', className)}
       aria-invalid={invalid || undefined}
       role="tablist"
