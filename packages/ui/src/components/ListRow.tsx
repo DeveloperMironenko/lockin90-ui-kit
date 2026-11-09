@@ -12,6 +12,8 @@ export interface ListRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'titl
   trailing?: ReactNode;
   /** When set, the row renders as a `<button>` (hover bg, pointer). */
   onClick?: () => void;
+  /** Shown but unavailable (e.g. "coming soon"): dimmed, announced disabled, not pressable. */
+  disabled?: boolean;
   /** Accent-tinted selected state (used in pickers). */
   active?: boolean;
   /** Overrides the ACTIVE-state background — a translucent color string
@@ -30,12 +32,13 @@ export interface ListRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'titl
  *  hairline between them (handled in CSS). With `onClick` it renders an
  *  interactive `<button>`; otherwise a static `<div>`. */
 export const ListRow = forwardRef<HTMLDivElement, ListRowProps>(function ListRow(
-  { leading, title, subtitle, trailing, onClick, active, activeTint, danger, boxed, className, style, ...rest },
+  { leading, title, subtitle, trailing, onClick, disabled, active, activeTint, danger, boxed, className, style, ...rest },
   ref,
 ) {
   const classes = cn(
     'lk-listrow',
-    onClick && 'lk-listrow-tappable',
+    onClick && !disabled && 'lk-listrow-tappable',
+    disabled && 'lk-listrow-disabled',
     active && 'lk-listrow-active',
     danger && 'lk-listrow-danger',
     boxed && 'lk-listrow-boxed',
@@ -65,7 +68,9 @@ export const ListRow = forwardRef<HTMLDivElement, ListRowProps>(function ListRow
         type="button"
         className={classes}
         style={rowStyle}
-        onClick={onClick}
+        // focusable and announced; a click does nothing
+        onClick={disabled ? undefined : onClick}
+        aria-disabled={disabled || undefined}
         aria-pressed={active || undefined}
         {...(rest as HTMLAttributes<HTMLButtonElement>)}
       >
@@ -75,7 +80,14 @@ export const ListRow = forwardRef<HTMLDivElement, ListRowProps>(function ListRow
   }
 
   return (
-    <div ref={ref} className={classes} style={rowStyle} {...rest}>
+    <div
+      ref={ref}
+      className={classes}
+      style={rowStyle}
+      // a role that carries the state, so screen readers say the row is unavailable
+      {...(disabled ? { role: 'group', 'aria-disabled': true } : {})}
+      {...rest}
+    >
       {body}
     </div>
   );

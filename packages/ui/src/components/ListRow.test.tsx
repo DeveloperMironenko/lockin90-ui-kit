@@ -27,3 +27,19 @@ describe('ListRow boxed', () => {
     expect(renderToStaticMarkup(<ListRow title="Profile" />)).not.toContain('lk-listrow-boxed');
   });
 });
+
+describe('ListRow disabled', () => {
+  it('a static row is a group announced unavailable, dimmed', () => {
+    const html = renderToStaticMarkup(<ListRow title="Security" disabled />);
+    expect(html).toContain('role="group"');
+    expect(html).toContain('aria-disabled="true"');
+    expect(html).toContain('lk-listrow-disabled');
+  });
+
+  it('a pressable row stays a focusable button, announced unavailable, without the tappable look', () => {
+    const html = renderToStaticMarkup(<ListRow title="Security" onClick={() => {}} disabled />);
+    expect(html).toMatch(/<button[^>]*aria-disabled="true"/);
+    expect(html).not.toMatch(/<button[^>]* disabled=""/);
+    expect(html).not.toContain('lk-listrow-tappable');
+  });
+});

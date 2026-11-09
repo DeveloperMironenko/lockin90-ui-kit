@@ -29,6 +29,7 @@ Reach for `Menu` for a short list of contextual actions on a row/card. For arbit
 | `icon` | `ReactNode` | optional leading glyph (e.g. `<Icon />`) |
 | `onClick` | `() => void` | fired on click/press; the menu closes after |
 | `danger` | `boolean` | render in the danger tone (`--zone-low`) |
+| `disabled` | `boolean` | shown but unavailable ("coming soon"): opacity .5 (the kit's disabled), no hover, announced disabled and still focusable on web (`aria-disabled`, the WAI-ARIA menu pattern; native `accessibilityState`), never fires `onClick` / `onPress`; a tap leaves the menu open |
 | `divider` | `boolean` | render a 1px separator instead of an action |
 
 ### `Menu`
