@@ -39,3 +39,19 @@ describe('ListRow boxed', () => {
     expect(hasDeclaration(subtitle, 'text-overflow:ellipsis')).toBe(false);
   });
 });
+
+/* `disabled` (docs/sdd/components/ListRow.md): shown but unavailable — dimmed and announced. */
+describe('ListRow disabled', () => {
+  test('a disabled row is announced unavailable, pressable or not, and dimmed', () => {
+    const plain = render(ListRow, { title: 'Security', disabled: true });
+    expect(plain).toContain('aria-disabled="true"');
+    expect(plain).toContain('r-opacity');
+    expect(render(ListRow, { title: 'Security', disabled: true, onPress: () => {} })).toContain(
+      'aria-disabled="true"',
+    );
+  });
+
+  test('a plain row is not', () => {
+    expect(render(ListRow, { title: 'Security' })).not.toContain('aria-disabled');
+  });
+});
