@@ -1,5 +1,11 @@
 # @lockin90/ui-native
 
+## 2.11.0
+
+### Minor Changes
+
+- b8c086a: Menu items and ListRow: `disabled` — shown but unavailable (e.g. "coming soon"): dimmed, announced disabled, not pressable.
+
 ## 2.10.0
 
 ### Minor Changes
