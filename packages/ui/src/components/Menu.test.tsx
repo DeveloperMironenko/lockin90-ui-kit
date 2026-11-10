@@ -32,4 +32,11 @@ describe('Menu trigger', () => {
     const html = renderToStaticMarkup(<Menu iconTrigger trigger={<Icon name="camera" />} />);
     expect(html).toContain('lk-icon-btn');
   });
+
+  it('iconSize sm: IconButton\'s small square', () => {
+    const html = renderToStaticMarkup(
+      <Menu iconTrigger iconSize="sm" label="Change photo" trigger={<Icon name="camera" />} />,
+    );
+    expect(html).toContain('class="lk-icon-btn lk-icon-btn-sm"');
+  });
 });

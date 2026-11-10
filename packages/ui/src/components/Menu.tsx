@@ -51,6 +51,7 @@ export type MenuProps = MenuBaseProps &
         iconTrigger?: false;
         /** The trigger's spoken name (`aria-label`), for a trigger that shows no text. */
         label?: string;
+        iconSize?: never;
       }
     | {
         /** The trigger on IconButton's surface (its glass square and corners), for a menu opened
@@ -58,6 +59,8 @@ export type MenuProps = MenuBaseProps &
          *  `trigger`; its spoken name is required, as IconButton's. `bare` doesn't apply. */
         iconTrigger: true;
         label: string;
+        /** IconButton's sizes: 32 / 40 px (`sm` reaches a 44px touch target). @default 'md' */
+        iconSize?: 'sm' | 'md';
       }
   );
 
@@ -79,6 +82,7 @@ export function Menu({
   align = 'right',
   bare = false,
   iconTrigger = false,
+  iconSize = 'md',
   label,
   disabled = false,
   className,
@@ -149,7 +153,11 @@ export function Menu({
     <div ref={rootRef} className={cn('lk-menu', bare && 'lk-menu--bare', className)} {...rest}>
       <button
         type="button"
-        className={iconTrigger ? 'lk-icon-btn' : 'lk-menu-trigger'}
+        className={
+          iconTrigger
+            ? cn('lk-icon-btn', iconSize === 'sm' && 'lk-icon-btn-sm')
+            : 'lk-menu-trigger'
+        }
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={label}

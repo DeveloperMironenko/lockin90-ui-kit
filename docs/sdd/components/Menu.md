@@ -42,6 +42,7 @@ Reach for `Menu` for a short list of contextual actions on a row/card. For arbit
 | `bare` | `boolean` | `false` | ✓ | — | the trigger without its chrome, for a trigger that is already a whole element |
 | `iconTrigger` | `boolean` | `false` | ✓ | ⬜ | the trigger on `IconButton`'s surface (`.lk-icon-btn`: 40px glass square, `--r-sm`); the icon is passed as `trigger` |
 | `label` | `string` | — (required with `iconTrigger`) | ✓ | ⬜ | the trigger's `aria-label`, for a trigger with no text |
+| `iconSize` | `'sm' \| 'md'` | `'md'` | ✓ | ⬜ | with `iconTrigger`: IconButton's 32 / 40 px (`sm` keeps a 44 px touch target), e.g. a badge on an 80 px photo |
 | `disabled` | `boolean` | `false` | ✓ | ⬜ | the trigger can't be pressed; an open panel closes |
 | `className` | `string` | — | ✓ | — | web only (merged onto `.lk-menu`) |
 | _rest_ | `HTMLAttributes<HTMLDivElement>` | — | ✓ | — | web only — spread onto the `.lk-menu` root |
