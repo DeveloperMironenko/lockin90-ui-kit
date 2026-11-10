@@ -47,7 +47,7 @@ export function Card({ lit, padLg, pad, flat, blur, tone, variant, style, childr
         style={[composed, styles.cardBlur, style]}
         {...rest}
       >
-        {lit && <LitHairline />}
+        {lit && <LitHairline danger={tone === 'danger'} />}
         {children}
       </OptionalBlurView>
     );
@@ -55,7 +55,7 @@ export function Card({ lit, padLg, pad, flat, blur, tone, variant, style, childr
 
   return (
     <View style={[composed, style]} {...rest}>
-      {lit && <LitHairline />}
+      {lit && <LitHairline danger={tone === 'danger'} />}
       {children}
     </View>
   );
@@ -73,11 +73,18 @@ const LIT_STOPS = [
   'rgba(34,211,238,0.7)',
   'rgba(34,211,238,0)',
 ] as const;
+// a danger card's: --bad to --warn (web .lk-tone-danger.lk-lit)
+const LIT_DANGER_STOPS = [
+  'rgba(255,77,109,0)',
+  'rgba(255,77,109,0.7)',
+  'rgba(255,176,32,0.5)',
+  'rgba(255,176,32,0)',
+] as const;
 
-function LitHairline() {
+function LitHairline({ danger }: { danger?: boolean }) {
   return (
     <LinearGradient
-      colors={LIT_STOPS as unknown as [string, string]}
+      colors={(danger ? LIT_DANGER_STOPS : LIT_STOPS) as unknown as [string, string]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={styles.lit}
@@ -108,7 +115,8 @@ const styles = StyleSheet.create({
   // `color-mix(in srgb, var(--warn|--bad) 7|8%, var(--glass))` fill
   // (#FFB020 / #FF4D6D mixed into rgba(255,255,255,0.045)).
   toneWarn: { borderColor: 'rgba(255,176,32,0.42)', backgroundColor: 'rgba(255,206,115,0.11)' },
-  toneDanger: { borderColor: 'rgba(255,77,109,0.42)', backgroundColor: 'rgba(255,138,159,0.12)' },
+  // danger: the design's danger zone (web/settings.html .danger, as web): --bad at 30% / 4%
+  toneDanger: { borderColor: 'rgba(255,77,109,0.30)', backgroundColor: 'rgba(255,77,109,0.04)' },
   // dashed — add/connect action card (hover accent is web-only; text color
   // doesn't cascade natively, so children set their own `colors.textDim`)
   dashed: {

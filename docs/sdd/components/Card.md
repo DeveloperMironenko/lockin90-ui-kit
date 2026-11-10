@@ -34,7 +34,7 @@ It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parit
 | `lit` | `boolean` | `false` | ✓ | ✓ | gradient hairline on the top edge |
 | `flat` | `boolean` | `false` | ✓ | ✓ | drop the elevation shadow |
 | `hover` | `boolean` | `false` | ✓ | — | **web only** — lift + glow on hover (no pointer on native) |
-| `tone` | `'warn' \| 'danger'` | — | ✓ | ✓ | tinted status surface (same values both platforms); `danger` is the design's danger zone (`web/settings.html` `.danger`): `--bad` at 30% for the line, 4% for the fill, lit `--bad` to `--warn` (native: the same values in its follow-up PR, ⬜) |
+| `tone` | `'warn' \| 'danger'` | — | ✓ | ✓ | tinted status surface (same values both platforms); `danger` is the design's danger zone (`web/settings.html` `.danger`): `--bad` at 30% for the line, 4% for the fill, lit `--bad` to `--warn` (native: the same, flattened to rgba) |
 | `variant` | `'ghost' \| 'dashed'` | — | ✓ | ✓ | borderless / dashed action card; dashed **hover** accent is web-only |
 | `as` | `ElementType` | `'div'` | ✓ | — | **web only** — render as a different element (`article`/`li`/`section`/…); still `forwardRef` |
 | `blur` | `boolean` | `false` | — | ✓ | **native only** — real frosted blur via the optional `expo-blur` peer |
