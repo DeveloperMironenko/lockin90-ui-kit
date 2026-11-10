@@ -70,6 +70,7 @@ Reach for `Menu` for a short list of contextual actions on a row/card. For arbit
 | Open | portaled `.lk-menu-panel.is-open` (fade + translateY 0) | `Modal` fade; anchored panel |
 | Trigger active | `[aria-expanded='true']` → `--glass-2` + `--border-2` | press state |
 | Trigger disabled | `disabled` (`iconTrigger`: IconButton's `.5` opacity); an open panel closes | ⬜ |
+| Trigger focused | the kit's ring (`0 0 0 3px` accent at 45%), keyboard only (`:focus-visible`), never the browser's; a `bare` trigger is fully rounded, so the ring follows a round avatar | platform's |
 | Row hover (web) | `:hover/:focus-visible` → `--glass-2` + `--text` | n/a (press → `glass2`) |
 | Reposition | `scroll`(capture)/`resize` recompute | `onLayout` size change |
 | Dismiss | outside `mousedown` / ESC; or after a row click | backdrop tap / Android back; or after a row press |
