@@ -34,6 +34,7 @@ It's the one sanctioned re-auth surface — built on `Modal` + `Input` + `Button
 | `hasGoogle` | `boolean` | `false` | ✓ | ✓ | show "Continue with Google" |
 | `loading` | `boolean` | `false` | ✓ | ✓ | disables inputs; Confirm → "Confirming…" |
 | `error` | `string` | — | ✓ | ✓ | danger `Alert` above the fields; marks Input `invalid` |
+| `passwordLabel` · `passwordPlaceholder` · `confirmLabel` · `confirmingLabel` · `cancelLabel` · `googleLabel` · `orLabel` | `string` | English (`'Password'`, `'Your password'`, `'Confirm'`, `'Confirming…'`, `'Cancel'`, `'Continue with Google'`, `'or'`) | ✓ | ✓ | the dialog's texts, passed translated (web added 2026-11-10: it showed English in every language); native also `appleLabel` |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only (on the body `View`) |
 
 - **Web:** `'use client'`; password `Input` is `type="password"`, `autoComplete="current-password"`; the form's `onSubmit` calls `submit()`.

@@ -28,6 +28,14 @@ export interface ReauthDialogProps {
   loading?: boolean;
   /** Error message rendered in a danger Alert above the fields. */
   error?: string;
+  /** Localizable labels — English defaults; pass translated strings to localize (as native). */
+  passwordLabel?: string;
+  passwordPlaceholder?: string;
+  confirmLabel?: string;
+  confirmingLabel?: string;
+  cancelLabel?: string;
+  googleLabel?: string;
+  orLabel?: string;
 }
 
 /** Google "G" mark — matches the auth design's SSO glyph. */
@@ -68,6 +76,13 @@ export function ReauthDialog({
   hasGoogle = false,
   loading = false,
   error,
+  passwordLabel = 'Password',
+  passwordPlaceholder = 'Your password',
+  confirmLabel = 'Confirm',
+  confirmingLabel = 'Confirming…',
+  cancelLabel = 'Cancel',
+  googleLabel = 'Continue with Google',
+  orLabel = 'or',
 }: ReauthDialogProps) {
   const [password, setPassword] = useState('');
 
@@ -106,10 +121,10 @@ export function ReauthDialog({
             }}
           >
             <Input
-              label="Password"
+              label={passwordLabel}
               type="password"
               autoComplete="current-password"
-              placeholder="Your password"
+              placeholder={passwordPlaceholder}
               value={password}
               disabled={loading}
               invalid={Boolean(error)}
@@ -121,7 +136,7 @@ export function ReauthDialog({
               className="lk-reauth-submit"
               disabled={loading || !password}
             >
-              {loading ? 'Confirming…' : 'Confirm'}
+              {loading ? confirmingLabel : confirmLabel}
             </Button>
           </form>
         ) : null}
@@ -129,7 +144,7 @@ export function ReauthDialog({
         {hasPassword && hasGoogle ? (
           <div className="lk-reauth-or" aria-hidden="true">
             <span className="lk-reauth-ln" />
-            <span>or</span>
+            <span>{orLabel}</span>
             <span className="lk-reauth-ln" />
           </div>
         ) : null}
@@ -142,7 +157,7 @@ export function ReauthDialog({
             onClick={() => onGoogle?.()}
           >
             <span className="lk-reauth-google-icon">{GOOGLE}</span>
-            Continue with Google
+            {googleLabel}
           </Button>
         ) : null}
 
@@ -153,7 +168,7 @@ export function ReauthDialog({
           onClick={close}
           disabled={loading}
         >
-          Cancel
+          {cancelLabel}
         </Button>
       </div>
     </Modal>
