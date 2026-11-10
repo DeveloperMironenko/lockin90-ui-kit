@@ -22,6 +22,7 @@ link; `TabBar` is the phone's bottom bar.
 | `icon` | `ReactNode` | — | a kit `Icon` (18 px), before the label, hidden from screen readers |
 | `active` | `boolean` | `false` | the page shown: highlighted, the bar, `aria-current="page"` |
 | `badge` | `ReactNode` | — | a small count after the label |
+| `size` | `'sm' \| 'md'` | `'md'` | `sm`: a page's own section list (`.subnav`): padding 9 × 12, gap 11, 13.5px, a 16px icon, the active border at 26%, no edge bar |
 | _rest_ | `AnchorHTMLAttributes` | — | `href` and the app router's `onClick`; ref forwarded |
 
 ## 3. Visual spec (tokens — never hardcode)

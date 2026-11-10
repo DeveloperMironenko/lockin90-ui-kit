@@ -16,4 +16,9 @@ describe('NavItem', () => {
     expect(html).toContain('aria-current="page"');
     expect(html).toContain('lk-nav-item-active');
   });
+
+  it('sm: the section list row, no edge bar', () => {
+    const html = renderToStaticMarkup(<NavItem href="#profile" label="Profile" size="sm" active />);
+    expect(html).toContain('lk-nav-item lk-nav-item-sm lk-nav-item-active');
+  });
 });

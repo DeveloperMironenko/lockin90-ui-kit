@@ -50,3 +50,9 @@
   font-family: var(--font-mono);
   font-size: 10px;
 }
+
+/* sm: a page's own section list (design web/settings.html .subnav) */
+.lk-nav-item-sm { gap: 11px; padding: 9px 12px; font-size: 13.5px; }
+.lk-nav-item-sm .lk-nav-item-icon { flex-basis: 16px; }
+.lk-nav-item-sm.lk-nav-item-active { border-color: color-mix(in srgb, var(--accent) 26%, transparent); }
+.lk-nav-item-sm.lk-nav-item-active::before { content: none; }
