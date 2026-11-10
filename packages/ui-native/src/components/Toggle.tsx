@@ -17,6 +17,10 @@ export interface ToggleProps {
   size?: ToggleSize;
   /** when true, the switch is non-interactive and dimmed */
   disabled?: boolean;
+  /** the switch's spoken name when no `label` is shown (a switch in a table cell, its row and
+   *  column naming it). Mirrors web `aria-label`. */
+  accessibilityLabel?: string;
+  testID?: string;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -35,6 +39,8 @@ export function Toggle({
   label,
   size = 'md',
   disabled = false,
+  accessibilityLabel,
+  testID,
   style,
 }: ToggleProps) {
   const dims = size === 'sm' ? SIZE.sm : SIZE.md;
@@ -66,8 +72,10 @@ export function Toggle({
 
   const track = (
     <Pressable
-      accessibilityRole="switch"
-      accessibilityState={{ checked, disabled }}
+      // alone, the track is the switch; with a label, the row below is (one switch, not two)
+      {...(label == null
+        ? { accessibilityRole: 'switch' as const, accessibilityState: { checked, disabled }, accessibilityLabel, testID }
+        : { accessible: false })}
       disabled={disabled}
       onPress={() => {
         // selection tick when the app ships expo-haptics (silent no-op otherwise)
@@ -101,8 +109,13 @@ export function Toggle({
     <Pressable
       accessibilityRole="switch"
       accessibilityState={{ checked, disabled }}
+      accessibilityLabel={accessibilityLabel ?? label}
+      testID={testID}
       disabled={disabled}
-      onPress={() => onChange?.(!checked)}
+      onPress={() => {
+        hapticSelection();
+        onChange?.(!checked);
+      }}
       style={[styles.row, disabled && styles.disabled, style]}
     >
       {track}

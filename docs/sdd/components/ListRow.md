@@ -26,7 +26,7 @@ It is the *only* sanctioned list-row primitive; hand-rolling a flex row with the
 | --- | --- | --- | --- | --- | --- |
 | `leading` | `ReactNode` | — | ✓ | ✓ | icon/avatar/badge/letter chip — `flex-shrink: 0` |
 | `title` | `ReactNode` | — (required) | ✓ | ✓ | primary line; native renders strings as a 1-line `<Text>` |
-| `variant` | `'pref' \| 'action'` | — | ✓ | ⬜ | a settings row inside a padded card (`web/settings.html`): `pref` (`.pref-row`) padding 15 × 4, gap 16, a 600 14px title; `action` (`.acct-row`) padding 16 × 0, a 600 14.5px title; both a subtitle 2px under. Native when a native screen needs it |
+| `variant` | `'pref' \| 'action'` | — | ✓ | ✓ | a settings row inside a padded card (`web/settings.html`): `pref` (`.pref-row`) padding 15 × 4, gap 16, a 600 14px title; `action` (`.acct-row`) padding 16 × 0, a 600 14.5px title; both a subtitle 2px under. Native: the same (title 600 on 22, pref 14), the title and subtitle wrap; ignored with `boxed` |
 | `subtitle` | `ReactNode` | — | ✓ | ✓ | dimmer second line under the title |
 | `trailing` | `ReactNode` | — | ✓ | ✓ | chevron/value/icon — pinned right (`margin-left: auto`) |
 | **handler** | `() => void` | — | `onClick` | `onPress` | **platform-shaped** — presence makes the row interactive |

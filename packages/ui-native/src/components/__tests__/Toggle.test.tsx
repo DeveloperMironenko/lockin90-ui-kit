@@ -47,3 +47,18 @@ describe('Toggle knob inset math', () => {
     });
   }
 });
+
+describe('Toggle name', () => {
+  test('a switch with no label is spoken by its accessibilityLabel, and shows no text', () => {
+    const html = render(Toggle, { accessibilityLabel: 'Insights, Push', testID: 'push' });
+    expect(html).toContain('aria-label="Insights, Push"');
+    expect(html).toContain('data-testid="push"');
+    expect(html).not.toContain('>Insights, Push<');
+  });
+
+  test('a labelled switch is one element, named by its label', () => {
+    const html = render(Toggle, { label: 'Weekly report', testID: 'weekly' });
+    expect(html.match(/data-testid="weekly"/g)).toHaveLength(1);
+    expect(html.match(/role="switch"/g)).toHaveLength(1);
+  });
+});

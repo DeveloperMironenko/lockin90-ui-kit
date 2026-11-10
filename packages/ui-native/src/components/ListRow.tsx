@@ -37,6 +37,10 @@ export interface ListRowProps extends ViewProps {
   /** A row of its own: bordered glass box, no divider (a summary list, design onboarding
    *  `.recap li`); stack boxed rows with a gap. */
   boxed?: boolean;
+  /** A settings row, as web: `pref` (padding 15 × 4, a setting's name + its line, the control on the
+   *  right: design settings `.pref-row` / mobile `.setrow`) or `action` (padding 16 × 0, an icon tile,
+   *  a button on the right: `.acct-row`); not with `boxed`. Both: gap 16, title 600 on 22 (pref 14), title and subtitle wrap (19). */
+  variant?: 'pref' | 'action';
 }
 
 /** Title/subtitle helpers: render strings as <Text>, pass nodes through. */
@@ -65,18 +69,32 @@ export function ListRow({
   danger,
   divider = true,
   boxed,
+  variant,
   style,
   ...rest
 }: ListRowProps) {
-  const titleStyle = [styles.title, boxed && styles.titleBoxed, danger && styles.titleDanger];
+  const titleStyle = [
+    styles.title,
+    boxed && styles.titleBoxed,
+    variant && styles.titleSetting,
+    variant === 'pref' && styles.titlePref,
+    danger && styles.titleDanger,
+  ];
+  // a boxed or settings row's line wraps, as on web (a settings row's title too: a long setting's
+  // name in another language)
+  const wraps = boxed || variant != null;
 
   const body = (
     <>
       {leading != null && <View style={styles.leading}>{leading}</View>}
       <View style={styles.main}>
-        {asText(title, titleStyle)}
-        {/* a boxed row's summary wraps, as on web */}
-        {subtitle != null && asText(subtitle, [styles.subtitle, boxed && styles.subtitleBoxed], !boxed)}
+        {asText(title, titleStyle, variant == null)}
+        {subtitle != null &&
+          asText(
+            subtitle,
+            [styles.subtitle, boxed && styles.subtitleBoxed, variant && styles.subtitleSetting],
+            !wraps,
+          )}
       </View>
       {trailing != null && <View style={styles.trailing}>{trailing}</View>}
     </>
@@ -84,6 +102,9 @@ export function ListRow({
 
   const rowStyle = [
     styles.row,
+    // a boxed row keeps its box (the two don't combine)
+    !boxed && variant === 'pref' && styles.pref,
+    !boxed && variant === 'action' && styles.action,
     boxed ? styles.boxed : divider && styles.divider,
     active && (activeTint != null ? { backgroundColor: activeTint } : styles.active),
     disabled && styles.disabled,
@@ -136,6 +157,12 @@ const styles = StyleSheet.create({
   },
   // shown but unavailable
   disabled: { opacity: 0.5 },
+  // settings rows (web .lk-listrow--pref / --action)
+  pref: { minHeight: 0, gap: 16, paddingVertical: 15, paddingHorizontal: 4, borderRadius: 0 },
+  action: { minHeight: 0, gap: 16, paddingVertical: 16, paddingHorizontal: 0, borderRadius: 0 },
+  titleSetting: { fontWeight: '600', lineHeight: 22 },
+  titlePref: { fontSize: 14 },
+  subtitleSetting: { marginTop: 2, lineHeight: 19 },
   divider: {
     borderTopWidth: 1,
     borderTopColor: colors.border,
