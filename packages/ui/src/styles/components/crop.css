@@ -1,0 +1,46 @@
+/* ============================================================================
+   ImageCrop — frame a square of an image: drag to move, wheel / pinch / keys /
+   the slider to zoom. The image is sized and moved inline; the frame clips it.
+   Key: .lk-crop
+   ========================================================================== */
+.lk-crop {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 100%;
+}
+
+.lk-crop-frame {
+  position: relative;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--bg-1);
+  box-shadow: var(--elev-1);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.lk-crop-frame:active { cursor: grabbing; }
+.lk-crop-frame:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.lk-crop-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: none;
+  pointer-events: none;
+  transform-origin: 0 0;
+}
+
+/* rule of thirds */
+.lk-crop-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to right, transparent calc(100% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(100% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(100% / 3 + 0.5px), transparent calc(100% / 3 + 0.5px), transparent calc(200% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(200% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(200% / 3 + 0.5px), transparent calc(200% / 3 + 0.5px)),
+    linear-gradient(to bottom, transparent calc(100% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(100% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(100% / 3 + 0.5px), transparent calc(100% / 3 + 0.5px), transparent calc(200% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(200% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(200% / 3 + 0.5px), transparent calc(200% / 3 + 0.5px));
+}
