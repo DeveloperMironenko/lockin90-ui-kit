@@ -14,6 +14,8 @@
 
 .lk-seg-tab {
   flex: 1 1 auto;
+  /* a button's own line height, as the design's: an app's reset makes it inherit the page's */
+  line-height: normal;
   /* no min-width:0 — never shrink below content+padding, so the label always
      stays centered with its full horizontal padding honored */
   display: inline-flex;
