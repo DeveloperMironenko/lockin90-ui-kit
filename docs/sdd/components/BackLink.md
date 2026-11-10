@@ -22,6 +22,7 @@ On web it renders an `<a href>` when `href` is set, otherwise a `<button type="b
 | `label` | `string` | `'Back'` | ✓ | ✓ | text after the chevron |
 | `href` | `string` | — | ✓ | — | **web only** — when set, renders `<a href>`; else `<button>` |
 | `onClick` | `() => void` | — | ✓ | ✓ | click/press handler (native maps it onto `onPress`) |
+| `variant` | `'default' \| 'pill' \| 'bar'` | `'default'` | ✓ | ⬜ (`bar`) | `pill`: the auth brand panel's mono glass chip; `bar`: the signed-in top bar's back chip (`web/settings.html` `.topbar .backlink`): the pill's surface in the UI font, 13px, a 15px icon, 36px tall. Native `bar` when a native screen draws it (the phone's top bar has its own back) |
 | `className` | `string` | — | ✓ | — | web only |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |
 | _rest_ | `Omit<Anchor & Button HTMLAttributes, keyof CommonProps>` (web) / `Omit<PressableProps, 'children' \| 'style' \| 'onPress'>` (native) | — | ✓ | ✓ | spread onto the rendered element |
