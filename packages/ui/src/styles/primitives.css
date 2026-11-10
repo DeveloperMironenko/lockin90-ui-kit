@@ -33,9 +33,13 @@
   background: color-mix(in srgb, var(--warn) 7%, var(--glass));
 }
 .lk-card.lk-tone-warn.lk-hover:hover { border-color: color-mix(in srgb, var(--warn) 60%, transparent); }
+/* danger: the design's danger zone (web/settings.html .danger), lit red to amber */
 .lk-card.lk-tone-danger {
-  border-color: color-mix(in srgb, var(--bad) 42%, transparent);
-  background: color-mix(in srgb, var(--bad) 8%, var(--glass));
+  border-color: color-mix(in srgb, var(--bad) 30%, transparent);
+  background: color-mix(in srgb, var(--bad) 4%, transparent);
+}
+.lk-card.lk-tone-danger.lk-lit::before {
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--bad) 70%, transparent), color-mix(in srgb, var(--warn) 50%, transparent), transparent);
 }
 .lk-card.lk-tone-danger.lk-hover:hover { border-color: color-mix(in srgb, var(--bad) 60%, transparent); }
 
