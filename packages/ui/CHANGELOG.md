@@ -1,5 +1,20 @@
 # @lockin90/ui
 
+## 3.7.0
+
+### Minor Changes
+
+- ef37ad7: IconButton: a square button with one kit icon and no text (its `label` is required and spoken), on Button's glass surface with a control's 10px corners; `size` `sm` (32px, a 44px touch target) or `md` (40px).
+- 75dbea5: ImageCrop: frame a square of an image (drag, wheel, pinch, keys, zoom slider); `cropRect` gives the pixels to cut.
+- 6c46bc9: Menu: `iconTrigger` puts the trigger on IconButton's surface, `label` gives it a spoken name, `disabled` stops it (and closes an open panel). The trigger shows the kit's focus ring, and a `bare` trigger is fully rounded.
+- f6bef32: NavItem: a sidebar's link row (icon, label, badge; the current page with the accent bar).
+
+### Patch Changes
+
+- 1aadcd9: Avatar: a caller's `style` is merged with the size instead of replacing it, so `style={undefined}` no longer collapses the avatar to zero width.
+- 2d60d8d: Button and SegmentedTabs keep their own line height (normal), as the design's `.btn`: under an app's CSS reset (Tailwind's preflight) they inherited the page's and drew about 4px taller (`sm` 38 instead of 34).
+- b7d9e36: Slider: `aria-label` names its range input (it was put on the wrapper, which screen readers ignore).
+
 ## 3.6.0
 
 ### Minor Changes

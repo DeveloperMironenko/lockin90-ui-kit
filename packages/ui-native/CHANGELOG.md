@@ -1,5 +1,11 @@
 # @lockin90/ui-native
 
+## 2.13.0
+
+### Minor Changes
+
+- d0196cd: IconButton: a square button with one kit icon and no text (its `label` is required and announced), on Button's glass surface (frosted with the optional `expo-blur`) with a control's 10px corners; `size` `sm` (32px) or `md` (40px), a touch target of at least 44 × 44, half strength when disabled.
+
 ## 2.12.1
 
 ### Patch Changes
