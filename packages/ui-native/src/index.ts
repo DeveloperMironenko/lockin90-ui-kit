@@ -22,6 +22,8 @@ export { BrandMark } from './components/BrandMark';
 export type { BrandMarkVariant, BrandMarkProps } from './components/BrandMark';
 export { Button } from './components/Button';
 export type { ButtonVariant, ButtonTone, ButtonProps } from './components/Button';
+export { IconButton } from './components/IconButton';
+export type { IconButtonProps } from './components/IconButton';
 export { Card } from './components/Card';
 export type { CardProps } from './components/Card';
 export { Checkbox, Radio, RadioGroup } from './components/Checkbox';

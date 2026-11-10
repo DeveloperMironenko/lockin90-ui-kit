@@ -58,6 +58,7 @@ import * as HeatmapStories from './Heatmap.stories';
 import * as HighlightStories from './Highlight.stories';
 import * as HypnogramStories from './Hypnogram.stories';
 import * as IconStories from './Icon.stories';
+import * as IconButtonStories from './IconButton.stories';
 import * as IconTileStories from './IconTile.stories';
 import * as InputStories from './Input.stories';
 import * as InsightCardStories from './InsightCard.stories';
@@ -211,6 +212,7 @@ export const STORY_MODULES: Record<string, StoryModule> = {
   "Highlight": HighlightStories,
   "Hypnogram": HypnogramStories,
   "Icon": IconStories,
+  "IconButton": IconButtonStories,
   "IconTile": IconTileStories,
   "Input": InputStories,
   "InsightCard": InsightCardStories,
