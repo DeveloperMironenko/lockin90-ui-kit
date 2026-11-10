@@ -1,5 +1,18 @@
 # @lockin90/ui
 
+## 3.8.0
+
+### Minor Changes
+
+- 78873a0: BackLink `variant="bar"`: the signed-in top bar's back chip (Inter 13px, a 15px icon, the control's 10px corners and `--border-2` line).
+- ea6182a: ListRow `variant="pref" | "action"`: the design's settings rows (web/settings.html .pref-row / .acct-row): their padding, a 16px gap, the title 600 on the page's line height.
+- 8084f88: MetricTile `size="sm"`: the design's settings readout tile (web/settings.html .field); its label and a word value cut with an ellipsis when they don't fit; at phone width the phone's tile (three across). `hint` shows under a value too, not only in empty mode; `textValue` marks a word value (as native).
+- 172fc22: ReauthDialog takes its texts as props (`passwordLabel`, `passwordPlaceholder`, `confirmLabel`, `confirmingLabel`, `cancelLabel`, `googleLabel`, `orLabel`, `closeLabel`), English by default; Modal takes `closeLabel` too, as native: it showed English in every language.
+
+### Patch Changes
+
+- 6496a5a: Card `tone="danger"` takes the design's danger zone colours (web/settings.html `.danger`): `--bad` at 30% for the line, 4% for the fill, lit red to amber.
+
 ## 3.7.0
 
 ### Minor Changes
