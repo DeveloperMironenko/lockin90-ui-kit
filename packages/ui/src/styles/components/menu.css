@@ -48,6 +48,15 @@
   border-color: transparent;
   background: transparent;
 }
+/* a bare trigger is rounded all the way, so its focus ring follows a round avatar */
+.lk-menu--bare .lk-menu-trigger { border-radius: 999px; }
+
+/* the kit's focus ring, not the browser's (keyboard only); the icon trigger gets it too */
+.lk-menu-trigger:focus-visible,
+.lk-menu .lk-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent);
+}
 
 /* ---- floating panel (portaled to <body>, positioned by the component) ---- */
 .lk-menu-panel {
