@@ -39,6 +39,11 @@ Reach for `Menu` for a short list of contextual actions on a row/card. For arbit
 | `trigger` | `ReactNode` | `⋯` icon | ✓ | ✓ | clickable trigger |
 | `items` | `MenuItemData[]` | Edit / Duplicate / — / Delete (danger) | ✓ | ✓ | rows to render |
 | `align` | `'left' \| 'right'` | `'right'` | ✓ | ✓ | which trigger edge the panel aligns to |
+| `bare` | `boolean` | `false` | ✓ | — | the trigger without its chrome, for a trigger that is already a whole element |
+| `iconTrigger` | `boolean` | `false` | ✓ | ⬜ | the trigger on `IconButton`'s surface (`.lk-icon-btn`: 40px glass square, `--r-sm`); the icon is passed as `trigger` |
+| `label` | `string` | — (required with `iconTrigger`) | ✓ | ⬜ | the trigger's `aria-label`, for a trigger with no text |
+| `iconSize` | `'sm' \| 'md'` | `'md'` | ✓ | ⬜ | with `iconTrigger`: IconButton's 32 / 40 px (`sm` keeps a 44 px touch target), e.g. a badge on an 80 px photo |
+| `disabled` | `boolean` | `false` | ✓ | ⬜ | the trigger can't be pressed; an open panel closes |
 | `className` | `string` | — | ✓ | — | web only (merged onto `.lk-menu`) |
 | _rest_ | `HTMLAttributes<HTMLDivElement>` | — | ✓ | — | web only — spread onto the `.lk-menu` root |
 
@@ -65,6 +70,9 @@ Reach for `Menu` for a short list of contextual actions on a row/card. For arbit
 | Closed | trigger only; portal not mounted | trigger only; `Modal visible={false}` |
 | Open | portaled `.lk-menu-panel.is-open` (fade + translateY 0) | `Modal` fade; anchored panel |
 | Trigger active | `[aria-expanded='true']` → `--glass-2` + `--border-2` | press state |
+| Trigger disabled | opacity `.5`, `not-allowed`, no hover (`iconTrigger`: IconButton's own); an open panel closes in the same render | ⬜ |
+| Icon trigger open | `[aria-expanded='true']` → its border `--accent` | ⬜ |
+| Trigger focused | the kit's ring (`0 0 0 3px` accent at 45%), keyboard only (`:focus-visible`), never the browser's; a `bare` trigger is fully rounded, so the ring follows a round avatar; in a `SplitButton` (which clips) a 2px ring inside | platform's |
 | Row hover (web) | `:hover/:focus-visible` → `--glass-2` + `--text` | n/a (press → `glass2`) |
 | Reposition | `scroll`(capture)/`resize` recompute | `onLayout` size change |
 | Dismiss | outside `mousedown` / ESC; or after a row click | backdrop tap / Android back; or after a row press |
@@ -77,6 +85,8 @@ Reach for `Menu` for a short list of contextual actions on a row/card. For arbit
 - **Panel frost:** web `backdrop-filter: blur(18px) saturate(130%)`; native opaque `bg-1` (no `backdrop-filter`).
 - **Hover:** web rows lift on hover; native has press feedback only.
 - **Substrate:** web is real DOM with `role="menu"/menuitem"/separator"` + `className`/rest; native is an RN `Modal` with `Pressable` rows and no DOM props.
+
+- **`iconTrigger` / `label` / `disabled`:** web only so far (the web profile picture's camera, 1.33e); the mobile app opens its photo choices in a `Sheet`. Native gets them when a native screen needs them.
 
 No capability gap blocks use — the menu is fully usable and visually equivalent.
 
@@ -103,7 +113,7 @@ No capability gap blocks use — the menu is fully usable and visually equivalen
 
 ## 7. Accessibility
 
-- **Web:** trigger `<button aria-haspopup="menu" aria-expanded>`; panel `role="menu"`, action rows `role="menuitem"`, dividers `role="separator"`. ESC + outside-click dismiss; a row click closes and fires `onClick`.
+- **Web:** trigger `<button aria-haspopup="menu" aria-expanded>` (with `aria-label` from `label`); panel `role="menu"`, action rows `role="menuitem"`, dividers `role="separator"`. ESC + outside-click dismiss; a row click closes and fires `onClick`.
 - **Native:** trigger + backdrop are `Pressable` (`accessibilityRole="button"`); rows are `accessibilityRole="menuitem"`. Android back dismisses.
 - **Hit target:** trigger ≥30px; rows `8px 10px` padding (comfortable touch). Labels `numberOfLines={1}` on native (truncate, no wrap).
 

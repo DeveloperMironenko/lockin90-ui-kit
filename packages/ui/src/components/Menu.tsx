@@ -29,7 +29,7 @@ export interface MenuItemData {
   divider?: boolean;
 }
 
-export interface MenuProps extends HTMLAttributes<HTMLDivElement> {
+interface MenuBaseProps extends HTMLAttributes<HTMLDivElement> {
   /** The clickable trigger. Defaults to a small ⋯ icon button. */
   trigger?: ReactNode;
   /** Action rows to render in the panel. */
@@ -40,7 +40,29 @@ export interface MenuProps extends HTMLAttributes<HTMLDivElement> {
    *  ring). Use when the trigger is already a complete visual element (e.g.
    *  an avatar + name row) and the surrounding chrome would be visual noise. */
   bare?: boolean;
+  /** The trigger can't be pressed (e.g. while the action it opens is under way); an open panel
+   *  closes. */
+  disabled?: boolean;
 }
+
+export type MenuProps = MenuBaseProps &
+  (
+    | {
+        iconTrigger?: false;
+        /** The trigger's spoken name (`aria-label`), for a trigger that shows no text. */
+        label?: string;
+        iconSize?: never;
+      }
+    | {
+        /** The trigger on IconButton's surface (its glass square and corners), for a menu opened
+         *  from an icon in a tight spot, like the camera on a profile picture. Pass the icon as
+         *  `trigger`; its spoken name is required, as IconButton's. `bare` doesn't apply. */
+        iconTrigger: true;
+        label: string;
+        /** IconButton's sizes: 32 / 40 px (`sm` reaches a 44px touch target). @default 'md' */
+        iconSize?: 'sm' | 'md';
+      }
+  );
 
 const DEFAULT_ITEMS: MenuItemData[] = [
   { label: 'Edit' },
@@ -54,8 +76,21 @@ const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : use
 /** Popover menu of actions — a glass panel of item rows anchored to a trigger.
  *  The panel is portaled to <body> (no overflow ancestor can clip it) and flips
  *  above the trigger / shifts sideways to stay inside the viewport. */
-export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right', bare = false, className, ...rest }: MenuProps) {
-  const [open, setOpen] = useState(false);
+export function Menu({
+  trigger,
+  items = DEFAULT_ITEMS,
+  align = 'right',
+  bare = false,
+  iconTrigger = false,
+  iconSize = 'md',
+  label,
+  disabled = false,
+  className,
+  ...rest
+}: MenuProps) {
+  const [openState, setOpen] = useState(false);
+  // a trigger switched off closes its open panel, in the same render
+  const open = openState && !disabled;
   const [pos, setPos] = useState<MenuPosition | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -118,9 +153,15 @@ export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right', bare = f
     <div ref={rootRef} className={cn('lk-menu', bare && 'lk-menu--bare', className)} {...rest}>
       <button
         type="button"
-        className="lk-menu-trigger"
+        className={
+          iconTrigger
+            ? cn('lk-icon-btn', iconSize === 'sm' && 'lk-icon-btn-sm')
+            : 'lk-menu-trigger'
+        }
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label={label}
+        disabled={disabled}
         onClick={() => setOpen((v) => !v)}
       >
         {trigger ?? <Icon name="more" />}
