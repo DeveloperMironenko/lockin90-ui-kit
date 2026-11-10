@@ -29,6 +29,8 @@ Controlled: the parent owns `checked` and flips it in `onChange(next)`. Two size
 | `size` | `ToggleSize` (`'sm' \| 'md'`) | `'md'` | ✓ | ✓ | control scale |
 | `disabled` | `boolean` | `false` | ✓ | ✓ | non-interactive + dimmed (.5) |
 | `className` | `string` | — | ✓ | — | web only (applied to the row when labelled, else the button) |
+| `accessibilityLabel` | `string` | — | — | ✓ | native: the switch's spoken name when no `label` is shown (a switch in a table cell). Web: `aria-label` |
+| `testID` | `string` | — | — | ✓ | native: on the switch itself (the labelled row, or the track alone) |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |
 | _rest_ | `Omit<ButtonHTMLAttributes,'onChange'>` (web) | — | ✓ | — | spreads onto the `<button>` |
 

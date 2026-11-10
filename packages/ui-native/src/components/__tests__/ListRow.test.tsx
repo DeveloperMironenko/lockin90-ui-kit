@@ -3,7 +3,7 @@
    web twin's --lk-listrow-active-bg custom property. */
 import { describe, expect, test } from 'vitest';
 import { ListRow } from '../ListRow';
-import { findAll, hasDeclaration, parse, render, type El } from './markup';
+import { findAll, findByText, hasDeclaration, parse, render, type El } from './markup';
 
 /** The element paints the background, whether react-native-web serialized it
  *  as an atomic class (registered style) or an inline style (dynamic tint). */
@@ -53,5 +53,21 @@ describe('ListRow disabled', () => {
 
   test('a plain row is not', () => {
     expect(render(ListRow, { title: 'Security' })).not.toContain('aria-disabled');
+  });
+});
+
+describe('ListRow variant', () => {
+  test('pref: a settings row, title 600, whose line wraps', () => {
+    const root = parse(render(ListRow, { variant: 'pref', title: 'Unit system', subtitle: 'Weight, distance & height' }));
+    const line = findByText(root, 'Weight, distance & height')!;
+    expect(hasDeclaration(line, 'white-space:nowrap')).toBe(false);
+    const title = findByText(root, 'Unit system')!;
+    expect(hasDeclaration(title, 'font-weight:600')).toBe(true);
+    expect(hasDeclaration(title, 'white-space:nowrap')).toBe(false);
+  });
+
+  test('a plain row keeps its line to one', () => {
+    const root = parse(render(ListRow, { title: 'Settings', subtitle: 'Profile · physiology' }));
+    expect(hasDeclaration(findByText(root, 'Profile · physiology')!, 'white-space:nowrap')).toBe(true);
   });
 });
