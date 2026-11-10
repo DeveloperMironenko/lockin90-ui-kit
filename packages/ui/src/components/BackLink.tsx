@@ -15,9 +15,11 @@ type CommonProps = {
    * - `'pill'` — glass-chip mono affordance (matches the auth brand-panel
    *   "Back to site" button: bordered glass surface, dim mono label, no
    *   icon nudge on hover).
+   * - `'bar'` — the signed-in top bar's back chip (design `web/settings.html` `.topbar .backlink`): the
+   *   pill's surface in the UI font, 13px with a 15px icon, 36px tall.
    * @default 'default'
    */
-  variant?: 'default' | 'pill';
+  variant?: 'default' | 'pill' | 'bar';
 };
 
 export type BackLinkProps = CommonProps &
@@ -35,7 +37,12 @@ export function BackLink({
   variant = 'default',
   ...rest
 }: BackLinkProps) {
-  const rootClass = cn('lk-backlink', variant === 'pill' && 'lk-backlink--pill', className);
+  const rootClass = cn(
+    'lk-backlink',
+    variant === 'pill' && 'lk-backlink--pill',
+    variant === 'bar' && 'lk-backlink--pill lk-backlink--bar',
+    className,
+  );
   const content = (
     <>
       <Icon name="back" size={18} className="lk-backlink-icon" />

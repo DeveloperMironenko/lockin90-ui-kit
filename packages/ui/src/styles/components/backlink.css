@@ -67,3 +67,13 @@
 .lk-backlink--pill:hover .lk-backlink-icon {
   transform: none;
 }
+
+/* variant="bar" — the signed-in top bar's back chip (design web/settings.html .topbar .backlink): the
+   pill's surface in the UI font, 13px with a 15px icon, on the page's line height (36px tall). */
+/* the line stays the pill's --border-2 (CONVENTIONS "one shape, one line") */
+.lk-backlink--bar {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.lk-backlink--bar .lk-backlink-icon { width: 15px; height: 15px; }
