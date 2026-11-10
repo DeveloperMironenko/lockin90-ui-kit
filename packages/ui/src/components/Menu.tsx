@@ -29,7 +29,7 @@ export interface MenuItemData {
   divider?: boolean;
 }
 
-export interface MenuProps extends HTMLAttributes<HTMLDivElement> {
+interface MenuBaseProps extends HTMLAttributes<HTMLDivElement> {
   /** The clickable trigger. Defaults to a small ⋯ icon button. */
   trigger?: ReactNode;
   /** Action rows to render in the panel. */
@@ -40,14 +40,26 @@ export interface MenuProps extends HTMLAttributes<HTMLDivElement> {
    *  ring). Use when the trigger is already a complete visual element (e.g.
    *  an avatar + name row) and the surrounding chrome would be visual noise. */
   bare?: boolean;
-  /** The trigger on IconButton's surface (its glass square and corners), for a menu opened from an
-   *  icon in a tight spot, like the camera on a profile picture. Pass the icon as `trigger`. */
-  iconTrigger?: boolean;
-  /** The trigger's spoken name (`aria-label`), for a trigger that shows no text. */
-  label?: string;
-  /** The trigger can't be pressed (e.g. while the action it opens is under way). */
+  /** The trigger can't be pressed (e.g. while the action it opens is under way); an open panel
+   *  closes. */
   disabled?: boolean;
 }
+
+export type MenuProps = MenuBaseProps &
+  (
+    | {
+        iconTrigger?: false;
+        /** The trigger's spoken name (`aria-label`), for a trigger that shows no text. */
+        label?: string;
+      }
+    | {
+        /** The trigger on IconButton's surface (its glass square and corners), for a menu opened
+         *  from an icon in a tight spot, like the camera on a profile picture. Pass the icon as
+         *  `trigger`; its spoken name is required, as IconButton's. `bare` doesn't apply. */
+        iconTrigger: true;
+        label: string;
+      }
+  );
 
 const DEFAULT_ITEMS: MenuItemData[] = [
   { label: 'Edit' },
@@ -72,7 +84,9 @@ export function Menu({
   className,
   ...rest
 }: MenuProps) {
-  const [open, setOpen] = useState(false);
+  const [openState, setOpen] = useState(false);
+  // a trigger switched off closes its open panel, in the same render
+  const open = openState && !disabled;
   const [pos, setPos] = useState<MenuPosition | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -107,11 +121,6 @@ export function Menu({
       window.removeEventListener('resize', reposition);
     };
   }, [open, align, items]);
-
-  // a trigger switched off closes its open panel
-  useEffect(() => {
-    if (disabled) setOpen(false);
-  }, [disabled]);
 
   // click-outside + ESC — the panel is portaled, so check it too
   useEffect(() => {

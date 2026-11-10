@@ -102,6 +102,8 @@
 @media (hover: hover) { .lk-icon-btn:hover { transform: translateY(-1px); } }
 .lk-icon-btn:active { transform: scale(.96); }
 .lk-icon-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+/* the kit's focus ring, keyboard only */
+.lk-icon-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent); }
 .lk-icon-btn-sm { width: 32px; height: 32px; }
 /* the touch target reaches 44px around the 32px box */
 .lk-icon-btn-sm::before { content: ''; position: absolute; inset: -6px; }

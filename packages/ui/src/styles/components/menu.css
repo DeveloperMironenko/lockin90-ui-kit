@@ -26,7 +26,7 @@
   cursor: pointer;
   transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
-.lk-menu-trigger:hover {
+.lk-menu-trigger:not(:disabled):hover {
   color: var(--text);
   background: var(--glass-2);
 }
@@ -51,12 +51,24 @@
 /* a bare trigger is rounded all the way, so its focus ring follows a round avatar */
 .lk-menu--bare .lk-menu-trigger { border-radius: 999px; }
 
-/* the kit's focus ring, not the browser's (keyboard only); the icon trigger gets it too */
-.lk-menu-trigger:focus-visible,
-.lk-menu .lk-icon-btn:focus-visible {
+/* the kit's focus ring, not the browser's (keyboard only) */
+.lk-menu-trigger:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent);
 }
+/* a split button clips outside its edges: the ring goes inside */
+.lk-split .lk-menu-trigger:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+/* shown, can't be pressed */
+.lk-menu-trigger:disabled,
+.lk-menu-trigger:disabled:hover {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: transparent;
+}
+/* the icon trigger open: its border lit, as the default trigger's */
+.lk-menu .lk-icon-btn[aria-expanded='true'] { border-color: var(--accent); }
 
 /* ---- floating panel (portaled to <body>, positioned by the component) ---- */
 .lk-menu-panel {

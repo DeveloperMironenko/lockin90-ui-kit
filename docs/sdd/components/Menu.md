@@ -41,7 +41,7 @@ Reach for `Menu` for a short list of contextual actions on a row/card. For arbit
 | `align` | `'left' \| 'right'` | `'right'` | ✓ | ✓ | which trigger edge the panel aligns to |
 | `bare` | `boolean` | `false` | ✓ | — | the trigger without its chrome, for a trigger that is already a whole element |
 | `iconTrigger` | `boolean` | `false` | ✓ | ⬜ | the trigger on `IconButton`'s surface (`.lk-icon-btn`: 40px glass square, `--r-sm`); the icon is passed as `trigger` |
-| `label` | `string` | — | ✓ | ⬜ | the trigger's `aria-label`, for a trigger with no text |
+| `label` | `string` | — (required with `iconTrigger`) | ✓ | ⬜ | the trigger's `aria-label`, for a trigger with no text |
 | `disabled` | `boolean` | `false` | ✓ | ⬜ | the trigger can't be pressed; an open panel closes |
 | `className` | `string` | — | ✓ | — | web only (merged onto `.lk-menu`) |
 | _rest_ | `HTMLAttributes<HTMLDivElement>` | — | ✓ | — | web only — spread onto the `.lk-menu` root |
@@ -69,8 +69,9 @@ Reach for `Menu` for a short list of contextual actions on a row/card. For arbit
 | Closed | trigger only; portal not mounted | trigger only; `Modal visible={false}` |
 | Open | portaled `.lk-menu-panel.is-open` (fade + translateY 0) | `Modal` fade; anchored panel |
 | Trigger active | `[aria-expanded='true']` → `--glass-2` + `--border-2` | press state |
-| Trigger disabled | `disabled` (`iconTrigger`: IconButton's `.5` opacity); an open panel closes | ⬜ |
-| Trigger focused | the kit's ring (`0 0 0 3px` accent at 45%), keyboard only (`:focus-visible`), never the browser's; a `bare` trigger is fully rounded, so the ring follows a round avatar | platform's |
+| Trigger disabled | opacity `.5`, `not-allowed`, no hover (`iconTrigger`: IconButton's own); an open panel closes in the same render | ⬜ |
+| Icon trigger open | `[aria-expanded='true']` → its border `--accent` | ⬜ |
+| Trigger focused | the kit's ring (`0 0 0 3px` accent at 45%), keyboard only (`:focus-visible`), never the browser's; a `bare` trigger is fully rounded, so the ring follows a round avatar; in a `SplitButton` (which clips) a 2px ring inside | platform's |
 | Row hover (web) | `:hover/:focus-visible` → `--glass-2` + `--text` | n/a (press → `glass2`) |
 | Reposition | `scroll`(capture)/`resize` recompute | `onLayout` size change |
 | Dismiss | outside `mousedown` / ESC; or after a row click | backdrop tap / Android back; or after a row press |

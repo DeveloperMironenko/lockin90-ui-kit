@@ -23,6 +23,13 @@ describe('Menu trigger', () => {
 
   it('disabled: the trigger cannot be pressed', () => {
     const html = renderToStaticMarkup(<Menu disabled items={[{ label: 'Edit' }]} />);
+    expect(html).toContain('aria-expanded="false"');
     expect(html).toMatch(/<button[^>]*disabled=""/);
+  });
+
+  it('iconTrigger needs a spoken name (a type error without one)', () => {
+    // @ts-expect-error label is required with iconTrigger
+    const html = renderToStaticMarkup(<Menu iconTrigger trigger={<Icon name="camera" />} />);
+    expect(html).toContain('lk-icon-btn');
   });
 });

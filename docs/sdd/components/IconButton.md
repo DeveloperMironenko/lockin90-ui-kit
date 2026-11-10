@@ -39,7 +39,7 @@ the icon in `--text` / `colors.text`. **A control's corners**, `--r-sm` / `radii
 | --- | --- | --- |
 | Hover | `translateY(-1px)` (pointer devices) | n/a |
 | Pressed | `scale(.96)` | opacity .85 + `scale(.96)` |
-| Focus | the browser's focus ring | the platform's |
+| Focus | the kit's ring (`0 0 0 3px` accent at 45%), keyboard only | the platform's |
 | Disabled | opacity .5, `cursor: not-allowed`, no transform | opacity .5, presses ignored (as `Button`, 2026-11-09) |
 
 ## 5. Web ↔ native parity
