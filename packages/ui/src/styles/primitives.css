@@ -69,6 +69,8 @@
   display: inline-flex; align-items: center; justify-content: center; gap: 9px; white-space: nowrap;
   font-family: var(--font-ui); font-weight: 600; font-size: 14px;
   padding: 12px 20px; border-radius: var(--r-sm); border: 1px solid var(--border-2);
+  /* a button's own line height, as the design's: an app's reset (Tailwind's) makes it inherit the page's */
+  line-height: normal;
   background: var(--glass-2); color: var(--text); cursor: pointer;
   transition: transform .25s var(--ease), box-shadow .3s var(--ease), background .3s var(--ease), border-color .3s var(--ease);
   will-change: transform;

@@ -34,6 +34,7 @@ It is intentionally the *only* sanctioned way to render a button-shaped action i
 | --- | --- | --- | --- | --- | --- |
 | `variant` | web `'default' \| 'primary' \| 'ghost' \| 'text' \| 'sso'` · native `'default' \| 'primary' \| 'ghost' \| 'text'` | `'default'` | ✓ | ✓ | `sso` is web-only (2-up social grid) |
 | `tone` | `'danger' \| 'muted'` | — | ✓ | ✓ | `danger`: destructive; **composes with `variant`** — solid `--bad` on `default`, red-tinted on `ghost`. Emits `.lk-btn--tone-danger`. `muted`: **`text` variant only** — the faint mono way out (design onboarding `.step-skip`: 12.5px, `--text-faint`, `padding` `--space-2` (the design's 8 / 6 snapped), `--text-dim` on hover, no underline). Emits `.lk-btn--tone-muted`; ignored on surface variants. Native: the text label at 12.5 in `colors.textFaint`, padding 8 |
+| _line height_ | — | `normal` | ✓ | — | the button's own, as the design's `.btn`: an app's CSS reset (Tailwind's preflight) makes buttons inherit the page's, which made every button about 4px taller than drawn (`sm` 38 instead of 34) |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | ✓ | ✓ | `sm` = tighter padding + 13px label; `lg` the closing CTA (`.lk-btn-lg`: 17px, padding `--space-4` `--space-7`; native `padLg` 16 / 28, label 17) |
 | `leading` | `ReactNode` | — | ✓ | ✓ | icon/node before the label |
 | `trailing` | `ReactNode` | — | ✓ | ✓ | icon/node after the label — symmetric with `leading` (e.g. a trailing arrow) |
