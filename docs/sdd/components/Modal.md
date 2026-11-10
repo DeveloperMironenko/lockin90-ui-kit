@@ -25,7 +25,7 @@ It is the only sanctioned centered-dialog primitive. For an edge-anchored drawer
 | `children` | `ReactNode` | — | ✓ | ✓ | body; native wraps a bare `string` child in a styled `Text` |
 | `footer` | `ReactNode` | — | ✓ | ✓ | right-aligned actions under a hairline; omitted when absent |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | ✓ | ✓ | max-width 380 / 460 / 620 |
-| `closeLabel` | `string` | `'Close'` | — | ✓ | native: the close button's accessibility label (pass a localized string) |
+| `closeLabel` | `string` | `'Close'` | ✓ | ✓ | the close button's spoken name (web `aria-label`, native `accessibilityLabel`); pass a translated string |
 | `className` | `string` | — | ✓ | — | web only (merged onto `.lk-modal`) |
 | _rest_ | `HTMLAttributes<HTMLDivElement>` | — | ✓ | — | web only — spread onto the dialog `<div>` |
 

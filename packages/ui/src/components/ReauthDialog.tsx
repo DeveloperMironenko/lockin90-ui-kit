@@ -36,6 +36,8 @@ export interface ReauthDialogProps {
   cancelLabel?: string;
   googleLabel?: string;
   orLabel?: string;
+  /** the close button's spoken name */
+  closeLabel?: string;
 }
 
 /** Google "G" mark — matches the auth design's SSO glyph. */
@@ -83,6 +85,7 @@ export function ReauthDialog({
   cancelLabel = 'Cancel',
   googleLabel = 'Continue with Google',
   orLabel = 'or',
+  closeLabel = 'Close',
 }: ReauthDialogProps) {
   const [password, setPassword] = useState('');
 
@@ -102,7 +105,7 @@ export function ReauthDialog({
   };
 
   return (
-    <Modal open={open} onClose={close} title={title} size="sm">
+    <Modal open={open} onClose={close} title={title} size="sm" closeLabel={closeLabel}>
       <div className="lk-reauth">
         {description ? <p className="lk-reauth-desc">{description}</p> : null}
 

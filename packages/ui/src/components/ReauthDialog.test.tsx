@@ -6,8 +6,9 @@ import { ReauthDialog } from './ReauthDialog';
 
 // the Modal portals once mounted in a browser; here its content renders in place
 vi.mock('./Modal', () => ({
-  Modal: ({ children, footer }: { children?: ReactNode; footer?: ReactNode }) => (
+  Modal: ({ children, footer, closeLabel }: { children?: ReactNode; footer?: ReactNode; closeLabel?: string }) => (
     <div>
+      <button aria-label={closeLabel} />
       {children}
       {footer}
     </div>
@@ -27,9 +28,10 @@ describe('ReauthDialog labels', () => {
         cancelLabel="Скасувати"
         googleLabel="Підтвердити з Google"
         orLabel="або"
+        closeLabel="Закрити"
       />,
     );
-    for (const text of ['Пароль', 'Ваш пароль', 'Видалити', 'Скасувати', 'Підтвердити з Google', 'або']) {
+    for (const text of ['Закрити', 'Пароль', 'Ваш пароль', 'Видалити', 'Скасувати', 'Підтвердити з Google', 'або']) {
       expect(html).toContain(text);
     }
     expect(html).not.toContain('Cancel');

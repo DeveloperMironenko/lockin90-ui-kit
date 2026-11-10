@@ -15,6 +15,8 @@ export interface ModalProps extends HTMLAttributes<HTMLDivElement> {
   footer?: ReactNode;
   /** Card max-width: sm ~380px, md ~460px, lg ~620px. */
   size?: 'sm' | 'md' | 'lg';
+  /** The close button's spoken name, translated (as native). @default 'Close' */
+  closeLabel?: string;
 }
 
 const CLOSE = (
@@ -31,6 +33,7 @@ export function Modal({
   children,
   footer,
   size = 'md',
+  closeLabel = 'Close',
   className,
   ...rest
 }: ModalProps) {
@@ -79,7 +82,7 @@ export function Modal({
               <button
                 type="button"
                 className="lk-modal-close"
-                aria-label="Close"
+                aria-label={closeLabel}
                 onClick={() => onClose()}
               >
                 {CLOSE}
