@@ -24,6 +24,8 @@ export { BrandMark } from './components/BrandMark';
 export type { BrandMarkVariant, BrandMarkProps } from './components/BrandMark';
 export { Button } from './components/Button';
 export type { ButtonVariant, ButtonTone, ButtonProps } from './components/Button';
+export { IconButton } from './components/IconButton';
+export type { IconButtonProps } from './components/IconButton';
 export { Card } from './components/Card';
 export type { CardProps } from './components/Card';
 export { Checkbox, Radio, RadioGroup } from './components/Checkbox';
@@ -180,6 +182,8 @@ export { RichTextEditor, sanitizeRichTextHtml } from './components/RichTextEdito
 export type { RichTextAction, RichTextEditorProps } from './components/RichTextEditor';
 export { FocalPointPicker } from './components/FocalPointPicker';
 export type { FocalPoint, FocalPointPickerProps } from './components/FocalPointPicker';
+export { ImageCrop, IMAGE_CROP_START, clampCrop, cropRect } from './components/ImageCrop';
+export type { ImageCropProps, ImageCropRect, ImageCropValue } from './components/ImageCrop';
 export { CodeField } from './components/CodeField';
 export type { CodeFieldProps } from './components/CodeField';
 export { ColorPicker } from './components/ColorPicker';

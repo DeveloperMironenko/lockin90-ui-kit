@@ -91,6 +91,20 @@
 /* lg — a flow's closing CTA (design onboarding .enter-cta: 17px, padding 17 / 28 on the 4px scale) */
 .lk-btn-lg { padding: var(--space-4) var(--space-7); font-size: 17px; }
 .lk-btn-lg svg { width: 19px; height: 19px; }
+/* icon-only: a square button with one icon (IconButton.md), Button's surface and a control's corners */
+.lk-icon-btn {
+  position: relative; display: inline-grid; place-items: center; flex: 0 0 auto;
+  width: 40px; height: 40px; padding: 0; border-radius: var(--r-sm);
+  border: 1px solid var(--border-2); background: var(--glass-2); color: var(--text);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); cursor: pointer;
+  transition: transform .25s var(--ease), border-color .3s var(--ease), background .3s var(--ease);
+}
+@media (hover: hover) { .lk-icon-btn:hover { transform: translateY(-1px); } }
+.lk-icon-btn:active { transform: scale(.96); }
+.lk-icon-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.lk-icon-btn-sm { width: 32px; height: 32px; }
+/* the touch target reaches 44px around the 32px box */
+.lk-icon-btn-sm::before { content: ''; position: absolute; inset: -6px; }
 /* text: a bare action inside a line of mono meta text ("Resend code" beside the code's hint):
    no surface, no padding, `--accent-2`; underlined on hover, `--text-faint` when disabled.
    Two classes, so it wins over the surface rules wherever they sit (Button skips size/tone). */

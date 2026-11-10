@@ -37,6 +37,7 @@ export function Slider({
   labels,
   className,
   style,
+  'aria-label': ariaLabel,
   ...rest
 }: SliderProps) {
   const span = max - min || 1;
@@ -62,6 +63,7 @@ export function Slider({
       <input
         className="lk-slider-input"
         type="range"
+        aria-label={ariaLabel}
         min={min}
         max={max}
         value={value}
@@ -80,6 +82,7 @@ export function Slider({
         <input
           className="lk-slider-input"
           type="range"
+          aria-label={ariaLabel}
           min={min}
           max={max}
           value={value}
