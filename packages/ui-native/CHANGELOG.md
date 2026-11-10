@@ -1,5 +1,11 @@
 # @lockin90/ui-native
 
+## 2.12.1
+
+### Patch Changes
+
+- 2ad93b1: Button: a disabled `default`, `primary` or `ghost` button is drawn at half strength (opacity .5), as on web; it looked enabled before.
+
 ## 2.12.0
 
 ### Minor Changes
