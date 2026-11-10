@@ -34,6 +34,7 @@ slightly larger. Documented here because it ships from `MetricTile.tsx`.
 | --- | --- | --- | --- | --- | --- |
 | `label` | `string` | `'Followers'` | ✓ | ✓ | mono uppercase caption |
 | `value` | `ReactNode` | `'1.2k'` | ✓ | ✓ | big display number |
+| `size` | `'sm' \| 'md'` | `'md'` | ✓ | ⬜ | `sm`: a readout tile in a settings grid (`web/settings.html` `.field`): padding 14 × 15, gap 7, label 10px `.14em`, value 600 19px `-.01em`, unit mono 12px `--text-faint`, hint 11.5px `--text-dim`; the label cut with an ellipsis when it doesn't fit; at phone width (≤ 540px) the phone's tile: padding 12 × 11, `--r`, value 20. Native with the phone's settings (⬜) |
 | `unit` | `string` | — | ✓ | ✓ | small suffix (`'%'`, `'pts'`); renders only when non-null |
 | `delta` | `string` | — | ✓ | ✓ | signed change shown as a pill; renders only when non-null |
 | `deltaTone` | `MetricDeltaTone` = `'up' \| 'down' \| 'flat'` | `'flat'` | ✓ | ✓ | colors the pill: up=mint, down=rose, flat=faint |
@@ -41,7 +42,8 @@ slightly larger. Documented here because it ships from `MetricTile.tsx`.
 | `spark` | `number[]` | — | ✓ | ✓ | bottom fill bar; renders only when non-empty. Single value `[0,1]` fills to that fraction; a multi-point series fills to `last/max` |
 | `sparkColor` | `string` | `--grad-cta` / `gradients.cta` | ✓ | ✓ | overrides the spark fill colour (web any CSS colour/gradient; native a solid colour) |
 | `empty` | `boolean` | — | ✓ | ✓ | em-dash placeholder, no unit/pill/spark |
-| `hint` | `string` | — | ✓ | ✓ | helper line in empty mode |
+| `hint` | `string` | — | ✓ | ✓ (empty only, ⬜ under a value) | a small line: under the dash in empty mode; on an `sm` tile also under a value (e.g. "BMI 25.8"; the design's settings tiles) |
+| `textValue` | `boolean` | — | ✓ | ⬜ | `sm` only: the value is a word; at phone width (web) / on the phone (native) it's drawn at 15 on one line, cut with an ellipsis when it doesn't fit |
 | `className` | `string` | — | ✓ | — | web only |
 | `style` / _rest_ | `HTMLAttributes<HTMLDivElement>` (web) / `ViewProps` (native) | — | ✓ | ✓ | spread onto root |
 

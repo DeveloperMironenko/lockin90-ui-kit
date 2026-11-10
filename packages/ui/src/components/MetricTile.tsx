@@ -6,6 +6,9 @@ import { cn } from '../cn';
 export type MetricDeltaTone = 'up' | 'down' | 'flat';
 
 export interface MetricTileProps extends HTMLAttributes<HTMLDivElement> {
+  /** `sm`: a readout tile in a settings grid (design `web/settings.html` `.field`): a 19px value,
+   *  a mono unit, 14 × 15 padding. @default 'md' */
+  size?: 'sm' | 'md';
   /** mono uppercase caption above the value */
   label?: string;
   /** big display number */
@@ -26,8 +29,12 @@ export interface MetricTileProps extends HTMLAttributes<HTMLDivElement> {
   /** placeholder mode: renders an em-dash `—` in place of the value, suppresses
    *  the unit + delta pill, and shows the optional `hint` instead. */
   empty?: boolean;
-  /** small helper line shown in empty mode (e.g. "No data yet — connect a wearable"). */
+  /** a small line: in empty mode under the dash (e.g. "No data yet — connect a wearable"); on an
+   *  `sm` tile also under a value (e.g. "BMI 25.8"). */
   hint?: string;
+  /** the value is a word, not a number (as native): at phone width an `sm` tile draws it at 15 on
+   *  one line, cut with an ellipsis rather than broken mid-word (design mobile `.fv.txt`). */
+  textValue?: boolean;
 }
 
 /** Fraction (0..1) the spark-fill bar should reach for a given series. */
@@ -53,12 +60,15 @@ export function MetricTile({
   sparkColor,
   empty,
   hint,
+  size = 'md',
+  textValue,
   className,
   ...rest
 }: MetricTileProps) {
+  const sized = size === 'sm' && 'lk-metric-sm';
   if (empty) {
     return (
-      <div className={cn('lk-metric lk-metric-empty', className)} {...rest}>
+      <div className={cn('lk-metric lk-metric-empty', sized, className)} {...rest}>
         <div className="lk-metric-top">
           <span className="lk-metric-label">{label}</span>
           {icon != null && <span className="lk-metric-icon">{icon}</span>}
@@ -71,13 +81,13 @@ export function MetricTile({
     );
   }
   return (
-    <div className={cn('lk-metric', className)} {...rest}>
+    <div className={cn('lk-metric', sized, className)} {...rest}>
       <div className="lk-metric-top">
         <span className="lk-metric-label">{label}</span>
         {icon != null && <span className="lk-metric-icon">{icon}</span>}
       </div>
       <div className="lk-metric-body">
-        <span className="lk-metric-value lk-tnum">{value}</span>
+        <span className={cn('lk-metric-value lk-tnum', textValue && 'lk-metric-word')}>{value}</span>
         {unit != null && <span className="lk-metric-unit">{unit}</span>}
       </div>
       {delta != null && (
@@ -93,6 +103,8 @@ export function MetricTile({
           />
         </div>
       )}
+      {/* under a value only on the settings tile (as native): elsewhere it's empty mode's line */}
+      {sized && hint != null && <span className="lk-metric-hint">{hint}</span>}
     </div>
   );
 }
