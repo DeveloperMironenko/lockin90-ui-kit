@@ -21,6 +21,9 @@ export interface StatProps {
   valueColor?: string;
   /** size scale (default `md`). */
   size?: StatSize;
+  /** the label under the value, centred (a stat tile, design mobile/account.html `.ov-stat`); `hero`
+   *  always has it there. */
+  labelBelow?: boolean;
   /** optional caption under the value (mono, faint). */
   sub?: ReactNode;
   /** placeholder mode: renders an em-dash `—` in place of the value, suppresses
@@ -53,7 +56,7 @@ const SIZE: Record<
 /** Label + big display value + optional signed delta. `tone="gradient"` renders
  *  the value as flux-gradient text; `size` scales it (`hero` flips the label below).
  *  In `empty` mode it shows an em-dash placeholder + an optional `hint`. */
-export function Stat({ label, value, delta, deltaDir, tone = 'default', valueColor, size = 'md', sub, empty, hint, style }: StatProps) {
+export function Stat({ label, value, delta, deltaDir, tone = 'default', valueColor, size = 'md', sub, empty, hint, labelBelow, style }: StatProps) {
   const s = SIZE[size];
   const isGradient = tone === 'gradient' && !valueColor;
   const valueColorResolved = valueColor ?? (tone === 'mint' ? colors.mint : colors.text);
@@ -65,33 +68,35 @@ export function Stat({ label, value, delta, deltaDir, tone = 'default', valueCol
     letterSpacing: s.valueSpacing,
   };
 
+  const labelText = (
+    <Text
+      style={[
+        styles.label,
+        { fontSize: s.labelSize, letterSpacing: s.labelSpacing, fontWeight: s.labelWeight, color: s.labelColor },
+        labelBelow && styles.labelCentred,
+      ]}
+    >
+      {label}
+    </Text>
+  );
+  // `hero` reverses the stack; `labelBelow` moves only the label, under the value (the delta, the
+  // caption and the hint stay under them)
+  const box = [styles.stat, { gap: s.gap }, s.reverse && !labelBelow && styles.reverse, labelBelow && styles.centred, style];
+
   if (empty) {
     return (
-      <View style={[styles.stat, { gap: s.gap }, s.reverse && styles.reverse, style]}>
-        <Text
-          style={[
-            styles.label,
-            { fontSize: s.labelSize, letterSpacing: s.labelSpacing, fontWeight: s.labelWeight, color: s.labelColor },
-          ]}
-        >
-          {label}
-        </Text>
+      <View style={box}>
+        {!labelBelow && labelText}
         <Text style={[valueStyle, { color: colors.textFaint }]}>—</Text>
+        {labelBelow && labelText}
         {hint != null && <Text style={styles.hint}>{hint}</Text>}
       </View>
     );
   }
 
   return (
-    <View style={[styles.stat, { gap: s.gap }, s.reverse && styles.reverse, style]}>
-      <Text
-        style={[
-          styles.label,
-          { fontSize: s.labelSize, letterSpacing: s.labelSpacing, fontWeight: s.labelWeight, color: s.labelColor },
-        ]}
-      >
-        {label}
-      </Text>
+    <View style={box}>
+      {!labelBelow && labelText}
       {isGradient ? (
         <GradientText gradient={size === 'hero' ? 'flux' : 'cta'} style={valueStyle}>
           {value}
@@ -99,6 +104,7 @@ export function Stat({ label, value, delta, deltaDir, tone = 'default', valueCol
       ) : (
         <Text style={[valueStyle, { color: valueColorResolved }]}>{value}</Text>
       )}
+      {labelBelow && labelText}
       {delta != null && (
         <Text style={[styles.delta, { color: deltaDir === 'down' ? colors.zoneLow : colors.zoneHigh }]}>{delta}</Text>
       )}
@@ -110,6 +116,8 @@ export function Stat({ label, value, delta, deltaDir, tone = 'default', valueCol
 const styles = StyleSheet.create({
   stat: { gap: 6 },
   reverse: { flexDirection: 'column-reverse' },
+  centred: { alignItems: 'center' },
+  labelCentred: { textAlign: 'center' },
   label: { fontFamily: fonts.mono, textTransform: 'uppercase', color: colors.textFaint },
   delta: { fontFamily: fonts.mono, fontSize: 12 },
   sub: { fontFamily: fonts.mono, fontSize: 10.5, color: colors.textFaint },

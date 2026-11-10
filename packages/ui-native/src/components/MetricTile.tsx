@@ -28,8 +28,16 @@ export interface MetricTileProps extends ViewProps {
   /** placeholder mode: renders an em-dash `—` in place of the value, suppresses
    *  the unit + delta pill, and shows the optional `hint` instead. */
   empty?: boolean;
-  /** small helper line shown in empty mode (e.g. "No data yet — connect a wearable"). */
+  /** a small line: in empty mode under the dash (e.g. "No data yet — connect a wearable"); on an
+   *  `sm` tile also under a value. */
   hint?: string;
+  /** `sm`: a readout tile in a phone's settings grid, three across (design `mobile/account.html`
+   *  `.fcell`, scaled to a 402pt screen): padding 12 × 11, `radii.md`, label 10 `.1em`, value 600 20,
+   *  unit mono 12 faint. @default 'md' */
+  size?: 'sm' | 'md';
+  /** `sm` only: the value is a word, not a number, drawn at 15 (design `.fv.txt`) so it fits a third of
+   *  the screen; one line, cut with an ellipsis when it doesn't fit, never broken mid-word. */
+  textValue?: boolean;
 }
 
 const DELTA: Record<MetricDeltaTone, { color: string; bg: string }> = {
@@ -61,33 +69,45 @@ export function MetricTile({
   sparkColor,
   empty,
   hint,
+  size = 'md',
+  textValue,
   style,
   ...rest
 }: MetricTileProps) {
+  const sm = size === 'sm';
+  const labelStyle = [styles.label, sm && styles.labelSm];
+  // an sm label stays on one line, cut with an ellipsis when it doesn't fit (owner, 2026-11-10)
+  const labelLines = sm ? 1 : undefined;
   if (empty) {
     return (
-      <View style={[styles.tile, style]} {...rest}>
+      <View style={[styles.tile, sm && styles.tileSm, style]} {...rest}>
         <View style={styles.top}>
-          <Text style={styles.label}>{label}</Text>
+          <Text style={labelStyle} numberOfLines={labelLines}>{label}</Text>
           {icon != null && <View style={styles.icon}>{icon}</View>}
         </View>
         <View style={styles.body}>
-          <Text style={[styles.value, styles.valueEmpty]}>—</Text>
+          <Text style={[styles.value, sm && styles.valueSm, styles.valueEmpty]}>—</Text>
         </View>
-        {hint != null && <Text style={styles.hint}>{hint}</Text>}
+        {hint != null && <Text style={[styles.hint, sm && styles.hintSm]}>{hint}</Text>}
       </View>
     );
   }
   const d = DELTA[deltaTone];
   return (
-    <View style={[styles.tile, style]} {...rest}>
+    <View style={[styles.tile, sm && styles.tileSm, style]} {...rest}>
       <View style={styles.top}>
-        <Text style={styles.label}>{label}</Text>
+        <Text style={labelStyle} numberOfLines={labelLines}>{label}</Text>
         {icon != null && <View style={styles.icon}>{icon}</View>}
       </View>
       <View style={styles.body}>
-        <Text style={styles.value}>{value}</Text>
-        {unit != null && <Text style={styles.unit}>{unit}</Text>}
+        <Text
+          style={[styles.value, sm && styles.valueSm, sm && textValue && styles.valueWord]}
+          // a word stays on one line, cut with an ellipsis when it doesn't fit (owner, 2026-11-10)
+          {...(sm && textValue ? { numberOfLines: 1 } : {})}
+        >
+          {value}
+        </Text>
+        {unit != null && <Text style={[styles.unit, sm && styles.unitSm]}>{unit}</Text>}
       </View>
       {delta != null && (
         <View style={[styles.delta, { backgroundColor: d.bg }]}>
@@ -110,6 +130,8 @@ export function MetricTile({
           )}
         </View>
       )}
+      {/* under a value only on the settings tile (as web): elsewhere it's empty mode's line */}
+      {sm && hint != null && <Text style={[styles.hint, styles.hintSm]}>{hint}</Text>}
     </View>
   );
 }
@@ -230,6 +252,14 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   sparkFill: { height: '100%', borderRadius: 999 },
+  /* size sm: the phone's settings readout (design mobile/account.html .fcell × 402/294) */
+  tileSm: { gap: 3, paddingVertical: 12, paddingHorizontal: 11, borderRadius: radii.md },
+  // flexShrink: in its row the text is held to the tile's width, so the ellipsis shows
+  labelSm: { fontSize: 10, fontWeight: '400', letterSpacing: 1, flexShrink: 1 },
+  valueSm: { fontWeight: '600', fontSize: 20, letterSpacing: -0.2 },
+  valueWord: { fontSize: 15, letterSpacing: 0, flexShrink: 1 },
+  unitSm: { fontFamily: fonts.mono, fontSize: 12, color: colors.textFaint },
+  hintSm: { fontFamily: fonts.ui, fontSize: 11, letterSpacing: 0, color: colors.textDim },
   /* ProgressDots */
   dots: {
     flexDirection: 'row',

@@ -46,6 +46,7 @@ source of truth that admin `Statistic` and marketing `Stat` wrap (§6) — exten
 | `sub` | `ReactNode` | — | ✓ | ✓ | optional mono caption rendered below the value/delta |
 | `empty` | `boolean` | — | ✓ | ✓ | em-dash placeholder, suppresses delta |
 | `hint` | `string` | — | ✓ | ✓ | helper line shown in empty mode |
+| `labelBelow` | `boolean` | — | ⬜ | ✓ | the label under the value, centred (a stat tile, design `mobile/account.html` `.ov-stat`); only the label moves (the delta, the caption and the hint stay under the value). `hero` always has it there. Web when a web screen needs it |
 | `className` | `string` | — | ✓ | — | web only |
 | `style` | `StyleProp<ViewStyle>` | — | — | ✓ | native only |
 | _rest_ | `HTMLAttributes<HTMLDivElement>` (web) | — | ✓ | — | spread onto the root `<div>` |
