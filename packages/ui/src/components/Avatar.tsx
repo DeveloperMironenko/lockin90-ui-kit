@@ -55,6 +55,7 @@ export function Avatar({
   variant = 'default',
   gradient = 'linear-gradient(135deg, var(--accent), var(--cyan))',
   className,
+  style,
   ...rest
 }: AvatarProps) {
   if (variant === 'aura') {
@@ -69,7 +70,7 @@ export function Avatar({
           shape === 'rounded' && 'lk-avatar-rounded',
           className,
         )}
-        style={{ width: size, height: size }}
+        style={{ width: size, height: size, ...style }}
         role="img"
         aria-label={name ?? 'Aura'}
         {...rest}
@@ -80,7 +81,7 @@ export function Avatar({
   return (
     <span
       className={cn('lk-avatar', shape === 'rounded' && 'lk-avatar-rounded', className)}
-      style={{ width: size, height: size }}
+      style={{ width: size, height: size, ...style }}
       {...rest}
     >
       {src ? (
