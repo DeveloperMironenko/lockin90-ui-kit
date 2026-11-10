@@ -158,7 +158,7 @@
 }
 
 /* sm: a readout tile in a settings grid (design web/settings.html .field) */
-.lk-metric-sm { gap: 7px; padding: 14px 15px; }
+.lk-metric-sm { gap: 7px; padding: 14px 15px; min-width: 0; }  /* min-width: a grid cell can shrink, so its text is cut */
 .lk-metric-sm .lk-metric-label { font-size: 10px; font-weight: 400; letter-spacing: 0.14em; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .lk-metric-sm .lk-metric-value { font-weight: 600; font-size: 19px; line-height: 1.2; letter-spacing: -0.01em; }
 .lk-metric-sm .lk-metric-unit { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--text-faint); }

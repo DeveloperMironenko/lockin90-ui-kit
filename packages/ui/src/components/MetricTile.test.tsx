@@ -20,9 +20,11 @@ describe('MetricTile size', () => {
 
 describe('MetricTile hint', () => {
   it('shows its line under a value, as under the dash', () => {
-    expect(renderToStaticMarkup(<MetricTile label="Height" value="183" hint="BMI 25.8" />)).toContain(
+    expect(renderToStaticMarkup(<MetricTile size="sm" label="Height" value="183" hint="BMI 25.8" />)).toContain(
       '<span class="lk-metric-hint">BMI 25.8</span>',
     );
+    // a default tile keeps its line to empty mode
+    expect(renderToStaticMarkup(<MetricTile label="Height" value="183" hint="BMI 25.8" />)).not.toContain('BMI 25.8');
     expect(renderToStaticMarkup(<MetricTile label="Max HR" empty hint="no data yet" />)).toContain(
       '<span class="lk-metric-hint">no data yet</span>',
     );

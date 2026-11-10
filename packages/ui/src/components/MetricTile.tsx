@@ -29,8 +29,8 @@ export interface MetricTileProps extends HTMLAttributes<HTMLDivElement> {
   /** placeholder mode: renders an em-dash `—` in place of the value, suppresses
    *  the unit + delta pill, and shows the optional `hint` instead. */
   empty?: boolean;
-  /** a small line under the value (e.g. "BMI 25.8"), or in empty mode under the dash (e.g. "No data
-   *  yet — connect a wearable"). */
+  /** a small line: in empty mode under the dash (e.g. "No data yet — connect a wearable"); on an
+   *  `sm` tile also under a value (e.g. "BMI 25.8"). */
   hint?: string;
   /** the value is a word, not a number (as native): at phone width an `sm` tile draws it at 15 on
    *  one line, cut with an ellipsis rather than broken mid-word (design mobile `.fv.txt`). */
@@ -103,7 +103,8 @@ export function MetricTile({
           />
         </div>
       )}
-      {hint != null && <span className="lk-metric-hint">{hint}</span>}
+      {/* under a value only on the settings tile (as native): elsewhere it's empty mode's line */}
+      {sized && hint != null && <span className="lk-metric-hint">{hint}</span>}
     </div>
   );
 }
