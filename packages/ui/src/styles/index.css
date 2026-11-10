@@ -26,6 +26,7 @@
 @import './components/statelabel.css';
 @import './components/field.css';
 @import './components/focal.css';
+@import './components/navitem.css';
 @import './components/gauge.css';
 @import './components/heatmap.css';
 @import './components/highlight.css';

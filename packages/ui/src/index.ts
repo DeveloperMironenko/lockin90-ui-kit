@@ -68,6 +68,8 @@ export { StepIndex } from './components/StepIndex';
 export type { StepIndexProps } from './components/StepIndex';
 export { IconTile } from './components/IconTile';
 export type { IconTileProps } from './components/IconTile';
+export { NavItem } from './components/NavItem';
+export type { NavItemProps } from './components/NavItem';
 export { Menu } from './components/Menu';
 export type { MenuItemData, MenuProps } from './components/Menu';
 export { MetricTile, ProgressDots } from './components/MetricTile';
