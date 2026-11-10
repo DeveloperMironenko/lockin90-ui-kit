@@ -39,7 +39,7 @@
   background: color-mix(in srgb, var(--bad) 4%, transparent);
 }
 .lk-card.lk-tone-danger.lk-lit::before {
-  background: linear-gradient(90deg, transparent, rgba(255, 77, 109, 0.7), rgba(255, 176, 32, 0.5), transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--bad) 70%, transparent), color-mix(in srgb, var(--warn) 50%, transparent), transparent);
 }
 .lk-card.lk-tone-danger.lk-hover:hover { border-color: color-mix(in srgb, var(--bad) 60%, transparent); }
 
