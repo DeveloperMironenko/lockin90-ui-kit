@@ -78,7 +78,7 @@ It is intentionally the *only* sanctioned way to render a button-shaped action i
 | Hover | `translateY(-2px)`; primary glow intensifies to `0 0 56px rgba(124,92,255,.55)` | n/a (no hover) |
 | Pressed / active | `:active scale(.98)` | `pressed` → opacity .85 + `scale(.98)` |
 | Focus | native focus ring (`<button>`) | platform focus ring (Pressable) |
-| Disabled | `:disabled` opacity .5, `cursor: not-allowed`, no transform | pass `disabled` → Pressable dims; honor in consumer |
+| Disabled | `:disabled` opacity .5, `cursor: not-allowed`, no transform | `disabled` → the surface at opacity .5, as web (the `text` variant fades its label instead) |
 | Loading | not built-in — compose with `Spinner` in `leading` and disable | same |
 
 ## 5. Web ↔ native parity
@@ -182,3 +182,12 @@ There is **no capability gap** that blocks use — the button is fully usable an
 - **Native layout:** a `Pressable` can't sit inside a `Text` run, so on native the button goes in a row
   `View` beside the meta text (as the code row does). Icons in `leading`/`trailing` take their own `color`
   (native has no `currentColor`).
+
+## Update — 2026-11-09 (native disabled look)
+- **Why:** a disabled native `default`, `primary` or `ghost` button looked the same as an enabled one (the
+  mobile Settings screen's Save with a too-long name, and its "Change email" that is coming soon); the
+  §4 row said "Pressable dims", but `Pressable` doesn't.
+- **Now:** the surface (gradient or `View`) takes opacity .5 when disabled, as web `.lk-btn:disabled`. Only the
+  `disabled` prop dims: it is the only one that stops `Pressable`'s presses (`aria-disabled` and
+  `accessibilityState.disabled` only change what is announced), so a dimmed button never takes a press.
+  The `text` variant keeps its faint label at full opacity (2026-11-05).

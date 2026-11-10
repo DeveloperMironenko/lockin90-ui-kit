@@ -46,6 +46,8 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
   const pad = size === 'sm' ? styles.padSm : size === 'lg' ? styles.padLg : styles.padMd;
   const labelSize = size === 'sm' ? 13 : size === 'lg' ? 17 : 14;
   const danger = tone === 'danger';
+  // only `disabled` stops Pressable's presses (`aria-disabled` / `accessibilityState` just announce it)
+  const disabled = rest.disabled === true;
 
   // selection tick on every press (no-op without expo-haptics) — a real button
   // press should feel like one, same as the tab bar
@@ -64,7 +66,7 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
         {({ pressed }) => (
           <View style={[styles.textRow, tone === 'muted' && styles.textRowMuted, pressed && styles.textPressed, style]}>
             {leading}
-            <Text style={[styles.textLabel, tone === 'muted' && styles.textMuted, rest.disabled && styles.textDisabled]}>
+            <Text style={[styles.textLabel, tone === 'muted' && styles.textMuted, disabled && styles.textDisabled]}>
               {title}
             </Text>
             {trailing}
@@ -82,7 +84,7 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
             colors={gradients.cta.stops as unknown as [string, string]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={[styles.base, pad, styles.primary, pressed && styles.pressed, style]}
+            style={[styles.base, pad, styles.primary, pressed && styles.pressed, disabled && styles.disabled, style]}
           >
             {leading}
             <Text style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: '#0A0A12' }]}>{title}</Text>
@@ -130,6 +132,7 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
             { backgroundColor, borderWidth, borderColor },
             surfaceShadow,
             pressed && styles.pressed,
+            disabled && styles.disabled,
             style,
           ]}
         >
@@ -151,6 +154,8 @@ const styles = StyleSheet.create({
   primary: { ...nativeShadows.glowAccent },
   dangerGlow: { shadowColor: colors.bad, shadowOpacity: 0.4, shadowRadius: 24, shadowOffset: { width: 0, height: 0 }, elevation: 8 },
   pressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },
+  // web `.lk-btn:disabled`: the whole surface at half strength
+  disabled: { opacity: 0.5 },
   label: { fontFamily: fonts.ui, fontWeight: '600' },
   textRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9 },
   textPressed: { opacity: 0.85 },
