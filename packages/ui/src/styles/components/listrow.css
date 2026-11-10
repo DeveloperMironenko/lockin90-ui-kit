@@ -135,3 +135,14 @@
   opacity: .5;
   cursor: default;
 }
+
+/* settings rows (design web/settings.html .pref-row / .acct-row): inside a padded card */
+.lk-listrow-pref,
+.lk-listrow-action { gap: 16px; }
+.lk-listrow-pref { padding: 15px 4px; }
+.lk-listrow-action { padding: 16px 0; }
+.lk-listrow-pref .lk-listrow-title,
+.lk-listrow-action .lk-listrow-title { font-weight: 600; line-height: 1.55; }
+.lk-listrow-pref .lk-listrow-title { font-size: 14px; }
+.lk-listrow-pref .lk-listrow-subtitle,
+.lk-listrow-action .lk-listrow-subtitle { margin-top: 2px; line-height: 1.55; }

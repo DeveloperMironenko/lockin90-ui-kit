@@ -42,4 +42,9 @@ describe('ListRow disabled', () => {
     expect(html).not.toMatch(/<button[^>]* disabled=""/);
     expect(html).not.toContain('lk-listrow-tappable');
   });
+
+  it('variant: the settings rows (pref, action)', () => {
+    expect(renderToStaticMarkup(<ListRow title="Unit system" variant="pref" />)).toContain('lk-listrow-pref');
+    expect(renderToStaticMarkup(<ListRow title="Sign out" variant="action" />)).toContain('lk-listrow-action');
+  });
 });
