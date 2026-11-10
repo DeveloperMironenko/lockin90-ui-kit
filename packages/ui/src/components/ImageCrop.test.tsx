@@ -1,5 +1,5 @@
 /* ImageCrop — the frame never shows past the image's edges, and cropRect gives the square of image
-   pixels the frame shows (what the app cuts and sends). */
+   pixels the frame shows (what the app cuts and sends), always inside the image. */
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { IMAGE_CROP_START, ImageCrop, clampCrop, cropRect } from './ImageCrop';
@@ -19,6 +19,13 @@ describe('cropRect', () => {
     expect(cropRect({ zoom: 1, x: 0, y: 0.5 }, landscape)).toEqual({ left: 0, top: 0, size: 400 });
     expect(cropRect({ zoom: 2, x: 1, y: 1 }, landscape)).toEqual({ left: 400, top: 200, size: 200 });
   });
+
+  it('never reaches past the image when rounding (an odd side, at the right edge)', () => {
+    const odd = { width: 600, height: 401 };
+    const rect = cropRect({ zoom: 2, x: 1, y: 0.5 }, odd);
+    expect(rect.left + rect.size).toBeLessThanOrEqual(odd.width);
+    expect(rect.top + rect.size).toBeLessThanOrEqual(odd.height);
+  });
 });
 
 describe('clampCrop', () => {
@@ -28,20 +35,26 @@ describe('clampCrop', () => {
   });
 
   it('a portrait image at zoom 1 moves only up and down', () => {
-    const portrait = { width: 400, height: 600 };
-    const moved = clampCrop({ zoom: 1, x: 0.9, y: 0.9 }, portrait);
+    const moved = clampCrop({ zoom: 1, x: 0.9, y: 0.9 }, { width: 400, height: 600 });
     expect(moved.x).toBe(0.5);
     expect(moved.y).toBeCloseTo(2 / 3);
   });
 });
 
 describe('ImageCrop', () => {
-  it('names the frame and the zoom slider', () => {
+  it('names the frame, and the zoom slider’s own range input', () => {
     const html = renderToStaticMarkup(
       <ImageCrop src="x.png" value={IMAGE_CROP_START} onChange={() => {}} label="Photo" zoomLabel="Zoom" />,
     );
-    expect(html).toContain('aria-label="Photo"');
-    expect(html).toContain('aria-label="Zoom"');
+    expect(html).toContain('role="group" aria-label="Photo"');
+    expect(html).toMatch(/<input[^>]*type="range"[^>]*aria-label="Zoom"/);
     expect(html).toContain('tabindex="0"');
+  });
+
+  it('is exactly the size it is given', () => {
+    const html = renderToStaticMarkup(
+      <ImageCrop src="x.png" value={IMAGE_CROP_START} onChange={() => {}} label="Photo" zoomLabel="Zoom" size={280} />,
+    );
+    expect(html).toContain('width:280px;height:280px');
   });
 });

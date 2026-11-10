@@ -25,26 +25,29 @@ zoom but on web no"). `FocalPointPicker` only picks a point; it doesn't frame or
 | `label` | `string` | — (required) | the frame's spoken name (it's focusable) |
 | `zoomLabel` | `string` | — (required) | the zoom slider's spoken name |
 | `maxZoom` | `number` | `4` | |
-| `size` | `number` | `320` | the frame's side, px |
+| `size` | `number` | `320` | the frame's side, px. It never shrinks itself (what it shows is what `cropRect` cuts): the app fits it to the space it has |
 | `onLoad` | `({ width, height }) => void` | — | the image's own size once loaded (for `cropRect`) |
 | _rest_ | `HTMLAttributes<HTMLDivElement>` | — | on the root |
 
 `IMAGE_CROP_START` is `{ zoom: 1, x: .5, y: .5 }` (the centre square). `clampCrop(value, natural,
-maxZoom?)` keeps a value inside the image. `cropRect(value, natural)` → `{ left, top, size }` in the
-image's pixels.
+maxZoom?)` keeps a value inside the image. `cropRect(value, natural)` → `{ left, top, size }` in whole
+image pixels, always inside the image. On screen the image moves by the exact (unrounded) value, so
+it glides.
 
 ## 3. Visual spec (tokens — never hardcode)
 
-The frame: `--bg-1`, a 1px `--border`, `--r` corners, `--elev-1`; a rule-of-thirds grid of faint white
-lines over the image; `cursor: grab` (`grabbing` while dragged). Below it the kit `Slider` (16 px gap).
+The frame: `--bg-1`, a 1px `--border`, `--r` corners, `--elev-1`; a rule-of-thirds grid of `--border-2`
+lines over the image (as `FocalPointPicker`'s); `cursor: grab` (`grabbing` while dragged). Below it the kit `Slider` (16 px gap).
 Focus: a 2px `--accent` outline, 2px off.
 
 ## 4. States
 
 | State | What |
 | --- | --- |
-| Loading | the image hidden until it loads (its size is needed to place it) |
-| Idle / dragging | grab / grabbing cursor |
+| Loading | the image hidden until it loads (its size is needed to place it); a new `src` waits for its own size; an image already loaded (cached) is taken at once |
+| Idle / dragging | grab / grabbing cursor; the main button or a touch only (a right click opens the context menu) |
+| Wheel | zooms; never scrolls what's behind the frame (a non-passive listener); lines or pages counted as pixels |
+| Pinch | the zoom follows the fingers' spread from where they are; lifting one carries on with the other |
 | At an edge | the frame stops: it never shows past the image |
 | Focused | the accent outline; arrows move, `+` / `=` / `-` zoom |
 
@@ -67,7 +70,7 @@ const [natural, setNatural] = useState<{ width: number; height: number }>()
 ## 7. Accessibility
 
 The frame is a focusable `role="group"` named by `label`, moved with the arrow keys and zoomed with
-`+` / `−`; the zoom `Slider` is a real range input in a group named by `zoomLabel`. The image itself is
+`+` / `−`; the zoom `Slider`'s range input is named by `zoomLabel` (`Slider` now puts `aria-label` on its input). The image itself is
 decorative (`alt=""`): the app's text says what it is.
 
 ## 8. Usage rules — Do / Don't

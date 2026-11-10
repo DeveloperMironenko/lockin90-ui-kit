@@ -1,18 +1,18 @@
 /* ============================================================================
    ImageCrop — frame a square of an image: drag to move, wheel / pinch / keys /
-   the slider to zoom. The image is sized and moved inline; the frame clips it.
+   the slider to zoom. The image is sized and moved inline; the frame clips it
+   and never shrinks (what it shows is what cropRect cuts).
    Key: .lk-crop
    ========================================================================== */
 .lk-crop {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 100%;
 }
 
 .lk-crop-frame {
   position: relative;
-  max-width: 100%;
+  flex: none;
   overflow: hidden;
   border-radius: var(--r);
   border: 1px solid var(--border);
@@ -35,12 +35,13 @@
   transform-origin: 0 0;
 }
 
-/* rule of thirds */
-.lk-crop-grid {
+/* rule of thirds, on the kit's border token (as FocalPointPicker's) */
+.lk-crop-grid { position: absolute; inset: 0; pointer-events: none; }
+.lk-crop-v,
+.lk-crop-h {
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(to right, transparent calc(100% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(100% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(100% / 3 + 0.5px), transparent calc(100% / 3 + 0.5px), transparent calc(200% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(200% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(200% / 3 + 0.5px), transparent calc(200% / 3 + 0.5px)),
-    linear-gradient(to bottom, transparent calc(100% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(100% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(100% / 3 + 0.5px), transparent calc(100% / 3 + 0.5px), transparent calc(200% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(200% / 3 - 0.5px), rgba(255, 255, 255, 0.28) calc(200% / 3 + 0.5px), transparent calc(200% / 3 + 0.5px));
+  background: var(--border-2);
+  box-shadow: 0 0 1px rgba(5, 6, 11, 0.6);
 }
+.lk-crop-v { top: 0; bottom: 0; width: 1px; transform: translateX(-0.5px); }
+.lk-crop-h { left: 0; right: 0; height: 1px; transform: translateY(-0.5px); }
