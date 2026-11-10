@@ -40,6 +40,13 @@ export interface MenuProps extends HTMLAttributes<HTMLDivElement> {
    *  ring). Use when the trigger is already a complete visual element (e.g.
    *  an avatar + name row) and the surrounding chrome would be visual noise. */
   bare?: boolean;
+  /** The trigger on IconButton's surface (its glass square and corners), for a menu opened from an
+   *  icon in a tight spot, like the camera on a profile picture. Pass the icon as `trigger`. */
+  iconTrigger?: boolean;
+  /** The trigger's spoken name (`aria-label`), for a trigger that shows no text. */
+  label?: string;
+  /** The trigger can't be pressed (e.g. while the action it opens is under way). */
+  disabled?: boolean;
 }
 
 const DEFAULT_ITEMS: MenuItemData[] = [
@@ -54,7 +61,17 @@ const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : use
 /** Popover menu of actions — a glass panel of item rows anchored to a trigger.
  *  The panel is portaled to <body> (no overflow ancestor can clip it) and flips
  *  above the trigger / shifts sideways to stay inside the viewport. */
-export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right', bare = false, className, ...rest }: MenuProps) {
+export function Menu({
+  trigger,
+  items = DEFAULT_ITEMS,
+  align = 'right',
+  bare = false,
+  iconTrigger = false,
+  label,
+  disabled = false,
+  className,
+  ...rest
+}: MenuProps) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<MenuPosition | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -91,6 +108,11 @@ export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right', bare = f
     };
   }, [open, align, items]);
 
+  // a trigger switched off closes its open panel
+  useEffect(() => {
+    if (disabled) setOpen(false);
+  }, [disabled]);
+
   // click-outside + ESC — the panel is portaled, so check it too
   useEffect(() => {
     if (!open) return;
@@ -118,9 +140,11 @@ export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right', bare = f
     <div ref={rootRef} className={cn('lk-menu', bare && 'lk-menu--bare', className)} {...rest}>
       <button
         type="button"
-        className="lk-menu-trigger"
+        className={iconTrigger ? 'lk-icon-btn' : 'lk-menu-trigger'}
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label={label}
+        disabled={disabled}
         onClick={() => setOpen((v) => !v)}
       >
         {trigger ?? <Icon name="more" />}
