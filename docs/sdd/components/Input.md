@@ -137,3 +137,4 @@ No capability gap blocks use — the field is fully usable and visually equivale
   31.5), md unchanged (min height 39.6).
 - **Native:** the field box is a `Pressable` (`accessible={false}`): a tap on its padding, icon or unit focuses
   the `TextInput`.
+- **`ref`** (web + native): forwarded to the field itself — web the `<input>` (`forwardRef<HTMLInputElement>`), native the `TextInput` — so an app moves focus to the next field on Return (`returnKeyType="next"` + `onSubmitEditing={() => next.current?.focus()}`). Works on React 18 and 19.

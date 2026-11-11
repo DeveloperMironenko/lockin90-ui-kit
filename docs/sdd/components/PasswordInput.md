@@ -145,3 +145,4 @@ No capability gap blocks use.
   focuses the field).
 - **Eye toggle target:** native `hitSlop` 13 (18 + 26 = 44pt); web an invisible centred `::before`, 24px (44 at
   phone width). Its focus ring is the kit's shared one (`2px --accent-2`).
+- **`ref`** (web + native): forwarded to the field itself (web `<input>`, native `TextInput`), as `Input`, for focusing the next field on Return.

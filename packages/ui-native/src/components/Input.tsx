@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState, type ReactNode } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, type TextInputProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
 
@@ -24,20 +24,25 @@ export interface InputProps extends TextInputProps {
 }
 
 /** Dark glassy text input — mono label, faint unit suffix, accent focus border. */
-export function Input({
-  label,
-  unit,
-  invalid = false,
-  inputSize = 'md',
-  leading,
-  variant = 'default',
-  style,
-  onFocus,
-  onBlur,
-  ...rest
-}: InputProps) {
+export const Input = forwardRef<TextInput, InputProps>(function Input(
+  {
+    label,
+    unit,
+    invalid = false,
+    inputSize = 'md',
+    leading,
+    variant = 'default',
+    style,
+    onFocus,
+    onBlur,
+    ...rest
+  },
+  ref,
+) {
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
+  // the app's ref is the TextInput itself (focus the next field on Return)
+  useImperativeHandle(ref, () => inputRef.current as TextInput, []);
   const sm = inputSize === 'sm';
   const numeral = variant === 'numeral';
 
@@ -73,7 +78,7 @@ export function Input({
       </Pressable>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   wrap: { gap: 6, minWidth: 0 },

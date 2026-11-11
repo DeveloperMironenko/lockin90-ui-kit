@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState, type ReactNode } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, type TextInputProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { Icon } from './Icon';
@@ -27,22 +27,27 @@ export interface PasswordInputProps extends Omit<TextInputProps, 'secureTextEntr
  * Mirrors `Input` (same `label` / `leading` / `invalid` / `inputSize` + glass
  * shell); `secureTextEntry` is owned internally and flipped by the eye button.
  */
-export function PasswordInput({
-  label,
-  invalid = false,
-  inputSize = 'md',
-  leading,
-  defaultVisible = false,
-  showLabel = 'Show password',
-  hideLabel = 'Hide password',
-  style,
-  onFocus,
-  onBlur,
-  ...rest
-}: PasswordInputProps) {
+export const PasswordInput = forwardRef<TextInput, PasswordInputProps>(function PasswordInput(
+  {
+    label,
+    invalid = false,
+    inputSize = 'md',
+    leading,
+    defaultVisible = false,
+    showLabel = 'Show password',
+    hideLabel = 'Hide password',
+    style,
+    onFocus,
+    onBlur,
+    ...rest
+  },
+  ref,
+) {
   const [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState(defaultVisible);
   const inputRef = useRef<TextInput>(null);
+  // the app's ref is the TextInput itself (focus the next field on Return)
+  useImperativeHandle(ref, () => inputRef.current as TextInput, []);
   const sm = inputSize === 'sm';
   const borderColor = invalid ? colors.zoneLow : focused ? colors.accent : colors.borderControl;
 
@@ -84,7 +89,7 @@ export function PasswordInput({
       </Pressable>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   wrap: { gap: 6, minWidth: 0 },
