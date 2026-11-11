@@ -45,3 +45,11 @@ describe('MetricTile sm label', () => {
     expect(hasDeclaration(label, 'font-size:11px')).toBe(true);
   });
 });
+
+describe('MetricTile value row', () => {
+  test('the unit wraps under the value when they don\u2019t fit one line', () => {
+    const root = parse(render(MetricTile, { size: 'sm', label: 'Вага', value: '205,9', unit: 'фунт' }));
+    const row = findByText(root, '205,9')!.parent!;
+    expect(hasDeclaration(row, 'flex-wrap:wrap')).toBe(true);
+  });
+});

@@ -31,4 +31,4 @@ UX and accessibility (1.35b–h, CONVENTIONS "Accessibility"):
   - **Menu:** opens from the keyboard on its first item, the arrows move and Escape returns focus to the trigger.
   - **Text size:** no meaningful text under 11px (chips, badges, eyebrows, labels, counts).
   - **Alert:** new `live` and `footer` (a countdown outside the live region).
-  - **MetricTile:** the `sm` label and a word value wrap instead of being cut with an ellipsis; label and hint are 11px (web and native).
+  - **MetricTile:** the `sm` label and a word value wrap instead of being cut with an ellipsis; label and hint are 11px; the unit wraps under the value when the row doesn't fit (web and native).

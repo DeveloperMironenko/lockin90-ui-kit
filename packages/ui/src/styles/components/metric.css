@@ -49,8 +49,10 @@
 
 .lk-metric-body {
   display: flex;
+  /* the unit wraps under the value when the row doesn't fit ("205,9 фунт" in a 3-across tile) */
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: 4px;
+  gap: 0 4px;
   min-width: 0;
 }
 

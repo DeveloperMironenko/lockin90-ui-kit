@@ -204,8 +204,10 @@ const styles = StyleSheet.create({
   icon: { opacity: 0.8 },
   body: {
     flexDirection: 'row',
+    // the unit wraps under the value when the row doesn't fit ("205,9 фунт" in a 3-across tile), as web
+    flexWrap: 'wrap',
     alignItems: 'baseline',
-    gap: 4,
+    columnGap: 4,
   },
   value: {
     fontFamily: fonts.display,
