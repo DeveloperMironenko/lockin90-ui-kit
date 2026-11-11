@@ -169,3 +169,31 @@ No capability gap blocks use.
   - **Re-evaluation:** the decision is per key (labels, text size, `size`, `fill`, the track width in 8pt buckets) and re-evaluated on every row-layout pass, so it never sticks to stale data. There is no hidden measurer and no clamped first frame.
   - **iOS:** a single-word label gets one line plus shrink-to-fit only after a pass confirmed it fits. Android never clamps.
   - **Web** already puts the segments on rows (`.lk-seg--rows`).
+
+## Update — 2026-11-11 (measured fit, 1.35 — replaces the `onTextLayout` rule above)
+
+The `onTextLayout` rule missed iOS breaks at the default size ("Sedentar/y", "Друго/й", "Нейтральны/й") and is
+gone (`labelProblem` too). Native now decides from widths it measures, so it can't miss:
+
+- **Measurer (`md`):** an invisible, unreadable absolute `View` (`testID="lk-seg-measure"`, 10000 wide, 0 tall)
+  lays out on one line each label, each of its words, `"a a"` / `"aa"` (a space) and each count, in the label's
+  own font and the OS text size. Its widths, with the track's width (1 border + 4 padding, 4 gaps, equal
+  segments less their padding, dot, icon, count and lock), go to `segmentFit` (exported, pure):
+  - a label that fits keeps its size; a `fill` label up to 20 % too wide gets a smaller `fontSize` (whole
+    percent, down to 80 %, as web `MIN_FIT`) and stays on one line;
+  - otherwise it wraps between words at 80 %; a word still wider than its room, or more than 2 lines, stacks
+    the segments. 1pt is kept beside every measured width so rounding never wraps the last letter.
+- **No flicker:** until every width and the track's width are in, the track is laid out at `opacity: 0`; the
+  first frame shown is the final layout (the track's opacity is always set, 0 or 1: iOS Fabric kept a dropped
+  `opacity: 0`). Late fonts or a new width decide again (the measurer stays mounted).
+- **Measured twice over:** besides `onLayout`, a layout effect measures the track and every probe from their
+  refs (`measure`). A tree mounted while hidden (the app's onboarding while its language loads) gets no
+  `onLayout` at all on iOS Fabric, which had left the row invisible; React runs layout effects again when a
+  hidden tree is shown.
+- **Large text** (`fontScale` > 1.35) always stacks; it is measured too, and a stacked label whose widest word
+  is wider than the segment (a half-width form column at AX sizes: "Друго/й") shrinks to fit (`stackedScales`,
+  exported; down to 50 %). **`sm`** hugs its labels (they never wrap), isn't measured, and stacks only at a
+  large text size.
+- **Stacked shape:** a stacked track is a tall box, so it takes a container's corners (`radii.md`) and its
+  segments (and the gradient fill) a control's (`radii.sm`), never the pill that drew a stadium at AX sizes.
+  Web: `.lk-seg--rows` likewise takes `--r`, its segments `--r-sm`.

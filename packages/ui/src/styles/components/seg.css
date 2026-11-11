@@ -233,10 +233,13 @@
 /* a single word still doesn't fit: the segments take the width they need, on more than one row */
 .lk-seg.lk-seg--fill.lk-seg--rows {
   flex-wrap: wrap;
+  /* a tall box: a container's corners, never the pill that draws it as a stadium (as native stacked) */
+  border-radius: var(--r);
 }
 .lk-seg.lk-seg--fill.lk-seg--rows .lk-seg-tab {
   flex: 1 1 auto;
   min-width: max-content;
+  border-radius: var(--r-sm);
 }
 @media (max-width: 540px) {
   .lk-seg.lk-seg--fill .lk-seg-tab {

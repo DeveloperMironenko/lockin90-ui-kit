@@ -4,6 +4,7 @@ import { Dimensions, Text } from 'react-native';
 import { afterEach, describe, expect, test } from 'vitest';
 import { ListRow } from '../ListRow';
 import { SegmentedTabs } from '../SegmentedTabs';
+import { Stepper } from '../Stepper';
 import { codeBoxLayout } from '../TagInput';
 import { findAll, findByText, hasDeclaration, parse, render } from './markup';
 
@@ -36,6 +37,20 @@ describe('SegmentedTabs at a large text size', () => {
     const track = parse(render(SegmentedTabs, { tabs: ['Metric', 'Imperial'] })).children[0]!;
     // the track is a row; stacked it is a column
     expect(hasDeclaration(track, 'flex-direction:row')).toBe(!stacked);
+  });
+});
+
+describe('Stepper at a large text size', () => {
+  test.each([
+    [1, false],
+    [1.6, true],
+  ])('fontScale %s: the rail is vertical and labels unclamped: %s', (fs, vertical) => {
+    scale(fs);
+    const root = parse(render(Stepper, { variant: 'glow', steps: [{ label: 'Профиль' }, { label: 'Готово' }], current: 0 }));
+    expect(hasDeclaration(root.children[0]!, 'flex-direction:row')).toBe(!vertical);
+    expect(hasDeclaration(findByText(root, 'Профиль')!, 'white-space:nowrap')).toBe(!vertical);
+    // the current node grows with the text (14 × 1.6 × 1.35 → 31, still the 40 minimum; at 3.1 → 59)
+    expect((findByText(root, '1')!.parent?.attrs.style ?? '').includes('width:')).toBe(vertical);
   });
 });
 

@@ -144,3 +144,12 @@ No capability gap blocks use — both render equivalent steppers.
 - **New need → add to BOTH platforms.** Need vertical steps, clickable nodes, or a long-press repeat on `NumberStepper`? Add it on web AND native (same prop, same tokens) — never a one-off.
 - **Tokens only.** Node fills (`--grad-cta`/`--grad-mint`), the accent line, glows, pill bg, and mono value come from tokens; never literals.
 - **Parity gate.** Before shipping a flow or a quantity input, confirm the web phone-width and native renders match (same node states, same line fill, same disabled ends).
+
+## Update — 2026-11-11 (large text, 1.35)
+
+- **Native, large OS text size** (`fontScale` > 1.35, as ListRow / SegmentedTabs): the rail is vertical — each
+  step a row (node, then its label taking the rest of the width, wrapping between words, no `numberOfLines`),
+  joined by short 2 × 12 vertical connectors under the nodes. At AX sizes the row's labels were clamped to
+  "Про…" / "Гот…" (CONVENTIONS "Accessibility": nothing cut off). The nodes grow with the text there
+  (`max(40 | 30, number size × fontScale × 1.35)`, still circles), so the step number isn't clipped; the
+  connectors sit under their centres. Normal sizes keep the one-line row and fixed nodes.

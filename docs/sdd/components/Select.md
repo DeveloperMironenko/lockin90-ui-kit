@@ -201,3 +201,15 @@ The overlay differences are expected substrate, not capability gaps that block u
 ## Update — 2026-11-11 (review fixes, 1.35)
 
 - **The value wraps** (web and native): no one-line clamp or ellipsis on the trigger's value or the options (web `overflow-wrap: break-word`: at words, and a single word longer than the line breaks inside it rather than being cut); the trigger grows taller ("UTC…", "Engl…" were cut at the largest text size).
+
+## Update — 2026-11-11 (a word never splits, 1.35)
+
+- **Native:** the value's words are measured on one unconstrained line (an invisible, unreadable absolute
+  `View`, `testID="lk-select-measure"`), and the select is at least its widest word + 1pt + the chrome wide
+  (`md` 12 + 11 padding, 2 edge, 8 gap, 16 chevron; `sm` 9 + 8, 2, 5, 13; plus a `leading` icon and its gap):
+  wider than a parent's `maxWidth` if it must be (as CSS `min-width` beats `max-width`), never wider than the
+  screen less 2 × 16. The value still wraps between words, so the field grows taller ("Europ/e/Kyiv",
+  "Engli/sh" at AX sizes are gone). The words are measured on `onLayout` and again from refs in a layout
+  effect (a tree mounted while hidden gets no `onLayout` on iOS Fabric, as SegmentedTabs).
+- **Web:** the wrapper, trigger and value have `min-width: min-content` (was 0), so the trigger is never
+  narrower than the value's widest word; `overflow-wrap: break-word` stays only as the last resort.

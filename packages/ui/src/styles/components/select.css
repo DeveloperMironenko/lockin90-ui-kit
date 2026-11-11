@@ -7,7 +7,8 @@
   display: inline-flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 0;
+  /* never narrower than the value's widest word plus the chrome (min-width beats a parent's max-width) */
+  min-width: min-content;
 }
 
 .lk-select-label {
@@ -26,7 +27,7 @@
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  min-width: 0;
+  min-width: min-content;
   padding: 9px 11px 9px 12px;
   border-radius: var(--r-sm);
   /* a field's edge at 3:1 on the card (CONVENTIONS "Accessibility") */
@@ -97,9 +98,9 @@
 
 .lk-select-value {
   flex: 1 1 auto;
-  min-width: 0;
-  /* wraps at words to more lines (the trigger grows); a single word longer than the line still breaks inside
-     it rather than being cut: nothing is ever cut off (CONVENTIONS "Accessibility") */
+  /* wraps between words to more lines (the trigger grows taller); never inside a word: the value is at
+     least its widest word wide, and the trigger and wrapper with it (CONVENTIONS "Accessibility") */
+  min-width: min-content;
   overflow-wrap: break-word;
 }
 .lk-select-placeholder {

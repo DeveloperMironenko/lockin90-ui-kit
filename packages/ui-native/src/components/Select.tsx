@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  useWindowDimensions,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
@@ -134,6 +135,39 @@ export function Select({
   const isSm = size === 'sm';
   // Increase Contrast steps the edge, placeholder and label up
   const c = useContrastColors();
+  // A word of the value never breaks (CONVENTIONS "Accessibility"): its widest word is measured on one
+  // unconstrained line, and the select is at least that wide plus its chrome (padding, edge, icon,
+  // chevron) — wider than a parent's maxWidth if it must, as CSS min-width beats max-width — never wider
+  // than the screen less its 16pt gutters. Words still wrap between them, so the field grows taller.
+  const shownText = selected ? selected.label : (placeholder ?? '');
+  const words = shownText.trim().split(/\s+/).filter(Boolean);
+  const { width: screenW } = useWindowDimensions();
+  const [wordW, setWordW] = useState<{ text: string; w: number[] }>({ text: '', w: [] });
+  const [leadW, setLeadW] = useState(0);
+  const measuredWords = wordW.text === shownText ? wordW.w : [];
+  const widest = measuredWords.length === words.length && words.length ? Math.max(...measuredWords) : 0;
+  const chrome = isSm ? 9 + 8 + 2 + 5 + 13 : 12 + 11 + 2 + 8 + 16;
+  const need = widest ? Math.ceil(widest) + 1 + chrome + (leading != null ? leadW + (isSm ? 5 : 8) : 0) : 0;
+  const minWidth = need ? (screenW > 32 ? Math.min(screenW - 32, need) : need) : undefined;
+  // also measured from refs in a layout effect: a tree mounted while hidden gets no `onLayout` on iOS
+  // Fabric (SegmentedTabs has the same guard)
+  const wordRefs = useRef<(Text | null)[]>([]);
+  const fieldRef = useRef<View>(null);
+  useLayoutEffect(() => {
+    fieldRef.current?.measure?.((_x, _y, fw) => {
+      if (!(fw > 0)) return;
+      words.forEach((_, k) => wordRefs.current[k]?.measure?.((_wx, _wy, w) => recordWord(k, w)));
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- words follow shownText
+  }, [shownText]);
+  const recordWord = (k: number, w: number) =>
+    setWordW((prev) => {
+      const base = prev.text === shownText ? prev.w : [];
+      if (base[k] === w) return prev;
+      const next = base.slice();
+      next[k] = w;
+      return { text: shownText, w: next };
+    });
 
   const shown =
     searchable && query.trim()
@@ -150,7 +184,7 @@ export function Select({
   }
 
   return (
-    <View style={[styles.wrap, isSm && styles.wrapSm]}>
+    <View ref={fieldRef} style={[styles.wrap, isSm && styles.wrapSm, minWidth != null && { minWidth }]}>
       {label ? <Text style={[styles.label, { color: c.textDim }]}>{label.toUpperCase()}</Text> : null}
       <Pressable
         style={[
@@ -168,14 +202,42 @@ export function Select({
         disabled={disabled}
         onPress={() => { hapticSelection(); setOpen(true); }}
       >
-        {leading != null ? <View style={styles.leading}>{leading}</View> : null}
+        {leading != null ? (
+          <View style={styles.leading} onLayout={(e) => setLeadW(e.nativeEvent.layout.width)}>
+            {leading}
+          </View>
+        ) : null}
         <Text
-          // wraps to more lines (the field grows): a value is never cut at a large text size
+          // wraps between words to more lines (the field grows): never cut, never split (the minWidth above)
           style={[styles.value, isSm && styles.valueSm, !selected && { color: c.textFaint }]}
         >
           {selected ? selected.label : (placeholder ?? '')}
         </Text>
         <Chevron color={isSm ? colors.textFaint : colors.textDim} size={isSm ? 13 : 16} />
+        <View
+          testID="lk-select-measure"
+          pointerEvents="none"
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+          style={styles.measure}
+        >
+          {words.map((w, k) => (
+            <Text
+              key={`${shownText}:${k}`}
+              ref={(el) => {
+                wordRefs.current[k] = el;
+              }}
+              numberOfLines={1}
+              accessible={false}
+              accessibilityElementsHidden
+              importantForAccessibility="no"
+              onLayout={(e) => recordWord(k, e.nativeEvent.layout.width)}
+              style={[styles.value, styles.measureText, isSm && styles.valueSm]}
+            >
+              {w}
+            </Text>
+          ))}
+        </View>
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={close}>
@@ -291,6 +353,18 @@ const styles = StyleSheet.create({
   },
   fieldInvalid: { borderColor: colors.zoneLow },
   fieldDisabled: { opacity: 0.55 },
+  // the word measurer: one unconstrained line per word, laid out but never seen or read
+  measure: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: 10000,
+    height: 0,
+    overflow: 'hidden',
+    opacity: 0,
+    alignItems: 'flex-start',
+  },
+  measureText: { flex: 0 },
   leading: { flexShrink: 0, alignItems: 'center', justifyContent: 'center' },
   // the value takes the row and sits left after the icon, as on web; `sm` hugs its content
   value: { flex: 1, fontFamily: fonts.ui, fontSize: 14, color: colors.text },
