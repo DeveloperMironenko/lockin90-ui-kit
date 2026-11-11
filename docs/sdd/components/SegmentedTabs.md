@@ -223,3 +223,8 @@ Native decides from widths it measures, so it can't miss:
   and while a stacked label is shrunk a narrower track width is not taken (as wide as its content, it would
   shrink the labels again and again); the measure key includes the window width, so a rotation decides
   afresh.
+- **Web, a field's height:** a one-line `fill` segment (not rows, not wrapped, not `tint`) has a fixed
+  15.6px line, so the track is the Input's 39.6 at desktop width in every script (a CJK fallback font's
+  `normal` line made it 43 in zh, 45 in ja).
+- **Web, fit kept:** the fit runs again when `invalid`, `className` or `active` change: React rewrites the
+  whole class on those renders and dropped the fit's `lk-seg--rows` / `lk-seg-wrap`.

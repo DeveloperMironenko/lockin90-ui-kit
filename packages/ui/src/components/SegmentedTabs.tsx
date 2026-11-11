@@ -220,7 +220,9 @@ export function SegmentedTabs({
       observer?.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [fill, labels, size, appearance]);
+    // also after a render that rewrites the track's or a tab's class (invalid, the chosen tab): React
+    // replaces the whole class, dropping the fit's lk-seg--rows / lk-seg-wrap
+  }, [fill, labels, size, appearance, invalid, className, active]);
 
   return (
     <div

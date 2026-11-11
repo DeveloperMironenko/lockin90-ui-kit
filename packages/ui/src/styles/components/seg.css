@@ -222,6 +222,11 @@
   flex: 1 1 0;
   min-width: 0;
 }
+/* a one-line fill choice is a field's height (Input's 39.6) in every script: a fixed line, so a CJK
+   fallback font's taller "normal" line doesn't grow the track (zh 43, ja 45 beside a 39.6 field) */
+.lk-seg.lk-seg--fill:not(.lk-seg--rows):not([data-appearance='tint']) .lk-seg-tab:not(.lk-seg-wrap) {
+  line-height: 15.6px;
+}
 /* set by the fit when even its smallest size doesn't fit: the label wraps at a space inside its segment,
    never inside a word */
 .lk-seg.lk-seg--fill .lk-seg-tab.lk-seg-wrap {

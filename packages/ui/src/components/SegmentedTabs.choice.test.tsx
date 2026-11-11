@@ -59,4 +59,29 @@ describe('SegmentedTabs choice', () => {
     act(() => root.unmount());
     host.remove();
   });
+
+  it('keeps a fill track on rows when a render rewrites its class (invalid, a choice made)', () => {
+    // every label wider than its segment, at any size: the fit goes to rows
+    Object.defineProperty(HTMLElement.prototype, 'scrollWidth', { configurable: true, get: () => 100 });
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', { configurable: true, get: () => 50 });
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    const root = createRoot(host);
+    const draw = (invalid: boolean, active: number) =>
+      act(() => root.render(<SegmentedTabs kind="choice" fill tabs={['Sedentary', 'Moderate']} invalid={invalid} active={active} />));
+    const track = () => host.querySelector('.lk-seg')!;
+    draw(false, -1);
+    expect(track().classList).toContain('lk-seg--rows');
+    draw(true, -1);
+    expect(track().classList).toContain('lk-seg--invalid');
+    expect(track().classList).toContain('lk-seg--rows');
+    draw(false, 1);
+    expect(track().classList).toContain('lk-seg--rows');
+    expect(host.querySelectorAll('.lk-seg-tab')[1].classList).toContain('lk-seg-wrap');
+    act(() => root.unmount());
+    host.remove();
+    // back to the DOM's own (inherited) sizes
+    delete (HTMLElement.prototype as { scrollWidth?: number }).scrollWidth;
+    delete (HTMLElement.prototype as { clientWidth?: number }).clientWidth;
+  });
 });
