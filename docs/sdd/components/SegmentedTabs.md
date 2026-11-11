@@ -163,4 +163,9 @@ No capability gap blocks use.
 
 - **Web fit:** when one word needs the segments on rows, every tab is fitted again in the rows layout, so none stays shrunk for the one-row widths.
 - **Native count text** line height 13 (was 12) for the 11 font.
-- **No ellipsis at all (native), from the real layout:** in the row layout each label's room is its own container's width (`onLayout`, so icons, the count badge, the lock, borders and padding are already out); each label's words are measured unconstrained (a hidden, absolute, 10000-wide box after the segments, so Yoga never caps them). When a label's longest word × the shrink floor (iOS 0.5; Android 1, it doesn't shrink) is wider than its room, the segments stack, each the full width, labels free to wrap ("Imperial" was "Imperia"). Measurements are batched in refs and decided once per key (labels, text scale, track width, `fill`); a stacked decision holds until the key changes (no row ↔ column loop), and a new key renders the row layout again to re-measure. Until decided, labels render unclamped (no one-line flash). Web already puts the segments on rows (`.lk-seg--rows`).
+- **No ellipsis at all (native), one predictable rule** (replaces the measuring version):
+  - **Large text** (`fontScale` > 1.35, as ListRow) always stacks the segments, each the full width, labels wrapping freely. No measuring.
+  - **Otherwise the row.** Labels render normally (no `numberOfLines`), and each label's own `onTextLayout` says whether the row works. A label "has a problem" when it takes more than 2 lines or a line ends inside a word (`labelProblem`, exported; empty labels never do). Any problem stacks the segments.
+  - **Re-evaluation:** the decision is per key (labels, text size, `size`, `fill`, the track width in 8pt buckets) and re-evaluated on every row-layout pass, so it never sticks to stale data. There is no hidden measurer and no clamped first frame.
+  - **iOS:** a single-word label gets one line plus shrink-to-fit only after a pass confirmed it fits. Android never clamps.
+  - **Web** already puts the segments on rows (`.lk-seg--rows`).

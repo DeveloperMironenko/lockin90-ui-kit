@@ -3,6 +3,7 @@
 import { Dimensions, Text } from 'react-native';
 import { afterEach, describe, expect, test } from 'vitest';
 import { ListRow } from '../ListRow';
+import { SegmentedTabs } from '../SegmentedTabs';
 import { codeBoxLayout } from '../TagInput';
 import { findAll, findByText, hasDeclaration, parse, render } from './markup';
 
@@ -23,6 +24,18 @@ describe('ListRow at a large text size', () => {
   test('a plain row’s title wraps (never cut)', () => {
     const root = parse(render(ListRow, { title: 'Data sources', subtitle: 'Wearables' }));
     expect(hasDeclaration(findByText(root, 'Data sources')!, 'white-space:nowrap')).toBe(false);
+  });
+});
+
+describe('SegmentedTabs at a large text size', () => {
+  test.each([
+    [1, false],
+    [1.6, true],
+  ])('fontScale %s: the segments stack: %s', (fs, stacked) => {
+    scale(fs);
+    const track = parse(render(SegmentedTabs, { tabs: ['Metric', 'Imperial'] })).children[0]!;
+    // the track is a row; stacked it is a column
+    expect(hasDeclaration(track, 'flex-direction:row')).toBe(!stacked);
   });
 });
 

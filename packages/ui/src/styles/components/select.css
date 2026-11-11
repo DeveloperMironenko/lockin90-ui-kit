@@ -98,7 +98,8 @@
 .lk-select-value {
   flex: 1 1 auto;
   min-width: 0;
-  /* wraps at words to more lines (the trigger grows): a value is never cut off (CONVENTIONS "Accessibility") */
+  /* wraps at words to more lines (the trigger grows); a single word longer than the line still breaks inside
+     it rather than being cut: nothing is ever cut off (CONVENTIONS "Accessibility") */
   overflow-wrap: break-word;
 }
 .lk-select-placeholder {
@@ -199,7 +200,7 @@
   cursor: not-allowed;
 }
 .lk-select-option-label {
-  /* an option wraps at words instead of being cut */
+  /* an option wraps at words (a word longer than the line breaks) instead of being cut */
   min-width: 0;
   overflow-wrap: break-word;
 }

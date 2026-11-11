@@ -54,4 +54,4 @@ UX and accessibility (1.35b–h, CONVENTIONS "Accessibility"):
     - **Alert:** iOS announces on mount for danger only (new `announceOnMount`).
     - **Increase Contrast:** ignores Bold Text, and a change event beats the first read.
     - **DotsLoader:** the web stagger slows with the dots.
-  - **Nothing cut off:** SegmentedTabs stack their segments when a label's longest word can't fit its measured room even shrunk (native, no ellipsis); Select values and options wrap and the trigger grows (web and native).
+  - **Nothing cut off:** SegmentedTabs stack their segments at a text size over 1.35, or when a label's real text layout breaks inside a word or takes more than 2 lines (native, no ellipsis); Select values and options wrap and the trigger grows (web and native).

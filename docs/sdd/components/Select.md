@@ -200,4 +200,4 @@ The overlay differences are expected substrate, not capability gaps that block u
 
 ## Update — 2026-11-11 (review fixes, 1.35)
 
-- **The value wraps** (web and native): no one-line clamp or ellipsis on the trigger's value or the options (web `overflow-wrap: break-word`: at words); the trigger grows taller ("UTC…", "Engl…" were cut at the largest text size).
+- **The value wraps** (web and native): no one-line clamp or ellipsis on the trigger's value or the options (web `overflow-wrap: break-word`: at words, and a single word longer than the line breaks inside it rather than being cut); the trigger grows taller ("UTC…", "Engl…" were cut at the largest text size).

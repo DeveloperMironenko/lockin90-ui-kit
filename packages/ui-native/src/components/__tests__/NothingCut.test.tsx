@@ -1,11 +1,12 @@
 // @vitest-environment happy-dom
 /// <reference lib="dom" />
-/* Nothing is cut off at the largest text size: a SegmentedTabs label whose longest word can't fit its room
-   even at the shrink floor stacks the segments (full width, no ellipsis); a Select value wraps. */
+/* Nothing is cut off: a SegmentedTabs label whose real text layout breaks inside a word or takes more than
+   2 lines stacks the segments (full width, no ellipsis); a Select value wraps. (The large-text rule is in
+   LargeText.test.tsx: it needs Dimensions.) */
 import { act } from 'react';
 import { Platform } from 'react-native';
 import { describe, expect, test } from 'vitest';
-import { SegmentedTabs } from '../SegmentedTabs';
+import { labelProblem, SegmentedTabs } from '../SegmentedTabs';
 import { Select } from '../Select';
 import { mount, propOf } from './dom';
 
@@ -14,89 +15,94 @@ const layout = (el: Element, width: number) =>
     (propOf(el, 'onLayout') as (e: unknown) => void)({ nativeEvent: { layout: { width, height: 40, x: 0, y: 0 } } });
   });
 
-const words = (host: Element) => Array.from(host.querySelectorAll('[data-testid="lk-seg-measure"] > div'));
-const room = (host: Element, i: number) => host.querySelector(`[data-testid="lk-seg-room-${i}"]`)!;
-const label = (host: Element, text: string) =>
+const tabLabel = (host: Element, text: string) =>
   Array.from(host.querySelectorAll('[role="radio"] div, [role="tab"] div')).filter((d) => d.textContent === text).pop()!;
 const isStacked = (host: Element) =>
   JSON.stringify(propOf(host.querySelector('[role="radiogroup"], [role="tablist"]')!, 'style')).includes('"flexDirection":"column"');
-/** Lay the track, each label's room and each measured word out at the given widths. */
-function measure(host: Element, track: number, rooms: number[], wordWidths: number[]) {
-  layout(host.querySelector('[role="radiogroup"], [role="tablist"]')!, track);
-  rooms.forEach((w, i) => layout(room(host, i), w));
-  words(host).forEach((el, k) => layout(el, wordWidths[k]));
-}
-const asIos = async (fn: () => void | Promise<void>) => {
-  const os = Platform.OS;
-  Object.defineProperty(Platform, 'OS', { value: 'ios', configurable: true });
+const lines = (el: Element, ...texts: string[]) =>
+  act(() => {
+    (propOf(el, 'onTextLayout') as (e: unknown) => void)({ nativeEvent: { lines: texts.map((text) => ({ text })) } });
+  });
+const asOs = (os: string, fn: () => void) => {
+  const was = Platform.OS;
+  Object.defineProperty(Platform, 'OS', { value: os, configurable: true });
   try {
-    await fn();
+    fn();
   } finally {
-    Object.defineProperty(Platform, 'OS', { value: os, configurable: true });
+    Object.defineProperty(Platform, 'OS', { value: was, configurable: true });
   }
 };
 
+describe('labelProblem', () => {
+  test('a break inside a word, or more than 2 lines, is a problem; a break at a space is not', () => {
+    expect(labelProblem('Imperial', [{ text: 'Imperi' }, { text: 'al' }])).toBe(true);
+    expect(labelProblem('Very active', [{ text: 'Very ' }, { text: 'active' }])).toBe(false);
+    expect(labelProblem('Lightly active person', [{ text: 'Lightly ' }, { text: 'active ' }, { text: 'person' }])).toBe(true);
+    expect(labelProblem('', [])).toBe(false);
+    expect(labelProblem('   ', [{ text: '' }, { text: '' }])).toBe(false);
+  });
+});
+
 describe('SegmentedTabs: nothing cut off', () => {
-  test('the measurer is unconstrained (10000 wide, out of the flow)', () => {
-    const { host, unmount } = mount(<SegmentedTabs tabs={['Metric', 'Imperial']} />);
-    const box = host.querySelector('[data-testid="lk-seg-measure"]')!;
-    expect(JSON.stringify(propOf(box, 'style'))).toMatch(/"position":"absolute".*"width":10000/);
+  test('labels render unclamped, with no hidden measurer', () => {
+    const { host, unmount } = mount(<SegmentedTabs kind="choice" tabs={['Metric', 'Imperial']} />);
+    expect(propOf(tabLabel(host, 'Imperial'), 'numberOfLines')).toBeUndefined();
+    expect(host.querySelector('[data-testid="lk-seg-measure"]')).toBeNull();
     unmount();
   });
 
-  test('a word wider than its room (no shrink on Android / web) stacks the segments, unclamped', () => {
+  test('a line break inside a word stacks the segments', () => {
     const { host, unmount } = mount(<SegmentedTabs kind="choice" tabs={['Metric', 'Imperial']} />);
-    // before the decision: no one-line clamp (no clamped flash)
-    expect(propOf(label(host, 'Imperial'), 'numberOfLines')).toBeUndefined();
-    measure(host, 200, [80, 80], [50, 120]);
+    lines(tabLabel(host, 'Metric'), 'Metric');
+    lines(tabLabel(host, 'Imperial'), 'Imperi', 'al');
     expect(isStacked(host)).toBe(true);
-    expect(propOf(label(host, 'Imperial'), 'numberOfLines')).toBeUndefined();
-    expect(words(host)).toHaveLength(0);
+    expect(propOf(tabLabel(host, 'Imperial'), 'numberOfLines')).toBeUndefined();
     unmount();
   });
 
-  test('labels that fit keep the row, clamped and shrinking', () => {
-    const { host, unmount } = mount(<SegmentedTabs kind="choice" tabs={['Metric', 'Imperial']} />);
-    measure(host, 300, [120, 120], [50, 60]);
-    expect(isStacked(host)).toBe(false);
-    expect(propOf(label(host, 'Imperial'), 'numberOfLines')).toBe(1);
-    unmount();
-  });
-
-  test('iOS, several words: the longest word at half size decides', async () => {
-    await asIos(() => {
-      const fits = mount(<SegmentedTabs tabs={['Very active', 'Light']} />);
-      // words: Very 40, active 90 (45 at the floor ≤ 60), Light 40
-      measure(fits.host, 200, [60, 60], [40, 90, 40]);
-      expect(isStacked(fits.host)).toBe(false);
-      expect(propOf(label(fits.host, 'Very active'), 'numberOfLines')).toBe(2);
-      fits.unmount();
-      const tooLong = mount(<SegmentedTabs tabs={['Very active', 'Light']} />);
-      measure(tooLong.host, 200, [60, 60], [40, 130, 40]);
-      expect(isStacked(tooLong.host)).toBe(true);
-      tooLong.unmount();
+  test('Android: a 3-line label stacks; Android never clamps', () => {
+    asOs('android', () => {
+      const { host, unmount } = mount(<SegmentedTabs tabs={['Lightly active person', 'Rest']} />);
+      lines(tabLabel(host, 'Rest'), 'Rest');
+      expect(propOf(tabLabel(host, 'Rest'), 'numberOfLines')).toBeUndefined();
+      lines(tabLabel(host, 'Lightly active person'), 'Lightly ', 'active ', 'person');
+      expect(isStacked(host)).toBe(true);
+      unmount();
     });
   });
 
-  test('a tab with a count badge: the room is the label’s own container (the badge already taken out)', () => {
-    const { host, unmount } = mount(<SegmentedTabs tabs={[{ label: 'Imperial', count: 12 }, 'Metric']} />);
-    const tab = host.querySelector('[role="tab"]')!;
-    expect(tab.contains(room(host, 0))).toBe(true);
-    expect(room(host, 0).textContent).toBe('Imperial');
-    // the segment is wide, but the badge leaves the label 50: the 60 word stacks
-    measure(host, 400, [50, 150], [60, 50]);
-    expect(isStacked(host)).toBe(true);
+  test('iOS: a single word that fits gets one line + shrink-to-fit after its pass', () => {
+    asOs('ios', () => {
+      const { host, unmount } = mount(<SegmentedTabs tabs={['Metric', 'Very active']} />);
+      lines(tabLabel(host, 'Metric'), 'Metric');
+      lines(tabLabel(host, 'Very active'), 'Very ', 'active');
+      expect(isStacked(host)).toBe(false);
+      expect(propOf(tabLabel(host, 'Metric'), 'numberOfLines')).toBe(1);
+      expect(propOf(tabLabel(host, 'Very active'), 'numberOfLines')).toBeUndefined();
+      unmount();
+    });
+  });
+
+  test('an empty label never crashes or stacks', () => {
+    const { host, unmount } = mount(<SegmentedTabs tabs={['', ' ', 'Rest']} />);
+    const tabs = host.querySelectorAll('[role="tab"]');
+    expect(tabs).toHaveLength(3);
+    expect(isStacked(host)).toBe(false);
     unmount();
   });
 
-  test('new labels drop the decision and measure again', () => {
-    const { host, rerender, unmount } = mount(<SegmentedTabs tabs={['A', 'B']} />);
-    measure(host, 300, [120, 120], [10, 10]);
-    expect(propOf(label(host, 'A'), 'numberOfLines')).toBe(1);
-    rerender(<SegmentedTabs tabs={['Metric', 'Imperial']} />);
-    expect(words(host)).toHaveLength(2);
-    expect(propOf(label(host, 'Imperial'), 'numberOfLines')).toBeUndefined();
-    measure(host, 300, [40, 40], [50, 120]);
+  test('a width change re-evaluates: the row comes back, then stacks again when it breaks', () => {
+    const { host, unmount } = mount(<SegmentedTabs tabs={['Metric', 'Imperial']} />);
+    const track = host.querySelector('[role="tablist"]')!;
+    layout(track, 200);
+    lines(tabLabel(host, 'Imperial'), 'Imperi', 'al');
+    expect(isStacked(host)).toBe(true);
+    layout(track, 400); // wider: a new key, the row again
+    expect(isStacked(host)).toBe(false);
+    lines(tabLabel(host, 'Imperial'), 'Imperial');
+    expect(isStacked(host)).toBe(false);
+    layout(track, 160);
+    lines(tabLabel(host, 'Imperial'), 'Impe', 'rial');
     expect(isStacked(host)).toBe(true);
     unmount();
   });
