@@ -17,6 +17,8 @@ export interface ReauthDialogProps {
   onSubmitPassword?: (password: string) => void;
   /** Google re-auth path — invoked by the "Continue with Google" button. */
   onGoogle?: () => void;
+  /** Apple re-auth path — invoked by the "Continue with Apple" button (as native). */
+  onApple?: () => void;
   /** Header title. */
   title?: string;
   /** Short reassurance line under the title. */
@@ -25,6 +27,8 @@ export interface ReauthDialogProps {
   hasPassword?: boolean;
   /** Show the "Continue with Google" button (default false). */
   hasGoogle?: boolean;
+  /** Show the "Continue with Apple" button (default false); with `hasGoogle` both show, Google first. */
+  hasApple?: boolean;
   /** Disable inputs + show loading on submit. */
   loading?: boolean;
   /** Error message rendered in a danger Alert above the fields. */
@@ -36,6 +40,7 @@ export interface ReauthDialogProps {
   confirmingLabel?: string;
   cancelLabel?: string;
   googleLabel?: string;
+  appleLabel?: string;
   orLabel?: string;
   /** the close button's spoken name */
   closeLabel?: string;
@@ -45,6 +50,13 @@ export interface ReauthDialogProps {
 }
 
 /** Google "G" mark — matches the auth design's SSO glyph. */
+/** Apple's mark, in the label colour (the brand's own monochrome glyph, as SsoButton's). */
+const APPLE = (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width={18} height={18}>
+    <path d="M16.37 12.78c.02 2.5 2.19 3.33 2.21 3.34-.02.06-.35 1.2-1.15 2.37-.69 1.02-1.41 2.03-2.55 2.05-1.11.02-1.47-.66-2.74-.66-1.27 0-1.67.64-2.72.68-1.1.04-1.93-1.1-2.63-2.11-1.43-2.07-2.53-5.86-1.06-8.42a4.1 4.1 0 0 1 3.46-2.1c1.08-.02 2.1.73 2.76.73.66 0 1.9-.9 3.2-.77.54.02 2.07.22 3.05 1.65-.08.05-1.82 1.07-1.8 3.21M14.3 4.6c.58-.71.98-1.69.87-2.68-.84.04-1.86.56-2.47 1.26-.54.62-1.02 1.62-.89 2.58.94.07 1.9-.48 2.49-1.16" />
+  </svg>
+);
+
 const GOOGLE = (
   <svg viewBox="0 0 24 24" aria-hidden="true" width={18} height={18}>
     <path
@@ -76,10 +88,12 @@ export function ReauthDialog({
   onClose,
   onSubmitPassword,
   onGoogle,
+  onApple,
   title = "Confirm it's you",
   description = 'For your security, re-enter your password to continue.',
   hasPassword = true,
   hasGoogle = false,
+  hasApple = false,
   loading = false,
   error,
   passwordLabel = 'Password',
@@ -88,6 +102,7 @@ export function ReauthDialog({
   confirmingLabel = 'Confirming…',
   cancelLabel = 'Cancel',
   googleLabel = 'Continue with Google',
+  appleLabel = 'Continue with Apple',
   orLabel = 'or',
   closeLabel = 'Close',
   passwordRequiredLabel = 'Enter your password',
@@ -163,7 +178,7 @@ export function ReauthDialog({
           </form>
         ) : null}
 
-        {hasPassword && hasGoogle ? (
+        {hasPassword && (hasGoogle || hasApple) ? (
           <div className="lk-reauth-or" aria-hidden="true">
             <span className="lk-reauth-ln" />
             <span>{orLabel}</span>
@@ -180,6 +195,18 @@ export function ReauthDialog({
           >
             <span className="lk-reauth-google-icon">{GOOGLE}</span>
             {googleLabel}
+          </Button>
+        ) : null}
+
+        {hasApple ? (
+          <Button
+            variant="default"
+            className="lk-reauth-google lk-reauth-apple"
+            disabled={loading}
+            onClick={() => onApple?.()}
+          >
+            <span className="lk-reauth-google-icon">{APPLE}</span>
+            {appleLabel}
           </Button>
         ) : null}
 

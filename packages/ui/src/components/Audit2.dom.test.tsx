@@ -65,3 +65,20 @@ describe('Menu keyboard', () => {
     expect(document.activeElement).toBe(trigger);
   });
 });
+
+describe('ReauthDialog providers', () => {
+  it('shows Google and Apple when both are linked, Apple calls onApple, both off while loading', () => {
+    const onApple = vi.fn();
+    const onGoogle = vi.fn();
+    const props = { open: true, onClose: () => {}, hasGoogle: true, hasApple: true, onGoogle, onApple, googleLabel: 'Continuar con Google', appleLabel: 'Continuar con Apple' };
+    mount(<ReauthDialog {...props} />);
+    const byText = (t: string) => Array.from(document.querySelectorAll('button')).find((b) => b.textContent === t)!;
+    act(() => byText('Continuar con Apple').click());
+    expect(onApple).toHaveBeenCalledTimes(1);
+    expect(byText('Continuar con Google')).toBeTruthy();
+    done();
+    mount(<ReauthDialog {...props} loading />);
+    expect(byText('Continuar con Apple').disabled).toBe(true);
+    expect(byText('Continuar con Google').disabled).toBe(true);
+  });
+});

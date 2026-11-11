@@ -35,3 +35,4 @@ UX and accessibility (1.35b–h, CONVENTIONS "Accessibility"):
   - **FormField / Button `text`:** the label row wraps (a long action goes to its own line, end-aligned) and a text button's label wraps instead of overflowing (web and native).
   - **ListRow `pref` / `action`:** under 300 wide the trailing control drops under the text (full width, start-aligned) instead of squeezing it (web container query, native `onLayout`).
   - **Narrow phones:** new `--bp-narrow` / `breakpoints.narrow` (360, max-width; Tailwind preset `narrow`); Card `padLg` drops to 16 there (native by window width) so an 8-box CodeInput fits 320; Chip labels wrap instead of overflowing (web and native).
+  - **ReauthDialog (web):** `hasApple`, `onApple`, `appleLabel`, as native; Google and Apple both show when both are linked, disabled while loading.
