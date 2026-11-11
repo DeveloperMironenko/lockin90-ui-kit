@@ -138,3 +138,7 @@ No capability gap blocks use — the menu is fully usable and visually equivalen
 - **New need → both platforms.** A new item kind (e.g. a checkbox row), submenu, or `align` value must be added to `MenuItemData`/`MenuProps` on web **and** native with the same names/tokens.
 - **Tokens only.** Trigger, panel, row highlight, danger tone, divider all come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping, confirm the web phone-width menu and native menu match (same items, order, danger styling, alignment).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Keyboard (web):** Enter, Space or ArrowDown on the trigger opens on the first item, ArrowUp on the last; ArrowUp / ArrowDown (wrapping), Home and End move; Escape and choosing an item give focus back to the trigger; Tab closes.

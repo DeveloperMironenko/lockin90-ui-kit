@@ -150,3 +150,7 @@ No capability gap blocks use.
   `aria-labelledby`. Native: `accessibilityRole="radiogroup"`, segments `radio` with `accessibilityState.checked`.
 - **Native `accessibilityLabel` / `accessibilityHint`** on the group (a `FormField` passes its label and error).
 - **Native targets, same look:** each segment `hitSlop` 7 above / below (`md`, 30 tall) or 11 (`sm`, 23): 44pt.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **44 tall** segments at phone width (web) and on native (`minHeight`; the hitSlop is gone). **`fill` labels never leave their segment:** web shrinks to 80% then wraps (`.lk-seg-wrap`), native shrinks then wraps to two lines (`numberOfLines={2}`). Counts are 11px.

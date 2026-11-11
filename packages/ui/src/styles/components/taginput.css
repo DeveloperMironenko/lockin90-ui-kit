@@ -11,7 +11,7 @@
   padding: 8px;
   border-radius: var(--r-sm);
   border: 1px solid var(--border-control);
-  background: var(--glass-2);
+  background: var(--field);
 }
 
 .lk-taginput-tag {
@@ -24,7 +24,7 @@
   background: rgba(34, 211, 238, 0.1);
   color: var(--mint);
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 11px;
   line-height: 1.4;
 }
 
@@ -54,6 +54,11 @@
   font-size: 12px;
 }
 .lk-taginput-input::placeholder { color: var(--text-faint); }
+.lk-taginput:focus-within {
+  /* the kit's focus ring, as buttons (CONVENTIONS "Accessibility": the border change alone is 1.2:1) */
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
 
 /* error state — red border + glow */
 .lk-taginput--invalid {
@@ -88,13 +93,15 @@
   font-weight: 700;
   font-size: 22px;
   color: var(--text);
-  background: var(--glass-2);
+  background: var(--field);
   border: 1px solid var(--border-control);
   border-radius: var(--r-sm);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 .lk-code-box:focus {
-  outline: none;
+  /* the kit's focus ring, as buttons (CONVENTIONS "Accessibility": the border change alone is 1.2:1) */
+  outline: 2px solid var(--accent-2);
+  outline-offset: 1px;
   border-color: var(--accent);
   background: rgba(124, 92, 255, 0.06);
   box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.16);
@@ -116,11 +123,14 @@
 
 /* phone (--bp-phone): no cap, the boxes fill the row; a tighter gap and digit, so 8 boxes fit a ~266px row */
 @media (max-width: 540px) {
+  /* 8 apart and at least 44 tall (CONVENTIONS "Accessibility"), as native; a narrower floor so 8 boxes fit */
   .lk-code {
-    gap: 6px;
+    gap: 8px;
   }
   .lk-code-box {
     max-width: none;
+    min-width: 24px;
+    min-height: 44px;
     font-size: 20px;
   }
 }

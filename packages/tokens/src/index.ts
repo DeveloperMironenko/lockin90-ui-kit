@@ -16,6 +16,12 @@ export const colors = {
   bg2: '#11151F',
   glass: 'rgba(255,255,255,0.045)',
   glass2: 'rgba(255,255,255,0.075)',
+  // a card's fill: the old glass look over the page (#13151D on bg0) but 79% opaque, so the aurora behind
+  // never lifts its text below 4.5:1 (CONVENTIONS "Accessibility")
+  card: 'rgba(22,24,32,0.79)',
+  // a field's fill (Input, Select, CodeInput, TagInput, SearchInput): opaque, glass-2 over the card, so
+  // placeholders keep 4.6:1 whatever is behind
+  field: '#25272E',
   border: 'rgba(255,255,255,0.09)',
   border2: 'rgba(255,255,255,0.16)',
   // a field's edge (Input, Select, CodeInput, TagInput): 3.3:1 on the card (CONVENTIONS "Accessibility")
@@ -161,7 +167,7 @@ export type Tokens = typeof tokens;
 /** Map a color token to its CSS custom property, e.g. `cssVar('zoneHigh')` → `var(--zone-high)`. */
 const cssVarName: Record<ColorToken, string> = {
   void: '--void', bg0: '--bg-0', bg1: '--bg-1', bg2: '--bg-2',
-  glass: '--glass', glass2: '--glass-2', border: '--border', border2: '--border-2', borderControl: '--border-control',
+  glass: '--glass', glass2: '--glass-2', card: '--card', field: '--field', border: '--border', border2: '--border-2', borderControl: '--border-control',
   text: '--text', textDim: '--text-dim', textFaint: '--text-faint',
   lime: '--lime', mint: '--mint', cyan: '--cyan', indigo: '--indigo', violet: '--violet', magenta: '--magenta', orange: '--orange',
   accent: '--accent', accent2: '--accent-2', accent3: '--accent-3',

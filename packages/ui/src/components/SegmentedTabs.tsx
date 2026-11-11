@@ -163,6 +163,7 @@ export function SegmentedTabs({
     const fit = () => {
       for (const tab of track.querySelectorAll<HTMLElement>('.lk-seg-tab')) {
         tab.style.removeProperty('font-size');
+        tab.classList.remove('lk-seg-wrap');
         if (tab.scrollWidth <= tab.clientWidth) continue;
         const style = getComputedStyle(tab);
         const base = parseFloat(style.fontSize);
@@ -172,6 +173,8 @@ export function SegmentedTabs({
           tab.style.fontSize = `${(base * percent) / 100}px`;
           if (tab.scrollWidth <= tab.clientWidth) break;
         }
+        // still too wide at 80% (a long word at 320px): the label wraps inside its segment, never out of it
+        if (tab.scrollWidth > tab.clientWidth) tab.classList.add('lk-seg-wrap');
       }
     };
     fit();

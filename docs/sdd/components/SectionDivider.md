@@ -94,3 +94,7 @@ There is **no capability gap**.
 - **New need → add to BOTH platforms.** If a variant is needed (e.g. a left/center label or a two-sided fade), add a prop to `SectionDivider` on web AND native with the same name + tokens — never a one-off.
 - **Tokens only.** Label via `Eyebrow`, rule via `--border-2` / `colors.border2`; never a literal.
 - **Parity gate.** The eyebrow + right-fading rule render identically at phone width and on native — confirm before shipping a shared screen.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **A long label wraps** instead of overflowing at 320 (web and native).

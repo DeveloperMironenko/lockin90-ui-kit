@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   ct: {
     flexShrink: 0,
     fontFamily: fonts.mono,
-    fontSize: 9.5,
+    fontSize: 11,
     color: colors.textFaint,
   },
 });

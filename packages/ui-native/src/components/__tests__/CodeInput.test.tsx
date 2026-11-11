@@ -18,6 +18,10 @@ describe('codeToBoxes', () => {
 });
 
 describe('spreadDigits (paste / autofill)', () => {
+  test('a whole code fills from the first box, wherever it was pasted', () => {
+    expect(spreadDigits(Array(6).fill(''), 3, '123456').boxes).toEqual(['1', '2', '3', '4', '5', '6']);
+  });
+
   test('a full-length paste into box 0 fills every box and focuses the last', () => {
     expect(spreadDigits(['', '', '', '', '', ''], 0, '123456')).toEqual({
       boxes: ['1', '2', '3', '4', '5', '6'],
@@ -122,7 +126,9 @@ describe('CodeInput rendering', () => {
       expect(hasDeclaration(box, 'flex:1')).toBe(true);
       expect(hasDeclaration(box, 'aspect-ratio:')).toBe(true);
       expect(hasDeclaration(box, 'width:44px')).toBe(false);
-      expect(hasDeclaration(box, 'min-width:28px')).toBe(true);
+      expect(hasDeclaration(box, 'min-width:24px')).toBe(true);
+      // 44 tall at least (CONVENTIONS "Accessibility")
+      expect(hasDeclaration(box, 'min-height:44px')).toBe(true);
       expect(hasDeclaration(box, 'max-width:60px')).toBe(true);
     }
   });

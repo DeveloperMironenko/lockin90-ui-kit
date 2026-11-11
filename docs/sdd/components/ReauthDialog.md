@@ -133,3 +133,7 @@ No capability gap — the dialog is fully usable and visually equivalent on both
 - **Align the Google host.** The native Google `Pressable`-lookalike should track the default `Button` chrome exactly; if Button changes, update it (or migrate to `Button` + `leading`) — don't let it diverge.
 - **New re-auth path → both platforms.** A new method (passkey, TOTP) is added as a prop + tokens on web **and** native, never a one-off.
 - **Tokens only.** Modal, divider, and button chrome come from `@lockin90/tokens`; only the four Google brand colors are hardcoded (identical in both twins).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Focus:** the dialog opens on the password field (`autoFocus`); the Modal keeps Tab inside and gives focus back on close. **Confirm stays enabled:** pressed empty, the field shows `passwordRequiredLabel` (new, both platforms; default `'Enter your password'`) as its `FormField` error. Busy is Button `loading` (named `confirmingLabel`). The field is 16px (Input). Native: new `closeLabel`; the Google / Apple buttons are named by `googleLabel` / `appleLabel` (were English literals).

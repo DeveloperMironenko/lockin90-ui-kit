@@ -162,8 +162,6 @@ export function Select({
         accessibilityValue={selected ? { text: selected.label } : undefined}
         accessibilityState={{ disabled, expanded: open }}
         disabled={disabled}
-        // sm is 6 + 13 + 6 + 2 = 27 tall, md 39.6: the slop reaches the 44pt touch target, same look
-        hitSlop={isSm ? { top: 9, bottom: 9, left: 4, right: 4 } : { top: 3, bottom: 3 }}
         onPress={() => { hapticSelection(); setOpen(true); }}
       >
         {leading != null ? <View style={styles.leading}>{leading}</View> : null}
@@ -272,9 +270,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     // a field's edge at 3:1 on the card (CONVENTIONS "Accessibility")
     borderColor: colors.borderControl,
-    backgroundColor: colors.glass2,
+    backgroundColor: colors.field,
     // the web field's height (as Input): 9 + 14 × 1.4 + 9 + 2 borders = 39.6
-    minHeight: 39.6,
+    minHeight: 44, // a 44pt target, as the web field at phone width (CONVENTIONS "Accessibility")
     paddingVertical: 9,
     paddingLeft: 12,
     paddingRight: 11,
@@ -282,7 +280,7 @@ const styles = StyleSheet.create({
   // sm — design settings `.pref-select`: mono glass pill, `--border` hairline,
   // r10, padding 6×9 (lead icon → text gap 5, mock `.lang-wrap` geometry)
   fieldSm: {
-    minHeight: 0,
+    minHeight: 44,
     gap: 5,
     paddingVertical: 6,
     paddingLeft: 9,

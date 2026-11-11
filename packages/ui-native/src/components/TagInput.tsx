@@ -149,7 +149,7 @@ export function codeToBoxes(value: string, length: number): string[] {
 }
 
 /** Spread a multi-char entry (paste / iOS SMS autofill delivered into one box) across the boxes from
- *  `index` on: digits only, the ones past the last box dropped, earlier boxes kept. Focus lands after
+ *  `index` on (a whole code from the first box): digits only, the ones past the last box dropped, earlier boxes kept. Focus lands after
  *  the last digit written (clamped). (Pure, so the paste math is unit-testable; mirrors the web.) */
 export function spreadDigits(
   boxes: readonly string[],
@@ -158,6 +158,8 @@ export function spreadDigits(
 ): { boxes: string[]; focusIndex: number } {
   const digits = text.replace(/\D/g, '');
   const next = boxes.slice();
+  // a whole code (as many digits as boxes) fills from the first box, wherever it was pasted
+  if (digits.length >= next.length) index = 0;
   for (let i = 0; i < digits.length && index + i < next.length; i++) next[index + i] = digits[i];
   return { boxes: next, focusIndex: Math.min(index + digits.length, next.length - 1) };
 }
@@ -192,6 +194,8 @@ export const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(function Co
     error = false,
     invalid = false,
     digitLabel = defaultDigitLabel,
+    accessibilityLabel,
+    accessibilityHint,
     style,
     ...rest
   },
@@ -273,7 +277,7 @@ export const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(function Co
             ? 'rgba(255,77,109,0.06)'
             : filled
               ? 'rgba(34,211,238,0.05)'
-              : colors.glass2;
+              : colors.field;
         return (
           <TextInput
             key={i}
@@ -290,7 +294,11 @@ export const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(function Co
             // The digit stays selected, so typing replaces it (also after a tap on a focused box).
             selectTextOnFocus
             selection={{ start: 0, end: ch.length }}
-            accessibilityLabel={digitLabel(i + 1, length)}
+            // each box carries the field's name (a FormField passes its label) and its error / help
+            accessibilityLabel={
+              accessibilityLabel ? `${accessibilityLabel}, ${digitLabel(i + 1, length)}` : digitLabel(i + 1, length)
+            }
+            accessibilityHint={accessibilityHint}
             selectionColor={colors.accent}
             onChangeText={(t) => onBoxChange(i, t)}
             onKeyPress={(e) => onKeyPress(i, e)}
@@ -315,7 +323,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     // a field's edge at 3:1 on the card (CONVENTIONS "Accessibility")
     borderColor: colors.borderControl,
-    backgroundColor: colors.glass2,
+    backgroundColor: colors.field,
   },
   // invalid: red border + soft red glow standing in for the web's 3px ring
   // (`.lk-taginput--invalid`: border var(--bad) + 0 0 0 3px rgba(255,77,109,.16))
@@ -343,7 +351,7 @@ const styles = StyleSheet.create({
   tagText: {
     color: colors.accent2,
     fontFamily: fonts.mono,
-    fontSize: 10.5,
+    fontSize: 11,
     lineHeight: 15,
   },
   tagX: {
@@ -368,11 +376,13 @@ const styles = StyleSheet.create({
   code: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 6,
+    // 8 apart and at least 44 tall (CONVENTIONS "Accessibility"), as the web at phone width
+    gap: 8,
   },
   codeBox: {
     flex: 1,
-    minWidth: 28,
+    minWidth: 24,
+    minHeight: 44,
     maxWidth: 60,
     aspectRatio: 1 / 1.18,
     textAlign: 'center',

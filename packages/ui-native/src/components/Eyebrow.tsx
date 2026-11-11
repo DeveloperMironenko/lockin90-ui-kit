@@ -13,7 +13,7 @@ export function Eyebrow({ style, ...rest }: EyebrowProps) {
 const styles = StyleSheet.create({
   eyebrow: {
     fontFamily: fonts.mono,
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 2,

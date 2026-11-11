@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: fonts.mono,
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '500',
     letterSpacing: 0.6,
     lineHeight: 10,

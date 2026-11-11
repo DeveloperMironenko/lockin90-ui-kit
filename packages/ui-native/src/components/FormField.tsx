@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: radii.pill,
     borderWidth: 1,
-    backgroundColor: colors.glass2,
+    backgroundColor: colors.field,
   },
   searchSm: {
     borderRadius: radii.sm,

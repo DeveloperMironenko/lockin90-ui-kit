@@ -130,3 +130,7 @@ It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parit
 - **New need → add to BOTH platforms.** A new surface treatment (e.g. native `tone`) is a new `Card` prop on web *and* native — same name, same tokens — never a one-off component.
 - **Tokens only.** Any color/space/radius/shadow not sourced from `@lockin90/tokens` is a bug even if it looks identical today.
 - **Parity gate.** Before shipping a screen, confirm the web phone-width card and the native card read identically (same pad, lit, flat); flag any reliance on a web-only modifier that native lacks.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Fill:** `--card` / `colors.card` (`rgba(22,24,32,.79)`) instead of `--glass`: the same `#13151D` on the plain page, but the aurora behind no longer lifts dim or faint text below 4.5:1 (CONVENTIONS ratios). The tones mix into it (warn 7%, danger 4%); native `blur` keeps the frost behind the same fill.

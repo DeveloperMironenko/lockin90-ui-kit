@@ -193,3 +193,7 @@ No blocking gap remains.
   any hardcoded equivalent is a bug even if it looks identical today.
 - **Parity gate.** Before shipping a screen with `Stat`, confirm the web phone-width and native renders match —
   same label casing, same value size, same delta tone.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Labels and sub 11px** (were 10 / 10.5).

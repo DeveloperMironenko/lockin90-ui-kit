@@ -70,6 +70,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
+    // a 44pt target, as the web at phone width (CONVENTIONS "Accessibility")
+    minHeight: 44,
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: radii.sm,

@@ -70,3 +70,7 @@ A real `<a href>`; the current page `aria-current="page"`. Put the rows in a `<n
 ## 9. Anti-patterns & lookalike ban
 
 A hand-styled sidebar link in an app is a lookalike: use this.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Badge 11px** (was 10).

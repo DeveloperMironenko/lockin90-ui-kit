@@ -42,10 +42,12 @@
   }
 }
 
-/* reduced motion — slow the sweep way down (8s) instead of stopping it, so it
-   still reads as "busy" without the fast, vestibular-triggering spin */
+/* reduced motion — slow the sweep (2.5s, as native) instead of stopping it, so it still reads as "busy"
+   without the fast spin. !important and a class: it wins over base.css's global reduced-motion rule,
+   which would otherwise freeze it after one .001ms turn. */
 @media (prefers-reduced-motion: reduce) {
   .lk-spinner-svg {
-    animation-duration: 8s;
+    animation-duration: 2.5s !important;
+    animation-iteration-count: infinite !important;
   }
 }

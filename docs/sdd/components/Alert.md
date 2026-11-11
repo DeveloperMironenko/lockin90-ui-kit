@@ -151,3 +151,7 @@ No capability gap — the alert is visually equivalent on both.
   Type `AlertTitleLevel` is exported.
 - **Close target:** native `hitSlop` 9 (26 + 18 = 44pt); web an invisible `::before` 24px (44 at phone width);
   its focus ring is the kit's shared one.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **`live`** (default `true`; `false`: no live region) and **`footer`** (web + native): content under the text that is not announced when it changes — a ticking countdown. With a footer the role / live region sits on the title + text only.

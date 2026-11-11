@@ -18,3 +18,16 @@ UX and accessibility (1.35b–h, CONVENTIONS "Accessibility"):
 - **Native reduced motion:** new exported `useReducedMotion()` (one shared store); AuroraBackground holds still and every loop (DotsLoader, ProgressBar, Avatar, GradientText, TypingIndicator, SessionBanner, VitalsStrip, chart pulse rings) stops at a defined still frame while it is on; Spinner slows to 8s, as web.
 - **Native Sheet** clears the home indicator via the new optional peer `react-native-safe-area-context`.
 - **Web:** SideNav and Modal use `100dvh` (with a `100vh` fallback).
+- **Running-app audit:**
+  - **tokens:** `--card` / `colors.card` (`rgba(22,24,32,.79)`: the old glass colour on the page, but opaque enough that the aurora never drops text below 4.5:1) and `--field` / `colors.field` (`#25272E`, opaque). Card uses `--card`; Input, PasswordInput, SearchInput, Select, CodeInput and TagInput use `--field`.
+  - **Web:** every field shows the 2px `--accent-2` focus ring (not just an accent edge).
+  - **44px controls:** at ≤ 540px Button, SsoButton, Input, Select (both sizes), SearchInput, SegmentedTabs segments and the Modal close are at least 44px tall; native draws the same controls 44pt. CodeInput boxes are 44 tall, 8 apart.
+  - **Spinner:** under Reduce Motion it turns at 2.5s on web (exempt from the global freeze) and native.
+  - **Select:** `aria-required` goes on the combobox.
+  - **ProgressBar:** names itself (web `aria-label` / `aria-labelledby`; native progressbar role + `accessibilityLabel`).
+  - **CodeInput:** a whole pasted code fills from box 1; `aria-required` sits on the boxes and the group takes FormField's name / description; native boxes read the field's name and hint.
+  - **Divider / SectionDivider / SegmentedTabs `fill`:** labels wrap instead of overflowing.
+  - **ReauthDialog:** opens on its field, Confirm stays enabled and shows the new `passwordRequiredLabel`, busy via Button `loading`; native gets `closeLabel` and translated SSO names.
+  - **Menu:** opens from the keyboard on its first item, the arrows move and Escape returns focus to the trigger.
+  - **Text size:** no meaningful text under 11px (chips, badges, eyebrows, labels, counts).
+  - **Alert:** new `live` and `footer` (a countdown outside the live region).

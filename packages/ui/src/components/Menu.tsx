@@ -5,6 +5,7 @@ import {
   useState,
   type CSSProperties,
   type HTMLAttributes,
+  type KeyboardEvent,
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
@@ -94,6 +95,40 @@ export function Menu({
   const [pos, setPos] = useState<MenuPosition | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  // opened from the keyboard: which item takes focus once the panel is there (WAI-ARIA menu button)
+  const focusOnOpen = useRef<'first' | 'last' | null>(null);
+  const menuItems = () => Array.from(panelRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? []);
+
+  useEffect(() => {
+    if (!open || !focusOnOpen.current) return;
+    const list = menuItems();
+    (focusOnOpen.current === 'last' ? list[list.length - 1] : list[0])?.focus();
+    focusOnOpen.current = null;
+  }, [open]);
+
+  const onTriggerKey = (e: KeyboardEvent<HTMLButtonElement>) => {
+    const where =
+      e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown' ? 'first' : e.key === 'ArrowUp' ? 'last' : null;
+    if (!where || disabled) return;
+    e.preventDefault();
+    focusOnOpen.current = where;
+    setOpen(true);
+  };
+
+  const onPanelKey = (e: KeyboardEvent<HTMLDivElement>) => {
+    const list = menuItems();
+    const at = list.indexOf(document.activeElement as HTMLElement);
+    const go = (i: number) => {
+      e.preventDefault();
+      list[(i + list.length) % list.length]?.focus();
+    };
+    if (e.key === 'ArrowDown') go(at + 1);
+    else if (e.key === 'ArrowUp') go(at < 0 ? list.length - 1 : at - 1);
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(list.length - 1);
+    else if (e.key === 'Tab') setOpen(false);
+  };
 
   // position the panel while open, and keep it pinned on scroll/resize
   useIsoLayoutEffect(() => {
@@ -134,8 +169,11 @@ export function Menu({
       if (rootRef.current?.contains(target) || panelRef.current?.contains(target)) return;
       setOpen(false);
     };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      // focus back on the trigger when it was inside the menu
+      if (panelRef.current?.contains(document.activeElement)) triggerRef.current?.focus();
+      setOpen(false);
     };
     document.addEventListener('mousedown', onPointer);
     document.addEventListener('keydown', onKey);
@@ -152,7 +190,9 @@ export function Menu({
   return (
     <div ref={rootRef} className={cn('lk-menu', bare && 'lk-menu--bare', className)} {...rest}>
       <button
+        ref={triggerRef}
         type="button"
+        onKeyDown={onTriggerKey}
         className={
           iconTrigger
             ? cn('lk-icon-btn', iconSize === 'sm' && 'lk-icon-btn-sm')
@@ -174,6 +214,7 @@ export function Menu({
               className={cn('lk-menu-panel', pos && `lk-menu-${pos.side}`, pos && 'is-open')}
               role="menu"
               style={panelStyle}
+              onKeyDown={onPanelKey}
             >
               {items.map((item, i) =>
                 item.divider ? (
@@ -189,8 +230,10 @@ export function Menu({
                     aria-disabled={item.disabled || undefined}
                     onClick={() => {
                       if (item.disabled) return;
+                      const fromMenu = panelRef.current?.contains(document.activeElement);
                       item.onClick?.();
                       setOpen(false);
+                      if (fromMenu) triggerRef.current?.focus();
                     }}
                   >
                     {item.icon != null && <span className="lk-menu-icon">{item.icon}</span>}

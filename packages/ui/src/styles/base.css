@@ -67,8 +67,9 @@
 
 /* labeled divider — hairline · centered label · hairline (the "or continue with" pattern) */
 .lk-hr-labeled { display: flex; align-items: center; gap: 12px; width: 100%; }
-.lk-hr-labeled .lk-hr-line { flex: 1; height: 1px; background: var(--border); }
-.lk-hr-label { flex: none; font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
+/* the label wraps (centred) when it is wider than the row, keeping a 16px line each side; never overflows */
+.lk-hr-labeled .lk-hr-line { flex: 1 0 16px; height: 1px; background: var(--border); }
+.lk-hr-label { flex: 0 1 auto; min-width: 0; text-align: center; overflow-wrap: anywhere; font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
 
 /* ---- layout helpers ---- */
 .lk-wrap { width: min(1240px, 92vw); margin-inline: auto; }

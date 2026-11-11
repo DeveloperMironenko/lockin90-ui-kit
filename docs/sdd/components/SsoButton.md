@@ -122,3 +122,7 @@ No capability gap.
 ## Update — 2026-11-10 (accessibility, 1.35)
 
 - **Focus ring (web):** the kit's shared `2px solid --accent-2` ring (it had `outline: none`).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **44 tall** at phone width (web) and on native (`minHeight`).

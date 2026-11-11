@@ -24,6 +24,11 @@ export interface AlertProps extends Omit<ViewProps, 'children'> {
   /** the title's level, as web: a heading level (`h2`…`h6`) makes the title a header; `p` (the default)
    *  keeps it plain text (an alert's title is not the screen's header). */
   titleAs?: AlertTitleLevel;
+  /** `false`: no live region at all (the app announces it itself). @default true */
+  live?: boolean;
+  /** content under the text that is NOT announced when it changes — a ticking countdown ("Try again in
+   *  0:42"): the live region is then the title and text only. */
+  footer?: ReactNode;
 }
 
 export type AlertTitleLevel = 'p' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
@@ -120,9 +125,18 @@ export function Alert({
   onDismiss,
   dismissLabel = 'Dismiss',
   titleAs = 'p',
+  live = true,
+  footer,
   style,
   ...rest
 }: AlertProps) {
+  // the live region: the whole alert, or (with a footer) the title + text only, as web
+  const liveProps = live
+    ? {
+        accessibilityRole: tone === 'danger' ? ('alert' as const) : undefined,
+        accessibilityLiveRegion: tone === 'danger' ? ('assertive' as const) : ('polite' as const),
+      }
+    : {};
   const t = TONE[tone];
   const note = NOTE[tone];
   // a text-only neutral note centres its icon; with a title or a dismiss it top-aligns like every tone
@@ -130,22 +144,24 @@ export function Alert({
   return (
     <View
       // an error is an alert and read as soon as it shows; every tone is a live region (web: alert / status)
-      accessibilityRole={tone === 'danger' ? 'alert' : undefined}
-      accessibilityLiveRegion={tone === 'danger' ? 'assertive' : 'polite'}
+      {...(footer == null ? liveProps : {})}
       style={[styles.alert, { backgroundColor: t.bg, borderColor: t.border }, note?.box, centred && styles.centred, style]}
       {...rest}
     >
       {!note && <View style={[styles.bar, { backgroundColor: t.c }]} pointerEvents="none" />}
       <View style={[styles.icon, centred && styles.iconCentered]}>{icon ?? defaultIcon(tone, t.c)}</View>
       <View style={styles.body}>
-        {title != null && (
-          <Text style={styles.title} accessibilityRole={titleAs === 'p' ? undefined : 'header'}>
-            {title}
-          </Text>
-        )}
-        {children != null && (isText(children)
-          ? <Text style={[styles.text, note?.text, note && title == null && styles.textAlone]}>{children}</Text>
-          : children)}
+        <View {...(footer == null ? {} : liveProps)}>
+          {title != null && (
+            <Text style={styles.title} accessibilityRole={titleAs === 'p' ? undefined : 'header'}>
+              {title}
+            </Text>
+          )}
+          {children != null && (isText(children)
+            ? <Text style={[styles.text, note?.text, note && title == null && styles.textAlone]}>{children}</Text>
+            : children)}
+        </View>
+        {footer != null ? <View style={styles.footer}>{typeof footer === 'string' ? <Text style={styles.text}>{footer}</Text> : footer}</View> : null}
       </View>
       {onDismiss && (
         <Pressable
@@ -214,6 +230,7 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: colors.textDim,
   },
+  footer: { marginTop: 8 },
   // a note's body alone sits flush with its icon (no gap under a missing title)
   textAlone: { marginTop: 0 },
   close: {

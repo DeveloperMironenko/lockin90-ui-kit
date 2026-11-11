@@ -189,3 +189,7 @@ The overlay differences are expected substrate, not capability gaps that block u
 - **Native targets:** `sm` (27 tall) `hitSlop` 9 above / below and 4 at the sides, `md` (39.6) 3 above / below:
   44pt, same look.
 - **Native `accessibilityHint`** prop: read after the name (a `FormField` passes its error or help).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Fill** `--field`; **focus ring** (web) 2px `--accent-2`; **44 tall** at phone width (web, both sizes) and on native (the sm hitSlop is gone, the box is 44). **`aria-required`** from a `FormField` now lands on the `combobox` button, not the wrapper (axe aria-allowed-attr). Label 11px.

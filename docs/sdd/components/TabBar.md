@@ -152,3 +152,7 @@ No capability gap blocks use — both render an equivalent bottom nav + FAB.
 ## Update — 2026-07-10
 - **Floating bar = frosted CAPSULE** (owner pick B): `floating` renders a full-radius (`--r-pill`) capsule at height 62 with an INNER absolutely-filled blur/translucent layer clipped to the capsule — so the center FAB tile still overhangs the top edge (an `overflow:hidden` on the container clips it flat). Real backdrop blur via `OptionalBlurView` (expo-blur optional peer); translucent fill fallback. The FAB tile is fully round. Hosts place it with EQUAL 12px side + bottom insets (do NOT inflate the bottom by the safe-area inset).
 - **Haptics:** every tab/FAB press fires `hapticSelection()` (see `optionalHaptics` — no-op without expo-haptics).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Label 11px** (was 10).

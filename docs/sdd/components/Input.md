@@ -139,3 +139,7 @@ No capability gap blocks use — the field is fully usable and visually equivale
   the `TextInput`.
 - **`ref`** (web + native): forwarded to the field itself — web the `<input>` (`forwardRef<HTMLInputElement>`), native the `TextInput` — so an app moves focus to the next field on Return (`returnKeyType="next"` + `onSubmitEditing={() => next.current?.focus()}`). Works on React 18 and 19.
 - **Native ref type:** `TextInputRef` = `ComponentRef<typeof TextInput>` (exported), and the component is annotated `ForwardRefExoticComponent<InputProps & RefAttributes<TextInputRef>>`, so the emitted `.d.ts` keeps that form. On RN 0.88 the type `TextInput` is the component (no `focus()`), so the old emitted `RefAttributes<TextInput>` broke apps there; the `ComponentRef` form has `focus()` on 0.81 and 0.88 (checked against the mobile app's RN 0.88.1 types).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Fill:** the opaque `--field` / `colors.field` (`#25272E`), so the placeholder keeps 4.6:1 over the aurora. **Focus (web):** the kit's 2px `--accent-2` ring (offset 2) on the field box. **Height:** at least 44 at phone width (web) and on native (all sizes), CONVENTIONS. Label 11px.

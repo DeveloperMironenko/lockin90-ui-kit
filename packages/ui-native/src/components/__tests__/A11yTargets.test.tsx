@@ -15,16 +15,20 @@ import { SegmentedTabs } from '../SegmentedTabs';
 import { Select } from '../Select';
 import { Toast } from '../Toast';
 import { click, mount, propOf, target } from './dom';
+import { classesFor, findAll, hasDeclaration, parse, render } from './markup';
+import { Input } from '../Input';
+import { SsoButton } from '../SsoButton';
+
+/** Some element of the markup is drawn at least 44 tall. */
+const minHeight44 = (html: string) => findAll(parse(html), (el) => hasDeclaration(el, 'min-height:44px')).length > 0;
 
 afterEach(() => vi.restoreAllMocks());
 
 const byLabel = (host: Element, label: string) => host.querySelector(`[aria-label="${label}"]`)!;
 
 describe('44pt touch targets, same look', () => {
-  test('Button sm (36.2 tall) and the text variant (17)', () => {
-    const sm = mount(<Button size="sm" title="Edit" />);
-    expect(target(sm.host.querySelector('[role="button"]')!, 60, 36.2).height).toBeGreaterThanOrEqual(44);
-    sm.unmount();
+  test('Button sm is 44 tall (as web at phone width); the text variant (17) has a slop', () => {
+    expect(minHeight44(render(Button, { size: 'sm', title: 'Edit' }))).toBe(true);
     const text = mount(<Button variant="text" title="Resend" />);
     expect(target(text.host.querySelector('[role="button"]')!, 60, 17).height).toBeGreaterThanOrEqual(44);
     text.unmount();
@@ -39,13 +43,14 @@ describe('44pt touch targets, same look', () => {
     p.unmount();
   });
 
-  test('Select sm (27 tall) and md (39.6)', () => {
-    const sm = mount(<Select size="sm" accessibilityLabel="Language" />);
-    expect(target(byLabel(sm.host, 'Language'), 80, 27).height).toBeGreaterThanOrEqual(44);
-    sm.unmount();
-    const md = mount(<Select accessibilityLabel="Country" />);
-    expect(target(byLabel(md.host, 'Country'), 200, 39.6).height).toBeGreaterThanOrEqual(44);
-    md.unmount();
+  test('Select sm and md are 44 tall', () => {
+    // mounted (its option sheet is a portal, which the static renderer can't draw)
+    for (const props of [{ size: 'sm' as const, accessibilityLabel: 'Language' }, { accessibilityLabel: 'Country' }]) {
+      const { host, unmount } = mount(<Select {...props} />);
+      const tall = new Set(classesFor('min-height:44px'));
+      expect(Array.from(byLabel(host, props.accessibilityLabel).classList as unknown as ArrayLike<string>).some((c) => tall.has(c))).toBe(true);
+      unmount();
+    }
   });
 
   test('ChoiceChip md (32) and sm (28)', () => {
@@ -73,13 +78,11 @@ describe('44pt touch targets, same look', () => {
     t.unmount();
   });
 
-  test('SegmentedTabs segments, md (30) and sm (23)', () => {
-    const md = mount(<SegmentedTabs tabs={['A', 'B']} />);
-    expect(target(md.host.querySelector('[role="tab"]')!, 80, 30).height).toBeGreaterThanOrEqual(44);
-    md.unmount();
-    const sm = mount(<SegmentedTabs size="sm" tabs={['A', 'B']} />);
-    expect(target(sm.host.querySelector('[role="tab"]')!, 40, 23).height).toBeGreaterThanOrEqual(44);
-    sm.unmount();
+  test('SegmentedTabs segments (md and sm), Input and SsoButton are 44 tall', () => {
+    expect(minHeight44(render(SegmentedTabs, { tabs: ['A', 'B'] }))).toBe(true);
+    expect(minHeight44(render(SegmentedTabs, { size: 'sm', tabs: ['A', 'B'] }))).toBe(true);
+    expect(minHeight44(render(Input, {}))).toBe(true);
+    expect(minHeight44(render(SsoButton, { provider: 'google' }))).toBe(true);
   });
 });
 

@@ -18,8 +18,6 @@ const DANGER_TINT = 'rgba(255,77,109,0.10)';
 const DANGER_BORDER = 'rgba(255,77,109,0.42)';
 // (44 − 17) / 2 above and below the text variant's line
 const TEXT_SLOP = { top: 14, bottom: 14, left: 8, right: 8 };
-// sm is 8 + 13 × 1.55 + 8 = 36.2 tall: 4 above and below make the 44pt touch target, same look
-const SM_SLOP = { top: 4, bottom: 4 };
 const SPIN_SIZE = { sm: 14, md: 16, lg: 18 } as const;
 // the dark label on a bright surface (primary's gradient, solid danger), as web: label and spinner
 const INK_ON_BRIGHT = '#0A0A12';
@@ -63,6 +61,7 @@ export function Button({
   style,
   onPress,
   accessibilityState,
+  accessibilityLabel,
   ...rest
 }: ButtonProps) {
   const pad = size === 'sm' ? styles.padSm : size === 'lg' ? styles.padLg : styles.padMd;
@@ -100,7 +99,7 @@ export function Button({
         onPress={press}
         hitSlop={TEXT_SLOP}
         accessibilityState={a11yState}
-        accessibilityLabel={title}
+        accessibilityLabel={accessibilityLabel ?? title}
         {...rest}
       >
         {({ pressed }) => (
@@ -124,9 +123,8 @@ export function Button({
       <Pressable
         accessibilityRole="button"
         onPress={press}
-        hitSlop={size === 'sm' ? SM_SLOP : undefined}
         accessibilityState={a11yState}
-        accessibilityLabel={title}
+        accessibilityLabel={accessibilityLabel ?? title}
         {...rest}
       >
         {({ pressed }) => (
@@ -179,9 +177,8 @@ export function Button({
     <Pressable
       accessibilityRole="button"
       onPress={press}
-      hitSlop={size === 'sm' ? SM_SLOP : undefined}
       accessibilityState={a11yState}
-      accessibilityLabel={title}
+      accessibilityLabel={accessibilityLabel ?? title}
       {...rest}
     >
       {({ pressed }) => (
@@ -213,7 +210,8 @@ const styles = StyleSheet.create({
   padMd: { paddingVertical: 12, paddingHorizontal: 20 },
   // web `.lk-btn-lg`: 16 / 28
   padLg: { paddingVertical: 16, paddingHorizontal: 28 },
-  padSm: { paddingVertical: 8, paddingHorizontal: 14 },
+  // sm: 44 tall at least, as the web at phone width (CONVENTIONS "Accessibility")
+  padSm: { minHeight: 44, paddingVertical: 8, paddingHorizontal: 14 },
   primary: { ...nativeShadows.glowAccent },
   dangerGlow: { shadowColor: colors.bad, shadowOpacity: 0.4, shadowRadius: 24, shadowOffset: { width: 0, height: 0 }, elevation: 8 },
   pressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },

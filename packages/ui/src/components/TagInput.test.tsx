@@ -64,7 +64,13 @@ describe('spreadDigits (paste, autofill)', () => {
   });
 
   it('drops digits past the last box', () => {
-    expect(spreadDigits(['', '', ''], 1, '789')).toEqual({ boxes: ['', '7', '8'], focusIndex: 2 });
+    expect(spreadDigits(['', '', '', ''], 2, '78')).toEqual({ boxes: ['', '', '7', '8'], focusIndex: 3 });
+    expect(spreadDigits(['', '', '', ''], 3, '78')).toEqual({ boxes: ['', '', '', '7'], focusIndex: 3 });
+  });
+
+  it('fills a whole code from the first box, wherever it was pasted', () => {
+    expect(spreadDigits(['', '', ''], 1, '789')).toEqual({ boxes: ['7', '8', '9'], focusIndex: 2 });
+    expect(spreadDigits(Array(6).fill(''), 3, '123456').boxes).toEqual(['1', '2', '3', '4', '5', '6']);
   });
 });
 

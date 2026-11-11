@@ -139,8 +139,6 @@ export interface SegmentedTabsProps {
   accessibilityHint?: string;
 }
 
-// a segment's touch target reaches 44pt above and below, same look: md is 8 + 14 + 8 = 30 tall, sm 5 + 13 + 5
-const SLOP = { md: { top: 7, bottom: 7 }, sm: { top: 11, bottom: 11 } } as const;
 
 /**
  * iOS-style segmented control — a glass pill track of equal-width segments; the
@@ -210,7 +208,6 @@ export function SegmentedTabs({
             key={i}
             accessibilityRole={choice ? 'radio' : 'tab'}
             accessibilityState={choice ? { checked: isActive, disabled: isLocked } : { selected: isActive, disabled: isLocked }}
-            hitSlop={SLOP[size]}
             disabled={isLocked}
             onPress={isLocked ? undefined : () => { hapticSelection(); onChange?.(i); }}
             style={({ pressed }) => [
@@ -250,9 +247,9 @@ export function SegmentedTabs({
               <View style={[styles.dot, { backgroundColor: toneColor }]} />
             )}
             {icon != null && <Icon name={icon} size={13} color={labelColor} />}
-            {/* fill: one line that shrinks to fit (web `fill` keeps labels on one line); else up to two */}
+            {/* shrinks to fit (down to 80%), then wraps to a second line, as web: the label never leaves its segment */}
             <Text
-              numberOfLines={fill ? 1 : 2}
+              numberOfLines={2}
               adjustsFontSizeToFit
               minimumFontScale={0.8}
               style={[styles.label, isSm && styles.labelSm, fill && styles.labelFill, { color: labelColor }]}
@@ -316,6 +313,8 @@ const styles = StyleSheet.create({
   tab: {
     flex: 1,
     minWidth: 0,
+    // a 44pt target, as the web segment at phone width (CONVENTIONS "Accessibility")
+    minHeight: 44,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -368,7 +367,7 @@ const styles = StyleSheet.create({
   countTintActive: {
     borderColor: TINT_COUNT_ACTIVE.border,
   },
-  countTextTint: { fontSize: 8.5, lineHeight: 11 },
+  countTextTint: { fontSize: 11, lineHeight: 13 },
   tabLocked: { opacity: 0.5 },
   tabActive: {
     backgroundColor: colors.glass2,
@@ -402,7 +401,7 @@ const styles = StyleSheet.create({
   // sm — design `.seg button`: mono 10.5/500
   labelSm: {
     fontFamily: fonts.mono,
-    fontSize: 10.5,
+    fontSize: 11,
     fontWeight: '500',
     letterSpacing: 0,
   },
@@ -421,7 +420,7 @@ const styles = StyleSheet.create({
   },
   countText: {
     fontFamily: fonts.mono,
-    fontSize: 10,
+    fontSize: 11,
     lineHeight: 12, // web is line-height 1; 12 keeps mono glyphs unclipped on device
     fontVariant: ['tabular-nums'],
   },

@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   labelCentred: { textAlign: 'center' },
   label: { fontFamily: fonts.mono, textTransform: 'uppercase', color: colors.textFaint },
   delta: { fontFamily: fonts.mono, fontSize: 12 },
-  sub: { fontFamily: fonts.mono, fontSize: 10.5, color: colors.textFaint },
+  sub: { fontFamily: fonts.mono, fontSize: 11, color: colors.textFaint },
   // helper line under the em-dash in empty mode (web `.lk-stat-hint`: mono 11px, 0.02em)
   hint: { fontFamily: fonts.mono, fontSize: 11, letterSpacing: 0.22, color: colors.textFaint },
 });

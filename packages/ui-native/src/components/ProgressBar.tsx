@@ -157,7 +157,14 @@ function VariantBar({
   );
 
   return (
-    <View style={[styles.root, style]} {...rest}>
+    <View
+      // a progressbar named by its label; an app passes accessibilityLabel when there is none (web aria-label)
+      accessibilityRole="progressbar"
+      accessibilityLabel={label}
+      accessibilityValue={{ min: 0, max: 100, now: Math.round(Math.min(1, raw) * 100) }}
+      style={[styles.root, style]}
+      {...rest}
+    >
       {(label || showPct) && (
         <View style={styles.vhead}>
           {label ? <Text style={styles.vtitle}>{label}</Text> : <View />}
@@ -344,7 +351,15 @@ export function ProgressBar(props: ProgressBarProps) {
   });
 
   return (
-    <View style={[styles.root, style]} {...rest}>
+    <View
+      // a progressbar named by its label; an app passes accessibilityLabel when there is none (web aria-label)
+      accessibilityRole="progressbar"
+      accessibilityLabel={label}
+      accessibilityValue={indeterminate ? undefined : { min: 0, max: 100, now: pct }}
+      accessibilityState={indeterminate ? { busy: true } : undefined}
+      style={[styles.root, style]}
+      {...rest}
+    >
       {(label || (showValue && !indeterminate)) && (
         <View style={styles.meta}>
           {label ? <Text style={styles.label}>{label}</Text> : <View />}

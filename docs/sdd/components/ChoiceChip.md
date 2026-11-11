@@ -135,3 +135,7 @@ Both render the same pill with the same selected look — no capability gap.
 
 - **Native targets, same look:** `hitSlop` 6 (`md`, 32 tall) / 8 (`sm`, 28): 44pt. `stacked` cells are tall
   already.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Stacked label 11px** (was 10).

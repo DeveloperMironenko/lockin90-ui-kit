@@ -136,8 +136,8 @@ export function codeToBoxes(value: string, length: number): string[] {
   return resizeBoxes(value.replace(/\D/g, '').split(''), length);
 }
 
-/** Spread typed / pasted / autofilled text across the boxes from `index` on: digits only, the ones past
- *  the last box dropped, earlier boxes kept. Focus goes after the last digit written (clamped). */
+/** Spread typed / pasted / autofilled text across the boxes from `index` on (a whole code from the first
+ *  box): digits only, the ones past the last box dropped, earlier boxes kept. Focus goes after the last digit written (clamped). */
 export function spreadDigits(
   boxes: readonly string[],
   index: number,
@@ -145,6 +145,8 @@ export function spreadDigits(
 ): { boxes: string[]; focusIndex: number } {
   const digits = text.replace(/\D/g, '');
   const next = boxes.slice();
+  // a whole code (as many digits as boxes) fills from the first box, wherever it was pasted
+  if (digits.length >= next.length) index = 0;
   for (let i = 0; i < digits.length && index + i < next.length; i++) next[index + i] = digits[i];
   return { boxes: next, focusIndex: Math.min(index + digits.length, next.length - 1) };
 }
@@ -174,6 +176,8 @@ export const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(function Co
     invalid = false,
     digitLabel = defaultDigitLabel,
     className,
+    // not allowed on a group (axe aria-allowed-attr): it goes on every box instead
+    'aria-required': ariaRequired,
     ...rest
   },
   ref,
@@ -286,6 +290,7 @@ export const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(function Co
           aria-label={digitLabel(i + 1, length)}
           // On every box: a role-less wrapper's aria-invalid isn't announced.
           aria-invalid={invalid || undefined}
+          aria-required={ariaRequired || undefined}
           onChange={(e) => onBoxChange(i, e.target.value)}
           onKeyDown={(e) => onKeyDown(i, e)}
           onPaste={(e) => onPaste(i, e)}

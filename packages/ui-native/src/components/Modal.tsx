@@ -52,8 +52,6 @@ export function Modal({ open = true, onClose, title, children, footer, size = 'm
                   onPress={onClose}
                   accessibilityRole="button"
                   accessibilityLabel={closeLabel}
-                  // the 30pt box reaches the 44pt touch target
-                  hitSlop={7}
                   style={styles.close}
                 >
                   <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={colors.textFaint} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -114,9 +112,11 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   close: {
-    width: 30,
-    height: 30,
-    marginRight: -4,
+    // a 44pt target, as the web at phone width (the glyph and the header line unchanged)
+    width: 44,
+    height: 44,
+    marginVertical: -7,
+    marginRight: -11,
     borderRadius: radii.sm,
     alignItems: 'center',
     justifyContent: 'center',

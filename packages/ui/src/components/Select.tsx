@@ -93,6 +93,8 @@ export function Select({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   'aria-describedby': ariaDescribedBy,
+  // on the combobox, never the wrapper div (axe aria-allowed-attr): a FormField passes it
+  'aria-required': ariaRequired,
   ...rest
 }: SelectProps) {
   const [open, setOpen] = useState(false);
@@ -116,7 +118,7 @@ export function Select({
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy ?? (label && !ariaLabel ? labelId : undefined),
   };
-  const comboProps = { ...comboName, 'aria-describedby': ariaDescribedBy, 'aria-required': required || undefined };
+  const comboProps = { ...comboName, 'aria-describedby': ariaDescribedBy, 'aria-required': required || ariaRequired || undefined };
   const listboxId = `lksel-${base}-list`;
   const optionId = (i: number) => `lksel-${base}-opt-${i}`;
 

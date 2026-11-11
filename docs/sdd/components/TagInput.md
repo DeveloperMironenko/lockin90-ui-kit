@@ -193,3 +193,7 @@ limitation.
   the card); filled, focus and invalid still recolour them. The TagInput's 12px text input is unchanged (an
   admin CMS field; not yet 16px).
 - **CodeInput `ref`** (web + native, type `CodeInputHandle`): `focus()` puts the caret in the first empty box, or the last box when the code is complete, so Return in the field before can move into the code. Web keeps the digit selected, as on any box focus.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **CodeInput:** boxes on `--field`, the focus ring (web), at least 44 tall and 8 apart at phone width and on native (min width 24 so 8 boxes fit 320). A whole code (as many digits as boxes) pasted or autofilled into any box fills from the first. Web: `aria-required` goes on every box (not allowed on the group); the group takes `aria-labelledby` / `aria-describedby` from a `FormField`. Native: each box reads `accessibilityLabel, digitLabel` and the `accessibilityHint` (a `FormField` passes both). TagInput box: `--field`, focus ring.

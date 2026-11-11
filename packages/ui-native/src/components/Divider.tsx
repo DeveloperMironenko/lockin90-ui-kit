@@ -47,14 +47,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
+  // a line keeps 16 each side; the label wraps (centred) when it is wider than the row
   labelLine: {
     flex: 1,
+    minWidth: 16,
     height: 1,
     backgroundColor: colors.border,
   },
   // the web `.lk-hr-label`: mono 11px / 500, uppercase, 0.14em, line height 1.55
   label: {
-    flexShrink: 0,
+    flexShrink: 1,
+    textAlign: 'center',
     fontFamily: fonts.mono,
     fontSize: 11,
     fontWeight: '500',

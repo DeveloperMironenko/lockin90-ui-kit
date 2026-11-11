@@ -127,6 +127,6 @@ const styles = StyleSheet.create({
   },
   smDotNoGlow: { shadowOpacity: 0 },
   label: { fontFamily: fonts.mono, fontSize: 11, fontWeight: '500', letterSpacing: 0.4 },
-  labelSm: { fontSize: 10, fontWeight: '600', letterSpacing: 0, lineHeight: 10, fontVariant: ['tabular-nums'] },
+  labelSm: { fontSize: 11, fontWeight: '600', letterSpacing: 0, lineHeight: 11, fontVariant: ['tabular-nums'] },
   labelSmAccent: { color: '#0A0A12' },
 });

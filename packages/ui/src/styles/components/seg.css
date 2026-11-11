@@ -74,7 +74,7 @@
 /* Trailing count badge — a small mono pill after the label. */
 .lk-seg-count {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
   padding: 2px 6px;
@@ -183,7 +183,7 @@
   box-shadow: none;
 }
 .lk-seg[data-appearance='tint'] .lk-seg-count {
-  font-size: 8.5px;
+  font-size: 11px;
   padding: 1px 5px;
   background: var(--glass-2);
   border: 1px solid var(--border);
@@ -221,6 +221,12 @@
 .lk-seg.lk-seg--fill .lk-seg-tab {
   flex: 1 1 0;
   min-width: 0;
+}
+/* set by the fit when even 80% doesn't fit: the label wraps inside its segment (never leaves it) */
+.lk-seg.lk-seg--fill .lk-seg-tab.lk-seg-wrap {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.2;
 }
 @media (max-width: 540px) {
   .lk-seg.lk-seg--fill .lk-seg-tab {

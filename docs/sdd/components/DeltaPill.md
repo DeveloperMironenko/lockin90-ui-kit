@@ -115,3 +115,7 @@ No capability gap; the two pills render identically.
 - **New need → both platforms.** A new tone, size, or glyph ships to web **and** native with the same prop name + tokens (keep the rgba tints matched).
 - **Tokens only.** Text/border colors come from `--zone-*` / `--text-dim` / `--border`; the rgba background tints are the canonical matched values — don't invent new ones per call site.
 - **Parity gate.** Before shipping, confirm the web phone-width pill ≡ native pill (same value, direction, tone, size) — the visuals are identical, so any mismatch is a real bug.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **sm 11px** (was 10).

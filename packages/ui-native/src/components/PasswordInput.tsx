@@ -120,15 +120,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     minWidth: 0,
-    minHeight: 39.6,
+    minHeight: 44, // a 44pt target, as the web field at phone width (CONVENTIONS "Accessibility")
     paddingVertical: 9,
     paddingHorizontal: 12,
     borderRadius: radii.sm,
     borderWidth: 1,
-    backgroundColor: colors.glass2,
+    backgroundColor: colors.field,
   },
   // the web box: 9 + 14 × 1.4 + 9 + 2 borders = 39.6 (sm: 6 + 12.5 × 1.4 + 6 + 2 = 31.5)
-  fieldSm: { minHeight: 31.5, paddingVertical: 5, paddingHorizontal: 10 },
+  fieldSm: { minHeight: 44, paddingVertical: 5, paddingHorizontal: 10 },
   lead: { flexShrink: 0 },
   input: {
     flex: 1,

@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, type StyleProp, type ViewStyle } fro
 import Svg, { Path } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { Modal } from './Modal';
+import { FormField } from './FormField';
 import { Input } from './Input';
 import { Button } from './Button';
 import { Alert } from './Alert';
@@ -41,6 +42,11 @@ export interface ReauthDialogProps {
   googleLabel?: string;
   appleLabel?: string;
   orLabel?: string;
+  /** the close button's spoken name (pass a localized string). @default 'Close' */
+  closeLabel?: string;
+  /** the field's error when Confirm is pressed with no password (Confirm stays enabled and says what's
+   *  missing, CONVENTIONS "Accessibility"). Mirrors web. @default 'Enter your password' */
+  passwordRequiredLabel?: string;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -106,27 +112,39 @@ export function ReauthDialog({
   googleLabel = 'Continue with Google',
   appleLabel = 'Continue with Apple',
   orLabel = 'or',
+  closeLabel = 'Close',
+  passwordRequiredLabel = 'Enter your password',
   style,
 }: ReauthDialogProps) {
   const [password, setPassword] = useState('');
+  // Confirm pressed with no password: the field says so (Confirm is never disabled for it)
+  const [missing, setMissing] = useState(false);
 
   // Drop the field whenever the dialog closes so it never leaks across opens.
   useEffect(() => {
-    if (!open) setPassword('');
+    if (!open) {
+      setPassword('');
+      setMissing(false);
+    }
   }, [open]);
 
   const close = () => {
     setPassword('');
+    setMissing(false);
     onClose();
   };
 
   const submit = () => {
-    if (loading || !password) return;
+    if (loading) return;
+    if (!password) {
+      setMissing(true);
+      return;
+    }
     onSubmitPassword?.(password);
   };
 
   return (
-    <Modal open={open} onClose={close} title={title} size="sm">
+    <Modal open={open} onClose={close} title={title} size="sm" closeLabel={closeLabel}>
       <View style={[styles.body, style]}>
         {description ? <Text style={styles.desc}>{description}</Text> : null}
 
@@ -138,23 +156,27 @@ export function ReauthDialog({
 
         {hasPassword ? (
           <View style={styles.pw}>
-            <Input
-              label={passwordLabel}
-              secureTextEntry
-              autoComplete="current-password"
-              textContentType="password"
-              placeholder={passwordPlaceholder}
-              value={password}
-              editable={!loading}
-              invalid={Boolean(error)}
-              onChangeText={setPassword}
-              onSubmitEditing={submit}
-            />
+            {/* the dialog opens on the field, as web */}
+            <FormField label={passwordLabel} error={missing && !password ? passwordRequiredLabel : undefined}>
+              <Input
+                secureTextEntry
+                autoComplete="current-password"
+                textContentType="password"
+                autoFocus
+                placeholder={passwordPlaceholder}
+                value={password}
+                editable={!loading}
+                invalid={Boolean(error) || (missing && !password)}
+                onChangeText={setPassword}
+                onSubmitEditing={submit}
+              />
+            </FormField>
             <Button
               variant="primary"
-              title={loading ? confirmingLabel : confirmLabel}
+              title={confirmLabel}
+              accessibilityLabel={loading ? confirmingLabel : undefined}
               style={styles.submit}
-              disabled={loading || !password}
+              loading={loading}
               onPress={submit}
             />
           </View>
@@ -171,7 +193,7 @@ export function ReauthDialog({
         {hasGoogle ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Continue with Google"
+            accessibilityLabel={googleLabel}
             disabled={loading}
             onPress={() => onGoogle?.()}
           >
@@ -187,7 +209,7 @@ export function ReauthDialog({
         {hasApple ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Continue with Apple"
+            accessibilityLabel={appleLabel}
             disabled={loading}
             onPress={() => onApple?.()}
           >

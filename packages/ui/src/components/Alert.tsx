@@ -24,6 +24,11 @@ export interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
    *  `p` (the default: an alert's title is not a page heading). Native: a heading level makes the title
    *  a header. */
   titleAs?: AlertTitleLevel;
+  /** `false`: no live region at all (the app announces it itself). @default true */
+  live?: boolean;
+  /** content under the text that is NOT announced when it changes — a ticking countdown ("Try again in
+   *  0:42"): the live region is then the title and text only. */
+  footer?: ReactNode;
 }
 
 export type AlertTitleLevel = 'p' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
@@ -85,22 +90,38 @@ export function Alert({
   onDismiss,
   dismissLabel = 'Dismiss',
   titleAs: Title = 'p',
+  live = true,
+  footer,
   className,
   ...rest
 }: AlertProps) {
+  // an error interrupts (alert); every other tone is a polite status; with a footer the role sits on the
+  // title + text only, so a ticking footer is never re-announced
+  const role = !live ? undefined : tone === 'danger' ? 'alert' : 'status';
+  const text = (
+    <>
+      {title && <Title className="lk-alert-title">{title}</Title>}
+      {children && <p className="lk-alert-text">{children}</p>}
+    </>
+  );
   return (
     <div
-      className={cn('lk-alert', TONE[tone], !title && !onDismiss && 'lk-alert--text-only', className)}
-      // an error interrupts (alert); every other tone is a polite status
-      role={tone === 'danger' ? 'alert' : 'status'}
+      className={cn('lk-alert', TONE[tone], !title && !onDismiss && !footer && 'lk-alert--text-only', className)}
+      role={footer == null ? role : undefined}
       {...rest}
     >
       <span className="lk-alert-icon" aria-hidden="true">
         {icon ?? DEFAULT_ICON[tone]}
       </span>
       <div className="lk-alert-body">
-        {title && <Title className="lk-alert-title">{title}</Title>}
-        {children && <p className="lk-alert-text">{children}</p>}
+        {footer == null ? (
+          text
+        ) : (
+          <>
+            <div role={role}>{text}</div>
+            <div className="lk-alert-footer">{footer}</div>
+          </>
+        )}
       </div>
       {onDismiss && (
         <button

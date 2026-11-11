@@ -187,3 +187,7 @@ No genuine (inherent) capability gap — `size="sm"` is buildable and now built 
 ## Update — 2026-11-02 (one shape, one line)
 - Radius 10 (`--r-sm` / `radii.sm`) and the shared `1px --border-2` line, per CONVENTIONS "One shape, one
   line", on web and native.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **sm 11px** (was 10), native `Badge` too: no meaningful text under 11px.

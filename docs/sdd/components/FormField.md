@@ -167,3 +167,7 @@ None block use; app code reads 1:1 (same `label`/`help`/`error`/`required`, same
   edge is `--border-control` / `colors.borderControl`; the field text is 16px (no iOS zoom), line 19.6 so the box
   keeps its height. The × reaches 24px web (44 at phone width, `::before`) and 44pt native (`hitSlop` 12).
 - **Review fixes:** web — the label has an id and the control gets `aria-labelledby` to it (unless it has its own `aria-label` / `aria-labelledby`), so a control a label's `for` can't name (CodeInput's group, a `kind="choice"` SegmentedTabs) is named. Both platforms map the children instead of swapping one cloned element for the list, so going between one and several children never remounts the control. Native — a new error is announced once: iOS by `announceForAccessibility`, Android by the error's live region; an error already shown when the field mounts is not announced.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- SearchInput: `--field` fill, focus ring, 44 at phone width. Label 11px on web (as native).

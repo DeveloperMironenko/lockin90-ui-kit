@@ -208,3 +208,7 @@ There is **no capability gap** that blocks use — the button is fully usable an
 - **Focus ring (web):** `:focus-visible` is the kit's shared ring, `2px solid --accent-2`, offset 2 (10:1 on the
   card); it had none of its own.
 - **Review fixes:** web — the spinner draws in `--lk-btn-ink`, each variant's label colour set in `primitives.css` (no colour list in the component). Native — the spinner is hidden from screen readers and the button is named by its `title` (`accessibilityLabel`), so it reads "Save, busy" once, not "Save, Save"; the dark-on-bright ink is one constant for label and spinner.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **44 at phone width / native:** at ≤ 540px every surface variant (sm included) is at least 44px tall; native `sm` is 44 (`minHeight`) instead of the 36 box + slop. `text` keeps its slop / `::before`.

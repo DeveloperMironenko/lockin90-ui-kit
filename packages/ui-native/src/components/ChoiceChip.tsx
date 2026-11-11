@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   dotOn: { backgroundColor: colors.accent, shadowColor: colors.accent },
   label: { fontFamily: fonts.ui, fontSize: 13, lineHeight: 16 },
   labelSm: { fontSize: 12 },
-  labelStacked: { fontFamily: fonts.mono, fontSize: 10, lineHeight: 13, letterSpacing: 0.3, textAlign: 'center' },
+  labelStacked: { fontFamily: fonts.mono, fontSize: 11, lineHeight: 13, letterSpacing: 0.3, textAlign: 'center' },
   labelOff: { color: colors.textDim },
   labelOn: { color: colors.text },
 });

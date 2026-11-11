@@ -19,6 +19,7 @@ Inter (UI), JetBrains Mono (data).
 | --- | --- | --- | --- |
 | Surfaces | `--void` `--bg-0/1/2` | `colors.void` `colors.bg0/1/2` | `#05060B` `#080A12` `#0C0F1A` `#11151F` |
 | Glass | `--glass` `--glass-2` | `colors.glass` `colors.glass2` | `rgba(255,255,255,.045)` / `.075` |
+| Card / field fill | `--card` `--field` | `colors.card` `colors.field` | `rgba(22,24,32,.79)` (= `#13151D` on `--bg-0`) / `#25272E` (opaque) |
 | Borders | `--border` `--border-2` `--border-control` | `colors.border` `colors.border2` `colors.borderControl` | `rgba(255,255,255,.09)` / `.16` / `.36` |
 | Text | `--text` `--text-dim` `--text-faint` | `colors.text` `colors.textDim` `colors.textFaint` | `#EEF1F8` `#AAB2C6` `#868FA3` |
 | Spectrum | `--lime --mint --cyan --indigo --violet --magenta` | `colors.lime` … | `#A8FF35 #34F5C5 #22D3EE #6E7BFF #A855F7 #FF3D81` |
@@ -86,8 +87,15 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
   `Animated.loop` and large movement stops when the kit's `useReducedMotion()` is true.
 - **Text scaling is never disabled:** no `allowFontScaling={false}` or `maxFontSizeMultiplier`; inputs are
   16px / 16pt (no iOS zoom on web), with the box height kept by their padding and line height.
+- **Over the aurora:** a card's fill is `--card` (79% opaque: the old glass colour on the page, but the
+  aurora behind can't lift its text below 4.5:1); a field's fill is the opaque `--field`.
+- **No meaningful text under 11px** (chips, badges, eyebrows, labels, counts).
+- **44 at phone width (web) = 44 on native:** at ≤ 540px every Button (not `text`), SsoButton, Input,
+  Select (both sizes), SearchInput, SegmentedTabs segment and the Modal close is at least 44px tall; native
+  draws the same controls 44pt, so web and native stay equal. CodeInput boxes are 44 tall, 8 apart.
 - **Focus (web):** everything focusable shows a `:focus-visible` ring at 3:1 — a 2px solid `--accent-2` ring
-  (10.1:1 on the card), never `outline: none` without a replacement.
+  (10.1:1 on the card), never `outline: none` without a replacement. Fields (Input, SearchInput, Select,
+  CodeInput boxes, TagInput, NoteField, DateField) show the same ring on focus, not just a recoloured edge.
 
 ### Measured ratios (2026-11-10)
 
@@ -98,6 +106,12 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
 | `--text-faint` `#868FA3` on the field fill `#25272E` | 4.62:1 (on the card 5.61:1, on `--bg-0` 6.09:1); was `#828B9F` 4.38:1 |
 | `--text-dim` on the field fill | 7.06:1 |
 | `--accent-2` focus ring on the card | 10.08:1 (the old `--accent` 45% ring was 1.79:1) |
+| `--text-faint` / `--text-dim` on `--card` over the brightest aurora pixel | ≥ 4.90 / 7.49 (vivid: 4.56 / 6.97); the old glass card measured 3.22 / 3.71 |
+| `--text-faint` (placeholder) on `--field` | 4.60:1, whatever is behind (was 2.77 over the aurora) |
+
+The aurora peaks are modelled from the measured worst case (luminance .081 behind the old glass card): each
+blob colour screened over `--bg-0` at the intensity that reproduces it (cyan .343, violet .547, magenta
+.497), and 1.44× that for `vivid`. `tokens.test.ts` checks them.
 
 ## One shape, one line (owner rule, 2026-11-02 — "the border has to be the same")
 

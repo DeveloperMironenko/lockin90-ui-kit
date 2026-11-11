@@ -5,7 +5,8 @@
 /* ---- glass card ---- */
 .lk-card {
   position: relative;
-  background: var(--glass);
+  /* opaque enough that the aurora never drops its text below 4.5:1 (CONVENTIONS "Accessibility") */
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--r);
   backdrop-filter: blur(16px) saturate(120%);
@@ -30,13 +31,13 @@
 /* tone — tinted border + subtle bg in a status color */
 .lk-card.lk-tone-warn {
   border-color: color-mix(in srgb, var(--warn) 42%, transparent);
-  background: color-mix(in srgb, var(--warn) 7%, var(--glass));
+  background: color-mix(in srgb, var(--warn) 7%, var(--card));
 }
 .lk-card.lk-tone-warn.lk-hover:hover { border-color: color-mix(in srgb, var(--warn) 60%, transparent); }
 /* danger: the design's danger zone (web/settings.html .danger), lit red to amber */
 .lk-card.lk-tone-danger {
   border-color: color-mix(in srgb, var(--bad) 30%, transparent);
-  background: color-mix(in srgb, var(--bad) 4%, transparent);
+  background: color-mix(in srgb, var(--bad) 4%, var(--card));
 }
 .lk-card.lk-tone-danger.lk-lit::before {
   background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--bad) 70%, transparent), color-mix(in srgb, var(--warn) 50%, transparent), transparent);
@@ -165,6 +166,11 @@
   height: max(100%, var(--lk-hit));
   transform: translate(-50%, -50%);
 }
+/* Phone width (--bp-phone): every control is at least 44px tall, as native (CONVENTIONS "Accessibility") */
+@media (max-width: 540px) {
+  .lk-btn:not(.lk-btn-text), .lk-sso, .lk-input-field, .lk-select-trigger, .lk-search, .lk-seg-tab { min-height: 44px; }
+  .lk-modal-close { min-width: 44px; min-height: 44px; }
+}
 /* SSO / social sign-in: full-width, roomy rounded-square (not the pill) with a
    brand logo left of the label. Sits in a 2-up SSO grid. */
 .lk-btn-sso {
@@ -231,7 +237,7 @@
   gap: 4px; justify-content: center;
   min-width: 16px; min-height: 16px;
   padding: 2px 6px;
-  font-size: 10px; font-weight: 600; letter-spacing: 0; line-height: 1;
+  font-size: 11px; font-weight: 600; letter-spacing: 0; line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 .lk-chip.lk-chip-sm.lk-high { background: rgba(52, 245, 197, 0.10); }
@@ -260,7 +266,7 @@
 
 /* ---- stat block ---- */
 .lk-stat { display: flex; flex-direction: column; gap: 6px; }
-.lk-stat .lk-label { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-faint); }
+.lk-stat .lk-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-faint); }
 .lk-stat .lk-value { font-family: var(--font-display); font-weight: 700; font-size: 30px; letter-spacing: -0.02em; }
 .lk-delta { font-family: var(--font-mono); font-size: 12px; }
 .lk-delta.lk-up { color: var(--zone-high); }
@@ -269,7 +275,7 @@
 .lk-stat-empty .lk-stat-empty-value { color: var(--text-faint); }
 .lk-stat .lk-stat-hint { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.02em; color: var(--text-faint); }
 /* optional caption below the value (admin Statistic's `sub`) */
-.lk-stat .lk-stat-sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); }
+.lk-stat .lk-stat-sub { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
 
 /* value tone — gradient or mint, mirroring admin Statistic / marketing Stat.
    The non-hero gradient is the static flux (violet→cyan→violet); the hero size
@@ -284,7 +290,7 @@
 /* size scale — md (default 30px) · sm/lg mirror admin Statistic (20/28px) ·
    hero is the marketing Stat (huge flux number with the label BELOW). */
 .lk-stat-sm, .lk-stat-lg { gap: 3px; min-width: 0; }
-.lk-stat-sm .lk-label, .lk-stat-lg .lk-label { font-size: 10px; letter-spacing: 0.12em; }
+.lk-stat-sm .lk-label, .lk-stat-lg .lk-label { font-size: 11px; letter-spacing: 0.12em; }
 .lk-stat-sm .lk-value { font-size: 20px; line-height: 1.1; }
 .lk-stat-lg .lk-value { font-size: 28px; line-height: 1.1; }
 .lk-stat-hero { gap: 8px; flex-direction: column-reverse; }

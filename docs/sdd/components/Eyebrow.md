@@ -101,3 +101,7 @@ No capability gap blocks use — the overline is visually equivalent on both pla
 - **New need → add to BOTH platforms.** A new size or a tinted variant is a prop added on web *and* native (same name, same tokens) — never a one-off styled span/text.
 - **Tokens only.** Font, size, weight, and color come from `@lockin90/tokens`; never inline even if it matches today.
 - **Parity gate.** Before shipping, confirm the web phone-width and native overline read identically (same size, tracking, color); the only allowed divergence is the web `as` element choice.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **11px** (was 10): no meaningful text under 11px (CONVENTIONS).

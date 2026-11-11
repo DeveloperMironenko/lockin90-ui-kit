@@ -120,3 +120,7 @@ There is **no capability gap**.
   0.14em, line height 1.55 ("OR CONTINUE WITH"), so the "identical" parity above wasn't true. Native now uses
   the web's values (`textTransform: 'uppercase'`, so the text stays as translated and only its look changes).
   Measured against the web Log in at 402×874 (owner: "the divider has a different font case").
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **A long label wraps** (centred), each line keeping 16px; it never overflows at 320 (web `flex: 0 1 auto` + `overflow-wrap: anywhere`, native `flexShrink: 1`).

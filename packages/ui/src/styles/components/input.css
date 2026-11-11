@@ -12,7 +12,7 @@
 
 .lk-input-label {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -28,11 +28,14 @@
   border-radius: var(--r-sm);
   /* a field's edge at 3:1 on the card (CONVENTIONS "Accessibility") */
   border: 1px solid var(--border-control);
-  background: var(--glass-2);
+  background: var(--field);
   color: var(--text);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 .lk-input-field:focus-within {
+  /* the kit's focus ring, as buttons (CONVENTIONS "Accessibility": the border change alone is 1.2:1) */
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
 }
@@ -90,7 +93,7 @@
 .lk-input-field.lk-input-sm { padding: 6px 10px; gap: 6px; }
 .lk-input-sm .lk-input { font-size: 16px; line-height: 17.5px; } /* the 12.5px × 1.4 line: 31.5 tall */
 .lk-input-sm .lk-input-lead svg { width: 14px; height: 14px; }
-.lk-input-sm .lk-input-unit { font-size: 10px; }
+.lk-input-sm .lk-input-unit { font-size: 11px; }
 
 /* numeral — the design's large-readout variant (edit-set weight/reps,
    `.strow .sv`): 20px bold display-font, centered, tabular-nums. The field +

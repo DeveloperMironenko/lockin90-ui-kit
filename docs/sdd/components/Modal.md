@@ -131,3 +131,7 @@ No capability gap blocks use — the dialog is fully usable and visually equival
 - **Native close target:** `hitSlop` 7 (30 + 14 = 44pt).
 - **`100dvh`:** the card's `max-height` is `calc(100dvh - 48px)` with a `100vh` fallback.
 - **Review fixes:** the opener is read in the render that opens the dialog (an `autoFocus` field takes focus before effects run), so focus always returns to it; with dialogs stacked, only the topmost traps Tab.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Close:** 44 × 44 at phone width (web) and on native (no slop needed); the glyph and header line are unchanged.

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { cn } from '../cn';
+import { FormField } from './FormField';
 import { Modal } from './Modal';
 import { Input } from './Input';
 import { Button } from './Button';
@@ -38,6 +39,9 @@ export interface ReauthDialogProps {
   orLabel?: string;
   /** the close button's spoken name */
   closeLabel?: string;
+  /** the field's error when Confirm is pressed with no password (Confirm stays enabled and says what's
+   *  missing, CONVENTIONS "Accessibility"). @default 'Enter your password' */
+  passwordRequiredLabel?: string;
 }
 
 /** Google "G" mark — matches the auth design's SSO glyph. */
@@ -86,21 +90,32 @@ export function ReauthDialog({
   googleLabel = 'Continue with Google',
   orLabel = 'or',
   closeLabel = 'Close',
+  passwordRequiredLabel = 'Enter your password',
 }: ReauthDialogProps) {
   const [password, setPassword] = useState('');
+  // Confirm pressed with no password: the field says so (Confirm is never disabled for it)
+  const [missing, setMissing] = useState(false);
 
   // Drop the field whenever the dialog closes so it never leaks across opens.
   useEffect(() => {
-    if (!open) setPassword('');
+    if (!open) {
+      setPassword('');
+      setMissing(false);
+    }
   }, [open]);
 
   const close = () => {
     setPassword('');
+    setMissing(false);
     onClose();
   };
 
   const submit = () => {
-    if (loading || !password) return;
+    if (loading) return;
+    if (!password) {
+      setMissing(true);
+      return;
+    }
     onSubmitPassword?.(password);
   };
 
@@ -123,23 +138,27 @@ export function ReauthDialog({
               submit();
             }}
           >
-            <Input
-              label={passwordLabel}
-              type="password"
-              autoComplete="current-password"
-              placeholder={passwordPlaceholder}
-              value={password}
-              disabled={loading}
-              invalid={Boolean(error)}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            {/* the dialog opens on the field (the Modal keeps Tab inside and gives focus back on close) */}
+            <FormField label={passwordLabel} error={missing && !password ? passwordRequiredLabel : undefined}>
+              <Input
+                type="password"
+                autoComplete="current-password"
+                autoFocus
+                placeholder={passwordPlaceholder}
+                value={password}
+                disabled={loading}
+                invalid={Boolean(error) || (missing && !password)}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </FormField>
             <Button
               type="submit"
               variant="primary"
               className="lk-reauth-submit"
-              disabled={loading || !password}
+              loading={loading}
+              aria-label={loading ? confirmingLabel : undefined}
             >
-              {loading ? confirmingLabel : confirmLabel}
+              {confirmLabel}
             </Button>
           </form>
         ) : null}

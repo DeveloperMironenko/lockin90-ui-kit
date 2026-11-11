@@ -121,3 +121,7 @@ The only difference is implementation substrate: web selects a per-env CSS class
 - **New env?** If a fourth environment is needed (e.g. `preview`), add it to the `VersionEnv` union + `ENV_COLOR`/CSS on **both** platforms (same token) — never a one-off chip.
 - **Tokens only.** The mint/warn/accent tints, glass-2 fill, pill radius, and mono font come from `@lockin90/tokens`; a hardcoded color is a bug even if it matches today.
 - **Parity gate.** Before shipping a header, confirm web phone-width and native render the same segments, order, and env tint.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **11px** (was 10.5).

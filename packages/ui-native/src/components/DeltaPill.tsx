@@ -110,5 +110,5 @@ const styles = StyleSheet.create({
   pillSm: { gap: 4, paddingVertical: 3, paddingHorizontal: 8 },
   val: { fontFamily: fonts.mono, fontWeight: '600' },
   valMd: { fontSize: 13 },
-  valSm: { fontSize: 10 },
+  valSm: { fontSize: 11 },
 });

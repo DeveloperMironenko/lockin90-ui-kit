@@ -31,6 +31,8 @@
 }
 .lk-note::placeholder { color: var(--text-faint); }
 .lk-note:focus {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
 }

@@ -120,3 +120,7 @@ There is no capability gap — the component is fully equivalent on both platfor
 - **New need → add to BOTH platforms.** A new status tier or a different threshold model must land on web *and* native with the same prop, same tokens — never a one-off.
 - **Tokens only.** The fill/count colors are `@lockin90/tokens` values; never inline hex even if it matches today.
 - **Parity gate.** Confirm the web phone-width and native counters show the same color at the same `value`/`max` before shipping a length-limited field.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Count 11px** (was 9.5).

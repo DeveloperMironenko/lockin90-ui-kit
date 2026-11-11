@@ -145,3 +145,7 @@ Variant mode (both platforms, catalog-exact):
 
 - **Native reduced motion:** the indeterminate sweep stops while `useReducedMotion()` is true.
 - **Review fix:** under Reduce Motion the native indeterminate band stays still in the middle of the track (web: a centred band), never off-track.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Name:** web takes `aria-label` / `aria-labelledby` (axe aria-progressbar-name); native is now `accessibilityRole="progressbar"` with `accessibilityValue`, named by `label` or the app's `accessibilityLabel`; indeterminate is `busy`.
