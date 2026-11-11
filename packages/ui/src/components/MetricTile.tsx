@@ -32,8 +32,8 @@ export interface MetricTileProps extends HTMLAttributes<HTMLDivElement> {
   /** a small line: in empty mode under the dash (e.g. "No data yet — connect a wearable"); on an
    *  `sm` tile also under a value (e.g. "BMI 25.8"). */
   hint?: string;
-  /** the value is a word, not a number (as native): at phone width an `sm` tile draws it at 15 on
-   *  one line, cut with an ellipsis rather than broken mid-word (design mobile `.fv.txt`). */
+  /** the value is a word, not a number (as native): at phone width an `sm` tile draws it at 15
+   *  (design mobile `.fv.txt`); it wraps when it doesn't fit, never cut with an ellipsis. */
   textValue?: boolean;
 }
 

@@ -34,7 +34,7 @@ slightly larger. Documented here because it ships from `MetricTile.tsx`.
 | --- | --- | --- | --- | --- | --- |
 | `label` | `string` | `'Followers'` | ✓ | ✓ | mono uppercase caption |
 | `value` | `ReactNode` | `'1.2k'` | ✓ | ✓ | big display number |
-| `size` | `'sm' \| 'md'` | `'md'` | ✓ | ✓ | `sm`: a readout tile in a settings grid (`web/settings.html` `.field`): padding 14 × 15, gap 7, label 10px `.14em`, value 600 19px `-.01em`, unit mono 12px `--text-faint`, hint 11.5px `--text-dim`; the label cut with an ellipsis when it doesn't fit; at phone width (≤ 540px) the phone's tile: padding 12 × 11, `--r`, value 20. Native: the phone's tile (design `mobile/account.html` `.fcell` × 402/294): padding 12 × 11, `radii.md`, gap 3, label 10 `1` tracking (one line), value 600 20, unit mono 12 faint |
+| `size` | `'sm' \| 'md'` | `'md'` | ✓ | ✓ | `sm`: a readout tile in a settings grid (`web/settings.html` `.field`): padding 14 × 15, gap 7, label 11px `.14em`, value 600 19px `-.01em`, unit mono 12px `--text-faint`, hint 11.5px `--text-dim`; the label wraps when it doesn't fit (never cut); at phone width (≤ 540px) the phone's tile: padding 12 × 11, `--r`, value 20. Native: the phone's tile (design `mobile/account.html` `.fcell` × 402/294): padding 12 × 11, `radii.md`, gap 3, label 11 `1` tracking (wraps), value 600 20, unit mono 12 faint |
 | `unit` | `string` | — | ✓ | ✓ | small suffix (`'%'`, `'pts'`); renders only when non-null |
 | `delta` | `string` | — | ✓ | ✓ | signed change shown as a pill; renders only when non-null |
 | `deltaTone` | `MetricDeltaTone` = `'up' \| 'down' \| 'flat'` | `'flat'` | ✓ | ✓ | colors the pill: up=mint, down=rose, flat=faint |
@@ -43,7 +43,7 @@ slightly larger. Documented here because it ships from `MetricTile.tsx`.
 | `sparkColor` | `string` | `--grad-cta` / `gradients.cta` | ✓ | ✓ | overrides the spark fill colour (web any CSS colour/gradient; native a solid colour) |
 | `empty` | `boolean` | — | ✓ | ✓ | em-dash placeholder, no unit/pill/spark |
 | `hint` | `string` | — | ✓ | ✓ | a small line: under the dash in empty mode; on an `sm` tile also under a value (e.g. "BMI 25.8"; the design's settings tiles) |
-| `textValue` | `boolean` | — | ✓ | ✓ | `sm` only: the value is a word; at phone width (web) / on the phone (native) it's drawn at 15 on one line, cut with an ellipsis when it doesn't fit |
+| `textValue` | `boolean` | — | ✓ | ✓ | `sm` only: the value is a word; at phone width (web) / on the phone (native) it's drawn at 15 and wraps when it doesn't fit (never cut) |
 | `className` | `string` | — | ✓ | — | web only |
 | `style` / _rest_ | `HTMLAttributes<HTMLDivElement>` (web) / `ViewProps` (native) | — | ✓ | ✓ | spread onto root |
 
@@ -169,3 +169,8 @@ shipping a native screen where the dots convey required state.
   are bugs even when visually identical.
 - **Parity gate.** Before shipping, diff the web phone-width tile vs native — same label, value, unit, pill tone,
   and (for dots) same filled count + glow.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Nothing is cut (web + native):** the `sm` label and a `textValue` word wrap inside the tile instead of one line with an ellipsis (Powerlifting, Пульс спокою, Макс. пульс, パワーリフティング were cut at 402). This replaces the earlier one-line rule. Web: `overflow-wrap: anywhere`, no `nowrap` / `text-overflow`. Native: no `numberOfLines` on the label or the word.
+- **11px at least:** the label (sm 10 → 11, md 10.5 → 11) and the hint (10.5 → 11), web and native.

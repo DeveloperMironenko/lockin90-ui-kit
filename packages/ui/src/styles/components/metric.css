@@ -30,7 +30,7 @@
 
 .lk-metric-label {
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.16em;
@@ -120,7 +120,7 @@
 
 .lk-metric-hint {
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 11px;
   letter-spacing: 0.02em;
   color: var(--text-faint);
 }
@@ -159,7 +159,8 @@
 
 /* sm: a readout tile in a settings grid (design web/settings.html .field) */
 .lk-metric-sm { gap: 7px; padding: 14px 15px; min-width: 0; }  /* min-width: a grid cell can shrink, so its text is cut */
-.lk-metric-sm .lk-metric-label { font-size: 10px; font-weight: 400; letter-spacing: 0.14em; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+/* the label and a word value wrap, never cut (a long translation: Пульс спокою, パワーリフティング) */
+.lk-metric-sm .lk-metric-label { font-size: 11px; font-weight: 400; letter-spacing: 0.14em; min-width: 0; overflow-wrap: anywhere; }
 .lk-metric-sm .lk-metric-value { font-weight: 600; font-size: 19px; line-height: 1.2; letter-spacing: -0.01em; }
 .lk-metric-sm .lk-metric-unit { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--text-faint); }
 .lk-metric-sm .lk-metric-hint { font-family: var(--font-ui); font-size: 11.5px; letter-spacing: normal; color: var(--text-dim); }
@@ -168,6 +169,6 @@
   .lk-metric-sm { gap: 3px; padding: 12px 11px; border-radius: var(--r); }
   .lk-metric-sm .lk-metric-label { letter-spacing: 0.1em; }
   .lk-metric-sm .lk-metric-value { font-size: 20px; }
-  .lk-metric-sm .lk-metric-word { font-size: 15px; letter-spacing: 0; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .lk-metric-sm .lk-metric-word { font-size: 15px; letter-spacing: 0; min-width: 0; overflow-wrap: anywhere; }
   .lk-metric-sm .lk-metric-body { min-width: 0; }
 }

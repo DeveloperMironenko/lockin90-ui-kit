@@ -36,7 +36,7 @@ export interface MetricTileProps extends ViewProps {
    *  unit mono 12 faint. @default 'md' */
   size?: 'sm' | 'md';
   /** `sm` only: the value is a word, not a number, drawn at 15 (design `.fv.txt`) so it fits a third of
-   *  the screen; one line, cut with an ellipsis when it doesn't fit, never broken mid-word. */
+   *  the screen; it wraps when it doesn't fit (never cut: the meaning stays whole). */
   textValue?: boolean;
 }
 
@@ -77,12 +77,11 @@ export function MetricTile({
   const sm = size === 'sm';
   const labelStyle = [styles.label, sm && styles.labelSm];
   // an sm label stays on one line, cut with an ellipsis when it doesn't fit (owner, 2026-11-10)
-  const labelLines = sm ? 1 : undefined;
   if (empty) {
     return (
       <View style={[styles.tile, sm && styles.tileSm, style]} {...rest}>
         <View style={styles.top}>
-          <Text style={labelStyle} numberOfLines={labelLines}>{label}</Text>
+          <Text style={labelStyle}>{label}</Text>
           {icon != null && <View style={styles.icon}>{icon}</View>}
         </View>
         <View style={styles.body}>
@@ -96,14 +95,12 @@ export function MetricTile({
   return (
     <View style={[styles.tile, sm && styles.tileSm, style]} {...rest}>
       <View style={styles.top}>
-        <Text style={labelStyle} numberOfLines={labelLines}>{label}</Text>
+        <Text style={labelStyle}>{label}</Text>
         {icon != null && <View style={styles.icon}>{icon}</View>}
       </View>
       <View style={styles.body}>
         <Text
           style={[styles.value, sm && styles.valueSm, sm && textValue && styles.valueWord]}
-          // a word stays on one line, cut with an ellipsis when it doesn't fit (owner, 2026-11-10)
-          {...(sm && textValue ? { numberOfLines: 1 } : {})}
         >
           {value}
         </Text>
@@ -198,7 +195,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: fonts.mono,
-    fontSize: 10.5,
+    fontSize: 11,
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 1.68,
@@ -239,7 +236,7 @@ const styles = StyleSheet.create({
   valueEmpty: { color: colors.textFaint },
   hint: {
     fontFamily: fonts.mono,
-    fontSize: 10.5,
+    fontSize: 11,
     letterSpacing: 0.21,
     color: colors.textFaint,
   },
@@ -255,7 +252,7 @@ const styles = StyleSheet.create({
   /* size sm: the phone's settings readout (design mobile/account.html .fcell × 402/294) */
   tileSm: { gap: 3, paddingVertical: 12, paddingHorizontal: 11, borderRadius: radii.md },
   // flexShrink: in its row the text is held to the tile's width, so the ellipsis shows
-  labelSm: { fontSize: 10, fontWeight: '400', letterSpacing: 1, flexShrink: 1 },
+  labelSm: { fontSize: 11, fontWeight: '400', letterSpacing: 1, flexShrink: 1 },
   valueSm: { fontWeight: '600', fontSize: 20, letterSpacing: -0.2 },
   valueWord: { fontSize: 15, letterSpacing: 0, flexShrink: 1 },
   unitSm: { fontFamily: fonts.mono, fontSize: 12, color: colors.textFaint },
