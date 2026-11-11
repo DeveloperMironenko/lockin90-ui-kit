@@ -134,3 +134,4 @@ It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parit
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **Fill:** `--card` / `colors.card` (`rgba(22,24,32,.79)`) instead of `--glass`: the same `#13151D` on the plain page, but the aurora behind no longer lifts dim or faint text below 4.5:1 (CONVENTIONS ratios). The tones mix into it (warn 7%, danger 4%); native `blur` keeps the frost behind the same fill.
+- **Narrow phone:** `padLg` / `pad="lg"` (30) drops to 16 at ≤ `--bp-narrow` (360) on web and when the window is ≤ `breakpoints.narrow` on native (`useWindowDimensions`), so an 8-box CodeInput (8 × 24 + 7 × 8 = 248) fits a 320 screen inside an AuthCard.

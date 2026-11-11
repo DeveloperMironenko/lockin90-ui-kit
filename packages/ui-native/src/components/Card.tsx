@@ -1,6 +1,6 @@
-import { View, StyleSheet, type ViewProps } from 'react-native';
+import { View, StyleSheet, useWindowDimensions, type ViewProps } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, radii, nativeShadows, gradients } from '@lockin90/tokens';
+import { breakpoints, colors, radii, nativeShadows, gradients } from '@lockin90/tokens';
 import { OptionalBlurView } from '../internal/optionalBlur';
 
 export interface CardProps extends ViewProps {
@@ -25,13 +25,17 @@ export interface CardProps extends ViewProps {
  *  translucent fill + hairline border. Set `blur` for a real frosted surface
  *  (via the optional `expo-blur` peer) that matches the web glass more closely. */
 export function Card({ lit, padLg, pad, flat, blur, tone, variant, style, children, ...rest }: CardProps) {
+  // a narrow phone (≤ breakpoints.narrow, 360): the large padding drops to 16, as web, so an 8-box
+  // CodeInput fits a 320 screen
+  const { width } = useWindowDimensions();
+  const narrow = width > 0 && width <= breakpoints.narrow; // 0: not measured (a static render)
+  const lg = padLg || pad === 'lg';
   const composed = [
     styles.card,
-    padLg && styles.padLg,
+    lg && (narrow ? styles.padSm : styles.padLg),
     pad === 'none' && styles.padNone,
     pad === 'sm' && styles.padSm,
     pad === 'md' && styles.padMd,
-    pad === 'lg' && styles.padLg,
     flat && styles.flat,
     tone === 'warn' && styles.toneWarn,
     tone === 'danger' && styles.toneDanger,

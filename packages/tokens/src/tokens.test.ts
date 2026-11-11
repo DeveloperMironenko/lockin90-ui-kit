@@ -40,7 +40,8 @@ describe('spacing + breakpoints (layout rules)', () => {
       screens: Record<string, { max: string }>;
       spacing: Record<string, string>;
     };
-    expect(Object.keys(screens)).toEqual(['tablet', 'phone']);
+    expect(Object.keys(screens)).toEqual(['tablet', 'phone', 'narrow']);
+    expect(screens.narrow.max).toBe('360px');
     expect(screens.phone.max).toBe('540px');
     expect(tw['4']).toBe('1rem');
   });

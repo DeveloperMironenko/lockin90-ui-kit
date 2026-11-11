@@ -84,7 +84,7 @@ follows. Page layouts, shells and screen compositions live in each app, built fr
 | Rule | Web (CSS) | Native / JS |
 |---|---|---|
 | Spacing: every padding, margin and gap is a step of the 4px scale: 0, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 64, 80, 96 | `--space-0` … `--space-24` | `spacing[0]` … `spacing[24]` |
-| Breakpoints (max-width): ≤ 540 one tight column; ≤ 980 side panels stack | `--bp-phone`, `--bp-tablet` (values only: CSS can't read vars in `@media`) | `breakpoints.phone`, `breakpoints.tablet` |
+| Breakpoints (max-width): ≤ 360 a narrow phone (cards tighten their padding); ≤ 540 one tight column; ≤ 980 side panels stack | `--bp-narrow`, `--bp-phone`, `--bp-tablet` (values only: CSS can't read vars in `@media`) | `breakpoints.narrow`, `breakpoints.phone`, `breakpoints.tablet` |
 | Corner radii | `--r-sm` 10 · `--r` 16 · `--r-lg` 22 · `--r-xl` 28 · `--r-pill` | `radii.*` |
 | Colours, glass, borders | `--bg-*`, `--glass*`, `--border*`, `--text*` | `colors.*` |
 

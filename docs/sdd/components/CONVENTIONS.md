@@ -90,6 +90,7 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
 - **Over the aurora:** a card's fill is `--card` (79% opaque: the old glass colour on the page, but the
   aurora behind can't lift its text below 4.5:1); a field's fill is the opaque `--field`.
 - **No meaningful text under 11px** (chips, badges, eyebrows, labels, counts).
+- **Narrow breakpoint:** `--bp-narrow` / `breakpoints.narrow` = 360 (max-width), alongside phone (540) and tablet (980); a large-padded Card tightens to 16 there.
 - **44 at phone width (web) = 44 on native:** at ≤ 540px every Button (not `text`), SsoButton, Input,
   Select (both sizes), SearchInput, SegmentedTabs segment and the Modal close is at least 44px tall; native
   draws the same controls 44pt, so web and native stay equal. CodeInput boxes are 44 tall, 8 apart.

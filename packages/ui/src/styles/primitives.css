@@ -23,6 +23,8 @@
   background: linear-gradient(90deg, transparent, rgba(124, 92, 255, 0.7), rgba(34, 211, 238, 0.7), transparent);
 }
 .lk-card.lk-pad-lg { padding: 30px; }
+/* a narrow phone (--bp-narrow): 16 so an 8-box CodeInput (248) fits a 320 screen inside an AuthCard */
+@media (max-width: 360px) { .lk-card.lk-pad-lg { padding: 16px; } }
 .lk-card.lk-pad-none { padding: 0; }
 .lk-card.lk-pad-sm { padding: 16px; }
 .lk-card.lk-pad-md { padding: 22px; }
@@ -219,7 +221,8 @@
    retired `Badge`); the marketing `Pill` and admin `StatusChip` are thin wrappers
    that emit these same classes. */
 .lk-chip {
-  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  /* its text wraps when the line is too narrow ("Paso 2 de 2 · creación de la cuenta" at 320), never overflows */
+  display: inline-flex; align-items: center; gap: 7px; white-space: normal; overflow-wrap: anywhere; max-width: 100%;
   font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
   padding: 5px 11px; border-radius: var(--r-sm);
   border: 1px solid var(--border-2); background: var(--glass); color: var(--text-dim);
@@ -237,7 +240,7 @@
    accent tone is a FILLED gradient count pill and the neutral tone reads dim on
    glass-2 (this preserves the retired Badge's look exactly). */
 .lk-chip.lk-chip-sm {
-  gap: 4px; justify-content: center;
+  gap: 4px; justify-content: center; white-space: nowrap;
   min-width: 16px; min-height: 16px;
   padding: 2px 6px;
   font-size: 11px; font-weight: 600; letter-spacing: 0; line-height: 1;

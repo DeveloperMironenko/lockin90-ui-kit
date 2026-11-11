@@ -93,9 +93,11 @@ export const spacing = {
   24: 96,
 } as const;
 
-/** Layout breakpoints (px, max-width): at or below `phone` one tight column; at or below
- *  `tablet` side panels stack. From the web designs (auth, app shells). */
+/** Layout breakpoints (px, max-width): at or below `narrow` (a 320–360 phone) cards tighten their
+ *  padding; at or below `phone` one tight column; at or below `tablet` side panels stack. From the web
+ *  designs (auth, app shells). */
 export const breakpoints = {
+  narrow: 360,
   phone: 540,
   tablet: 980,
 } as const;

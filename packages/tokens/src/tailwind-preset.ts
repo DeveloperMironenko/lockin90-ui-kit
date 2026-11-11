@@ -50,6 +50,7 @@ const preset = {
       screens: {
         tablet: { max: `${breakpoints.tablet}px` },
         phone: { max: `${breakpoints.phone}px` },
+        narrow: { max: `${breakpoints.narrow}px` },
       },
       // rem (16px root), like Tailwind's defaults, so spacing still scales with the font size
       spacing: Object.fromEntries(Object.entries(spacing).map(([k, v]) => [k, `${v / 16}rem`])),
