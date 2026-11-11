@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: colors.field,
   },
-  // the web box: 9 + 14 × 1.4 + 9 + 2 borders = 39.6 (sm: 6 + 12.5 × 1.4 + 6 + 2 = 31.5)
+  // at least 44 tall (all sizes), as the web field at phone width (CONVENTIONS "Accessibility")
   fieldSm: { minHeight: 44, paddingVertical: 5, paddingHorizontal: 10 },
   lead: { flexShrink: 0 },
   input: {
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     padding: 0,
     color: colors.text,
     fontFamily: fonts.ui,
-    // 16, as the web field (no iOS zoom there); the box keeps its 39.6 height
+    // 16, as the web field (no iOS zoom there)
     fontSize: 16,
     // centred by the field's height, as Input (an explicit lineHeight biases the glyph)
     textAlignVertical: 'center',

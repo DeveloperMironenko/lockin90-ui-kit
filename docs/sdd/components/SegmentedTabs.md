@@ -158,3 +158,8 @@ No capability gap blocks use.
 ## Update — 2026-11-10 (simulator check, 1.35)
 
 - **Never broken inside a word.** Native: a one-word label is one line and shrinks to fit (`adjustsFontSizeToFit`, down to 0.5); a label with a space may wrap at the space onto two lines (and shrink). Web `fill`: shrinks to 60% (was 80), then wraps only at a space (`word-break: keep-all`, no `overflow-wrap: anywhere`); a single word that still doesn't fit puts the segments on more than one row (`.lk-seg--rows`, each segment its content's width).
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **Web fit:** when one word needs the segments on rows, every tab is fitted again in the rows layout, so none stays shrunk for the one-row widths.
+- **Native count text** line height 13 (was 12) for the 11 font.

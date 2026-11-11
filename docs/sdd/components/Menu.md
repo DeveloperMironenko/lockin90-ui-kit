@@ -142,3 +142,7 @@ No capability gap blocks use — the menu is fully usable and visually equivalen
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **Keyboard (web):** Enter, Space or ArrowDown on the trigger opens on the first item, ArrowUp on the last; ArrowUp / ArrowDown (wrapping), Home and End move; Escape and choosing an item give focus back to the trigger; Tab closes.
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **Tab inside the open menu** closes it and puts focus back on the trigger (the panel is portaled to `<body>`, so Tab would have landed after it). **Enter / Space on the trigger of an open menu** close it; the arrows go into it. A mouse open never moves focus (the keyboard request is reset when the menu closes).

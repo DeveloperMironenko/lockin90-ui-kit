@@ -101,7 +101,12 @@ export function Menu({
   const menuItems = () => Array.from(panelRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? []);
 
   useEffect(() => {
-    if (!open || !focusOnOpen.current) return;
+    if (!open) {
+      // a keyboard open that never happened (or a closed menu) never moves focus on a later mouse open
+      focusOnOpen.current = null;
+      return;
+    }
+    if (!focusOnOpen.current) return;
     const list = menuItems();
     (focusOnOpen.current === 'last' ? list[list.length - 1] : list[0])?.focus();
     focusOnOpen.current = null;
@@ -112,6 +117,15 @@ export function Menu({
       e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown' ? 'first' : e.key === 'ArrowUp' ? 'last' : null;
     if (!where || disabled) return;
     e.preventDefault();
+    if (open) {
+      // Enter / Space toggle it closed; the arrows go into the open menu
+      if (e.key === 'Enter' || e.key === ' ') setOpen(false);
+      else {
+        const list = menuItems();
+        (where === 'last' ? list[list.length - 1] : list[0])?.focus();
+      }
+      return;
+    }
     focusOnOpen.current = where;
     setOpen(true);
   };
@@ -127,7 +141,12 @@ export function Menu({
     else if (e.key === 'ArrowUp') go(at < 0 ? list.length - 1 : at - 1);
     else if (e.key === 'Home') go(0);
     else if (e.key === 'End') go(list.length - 1);
-    else if (e.key === 'Tab') setOpen(false);
+    else if (e.key === 'Tab') {
+      // the panel is portaled to <body>: Tab would land after it, so focus goes back to the trigger first
+      e.preventDefault();
+      triggerRef.current?.focus();
+      setOpen(false);
+    }
   };
 
   // position the panel while open, and keep it pinned on scroll/resize

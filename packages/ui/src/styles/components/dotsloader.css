@@ -20,6 +20,7 @@
   background: var(--lk-dot-color, var(--accent));
   box-shadow: 0 0 10px var(--lk-dot-color, rgba(124, 92, 255, 0.5));
   animation: lk-dot-bounce 1.2s var(--ease-soft) infinite;
+  animation-delay: calc(var(--lk-dot-i, 0) * 0.16s);
   will-change: transform, opacity;
 }
 
@@ -41,6 +42,7 @@
 @media (prefers-reduced-motion: reduce) {
   .lk-dots > i {
     animation-duration: 3.6s !important;
+    animation-delay: calc(var(--lk-dot-i, 0) * 0.48s) !important;
     animation-iteration-count: infinite !important;
   }
 }

@@ -49,7 +49,6 @@ export interface ReauthDialogProps {
   passwordRequiredLabel?: string;
 }
 
-/** Google "G" mark — matches the auth design's SSO glyph. */
 /** Apple's mark, in the label colour (the brand's own monochrome glyph, as SsoButton's). */
 const APPLE = (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width={18} height={18}>
@@ -57,6 +56,7 @@ const APPLE = (
   </svg>
 );
 
+/** Google "G" mark — matches the auth design's SSO glyph. */
 const GOOGLE = (
   <svg viewBox="0 0 24 24" aria-hidden="true" width={18} height={18}>
     <path
@@ -201,11 +201,11 @@ export function ReauthDialog({
         {hasApple ? (
           <Button
             variant="default"
-            className="lk-reauth-google lk-reauth-apple"
+            className="lk-reauth-apple"
             disabled={loading}
             onClick={() => onApple?.()}
           >
-            <span className="lk-reauth-google-icon">{APPLE}</span>
+            <span className="lk-reauth-apple-icon">{APPLE}</span>
             {appleLabel}
           </Button>
         ) : null}

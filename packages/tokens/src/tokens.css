@@ -24,6 +24,8 @@
   --border-2: rgba(255, 255, 255, 0.16);
   /* a field's edge (Input, Select, CodeInput, TagInput, SearchInput): 3.3:1 on the card */
   --border-control: rgba(255, 255, 255, 0.36);
+  /* the control edge under Increase Contrast */
+  --border-control-strong: rgba(255, 255, 255, 0.5);
 
   /* ---- text ---- */
   --text: #EEF1F8;
@@ -111,8 +113,9 @@
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
-/* Increase Contrast (prefers-contrast: more): faint and dim text and the lines step up, as native's
-   useContrastColors (CONVENTIONS "Accessibility") */
+/* Increase Contrast (prefers-contrast: more): faint and dim text and the lines step up, the values of
+   `highContrastColors` (native useContrastColors uses the same; tokens.test.ts checks they match).
+   Literal values: a var() here would read the redefined token. */
 @media (prefers-contrast: more) {
   :root {
     --text-faint: #AAB2C6;

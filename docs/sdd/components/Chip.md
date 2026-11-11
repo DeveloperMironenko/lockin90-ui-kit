@@ -196,3 +196,7 @@ No genuine (inherent) capability gap — `size="sm"` is buildable and now built 
 ## Update — 2026-11-10 (simulator check, 1.35)
 
 - **Native `Badge`:** no fixed height (`minHeight` 16, padding 1.5, line 13), so its text never clips at the largest text size.
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **Native `sm` label line height 13** (was 11) so the 11 font never clips.

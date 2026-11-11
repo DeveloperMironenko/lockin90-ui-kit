@@ -165,8 +165,9 @@ export function SegmentedTabs({
   useLayoutEffect(() => {
     const track = ref.current;
     if (!fill || !track) return;
-    const fit = () => {
-      track.classList.remove('lk-seg--rows');
+    // one pass over the tabs; true when a single word still doesn't fit (the segments need rows)
+    const fitTabs = () => {
+      let rows = false;
       for (const tab of track.querySelectorAll<HTMLElement>('.lk-seg-tab')) {
         tab.style.removeProperty('font-size');
         tab.classList.remove('lk-seg-wrap');
@@ -179,12 +180,21 @@ export function SegmentedTabs({
           tab.style.fontSize = `${(base * percent) / 100}px`;
           if (tab.scrollWidth <= tab.clientWidth) break;
         }
-        // still too wide: several words wrap at a space inside the segment; a single word never breaks —
-        // the row then gives each segment the width it needs, on as many lines of segments as it takes
+        // still too wide: several words wrap at a space inside the segment; a single word never breaks
         if (tab.scrollWidth > tab.clientWidth) {
           tab.classList.add('lk-seg-wrap');
-          if (tab.scrollWidth > tab.clientWidth) track.classList.add('lk-seg--rows');
+          if (tab.scrollWidth > tab.clientWidth) rows = true;
         }
+      }
+      return rows;
+    };
+    const fit = () => {
+      track.classList.remove('lk-seg--rows');
+      // a word that never fits: the segments take the width they need, on as many rows as it takes, and
+      // every tab is fitted again in that layout (none stays shrunk for the one-row widths)
+      if (fitTabs()) {
+        track.classList.add('lk-seg--rows');
+        fitTabs();
       }
     };
     fit();

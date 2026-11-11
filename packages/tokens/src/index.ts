@@ -26,6 +26,8 @@ export const colors = {
   border2: 'rgba(255,255,255,0.16)',
   // a field's edge (Input, Select, CodeInput, TagInput): 3.3:1 on the card (CONVENTIONS "Accessibility")
   borderControl: 'rgba(255,255,255,0.36)',
+  // the control edge under Increase Contrast (a step above borderControl)
+  borderControlStrong: 'rgba(255,255,255,0.5)',
   // text
   text: '#EEF1F8',
   textDim: '#AAB2C6',
@@ -91,6 +93,16 @@ export const spacing = {
   16: 64,
   20: 80,
   24: 96,
+} as const;
+
+/** Increase Contrast (CONVENTIONS "Accessibility"): each colour that steps up, and what it becomes — faint
+ *  text → dim, dim → full, a container's line → a control's edge, a control's edge → the strong edge. Web
+ *  applies it under `@media (prefers-contrast: more)` (tokens.css), native through `useContrastColors`. */
+export const highContrastColors = {
+  textFaint: colors.textDim,
+  textDim: colors.text,
+  border2: colors.borderControl,
+  borderControl: colors.borderControlStrong,
 } as const;
 
 /** Layout breakpoints (px, max-width): at or below `narrow` (a 320–360 phone) cards tighten their
@@ -169,7 +181,7 @@ export type Tokens = typeof tokens;
 /** Map a color token to its CSS custom property, e.g. `cssVar('zoneHigh')` → `var(--zone-high)`. */
 const cssVarName: Record<ColorToken, string> = {
   void: '--void', bg0: '--bg-0', bg1: '--bg-1', bg2: '--bg-2',
-  glass: '--glass', glass2: '--glass-2', card: '--card', field: '--field', border: '--border', border2: '--border-2', borderControl: '--border-control',
+  glass: '--glass', glass2: '--glass-2', card: '--card', field: '--field', border: '--border', border2: '--border-2', borderControl: '--border-control', borderControlStrong: '--border-control-strong',
   text: '--text', textDim: '--text-dim', textFaint: '--text-faint',
   lime: '--lime', mint: '--mint', cyan: '--cyan', indigo: '--indigo', violet: '--violet', magenta: '--magenta', orange: '--orange',
   accent: '--accent', accent2: '--accent-2', accent3: '--accent-3',

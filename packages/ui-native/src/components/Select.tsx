@@ -296,7 +296,6 @@ const styles = StyleSheet.create({
   // the value takes the row and sits left after the icon, as on web; `sm` hugs its content
   value: { flex: 1, fontFamily: fonts.ui, fontSize: 14, color: colors.text },
   valueSm: { flex: 0, flexShrink: 1, fontFamily: fonts.mono, fontSize: 11 },
-  placeholder: { color: colors.textFaint },
   backdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.55)',

@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: colors.field,
   },
-  // the web box: 9 + 14 × 1.4 + 9 + 2 borders = 39.6 (sm: 6 + 12.5 × 1.4 + 6 + 2 = 31.5)
+  // at least 44 tall (all sizes), as the web field at phone width (CONVENTIONS "Accessibility")
   fieldSm: { minHeight: 44, paddingVertical: 5, paddingHorizontal: 10 },
   // design `.strow .sv` — glass-2 fill (already the field default), border-2
   // (already default), 9px radius, roomier centered padding.
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     padding: 0,
     color: colors.text,
     fontFamily: fonts.ui,
-    // 16, as the web field (no iOS zoom there); the box keeps its 39.6 height
+    // 16, as the web field (no iOS zoom there)
     fontSize: 16,
     // Center the value/placeholder: drop the explicit lineHeight (it top/bottom-biases
     // the glyph in a single-line TextInput) + Android font-padding/vertical-align props.

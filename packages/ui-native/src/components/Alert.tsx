@@ -1,4 +1,4 @@
-import { isValidElement, useEffect, type ReactNode } from 'react';
+import { isValidElement, useEffect, useRef, type ReactNode } from 'react';
 import { AccessibilityInfo, Platform, View, Text, Pressable, StyleSheet, type TextStyle, type ViewProps, type ViewStyle } from 'react-native';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
@@ -30,6 +30,10 @@ export interface AlertProps extends Omit<ViewProps, 'children'> {
   /** content under the text that is NOT announced when it changes — a ticking countdown ("Try again in
    *  0:42"): the live region is then the title and text only. */
   footer?: ReactNode;
+  /** iOS: say the alert when it mounts (not only when its text changes). Default: `danger` only — an
+   *  error usually mounts in answer to an action (a failed submit); a `warn` note present when the screen
+   *  opens isn't read out on top of the screen. (Android's live region and web's role do their own.) */
+  announceOnMount?: boolean;
 }
 
 export type AlertTitleLevel = 'p' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
@@ -128,6 +132,7 @@ export function Alert({
   titleAs = 'p',
   live = true,
   footer,
+  announceOnMount,
   style,
   ...rest
 }: AlertProps) {
@@ -141,15 +146,20 @@ export function Alert({
   const t = TONE[tone];
   // Increase Contrast steps the body text up
   const c = useContrastColors();
-  // iOS has no live regions: a danger / warn alert says itself when it appears or its text changes
-  // (Android reads the live region below); `live={false}` opts out
+  // iOS has no live regions: a danger / warn alert says itself when its text changes, and on mount when
+  // `announceOnMount` (default: danger only); Android reads the live region below; `live={false}` opts out
   const spoken = [title, typeof children === 'string' || typeof children === 'number' ? String(children) : '']
     .filter(Boolean)
     .join('. ');
+  const mounted = useRef(false);
+  const onMount = announceOnMount ?? tone === 'danger';
   useEffect(() => {
+    const first = !mounted.current;
+    mounted.current = true;
     if (!live || !spoken || Platform.OS !== 'ios' || (tone !== 'danger' && tone !== 'warn')) return;
+    if (first && !onMount) return;
     AccessibilityInfo.announceForAccessibility(spoken);
-  }, [spoken, live, tone]);
+  }, [spoken, live, tone, onMount]);
   const note = NOTE[tone];
   // a text-only neutral note centres its icon; with a title or a dismiss it top-aligns like every tone
   const centred = tone === 'neutral' && title == null && !onDismiss;

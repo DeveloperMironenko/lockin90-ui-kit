@@ -86,9 +86,11 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
 - **Reduced motion:** web `prefers-reduced-motion` (the global rule in `base.css`); native every
   `Animated.loop` and large movement stops when the kit's `useReducedMotion()` is true.
 - **Increase Contrast:** native `useHighContrast()` / `useContrastColors()` (exported; Android high text
-  contrast, iOS darker system colours or bold text; one shared store, as `useReducedMotion`) step faint →
-  dim, dim → full text, `--border-2` → the control edge, the control edge → `.5`; web the same under
-  `@media (prefers-contrast: more)` in tokens.css. Used by FormField, Input, PasswordInput, SearchInput,
+  contrast, iOS darker system colours — not Bold Text, a weight setting; one shared store, as
+  `useReducedMotion`, where a change event beats a late first read) step faint → dim, dim → full text,
+  `--border-2` → the control edge, the control edge → `--border-control-strong` (`.5`). The mapping is
+  `highContrastColors` in tokens; web applies the same values under `@media (prefers-contrast: more)` in
+  tokens.css (a test keeps them equal). Used by FormField, Input, PasswordInput, SearchInput,
   Select, ListRow, Eyebrow, Divider and Alert.
 - **Loading indicators slow, never stop, under Reduce Motion** (Spinner 2.5s, DotsLoader ×3): they still
   say busy. Other loops stop at a defined still frame.

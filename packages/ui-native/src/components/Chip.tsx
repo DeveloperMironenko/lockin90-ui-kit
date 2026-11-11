@@ -130,6 +130,6 @@ const styles = StyleSheet.create({
   smDotNoGlow: { shadowOpacity: 0 },
   labelWrap: { flexShrink: 1 },
   label: { fontFamily: fonts.mono, fontSize: 11, fontWeight: '500', letterSpacing: 0.4 },
-  labelSm: { fontSize: 11, fontWeight: '600', letterSpacing: 0, lineHeight: 11, fontVariant: ['tabular-nums'] },
+  labelSm: { fontSize: 11, fontWeight: '600', letterSpacing: 0, lineHeight: 13, fontVariant: ['tabular-nums'] },
   labelSmAccent: { color: '#0A0A12' },
 });

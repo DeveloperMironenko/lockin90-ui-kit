@@ -82,3 +82,29 @@ describe('ReauthDialog providers', () => {
     expect(byText('Continuar con Google').disabled).toBe(true);
   });
 });
+
+describe('Menu keyboard (review)', () => {
+  const items = () => Array.from(document.querySelectorAll<HTMLElement>('[role="menuitem"]'));
+  it('Tab inside the menu closes it and leaves focus on the trigger', () => {
+    const host = mount(<Menu label="More" items={[{ label: 'Edit' }, { label: 'Share' }]} />);
+    const trigger = host.querySelector('button')!;
+    trigger.focus();
+    key(trigger, 'Enter');
+    key(document.activeElement!, 'Tab');
+    expect(document.querySelector('[role="menu"]')).toBeNull();
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it('Enter on the trigger of an open menu closes it; a later mouse open does not move focus', () => {
+    const host = mount(<Menu label="More" items={[{ label: 'Edit' }, { label: 'Share' }]} />);
+    const trigger = host.querySelector('button')!;
+    trigger.focus();
+    act(() => trigger.click()); // mouse open: focus stays on the trigger
+    expect(document.activeElement).toBe(trigger);
+    key(trigger, 'Enter');
+    expect(document.querySelector('[role="menu"]')).toBeNull();
+    act(() => trigger.click());
+    expect(items().length).toBe(2);
+    expect(document.activeElement).toBe(trigger);
+  });
+});

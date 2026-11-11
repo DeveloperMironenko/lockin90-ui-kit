@@ -119,3 +119,7 @@ Substrate differences: web uses CSS `@keyframes` + custom properties; native use
 ## Update — 2026-11-10 (simulator check, 1.35)
 
 - **Reduce Motion slows it instead of stopping it** (a loading indicator still says busy, as Spinner): native ×3 (1080 / 1440 ms per bounce), web 3.6s (wins over `base.css`'s freeze). Replaces the still frame.
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **Web reduced motion triples the stagger too** (each dot's delay is `--lk-dot-i` × 0.16s, × 0.48s under reduced motion), so the slowed wave keeps its shape.

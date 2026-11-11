@@ -53,16 +53,19 @@
 }
 
 /* Google SSO button — default Button chrome, full width, centered glyph */
-.lk-reauth-google {
+.lk-reauth-google,
+.lk-reauth-apple {
   width: 100%;
   justify-content: center;
 }
-.lk-reauth-google-icon {
+.lk-reauth-google-icon,
+.lk-reauth-apple-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
-.lk-reauth-google-icon svg {
+.lk-reauth-google-icon svg,
+.lk-reauth-apple-icon svg {
   width: 18px;
   height: 18px;
 }

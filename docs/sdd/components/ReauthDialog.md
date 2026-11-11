@@ -138,3 +138,7 @@ No capability gap — the dialog is fully usable and visually equivalent on both
 
 - **Focus:** the dialog opens on the password field (`autoFocus`); the Modal keeps Tab inside and gives focus back on close. **Confirm stays enabled:** pressed empty, the field shows `passwordRequiredLabel` (new, both platforms; default `'Enter your password'`) as its `FormField` error. Busy is Button `loading` (named `confirmingLabel`). The field is 16px (Input). Native: new `closeLabel`; the Google / Apple buttons are named by `googleLabel` / `appleLabel` (were English literals).
 - **Apple on web too:** `hasApple`, `onApple`, `appleLabel` (default `'Continue with Apple'`), the native twin's names. Drawn as the Google button is (full-width default Button, the brand glyph in the label colour, the translated label); with `hasGoogle` both show, Google first, after the "or" line when there is a password. Both are disabled while `loading`.
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **Apple has its own classes** (`.lk-reauth-apple`, `.lk-reauth-apple-icon`), styled as Google's.

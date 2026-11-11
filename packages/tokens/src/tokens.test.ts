@@ -2,7 +2,7 @@
    typed raw values and the CSS custom-property sheet, and maps via cssVar. */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { breakpoints, colors, cssVar, spacing } from './index';
+import { breakpoints, colors, cssVar, highContrastColors, spacing } from './index';
 import preset from './tailwind-preset';
 
 describe('orange (recovery tint)', () => {
@@ -143,5 +143,20 @@ describe('contrast over the aurora', () => {
 
   it('the card looks as before on the plain page (#13151D)', () => {
     expect(over(colors.card, bg0).map(Math.round)).toEqual([19, 21, 29]);
+  });
+});
+
+/* Increase Contrast: the web media block and native's mapping are the same values (highContrastColors). */
+describe('Increase Contrast parity', () => {
+  it('prefers-contrast: more sets each token to its highContrastColors value', () => {
+    const css = readFileSync(new URL('./tokens.css', import.meta.url), 'utf8');
+    const block = css.slice(css.indexOf('@media (prefers-contrast: more)'));
+    const norm = (v: string) => v.replace(/\s+/g, '').toLowerCase();
+    const varOf = { textFaint: '--text-faint', textDim: '--text-dim', border2: '--border-2', borderControl: '--border-control' } as const;
+    for (const [key, value] of Object.entries(highContrastColors)) {
+      const m = block.match(new RegExp(`${varOf[key as keyof typeof varOf]}:\\s*([^;]+);`));
+      expect(norm(m![1])).toBe(norm(value));
+    }
+    expect(css).toContain('--border-control-strong: rgba(255, 255, 255, 0.5)');
   });
 });

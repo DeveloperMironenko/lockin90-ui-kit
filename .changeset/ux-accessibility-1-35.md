@@ -46,3 +46,11 @@ UX and accessibility (1.35b–h, CONVENTIONS "Accessibility"):
     - **DotsLoader** slows under Reduce Motion.
     - **Increase Contrast:** new `useHighContrast` / `useContrastColors` / `contrastColors` (native) and `prefers-contrast: more` (web tokens).
     - **Alert:** a danger / warn Alert announces itself on iOS.
+  - **Review fixes:**
+    - **tokens:** `--border-control-strong` / `colors.borderControlStrong` and `highContrastColors` (one Increase Contrast mapping for web and native).
+    - **Menu:** Tab closes it back to the trigger; Enter / Space toggle it closed.
+    - **SegmentedTabs:** the fit re-runs in rows mode.
+    - **Text:** native 11px labels keep a line height of 13 or more.
+    - **Alert:** iOS announces on mount for danger only (new `announceOnMount`).
+    - **Increase Contrast:** ignores Bold Text, and a change event beats the first read.
+    - **DotsLoader:** the web stagger slows with the dots.

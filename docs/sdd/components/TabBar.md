@@ -156,3 +156,7 @@ No capability gap blocks use — both render an equivalent bottom nav + FAB.
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **Label 11px** (was 10).
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **Native label line height 13** (was 10) for the 11 font.

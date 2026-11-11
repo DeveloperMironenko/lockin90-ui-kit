@@ -263,7 +263,8 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '500',
     letterSpacing: 0.6,
-    lineHeight: 10,
+    // ≥ the 11 font, so the glyphs never clip
+    lineHeight: 13,
   },
   // ---- FAB ----
   fabShadow: {

@@ -160,3 +160,7 @@ No capability gap — the alert is visually equivalent on both.
 
 - **iOS says it:** iOS has no live regions, so a `danger` or `warn` Alert calls `AccessibilityInfo.announceForAccessibility` (title. text) when it appears or its text changes; `live={false}` opts out; Android keeps its live region. Apps no longer announce alerts themselves.
 - **Increase Contrast** steps the body text up.
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **iOS announcement rule (`announceOnMount`, native):** a `danger` / `warn` Alert speaks when its text changes; on mount only when `announceOnMount` — default `true` for `danger` (an error mounts in answer to an action, e.g. a failed submit) and `false` for `warn` (a note already there when the screen opens isn't read out on top of the screen). `live={false}` opts out of both. Web's role and Android's live region do their own.

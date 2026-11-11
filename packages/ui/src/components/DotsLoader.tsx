@@ -47,8 +47,8 @@ export function DotsLoader({
       {...rest}
     >
       {Array.from({ length: n }, (_, i) => (
-        // each dot is delayed by 0.16s × index for the staggered wave
-        <i key={i} style={{ animationDelay: `${i * 0.16}s` } as CSSProperties} />
+        // each dot is delayed by 0.16s × index for the staggered wave (× 3 under reduced motion, in CSS)
+        <i key={i} style={{ '--lk-dot-i': i } as CSSProperties} />
       ))}
     </span>
   );

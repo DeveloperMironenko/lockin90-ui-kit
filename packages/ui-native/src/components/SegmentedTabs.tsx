@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
   countText: {
     fontFamily: fonts.mono,
     fontSize: 11,
-    lineHeight: 12, // web is line-height 1; 12 keeps mono glyphs unclipped on device
+    lineHeight: 13, // web is line-height 1; 13 keeps the 11 mono glyphs unclipped on device
     fontVariant: ['tabular-nums'],
   },
 });

@@ -70,18 +70,21 @@ describe('FormField error', () => {
 });
 
 describe('Alert on iOS', () => {
-  test('a danger or warn alert says itself; a note does not', () => {
+  test('danger says itself on mount; warn only when its text changes; live={false} never', () => {
     const announce = vi.spyOn(AccessibilityInfo, 'announceForAccessibility').mockImplementation(() => {});
     ios(() => {
       const a = mount(<Alert tone="danger" title="Sign-in failed">Wrong password</Alert>);
       a.unmount();
-      const b = mount(<Alert tone="info">Saved</Alert>);
+      const b = mount(<Alert tone="warn">Weak signal</Alert>);
+      expect(announce).toHaveBeenCalledTimes(1);
+      b.rerender(<Alert tone="warn">No signal</Alert>);
       b.unmount();
-      const c = mount(<Alert tone="warn" live={false}>Quiet</Alert>);
+      const c = mount(<Alert tone="danger" live={false}>Quiet</Alert>);
       c.unmount();
+      const d = mount(<Alert tone="info">Saved</Alert>);
+      d.unmount();
     });
-    expect(announce).toHaveBeenCalledTimes(1);
-    expect(announce).toHaveBeenCalledWith('Sign-in failed. Wrong password');
+    expect(announce.mock.calls.map((c) => c[0])).toEqual(['Sign-in failed. Wrong password', 'No signal']);
   });
 });
 
@@ -103,5 +106,35 @@ describe('Increase Contrast', () => {
     expect(JSON.stringify(propOf(label, 'style'))).toContain('"color":"rgba(238,241,248,1.00)"');
     unmount();
     delete info.isDarkerSystemColorsEnabled;
+  });
+});
+
+describe('useHighContrast (review)', () => {
+  test('a change event before the first read wins; Bold Text is not contrast', async () => {
+    const info = AccessibilityInfo as unknown as Record<string, unknown>;
+    let resolveFirst: (on: boolean) => void = () => {};
+    const handlers: Record<string, (on: boolean) => void> = {};
+    info.isDarkerSystemColorsEnabled = () => new Promise<boolean>((r) => (resolveFirst = r));
+    // Bold Text on: it must not count (the hook never asks for it)
+    info.isBoldTextEnabled = () => Promise.resolve(true);
+    vi.spyOn(AccessibilityInfo, 'addEventListener').mockImplementation(((e: string, fn: (on: boolean) => void) => {
+      handlers[e] = fn;
+      return { remove: () => {} };
+    }) as never);
+    vi.resetModules();
+    const { useHighContrast } = await import('../../internal/useHighContrast');
+    const seen: boolean[] = [];
+    function Probe() {
+      seen.push(useHighContrast());
+      return null;
+    }
+    const { unmount } = mount(<Probe />);
+    expect(handlers.boldTextChanged).toBeUndefined();
+    act(() => handlers.darkerSystemColorsChanged?.(true));
+    await act(async () => resolveFirst(false));
+    expect(seen[seen.length - 1]).toBe(true);
+    unmount();
+    delete info.isDarkerSystemColorsEnabled;
+    delete info.isBoldTextEnabled;
   });
 });
