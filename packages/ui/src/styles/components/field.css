@@ -13,9 +13,16 @@
 
 .lk-field-label-row {
   display: flex;
+  /* a long action ("¿Olvidaste tu contraseña?" at 320) goes to its own line, end-aligned; never overflows */
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
+  gap: 2px 10px;
+}
+.lk-field-label-row > :not(.lk-field-label) {
+  margin-left: auto;
+  min-width: 0;
+  text-align: end;
 }
 
 .lk-field-label {

@@ -32,3 +32,4 @@ UX and accessibility (1.35b–h, CONVENTIONS "Accessibility"):
   - **Text size:** no meaningful text under 11px (chips, badges, eyebrows, labels, counts).
   - **Alert:** new `live` and `footer` (a countdown outside the live region).
   - **MetricTile:** the `sm` label and a word value wrap instead of being cut with an ellipsis; label and hint are 11px; the unit wraps under the value when the row doesn't fit (web and native).
+  - **FormField / Button `text`:** the label row wraps (a long action goes to its own line, end-aligned) and a text button's label wraps instead of overflowing (web and native).

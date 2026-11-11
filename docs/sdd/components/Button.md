@@ -212,3 +212,4 @@ There is **no capability gap** that blocks use — the button is fully usable an
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **44 at phone width / native:** at ≤ 540px every surface variant (sm included) is at least 44px tall; native `sm` is 44 (`minHeight`) instead of the 36 box + slop. `text` keeps its slop / `::before`.
+- **`text` wraps:** its label wraps when the line is too narrow (web `white-space: normal`, native `flexShrink: 1`), instead of staying one line and overflowing (replaces "the label never shrinks", 2026-11-05).

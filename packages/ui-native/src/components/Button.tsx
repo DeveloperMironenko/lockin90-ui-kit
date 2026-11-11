@@ -218,10 +218,11 @@ const styles = StyleSheet.create({
   // web `.lk-btn:disabled`: the whole surface at half strength
   disabled: { opacity: 0.5 },
   label: { fontFamily: fonts.ui, fontWeight: '600' },
-  textRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9 },
+  // shrinks with its line, so a long label wraps (a long translation) instead of overflowing, as web
+  textRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, flexShrink: 1 },
   textPressed: { opacity: 0.85 },
-  // never shrinks to wrap or cut: one line, as web's nowrap
-  textLabel: { flexShrink: 0, fontFamily: fonts.mono, fontSize: 11.5, lineHeight: 17, color: colors.accent2 },
+  // wraps when its line is too narrow (never cut), as web
+  textLabel: { flexShrink: 1, fontFamily: fonts.mono, fontSize: 11.5, lineHeight: 17, color: colors.accent2 },
   textDisabled: { color: colors.textFaint },
   // web `.lk-btn--tone-muted` (design onboarding .step-skip): faint, 12.5, padding 8
   textMuted: { fontSize: 12.5, lineHeight: 17, color: colors.textFaint },

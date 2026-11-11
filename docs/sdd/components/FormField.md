@@ -171,3 +171,4 @@ None block use; app code reads 1:1 (same `label`/`help`/`error`/`required`, same
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - SearchInput: `--field` fill, focus ring, 44 at phone width. Label 11px on web (as native).
+- **The label row wraps** (web `flex-wrap: wrap`, native `flexWrap: 'wrap'`): a long `labelAction` ("¿Olvidaste tu contraseña?" at 320–360) goes to its own line, end-aligned (web `margin-left: auto` + `text-align: end`; native a wrapper with `marginLeft: 'auto'`), instead of overflowing.

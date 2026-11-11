@@ -83,7 +83,7 @@ export function FormField({
               {required ? <Text style={styles.req}>{'\u2009*'}</Text> : null}
             </Text>
           ) : null}
-          {labelAction}
+          {labelAction != null ? <View style={styles.labelAction}>{labelAction}</View> : null}
         </View>
       ) : null}
       <View style={styles.control}>{body}</View>
@@ -211,7 +211,16 @@ export function SearchInput({
 const styles = StyleSheet.create({
   // FormField
   field: { gap: 6, minWidth: 0 },
-  labelRow: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: 10 },
+  // a long action goes to its own line, end-aligned (as web); never overflows
+  labelRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    columnGap: 10,
+    rowGap: 2,
+  },
+  labelAction: { marginLeft: 'auto', maxWidth: '100%', flexShrink: 1, alignItems: 'flex-end' },
   // the label the web shows (11px / 500, text-dim, 0.12em, line height 1.55 = 17)
   fieldLabel: {
     fontFamily: fonts.mono,
