@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { absoluteFill } from '../internal/absoluteFill';
+import { useBottomInset } from '../internal/optionalSafeArea';
 
 export interface SheetProps {
   /** Show the sheet. When false, nothing renders. */
@@ -32,6 +33,8 @@ export interface SheetProps {
 const DISMISS_FRACTION = 0.25;
 /** Downward fling velocity (px/ms) that dismisses regardless of distance. */
 const DISMISS_VELOCITY = 0.5;
+/** The bottom sheet's own bottom padding, under the safe-area inset. */
+const PAD_BOTTOM = 18;
 
 /** Side drawer + bottom sheet over a dimmed scrim. The bottom variant is
  *  anchored to the bottom edge with rounded top corners and a centered drag
@@ -43,6 +46,9 @@ export function Sheet({ open = true, onClose, side = 'bottom', title, children }
   const isBottom = side === 'bottom';
   const align = isBottom ? styles.scrimBottom : side === 'right' ? styles.scrimRight : styles.scrimLeft;
   const panel = isBottom ? styles.panelBottom : side === 'right' ? styles.panelRight : styles.panelLeft;
+  // the bottom sheet's content clears the home indicator: its 18 padding plus the safe-area inset
+  const bottomInset = useBottomInset();
+  const clear = isBottom && bottomInset ? { paddingBottom: PAD_BOTTOM + bottomInset } : undefined;
 
   // ---- drag-to-dismiss (bottom sheet only) ----
   const dragY = useRef(new Animated.Value(0)).current;
@@ -100,7 +106,7 @@ export function Sheet({ open = true, onClose, side = 'bottom', title, children }
           {/* the panel claims the touch, so a tap on it never reaches the scrim (a plain view: as a
               Pressable it would be an accessible element grouping everything inside) */}
           <Animated.View
-            style={[styles.panel, panel, isBottom && { transform: [{ translateY: dragY }] }]}
+            style={[styles.panel, panel, clear, isBottom && { transform: [{ translateY: dragY }] }]}
             onStartShouldSetResponder={() => true}
             accessibilityViewIsModal
             // VoiceOver's escape gesture (two-finger Z) closes it, the scrim not being an element
@@ -168,7 +174,7 @@ const styles = StyleSheet.create({
     maxHeight: '86%',
     paddingTop: 8,
     paddingHorizontal: 16,
-    paddingBottom: 18,
+    paddingBottom: PAD_BOTTOM,
     borderBottomWidth: 0,
     borderTopLeftRadius: radii.lg,
     borderTopRightRadius: radii.lg,

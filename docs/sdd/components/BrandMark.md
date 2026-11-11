@@ -90,6 +90,7 @@ No capability gap blocks use.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** `mark`/`icon`/`mono` svgs set `role="img"` + `aria-label={title}` (default `'LockIn90'`); pass `aria-hidden` when the logo is decorative beside visible text. The `lockup` wraps a real text span ("LockIn90") that reads naturally.
 - **Native:** no `title` prop — add `accessibilityLabel="LockIn90"` on the wrapping element when the mark conveys the app name standalone; the `lockup` wordmark is real SVG text.
 - **Contrast:** `mono` uses `--text`/`colors.text` for single-color contexts; the `icon` tile keeps the bright glyph on a dark violet-glow base.

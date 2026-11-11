@@ -113,6 +113,7 @@ No capability gap blocks use.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** track `role="tablist"`; segments `role="tab"` with `aria-selected={i === active}`; locked segments are `disabled` + `aria-disabled`. The lock and tone dot are `aria-hidden`.
 - **Native:** track `accessibilityRole="tablist"`; segments `accessibilityRole="tab"` with `accessibilityState={{ selected, disabled }}`.
 - **Hit target:** `7px` vertical padding + label; for dense controls on touch ensure the track has enough height — prefer fewer, wider segments on phone.
@@ -139,3 +140,13 @@ No capability gap blocks use.
 
 ## Update — 2026-07-10
 - **Haptics:** the primary interaction (segment change / row press / panel open) fires `hapticSelection()` (native `optionalHaptics`; no-op without expo-haptics).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **`kind`** (web + native, `'tabs' | 'choice'`, default `'tabs'`): `'choice'` for a form value. Web: the track is
+  a `radiogroup`, each segment a `radio` with `aria-checked` (no `aria-selected`), one Tab stop (the chosen
+  segment, else the first unlocked), and ArrowRight / ArrowDown, ArrowLeft / ArrowUp (wrapping), Home and End
+  move focus and choose (`onChange`), skipping locked segments. Name it with `aria-label` /
+  `aria-labelledby`. Native: `accessibilityRole="radiogroup"`, segments `radio` with `accessibilityState.checked`.
+- **Native `accessibilityLabel` / `accessibilityHint`** on the group (a `FormField` passes its label and error).
+- **Native targets, same look:** each segment `hitSlop` 7 above / below (`md`, 30 tall) or 11 (`sm`, 23): 44pt.

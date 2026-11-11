@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from 'react';
-import { View, Text, TextInput, StyleSheet, type TextInputProps } from 'react-native';
+import { useRef, useState, type ReactNode } from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet, type TextInputProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
 
 export interface InputProps extends TextInputProps {
@@ -37,17 +37,24 @@ export function Input({
   ...rest
 }: InputProps) {
   const [focused, setFocused] = useState(false);
+  const inputRef = useRef<TextInput>(null);
   const sm = inputSize === 'sm';
   const numeral = variant === 'numeral';
 
-  const borderColor = invalid ? colors.zoneLow : focused ? colors.accent : colors.border2;
+  const borderColor = invalid ? colors.zoneLow : focused ? colors.accent : colors.borderControl;
 
   return (
     <View style={styles.wrap}>
       {label ? <Text style={styles.label}>{label.toUpperCase()}</Text> : null}
-      <View style={[styles.field, sm && styles.fieldSm, numeral && styles.fieldNumeral, { borderColor }]}>
+      {/* a tap on the padding, the icon or the unit focuses the field (the whole box is its target) */}
+      <Pressable
+        accessible={false}
+        onPress={() => inputRef.current?.focus()}
+        style={[styles.field, sm && styles.fieldSm, numeral && styles.fieldNumeral, { borderColor }]}
+      >
         {leading ? <View style={styles.lead}>{leading}</View> : null}
         <TextInput
+          ref={inputRef}
           style={[styles.input, sm && styles.inputSm, numeral && styles.inputNumeral, style]}
           placeholderTextColor={colors.textFaint}
           onFocus={(e) => {
@@ -63,7 +70,7 @@ export function Input({
         {unit ? (
           <Text style={[styles.unit, sm && styles.unitSm, numeral && styles.unitNumeral]}>{unit}</Text>
         ) : null}
-      </View>
+      </Pressable>
     </View>
   );
 }
@@ -92,7 +99,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.glass2,
   },
   // the web box: 9 + 14 × 1.4 + 9 + 2 borders = 39.6 (sm: 6 + 12.5 × 1.4 + 6 + 2 = 31.5)
-  fieldSm: { minHeight: 31.5, paddingVertical: 6, paddingHorizontal: 10 },
+  fieldSm: { minHeight: 31.5, paddingVertical: 5, paddingHorizontal: 10 },
   // design `.strow .sv` — glass-2 fill (already the field default), border-2
   // (already default), 9px radius, roomier centered padding.
   fieldNumeral: { minHeight: 0, justifyContent: 'center', paddingVertical: 10, paddingHorizontal: 10, borderRadius: 9 },
@@ -103,13 +110,14 @@ const styles = StyleSheet.create({
     padding: 0,
     color: colors.text,
     fontFamily: fonts.ui,
-    fontSize: 14,
+    // 16, as the web field (no iOS zoom there); the box keeps its 39.6 height
+    fontSize: 16,
     // Center the value/placeholder: drop the explicit lineHeight (it top/bottom-biases
     // the glyph in a single-line TextInput) + Android font-padding/vertical-align props.
     textAlignVertical: 'center',
     includeFontPadding: false,
   },
-  inputSm: { fontSize: 12.5 },
+  inputSm: { fontSize: 16 },
   // design `.strow .sv` — 20px bold display-font numeral, centered, tabular.
   // Content-hugging (not flex:1) so it groups tightly with the unit suffix
   // instead of stretching to the field's full width.

@@ -155,6 +155,7 @@ Standalone chart — composes nothing from the kit; typically placed inside a `C
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the `<svg>` carries `role="img"` + `aria-label={ariaLabel}` (or `aria-hidden` when no label); overlay text is real DOM but `pointer-events: none` — pass a data-bearing `ariaLabel` ("Today's timeline: 6 events, now 2pm").
 - **Native:** root `View` with `accessibilityRole="image"` + `accessibilityLabel={ariaLabel}`.
 - Non-interactive — no focus/keyboard surface. Overlay text renders at true px (8.5/8px) regardless of chart width — legible even when the SVG stretches.
@@ -183,3 +184,7 @@ Standalone chart — composes nothing from the kit; typically placed inside a `C
 - **Tokens only** — the catalog's raw whites are expressed as `--text`/`colors.text` + opacity inside the component; dark ink on colored pills is `--void`, never `#000`.
 - **Substrate diffs stay documented, not widened** — don't replace the Animated pulse with SMIL (the shine already uses the kit `FeGaussianBlur` pattern); §5 is the accepted contract.
 - **Parity gate:** any change ships only after the web story and the native story are compared side-by-side against `timeline-charts.html`.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native reduced motion:** the pulse ring stops while `useReducedMotion()` is true.

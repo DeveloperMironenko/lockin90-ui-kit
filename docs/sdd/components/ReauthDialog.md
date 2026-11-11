@@ -108,6 +108,7 @@ No capability gap — the dialog is fully usable and visually equivalent on both
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** inherits the `Modal` focus trap + ESC + scrim-close; the password field is a labeled `Input` with `autoComplete="current-password"`; Confirm is a real `<button type="submit">` inside a `<form>` (Enter submits). The error renders in a danger `Alert` (announced).
 - **Native:** `Modal` handles Android back + scrim tap; password is `secureTextEntry` + `textContentType="password"` (OS autofill); the Google `Pressable` has `accessibilityRole="button"` + `accessibilityLabel="Continue with Google"`; `onSubmitEditing` submits from the keyboard.
 - **Hit target:** all actions are full-width `Button`s/`Pressable` (≥44px `md`). Confirm stays disabled until a password is entered, signaling required input.

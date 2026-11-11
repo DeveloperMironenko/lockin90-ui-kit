@@ -134,6 +134,7 @@ function Shell() {
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Rail:** `<aside aria-label="Admin navigation">` wrapping `<nav aria-label="Primary">`.
 - **Items:** real `<a>` (with `href`) or `<button type="button">` (otherwise) — both focusable and
   keyboard-activatable; the active item carries `aria-current="page"`.
@@ -167,3 +168,7 @@ function Shell() {
   from `@lockin90/tokens`; any hardcoded equivalent is a bug (Aurora Flux renames will break it).
 - **Web-only.** This is an admin primitive; do not attempt to consume it from a native surface or
   claim web≡native parity — there is none to hold.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **`100dvh`:** the rail's height is `100dvh` with a `100vh` fallback (mobile browser bars).

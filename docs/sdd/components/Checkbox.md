@@ -114,6 +114,7 @@ None of these block use — the controls are visually and behaviorally equivalen
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a real `<input type="checkbox|radio">` inside a `<label>` — focusable, Space toggles, label click toggles, form-associated. `indeterminate` is set as the DOM property so SRs announce "mixed". `RadioGroup` wraps the rows in `role="radiogroup"`.
 - **Native:** `Pressable` with `accessibilityRole="checkbox"|"radio"` and `accessibilityState={{ checked: 'mixed'|boolean, disabled }}`; `RadioGroup` is a `role="radiogroup"` `View`.
 - **Hit target:** the 18px box plus the `9px` gap + label widen the touch target; prefer always rendering a `label` for a larger tap area.

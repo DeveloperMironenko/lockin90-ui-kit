@@ -110,6 +110,7 @@ Standalone chart — the live HR widget (VT-01), the HRV explainer (VT-02), the 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<div role="img" aria-label={ariaLabel}>`; the `<svg>` is `aria-hidden`. Pass a data-bearing `ariaLabel` ("Resting heart rate 62 bpm, sinus rhythm" / "One premature beat detected").
 - **Native:** root `View` with `accessibilityRole="image"` + `accessibilityLabel={ariaLabel}`.
 - Non-interactive; the SMIL pulse honors `prefers-reduced-motion`.
@@ -137,3 +138,7 @@ Standalone chart — the live HR widget (VT-01), the HRV explainer (VT-02), the 
 - **Tokens only** — mint/cyan/violet/indigo/zone tokens throughout; paper/ruler whites are `--text` + opacity.
 - **Don't fork the template** — the PQRST points and the 23.5 ms/px scale are the catalog spec; apps never re-implement them.
 - **Parity gate:** changes ship only after the web and native stories are compared side-by-side against `vitals-charts.html`.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native reduced motion:** the pulse dot and the live ECG trace stop while `useReducedMotion()` is true.

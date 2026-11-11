@@ -69,6 +69,8 @@ const [natural, setNatural] = useState<{ width: number; height: number }>()
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
+
 The frame is a focusable `role="group"` named by `label`, moved with the arrow keys and zoomed with
 `+` / `−`; the zoom `Slider`'s range input is named by `zoomLabel` (`Slider` now puts `aria-label` on its input). The image itself is
 decorative (`alt=""`): the app's text says what it is.

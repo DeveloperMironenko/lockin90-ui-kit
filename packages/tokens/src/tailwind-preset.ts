@@ -19,6 +19,7 @@ const preset = {
         'glass-2': colors.glass2,
         border: colors.border,
         'border-2': colors.border2,
+        'border-control': colors.borderControl,
         text: colors.text,
         dim: colors.textDim,
         faint: colors.textFaint,

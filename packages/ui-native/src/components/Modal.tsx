@@ -52,7 +52,8 @@ export function Modal({ open = true, onClose, title, children, footer, size = 'm
                   onPress={onClose}
                   accessibilityRole="button"
                   accessibilityLabel={closeLabel}
-                  hitSlop={6}
+                  // the 30pt box reaches the 44pt touch target
+                  hitSlop={7}
                   style={styles.close}
                 >
                   <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={colors.textFaint} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">

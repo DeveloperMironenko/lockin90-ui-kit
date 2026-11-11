@@ -82,6 +82,7 @@ No capability gap — EmptyState renders identically on both platforms.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** semantic text (`div`/`p`); the decorative tile is `aria-hidden`. The `action` `Button` carries its own focus/label. No live-region needed (static placeholder).
 - **Native:** the tile glyph is decorative (no `accessibilityLabel`); title/description are plain `Text` read in order; the `action` `Button` is the focusable target.
 - **Contrast:** title is full `--text`; description `--text-dim` at 13.5px stays legible. The glyph is decorative, so its faint `--accent` is fine.

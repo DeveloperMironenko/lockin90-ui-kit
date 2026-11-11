@@ -106,6 +106,7 @@ No capability gap — fully usable and visually equivalent on both platforms.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the primary is a real `<button type="button">`; the chevron is the `Menu` trigger (its own
   button + listbox semantics). Provide descriptive `label` and `items` labels.
 - **Native:** the primary is a `Pressable`; the chevron is the `Menu`'s `Pressable` trigger. Icon-only

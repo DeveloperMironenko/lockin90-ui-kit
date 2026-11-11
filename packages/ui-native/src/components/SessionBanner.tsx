@@ -2,6 +2,7 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { Animated, Easing, View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import { colors, fonts, radii } from '@lockin90/tokens';
 import { Button } from './Button';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 export interface SessionBannerStat {
   /** Mono stat value (e.g. `'142'`). */
@@ -42,7 +43,9 @@ export interface SessionBannerProps {
  *  DotsLoader/TypingIndicator. */
 function LiveDot() {
   const v = useRef(new Animated.Value(0)).current;
+  const reduced = useReducedMotion();
   useEffect(() => {
+    if (reduced) return;
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(v, { toValue: 1, duration: 800, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
@@ -51,7 +54,7 @@ function LiveDot() {
     );
     loop.start();
     return () => loop.stop();
-  }, [v]);
+  }, [v, reduced]);
   return (
     <Animated.View
       style={[

@@ -89,6 +89,7 @@ wheel must accept it degrades to hex+presets on native.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** OS picker `<input>` carries `aria-label="Pick a color"`; the hex `Input` `aria-label="Hex color"`;
   each preset `<button>` is labelled with its hex and exposes `aria-pressed`; the chip is `aria-hidden`.
 - **Native:** the trigger `Pressable` is `accessibilityRole="button"` labelled `Color {hex}`; each preset is a

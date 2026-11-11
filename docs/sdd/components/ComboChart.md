@@ -112,6 +112,7 @@ Standalone chart — composes nothing from the kit; typically placed inside a `C
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<div role="img" aria-label={ariaLabel}>`; the `<svg>` is `aria-hidden` (in-SVG text is decorative). Pass a data-bearing `ariaLabel` ("Training minutes vs energy, 14 days: energy trends up on training days").
 - **Native:** root `View` with `accessibilityRole="image"` + `accessibilityLabel={ariaLabel}`.
 - Non-interactive — no focus/keyboard surface. In-chart text scales with the container; keep charts ≥ ~300px wide or move critical numbers into surrounding real text.

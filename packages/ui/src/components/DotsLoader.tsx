@@ -10,6 +10,9 @@ export interface DotsLoaderProps extends HTMLAttributes<HTMLSpanElement> {
   count?: number;
   /** gap between dots in px */
   gap?: number;
+  /** what is loading, read by screen readers, in the app's language (CONVENTIONS "Accessibility").
+   *  @default 'Loading' (an English fallback for older apps) */
+  label?: string;
 }
 
 /**
@@ -22,6 +25,7 @@ export function DotsLoader({
   color,
   count = 3,
   gap,
+  label = 'Loading',
   className,
   style,
   ...rest
@@ -31,7 +35,7 @@ export function DotsLoader({
     <span
       className={cn('lk-dots', className)}
       role="status"
-      aria-label="Loading"
+      aria-label={label}
       style={
         {
           '--lk-dot-size': `${size}px`,

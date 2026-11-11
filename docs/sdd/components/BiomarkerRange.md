@@ -128,6 +128,7 @@ Static/decorative otherwise — no hover/focus/disabled.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<div role="img" aria-label={ariaLabel}>`; the `<svg>` is `aria-hidden="true"`. Pass a meaningful `ariaLabel` (e.g. `"Blood panel: ferritin low, LDL high"`) — the SVG text is not exposed.
 - **Native:** container `accessibilityRole="image"` + `accessibilityLabel={ariaLabel}` — same rule.
 - **Color:** out-of-range is never color-only — the coral dot is always paired with the LOW/HIGH flag (BR-01), verdict text (BR-04), or the readout itself.

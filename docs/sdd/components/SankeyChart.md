@@ -117,6 +117,7 @@ Standalone chart — composes nothing from the kit; typically placed inside a `C
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<svg role="img" aria-label={ariaLabel}>`; the default label is generated from the variant + resolved node labels (e.g. `"zone-outcomes flow: HABITS, SLEEP to GOOD, OK, ROUGH"`); pass a data-bearing `ariaLabel` when the numbers matter.
 - **Native:** wrapper `View` with `accessibilityRole="image"` + `accessibilityLabel={ariaLabel}` (same generated default).
 - Non-interactive — no focus/keyboard surface. In-chart text is 8/8.5 viewBox px; at the default 320px render that's actual size — keep the chart ≥ ~300px wide or carry the conclusion in surrounding real text.

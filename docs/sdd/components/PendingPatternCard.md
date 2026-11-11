@@ -96,6 +96,7 @@ No capability gap — both render the same reviewable pattern card with working 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the eyebrow + prose convey the pattern; Accept/Dismiss are real `Button`s (focusable, Enter/Space). The icon is `aria-hidden`. Ensure `acceptLabel`/`dismissLabel` are descriptive if the default verbs are ambiguous in context.
 - **Native:** Accept/Dismiss are `Button`s (`Pressable` with `accessibilityRole="button"`); prose is `Text`.
 - **Effect tone:** the sign (`+`/`−`) is rendered as text, so the valence isn't color-only — screen readers get the signed magnitude.

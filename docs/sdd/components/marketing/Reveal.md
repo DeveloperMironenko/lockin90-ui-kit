@@ -93,6 +93,7 @@ Key behaviors, all code-grounded:
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Respects `prefers-reduced-motion`** at the CSS layer — reduced-motion users see content immediately with no fade/lift, independent of the observer. This is the key a11y guarantee.
 - **Never traps content hidden:** the `IntersectionObserver`-missing fallback shows content on mount, so non-supporting/SSR-degraded runtimes still render fully.
 - `Reveal` is a **presentational wrapper** — it adds no role/label and doesn't change tab order or semantics, except that `as` lets you keep correct structure (use `as="li"` inside lists so the wrapper doesn't break `<ul>`/`<ol>` parsing).

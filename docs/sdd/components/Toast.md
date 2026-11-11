@@ -135,6 +135,7 @@ No capability gap blocks use.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** Toast `role="status"` (polite live region by default in AT). `×` has `aria-label="Dismiss"`. Badge is decorative text — pair counts with a visible/`aria-label` context on the host control.
 - **Native:** Toast `accessibilityRole="alert"` + `accessibilityLiveRegion="polite"` so it's announced; `×` is `accessibilityRole="button"` + `accessibilityLabel="Dismiss"` with `hitSlop`.
 - **Contrast:** Toast title is full `--text`; accent Badge uses dark `#0A0A12` text on the bright gradient (legible on every stop).
@@ -160,3 +161,10 @@ No capability gap blocks use.
 - **New need → both platforms.** A new tone or an action slot must be added to `ToastProps`/`BadgeProps` on web **and** native (keeping native Badge in `Badge.tsx`) with the same names/tokens. On web, a new `BadgeTone` first needs the matching tone on `Chip` (`ChipTone` + the `.lk-chip-sm` treatment in `Chip.md` §3) — `Badge` itself has no tone CSS to edit anymore, since it's a thin wrapper.
 - **Tokens only.** Rail, tones, the accent gradient, and the dot glow all come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping, confirm the web phone-width toast/badge and native match (same tone, title/message, dismiss, count) — accepting only the gradient-substrate difference.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **`dismissLabel`** (web + native) names the × (default `'Dismiss'`, an English fallback; apps pass it).
+- **Roles:** web `role="alert"` for `danger`, `status` otherwise. Native stays `accessibilityRole="alert"`; its
+  live region is `assertive` for `danger`, `polite` otherwise.
+- **Close target:** native `hitSlop` 12 (20 + 24 = 44pt); web an invisible `::before` 24px (44 at phone width).

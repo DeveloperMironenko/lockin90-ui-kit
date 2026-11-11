@@ -5,6 +5,7 @@
    the whole control brightens. Key: .lk-backlink — inline-flex row, no chrome.
    ========================================================================== */
 .lk-backlink {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -30,9 +31,7 @@
   transform: translateX(-2px);
 }
 .lk-backlink:focus-visible {
-  outline: none;
   border-radius: var(--r-sm);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
 /* ----------------------------------------------------------------------------

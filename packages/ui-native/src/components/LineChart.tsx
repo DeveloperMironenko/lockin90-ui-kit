@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Svg, { ClipPath, Defs, FeGaussianBlur, Filter, Line, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 /** A round overlay dot pinned over a data point (kept circular by rendering it as
  *  an absolutely-positioned View over the stretched Svg), with an optional
@@ -559,7 +560,9 @@ interface OPulse {
  *  mirroring the web CSS `lk-lc-pulse` keyframes (1.8s, scale 1→3, .8→0). */
 function PulseRing({ color }: { color: string }) {
   const v = useRef(new Animated.Value(0)).current;
+  const reduced = useReducedMotion();
   useEffect(() => {
+    if (reduced) return;
     const loop = Animated.loop(
       Animated.timing(v, {
         toValue: 1,
@@ -570,7 +573,7 @@ function PulseRing({ color }: { color: string }) {
     );
     loop.start();
     return () => loop.stop();
-  }, [v]);
+  }, [v, reduced]);
   return (
     <Animated.View
       style={[

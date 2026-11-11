@@ -74,6 +74,7 @@ The **active-session live banner** — the "you're mid-workout" surface pinned o
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a `<section>`; the dot is `aria-hidden` (the status **text** says "Live"); actions are real buttons.
 - **Native:** Texts read in order; actions are kit Buttons (accessible pressables).
 - Liveness is conveyed by the status text, never the dot alone — keep "Live" in `status` whenever `live` is set.
@@ -96,3 +97,7 @@ The **active-session live banner** — the "you're mid-workout" surface pinned o
 - **New need → both platforms** (e.g. a dismiss affordance) with the same prop name.
 - **Tokens only** (the dark-glass fill literal is the canonical matched value).
 - **Parity gate.** Web phone-width banner ≡ native banner (truncation, stats hairlines, dot, buttons) before shipping.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native reduced motion:** the live dot stops pulsing while `useReducedMotion()` is true.

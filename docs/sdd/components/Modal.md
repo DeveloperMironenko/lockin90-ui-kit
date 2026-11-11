@@ -96,6 +96,7 @@ No capability gap blocks use — the dialog is fully usable and visually equival
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** `role="dialog"` + `aria-modal="true"` on the card; scrim is `role="presentation"`. Close button has `aria-label="Close"`. ESC closes. (Focus-trapping/return-focus is not built in — the consumer should manage initial focus for long-lived dialogs.)
 - **Native:** `accessibilityViewIsModal` on the card traps assistive focus; the title is a header; close button has `accessibilityRole="button"` + `accessibilityLabel={closeLabel}` and `hitSlop={6}` for a comfortable target. The scrim `Pressable` is `accessible={false}` and the card a plain view that claims the touch, so the title, body and buttons stay separate items for VoiceOver; VoiceOver's escape gesture (`onAccessibilityEscape`) closes it.
 - **Hit target:** the × is 30×30 (native adds `hitSlop`). Footer actions inherit `Button` sizing (≥44px at `md`).
@@ -121,3 +122,11 @@ No capability gap blocks use — the dialog is fully usable and visually equival
 - **New need → both platforms.** A new size or a header-action slot must be added to `ModalProps` on web **and** native with the same name/tokens — never a one-off.
 - **Tokens only.** Scrim, `bg-1`, `border`, `r-lg`, `elev-2`, and the display/ui type all come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping, confirm the web phone-width modal and the native modal match (same title, body, footer actions, size) — accepting only the documented scrim-blur difference.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Web focus:** on open, focus moves to the dialog panel (`tabIndex={-1}`, no visible ring) unless something
+  inside took it (an `autoFocus` field); Tab / Shift+Tab stay inside; on close focus returns to what had it.
+  The dialog is named by its title (`aria-labelledby` → the `h2`'s id). `closeLabel` (web + native) names the ×.
+- **Native close target:** `hitSlop` 7 (30 + 14 = 44pt).
+- **`100dvh`:** the card's `max-height` is `calc(100dvh - 48px)` with a `100vh` fallback.

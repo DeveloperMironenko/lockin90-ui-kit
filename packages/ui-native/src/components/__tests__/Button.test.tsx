@@ -24,7 +24,7 @@ describe('Button text variant', () => {
   });
 
   test('faint when disabled', () => {
-    expect(hasDeclaration(label(true), 'color:rgba(130,139,159,1.00)')).toBe(true);
+    expect(hasDeclaration(label(true), 'color:rgba(134,143,163,1.00)')).toBe(true);
   });
 });
 
@@ -33,7 +33,7 @@ describe('Button muted tone', () => {
   test('faint 12.5 mono', () => {
     const label = findByText(parse(render(Button, { variant: 'text', tone: 'muted', title: 'Skip setup' })), 'Skip setup')!;
     expect(hasDeclaration(label, 'font-size:12.5px')).toBe(true);
-    expect(hasDeclaration(label, 'color:rgba(130,139,159,1.00)')).toBe(true);
+    expect(hasDeclaration(label, 'color:rgba(134,143,163,1.00)')).toBe(true);
   });
 });
 

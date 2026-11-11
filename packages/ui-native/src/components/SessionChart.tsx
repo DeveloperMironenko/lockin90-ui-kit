@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Svg, { Defs, FeGaussianBlur, Filter, Line, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 /** Catalog variant names — one per session form in
  *  `lockin90-design/charts/session-charts.html` (SN-01 … SN-10). */
@@ -411,13 +412,15 @@ interface OPulse {
  *  mirroring the web SMIL pulse (1.8s, r 3.6→11, opacity .8→0). */
 function PulseRing({ color }: { color: string }) {
   const v = useRef(new Animated.Value(0)).current;
+  const reduced = useReducedMotion();
   useEffect(() => {
+    if (reduced) return;
     const loop = Animated.loop(
       Animated.timing(v, { toValue: 1, duration: 1800, easing: Easing.out(Easing.quad), useNativeDriver: true }),
     );
     loop.start();
     return () => loop.stop();
-  }, [v]);
+  }, [v, reduced]);
   return (
     <Animated.View
       style={[

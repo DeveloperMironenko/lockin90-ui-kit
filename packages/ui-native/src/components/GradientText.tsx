@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, type LayoutChangeEvent, type TextProps, type TextStyle } from 'react-native';
 import Svg, { Defs, LinearGradient, Stop, Text as SvgText } from 'react-native-svg';
 import { gradients, fonts } from '@lockin90/tokens';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
@@ -34,14 +35,16 @@ export function GradientText({ gradient = 'flux', still = false, style, children
 
   // slow linear loop; drives the gradient window's horizontal scroll. useNativeDriver
   // is false because SVG gradient coords aren't native-drivable — fine at this low rate.
+  const reduced = useReducedMotion();
   useEffect(() => {
+    if (reduced) return;
     if (!size || still) return;
     const loop = Animated.loop(
       Animated.timing(anim, { toValue: 1, duration: 9000, easing: Easing.linear, useNativeDriver: false }),
     );
     loop.start();
     return () => loop.stop();
-  }, [size, still, anim]);
+  }, [size, still, anim, reduced]);
 
   const flat = (StyleSheet.flatten(style) ?? {}) as TextStyle;
   const fontSize = typeof flat.fontSize === 'number' ? flat.fontSize : 28;

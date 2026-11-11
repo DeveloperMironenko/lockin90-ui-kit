@@ -121,6 +121,7 @@ limitation.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** each tag's × is a `<button>` with `aria-label="Remove <tag>"`; the input uses the placeholder as its
   `aria-label`. `CodeInput`'s row is `role="group"`, so the `aria-label` / `aria-labelledby` an app passes (rest props) names it
   ("Reset code"); each box carries `aria-label={digitLabel(N, length)}`, `inputMode="numeric"`, and
@@ -185,3 +186,9 @@ limitation.
 
 ## Update — 2026-11-02 (minor, native)
 - **Native `CodeInput` boxes are fluid** (as `mobile/auth-onboarding.html` draws them; sizes in §3), so an 8-digit code fits a phone. The font stays the kit's mono (the design draws display).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Edge:** the TagInput box and every CodeInput box use `--border-control` / `colors.borderControl` (3.3:1 on
+  the card); filled, focus and invalid still recolour them. The TagInput's 12px text input is unchanged (an
+  admin CMS field; not yet 16px).

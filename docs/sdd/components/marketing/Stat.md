@@ -73,6 +73,7 @@ Stat is **static** — no hover / focus / pressed / disabled / loading / empty /
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Inherits root `Stat`'s markup: plain `<div>`s with no role. The DOM/reading order is still `label` then `value` (root `Stat` renders the label span first) — `.lk-stat-hero`'s `flex-direction: column-reverse` only flips the *visual* stacking so the value sits on top with the label below it; screen-reader order is unaffected and stays label-then-value.
 - `value` should be a human-readable string already (e.g. `"2.4×"`, `"12k"`) so screen readers announce the same thing a sighted user sees — don't rely on the gradient to convey meaning.
 - The continuous gradient animation is on a text fill (not motion/transform); it is low-distraction. If a global reduced-motion treatment is desired, handle it at the `.lk-flow-text` keyframe level (shared by root `Stat`'s `hero`+`gradient` combo and `.lk-gradient-text`), not per-instance.

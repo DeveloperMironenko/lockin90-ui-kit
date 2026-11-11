@@ -18,11 +18,13 @@
   --glass-2: rgba(255, 255, 255, 0.075);
   --border: rgba(255, 255, 255, 0.09);
   --border-2: rgba(255, 255, 255, 0.16);
+  /* a field's edge (Input, Select, CodeInput, TagInput, SearchInput): 3.3:1 on the card */
+  --border-control: rgba(255, 255, 255, 0.36);
 
   /* ---- text ---- */
   --text: #EEF1F8;
   --text-dim: #AAB2C6;
-  --text-faint: #828B9F;
+  --text-faint: #868FA3; /* 4.6:1 on a field's fill (glass-2 over the card) */
 
   /* ---- energy spectrum (the signature) ---- */
   --lime: #A8FF35;

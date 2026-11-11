@@ -83,6 +83,7 @@ No capability gap.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a real `<button>` (keyboard-focusable, Enter/Space activate); `aria-label="Continue with Google/Apple"` names it beyond the visible short label; the icon is `aria-hidden`. `:focus-visible` shows the glass focus state.
 - **Native:** `accessibilityRole="button"` + `accessibilityLabel="Continue with {label}"`.
 - **Contrast:** label is full `--text` on the glass surface; the brand glyphs are decorative (the label carries the name).
@@ -117,3 +118,7 @@ No capability gap.
 
 ## Update — 2026-11-02 (native sizes match web)
 - **Native height = web height:** label line height 1.55, so the button is 41.4 as on web (was 37).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Focus ring (web):** the kit's shared `2px solid --accent-2` ring (it had `outline: none`).

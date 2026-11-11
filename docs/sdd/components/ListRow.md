@@ -106,6 +106,7 @@ There is **no capability gap** — both render the same row.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** tappable rows are real `<button type="button">` — focusable, Enter/Space activate; `aria-pressed={active}` exposes selection in pickers. Static rows are `<div>` (non-interactive, correct). Provide a meaningful `title`; if `trailing` is the only label, add `aria-label` via rest.
 - **Native:** the `Pressable` should carry `accessibilityRole="button"` and an `accessibilityLabel` via rest props; `active` selection should be mirrored with `accessibilityState={{ selected }}` by the consumer.
 - **Hit target:** `14px` vertical padding + content yields a ≥44px touch target — safe for mobile.
@@ -135,3 +136,8 @@ There is **no capability gap** — both render the same row.
 
 ## Update — 2026-07-10
 - **Haptics:** the primary interaction (segment change / row press / panel open) fires `hapticSelection()` (native `optionalHaptics`; no-op without expo-haptics).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Focus ring (web):** a tappable row shows the kit's shared `2px solid --accent-2` ring, inset 2px (it had
+  `outline: none` with only a glass tint).

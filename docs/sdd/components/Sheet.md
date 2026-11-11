@@ -104,6 +104,7 @@ No gap blocks use — the sheet/drawer is fully usable and visually equivalent (
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** panel is `role="dialog"` + `aria-modal="true"`; scrim is `role="presentation"`. ESC + scrim click dismiss. The drag handle is `aria-hidden` (decorative). Manage initial focus for long forms.
 - **Native:** `accessibilityViewIsModal` traps assistive focus; the handle is `pointerEvents="none"` decoration. The title is a header. The scrim `Pressable` is `accessible={false}` and the card a plain view that claims the touch (`onStartShouldSetResponder`): as accessible elements they would group the title, fields and buttons into one item VoiceOver can't enter. Android back dismisses via `onRequestClose`; on iOS, VoiceOver's escape gesture (`onAccessibilityEscape`).
 - **Touch:** the bottom sheet's handle/title strip is a real drag surface — drag down past 25% (or fling) to
@@ -132,3 +133,11 @@ No gap blocks use — the sheet/drawer is fully usable and visually equivalent (
 - **New need → both platforms.** A new `side`, a snap-point, or a sticky footer must land in `SheetProps` on web **and** native with the same name/tokens.
 - **Tokens only.** Scrim, `bg-1`, `border`, `r-lg`, handle `border-2`, and display/ui type are all tokens.
 - **Parity gate.** Before shipping, confirm the web phone-width sheet and the native sheet match (same side, title, handle, body) — accepting only the documented scrim-blur difference.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Web focus:** as `Modal` — focus into the panel on open, Tab trapped, focus back on close, named by its title
+  (`aria-labelledby`). It has no close button (scrim, Esc, drag).
+- **Native home indicator:** the bottom sheet's bottom padding is 18 + the safe-area bottom inset, read from
+  `react-native-safe-area-context`'s `SafeAreaInsetsContext` — a new OPTIONAL peer (Expo Router apps have it;
+  the app's `SafeAreaProvider` must be above). Without the package or the provider the inset is 0, as before.

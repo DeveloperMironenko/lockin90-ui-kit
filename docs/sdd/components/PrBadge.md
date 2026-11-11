@@ -65,6 +65,7 @@ Static, read-only — no hover/focus/disabled. The only variation is `label` × 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - The label text carries the meaning on both platforms (real text, not an icon).
 - Contrast: white on `#FF4757` ≈ 4:1 at bold 10px mono — acceptable for a decorative-plus-text flag; don't shrink below `sm`.
 - Non-interactive; never give it a press handler — wrap the parent card/row instead.

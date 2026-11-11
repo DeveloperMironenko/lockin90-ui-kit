@@ -59,6 +59,7 @@
 }
 
 .lk-toast-x {
+  position: relative;
   flex: 0 0 auto;
   margin: -2px -2px 0 2px;
   width: 20px;

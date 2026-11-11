@@ -68,7 +68,7 @@ A shared `COLOR` map turns the `color` prop into a `.lk-mk-c-*` helper class (pr
 
 **Mono** — base `.lk-mono`: `--font-mono`, `font-feature-settings: "tnum" 1` (tabular numerals).
 
-**Color helpers** (`.lk-mk-c-*`): primary/white → `--text` (`#EEF1F8`) · secondary → `--text-dim` (`#AAB2C6`) · muted → `--text-faint` (`#828B9F`) · accent → `--accent` (`#7C5CFF`). On `Heading` all helpers resolve to `color: transparent` (see §4).
+**Color helpers** (`.lk-mk-c-*`): primary/white → `--text` (`#EEF1F8`) · secondary → `--text-dim` (`#AAB2C6`) · muted → `--text-faint` (`#868FA3`) · accent → `--accent` (`#7C5CFF`). On `Heading` all helpers resolve to `color: transparent` (see §4).
 
 ## 4. States
 
@@ -110,6 +110,7 @@ These are static text primitives — no hover/focus/pressed/disabled. The only v
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **`Heading` renders a real `h1`/`h2`/`h3`** — pick `as` for the **document outline**, `size` purely for visual scale; never skip heading levels to get a size. The gradient text remains selectable, real text (clip, not an image), so it stays screen-reader and zoom friendly.
 - `Body`/`Lead` render `<p>`; `Mono` renders inline `<span>`; `Eyebrow` renders `<div>` (decorative overline — keep it adjacent to the heading it labels, not as a substitute for the heading).
 - Color tokens are designed for contrast on the void background; `muted` (`--text-faint`) is for de-emphasized supporting text — don't use it for primary body copy.

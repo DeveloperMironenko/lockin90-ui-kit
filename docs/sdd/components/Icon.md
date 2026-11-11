@@ -123,6 +123,7 @@ No capability gap — the same icon renders the same on both platforms; only the
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the `<svg>` is `aria-hidden="true"` — it's decorative by default. When an icon is the **only** label
   (icon-only button), put the accessible name on the **interactive wrapper** (`aria-label` on the `Button`), not
   the icon. The `.lk-icon` span passes through `...rest` if you need to add attributes.

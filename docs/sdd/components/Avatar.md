@@ -94,6 +94,7 @@ No capability gap blocks use — the aura difference is platform-shaped motion, 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** image avatars set `alt={name ?? ''}` — pass a `name` for a meaningful alt; monogram avatars are decorative text.
 - **Native:** add `accessibilityLabel={name}` via `...rest` when the avatar conveys identity standalone.
 - **Contrast:** dark `#07080d` monogram on the bright violet→cyan gradient is chosen for legibility across the ramp.
@@ -122,3 +123,7 @@ No capability gap blocks use — the aura difference is platform-shaped motion, 
 - **New need → both platforms.** A new shape or a status ring goes on `Avatar` web **and** native (same prop name, same tokens), never a local variant. `variant="aura"` shipped on both platforms together (same API, same `--grad-flux`/`gradients.flux` + glow).
 - **Tokens only.** The default gradient resolves to `--accent`/`--cyan` (`gradients.cta`); the aura orb to `--grad-flux`/`gradients.flux` + `--glow-accent`/`nativeShadows.glowAccent`; the `#07080d` text and radii are fixed in the component — don't fork them per app.
 - **Parity gate.** Before shipping a profile/roster surface, diff web phone-width vs native: same size, shape, monogram/image, and gradient.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native reduced motion:** the aura orb stops spinning while `useReducedMotion()` is true.

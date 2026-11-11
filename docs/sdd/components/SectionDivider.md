@@ -72,6 +72,7 @@ There is **no capability gap**.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the rule `<span>` is `aria-hidden` (decorative); the label is read as normal text.
 - **Native:** the `LinearGradient` rule carries no accessibility role (decorative); the `Eyebrow` label reads as text.
 - **Contrast:** the label uses `Eyebrow`'s `--text-faint`; the fading rule is decoration (exempt from text-contrast minimums).

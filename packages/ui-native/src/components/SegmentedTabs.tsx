@@ -127,7 +127,20 @@ export interface SegmentedTabsProps {
   fill?: boolean;
   /** The track's line in `colors.zoneLow`: a required choice not made (web `invalid`). */
   invalid?: boolean;
+  /**
+   * What the control is. `'tabs'` (default) switches views: a `tablist` of `tab`s. `'choice'` is a form
+   * value (units, sex, activity level): a `radiogroup` of `radio`s, the chosen one `checked`. Mirrors
+   * web `kind` (where the arrow keys also move the choice).
+   */
+  kind?: 'tabs' | 'choice';
+  /** The group's name (a `FormField` passes its label here). */
+  accessibilityLabel?: string;
+  /** Read after the name (a `FormField` passes its error or help here). */
+  accessibilityHint?: string;
 }
+
+// a segment's touch target reaches 44pt above and below, same look: md is 8 + 14 + 8 = 30 tall, sm 5 + 13 + 5
+const SLOP = { md: { top: 7, bottom: 7 }, sm: { top: 11, bottom: 11 } } as const;
 
 /**
  * iOS-style segmented control — a glass pill track of equal-width segments; the
@@ -145,13 +158,19 @@ export function SegmentedTabs({
   appearance = 'raised',
   fill = false,
   invalid = false,
+  kind = 'tabs',
+  accessibilityLabel,
+  accessibilityHint,
 }: SegmentedTabsProps) {
   const isSm = size === 'sm';
   const isTint = appearance === 'tint';
+  const choice = kind === 'choice';
   return (
     <View
       style={[styles.track, isSm && styles.trackSm, isTint && styles.trackTint, invalid && styles.trackInvalid]}
-      accessibilityRole="tablist"
+      accessibilityRole={choice ? 'radiogroup' : 'tablist'}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
     >
       {tabs.map((item, i) => {
         const { label, count, tone: itemTone, icon } = toTab(item);
@@ -189,8 +208,9 @@ export function SegmentedTabs({
         return (
           <Pressable
             key={i}
-            accessibilityRole="tab"
-            accessibilityState={{ selected: isActive, disabled: isLocked }}
+            accessibilityRole={choice ? 'radio' : 'tab'}
+            accessibilityState={choice ? { checked: isActive, disabled: isLocked } : { selected: isActive, disabled: isLocked }}
+            hitSlop={SLOP[size]}
             disabled={isLocked}
             onPress={isLocked ? undefined : () => { hapticSelection(); onChange?.(i); }}
             style={({ pressed }) => [

@@ -126,6 +126,7 @@ the 3-week progress story, and day-by-day mini compares.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<svg role="img">` with a computed `aria-label` (`"{title}: radar of SLEEP, TRAIN, …"`); pass
   `aria-label` through rest to override with a data-bearing description ("Body balance 72, light is the strong factor").
 - **Native:** root `View` with `accessibilityRole="image"` + the same computed `accessibilityLabel`.

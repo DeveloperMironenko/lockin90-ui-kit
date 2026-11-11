@@ -28,6 +28,9 @@ The verdict (✅/🟡/🔵) + WHY, grounded in the actual two implementations. L
 Where it's used / what composes it, what it composes from (other kit primitives), and 1–2 short `tsx` examples (web + native). Note REUSE_RECIPES patterns if relevant.
 
 ## 7. Accessibility
+
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
+
 Web roles/aria/focus/keyboard; native `accessibilityRole`/`accessibilityLabel`/`accessibilityState`; hit-target size; contrast notes. Be concrete to THIS component.
 
 ## 8. Usage rules — Do / Don't

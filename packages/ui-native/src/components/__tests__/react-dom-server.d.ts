@@ -9,3 +9,13 @@ declare module 'react-dom/server' {
   export function renderToStaticMarkup(node: ReactNode): string;
   export function renderToString(node: ReactNode): string;
 }
+
+/** `react-dom/client`, for the live-tree tests (dom.ts). */
+declare module 'react-dom/client' {
+  import type { ReactNode } from 'react';
+  export interface Root {
+    render(node: ReactNode): void;
+    unmount(): void;
+  }
+  export function createRoot(container: Element): Root;
+}

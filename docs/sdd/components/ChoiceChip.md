@@ -104,6 +104,7 @@ Both render the same pill with the same selected look — no capability gap.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a real `<button aria-pressed>` — focusable, Enter/Space toggle, `type="button"` by default (won't submit a form). Pass `aria-label` when the chip is icon-only.
 - **Native:** `Pressable` with `accessibilityRole="button"` + `accessibilityState={{ selected, disabled }}`; the label `<Text>` is read.
 - **Hit target:** `md` padding (7/13) yields a comfortable touch target; prefer `md` on touch surfaces, `sm` for dense desktop/admin filter bars.
@@ -129,3 +130,8 @@ Both render the same pill with the same selected look — no capability gap.
 - **New need → add to BOTH platforms.** A new size or a trailing-remove `×` is a prop added on web *and* native (same name, same tokens) — never a one-off.
 - **Tokens only.** The selected tint, border, and focus ring come from `@lockin90/tokens` / the shared rgba constants; keep web CSS and native styles in sync.
 - **Parity gate.** Before shipping a filter bar, confirm the web phone-width and native chips look and toggle identically (idle vs selected, size, dot/icon).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native targets, same look:** `hitSlop` 6 (`md`, 32 tall) / 8 (`sm`, 28): 44pt. `stacked` cells are tall
+  already.

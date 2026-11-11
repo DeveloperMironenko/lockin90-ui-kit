@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, fonts } from '@lockin90/tokens';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 /**
  * Catalog variants (design catalog `progress-charts.html`, PL-01…PL-16).
@@ -314,7 +315,9 @@ export function ProgressBar(props: ProgressBarProps) {
   const onLayout = (e: LayoutChangeEvent) => setTrackW(e.nativeEvent.layout.width);
 
   const sweep = useRef(new Animated.Value(0)).current;
+  const reduced = useReducedMotion();
   useEffect(() => {
+    if (reduced) return;
     if (!indeterminate || trackW <= 0) return;
     sweep.setValue(0);
     const loop = Animated.loop(
@@ -327,7 +330,7 @@ export function ProgressBar(props: ProgressBarProps) {
     );
     loop.start();
     return () => loop.stop();
-  }, [indeterminate, trackW, sweep]);
+  }, [indeterminate, trackW, sweep, reduced]);
 
   const bandW = Math.max(0, trackW * BAND_FRACTION);
   const translateX = sweep.interpolate({

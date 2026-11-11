@@ -2,6 +2,7 @@ import { useEffect, useId, useRef } from 'react';
 import { Animated, Easing, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, Defs, FeGaussianBlur, Filter, LinearGradient, Stop } from 'react-native-svg';
 import { colors } from '@lockin90/tokens';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 export interface SpinnerProps {
   /** Outer diameter in px (the SVG viewBox is square at this size). */
@@ -45,7 +46,9 @@ export function Spinner({
 
   const spin = useRef(new Animated.Value(0)).current;
 
+  const reduced = useReducedMotion();
   useEffect(() => {
+    if (reduced) return;
     const loop = Animated.loop(
       Animated.timing(spin, {
         toValue: 1,
@@ -56,7 +59,7 @@ export function Spinner({
     );
     loop.start();
     return () => loop.stop();
-  }, [spin]);
+  }, [spin, reduced]);
 
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 

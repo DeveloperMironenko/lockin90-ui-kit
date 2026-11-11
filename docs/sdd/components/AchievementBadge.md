@@ -92,6 +92,7 @@ No capability gap blocks use.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Non-interactive by default** — it's a display card, not a button. Wrap in a `Pressable`/`<button>` only if the badge is tappable (e.g. opens detail).
 - **Web:** the corner lock + chevron-free card are `aria-hidden` glyphs; the title/description are real text. `:focus-within` outline supports a focusable child if you add one.
 - **Contrast:** tier accents are tokenized; the medal disc keeps the icon on a tinted-over-`#080A12` base for legibility.

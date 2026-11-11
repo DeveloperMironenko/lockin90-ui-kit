@@ -126,6 +126,7 @@ import { TrendCard } from '@lockin90/ui/admin';
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - The chart `<svg>` is `role="img"` with `aria-label={ariaLabel ?? `${title}: ${value}`}` — the
   trend line conveys no value to AT on its own; the label + real DOM title/value carry the meaning.
 - Colour is not the sole signal: the delta direction is reinforced by the `+`/`-` sign in the

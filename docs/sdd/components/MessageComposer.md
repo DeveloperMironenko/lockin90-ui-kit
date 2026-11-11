@@ -85,6 +85,7 @@ No capability gap — the composer is fully usable on both; the Enter-to-send is
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** real `<textarea>` with `aria-label="Message text"`; buttons are `<button type="button">` with `aria-label`/`title` (`Attach`, `Emoji`, `Send message`); the lock has `aria-label`/`title="End-to-end encrypted"`. `Enter` sends, `Shift+Enter` inserts a newline.
 - **Native:** `<TextInput accessibilityLabel="Message text">`; buttons are `Pressable` with `accessibilityRole="button"` + `accessibilityLabel`; lock `View` has `accessibilityLabel="End-to-end encrypted"`.
 - **Hit target:** attach/emoji are `38×38`, send `42×42` — all ≥ the comfortable touch minimum.

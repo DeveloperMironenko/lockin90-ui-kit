@@ -19,8 +19,8 @@ Inter (UI), JetBrains Mono (data).
 | --- | --- | --- | --- |
 | Surfaces | `--void` `--bg-0/1/2` | `colors.void` `colors.bg0/1/2` | `#05060B` `#080A12` `#0C0F1A` `#11151F` |
 | Glass | `--glass` `--glass-2` | `colors.glass` `colors.glass2` | `rgba(255,255,255,.045)` / `.075` |
-| Borders | `--border` `--border-2` | `colors.border` `colors.border2` | `rgba(255,255,255,.09)` / `.16` |
-| Text | `--text` `--text-dim` `--text-faint` | `colors.text` `colors.textDim` `colors.textFaint` | `#EEF1F8` `#AAB2C6` `#828B9F` |
+| Borders | `--border` `--border-2` `--border-control` | `colors.border` `colors.border2` `colors.borderControl` | `rgba(255,255,255,.09)` / `.16` / `.36` |
+| Text | `--text` `--text-dim` `--text-faint` | `colors.text` `colors.textDim` `colors.textFaint` | `#EEF1F8` `#AAB2C6` `#868FA3` |
 | Spectrum | `--lime --mint --cyan --indigo --violet --magenta` | `colors.lime` … | `#A8FF35 #34F5C5 #22D3EE #6E7BFF #A855F7 #FF3D81` |
 | Accents | `--accent` `--accent-2` `--accent-3` | `colors.accent/accent2/accent3` | `#7C5CFF` `#22D3EE` `#34F5C5` |
 | Zones | `--zone-high/mid/low` | `colors.zoneHigh/zoneMid/zoneLow` | `#34F5C5` `#FFB020` `#FF4D6D` |
@@ -62,6 +62,42 @@ filters on native" rule; any SDD still citing it is stale. View elevation/glow *
 2. **No lookalikes** — import the kit primitive; never re-create it locally.
 3. **New need → add to BOTH platforms** — same prop name, same tokens; never a one-off.
 4. **Parity gate** — web phone-width render ≡ native render before a screen ships.
+5. **Accessible by default** — the "Accessibility" rule below: contrast, targets, names from props,
+   announcements, reduced motion, text scaling.
+
+## Accessibility (owner rule, 2026-11-10 — WCAG 2.2 AA, Apple HIG, Material)
+
+A hard rule: every component SDD restates it in its §7 (one line citing this section) and says there how the
+primitive meets each point. A primitive that can't meet one is fixed here, in the kit, never in an app.
+
+- **Contrast:** text 4.5:1 (3:1 from 24px, or 18.7px bold); a control's edge, its icons and a focus ring 3:1,
+  measured on the surface the element sits on (a card is `--glass` over `--bg-0` ≈ `#13151D`; a field's fill is
+  `--glass-2` over the card ≈ `#25272E`). Never colour alone: an error has an icon and a text.
+- **Targets:** native at least 44×44 pt; web at least 24×24 px (44 at phone width). A control drawn smaller
+  keeps its look and gets the size from its hit area (native `hitSlop` / `minHeight`, web a `::before`).
+- **Names via props:** every control is named by a prop the app fills in its language (`label`,
+  `dismissLabel`, `clearLabel`…), never by built-in English. An English default that still exists is a
+  fallback for older apps only; apps always pass the translated text.
+- **Errors and changes are announced:** web `role="alert"` (errors) / `role="status"` (results), a field's
+  error and help tied by `aria-describedby`; native `accessibilityLiveRegion="polite"` plus
+  `AccessibilityInfo.announceForAccessibility` when an error appears, a field's label as its
+  `accessibilityLabel` and its error / help as its `accessibilityHint`.
+- **Reduced motion:** web `prefers-reduced-motion` (the global rule in `base.css`); native every
+  `Animated.loop` and large movement stops when the kit's `useReducedMotion()` is true.
+- **Text scaling is never disabled:** no `allowFontScaling={false}` or `maxFontSizeMultiplier`; inputs are
+  16px / 16pt (no iOS zoom on web), with the box height kept by their padding and line height.
+- **Focus (web):** everything focusable shows a `:focus-visible` ring at 3:1 — a 2px solid `--accent-2` ring
+  (10.1:1 on the card), never `outline: none` without a replacement.
+
+### Measured ratios (2026-11-10)
+
+| Pair | Ratio |
+| --- | --- |
+| `--border-control` (`.36` white) on the card `#13151D` | 3.34:1 (on `--bg-0` 3.26:1, on the field fill 3.23:1) |
+| `--border-2` (`.16`) on the card — cards keep it | 1.62:1 (a container's edge, not a control's) |
+| `--text-faint` `#868FA3` on the field fill `#25272E` | 4.62:1 (on the card 5.61:1, on `--bg-0` 6.09:1); was `#828B9F` 4.38:1 |
+| `--text-dim` on the field fill | 7.06:1 |
+| `--accent-2` focus ring on the card | 10.08:1 (the old `--accent` 45% ring was 1.79:1) |
 
 ## One shape, one line (owner rule, 2026-11-02 — "the border has to be the same")
 
@@ -77,6 +113,9 @@ Every bordered box in the kit has one of two corner radii and the same neutral l
   `borderWidth: 1, borderColor: colors.border2` (`rgba(255,255,255,.16)`). Fields already use it; cards,
   chips and the small select move up from `--border` (`.09`), which was too faint to see a field's
   edge. `--border` stays for dividers and table rules (lines inside a surface, not around it).
+- **A field's edge is stronger (2026-11-10, "Accessibility"):** the boxes you type into or pick from (Input,
+  PasswordInput, SearchInput, Select trigger, TagInput, CodeInput boxes) use `--border-control` /
+  `colors.borderControl` (`.36`, 3.3:1 on the card); buttons, chips and cards keep `--border-2`.
 - **States and tones still recolour the line:** focus (`--accent`), invalid (`--zone-low`), a chip or alert
   tone, a selected ChoiceChip. They change the colour of the same 1px line, never its width or radius.
 - **No borderless control next to a bordered one:** a Button whose variant had no outline (primary's

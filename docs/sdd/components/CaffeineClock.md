@@ -109,6 +109,7 @@ Standalone chart — the caffeine widget on the today screen (CF-01 "will it hit
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<div role="img" aria-label={ariaLabel}>`; the `<svg>` is `aria-hidden`. Pass a data-bearing `ariaLabel` ("120mg at 8:30 decays under 50mg by 15:42; 21mg at your 23:00 bedtime — safe").
 - **Native:** root `View` with `accessibilityRole="image"` + `accessibilityLabel={ariaLabel}`.
 - Non-interactive; the SMIL pulse honors `prefers-reduced-motion`.

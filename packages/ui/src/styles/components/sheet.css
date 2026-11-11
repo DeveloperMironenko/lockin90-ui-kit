@@ -121,3 +121,6 @@
   line-height: 1.55;
   color: var(--text-dim);
 }
+
+/* the panel takes focus only so its name is read (useDialogFocus); its controls show the ring */
+.lk-sheet:focus { outline: none; }

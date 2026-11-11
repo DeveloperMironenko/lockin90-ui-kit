@@ -54,3 +54,18 @@ export const Danger: StoryObj<typeof meta> = {
     </div>
   ),
 };
+
+/** `loading` — the kit Spinner over the kept label: same width, `aria-busy`, presses ignored. */
+export const Loading: StoryObj<typeof meta> = {
+  render: () => (
+    <div style={{ display: 'flex', gap: 12 }}>
+      <Button variant="primary" loading>
+        Create account
+      </Button>
+      <Button loading>Save</Button>
+      <Button variant="ghost" size="sm" loading>
+        Resend
+      </Button>
+    </div>
+  ),
+};

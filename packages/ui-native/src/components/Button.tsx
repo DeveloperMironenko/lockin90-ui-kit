@@ -3,6 +3,8 @@ import { Pressable, Text, StyleSheet, View, type PressableProps, type StyleProp,
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, gradients, fonts, nativeShadows } from '@lockin90/tokens';
 import { hapticSelection } from '../internal/optionalHaptics';
+import { absoluteFill } from '../internal/absoluteFill';
+import { Spinner } from './Spinner';
 
 // the web's body line height (1.55): the md button is 12 + 14 × 1.55 + 12 = 45.7, as on web
 const LINE = 1.55;
@@ -16,6 +18,9 @@ const DANGER_TINT = 'rgba(255,77,109,0.10)';
 const DANGER_BORDER = 'rgba(255,77,109,0.42)';
 // (44 − 17) / 2 above and below the text variant's line
 const TEXT_SLOP = { top: 14, bottom: 14, left: 8, right: 8 };
+// sm is 8 + 13 × 1.55 + 8 = 36.2 tall: 4 above and below make the 44pt touch target, same look
+const SM_SLOP = { top: 4, bottom: 4 };
+const SPIN_SIZE = { sm: 14, md: 16, lg: 18 } as const;
 
 export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> {
   variant?: ButtonVariant;
@@ -34,6 +39,9 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
   leading?: ReactNode;
   /** optional icon/node rendered after the label (e.g. a trailing arrow) */
   trailing?: ReactNode;
+  /** busy: the kit Spinner over the kept (invisible) label, so the width never changes;
+   *  `accessibilityState.busy`, and presses are ignored until it ends. Mirrors web `loading`. */
+  loading?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -42,7 +50,19 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
  *  with `variant` for destructive actions (solid red on `default`, red-tinted on
  *  `ghost`). `leading`/`trailing` render an icon before/after the label (the row is
  *  `gap: 9`-spaced). */
-export function Button({ variant = 'default', tone, size = 'md', title, leading, trailing, style, onPress, ...rest }: ButtonProps) {
+export function Button({
+  variant = 'default',
+  tone,
+  size = 'md',
+  title,
+  leading,
+  trailing,
+  loading = false,
+  style,
+  onPress,
+  accessibilityState,
+  ...rest
+}: ButtonProps) {
   const pad = size === 'sm' ? styles.padSm : size === 'lg' ? styles.padLg : styles.padMd;
   const labelSize = size === 'sm' ? 13 : size === 'lg' ? 17 : 14;
   const danger = tone === 'danger';
@@ -53,23 +73,36 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
   // press should feel like one, same as the tab bar
   const press = onPress
     ? (e: Parameters<NonNullable<ButtonProps['onPress']>>[0]) => {
+        if (loading) return;
         hapticSelection();
         onPress(e);
       }
     : undefined;
+  const a11yState = { ...accessibilityState, disabled, busy: loading || undefined };
+  // while loading the row keeps its content (and width) but hides it under the spinner
+  const hide = loading ? styles.hidden : undefined;
+  const spinner = (color: string) =>
+    loading ? (
+      <View style={styles.spin} pointerEvents="none">
+        <Spinner size={variant === 'text' ? 12 : SPIN_SIZE[size]} thickness={2} color={color} label={title} />
+      </View>
+    ) : null;
 
   if (variant === 'text') {
     // no surface: the label is the button (web `.lk-btn-text`); faint when disabled. The
     // 17-tall line gets a slop to the 44pt touch target.
     return (
-      <Pressable accessibilityRole="button" onPress={press} hitSlop={TEXT_SLOP} {...rest}>
+      <Pressable accessibilityRole="button" onPress={press} hitSlop={TEXT_SLOP} accessibilityState={a11yState} {...rest}>
         {({ pressed }) => (
           <View style={[styles.textRow, tone === 'muted' && styles.textRowMuted, pressed && styles.textPressed, style]}>
-            {leading}
-            <Text style={[styles.textLabel, tone === 'muted' && styles.textMuted, disabled && styles.textDisabled]}>
-              {title}
-            </Text>
-            {trailing}
+            <View style={[styles.textRow, hide]}>
+              {leading}
+              <Text style={[styles.textLabel, tone === 'muted' && styles.textMuted, disabled && styles.textDisabled]}>
+                {title}
+              </Text>
+              {trailing}
+            </View>
+            {spinner(colors.accent2)}
           </View>
         )}
       </Pressable>
@@ -78,7 +111,13 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
 
   if (variant === 'primary' && !danger) {
     return (
-      <Pressable accessibilityRole="button" onPress={press} {...rest}>
+      <Pressable
+        accessibilityRole="button"
+        onPress={press}
+        hitSlop={size === 'sm' ? SM_SLOP : undefined}
+        accessibilityState={a11yState}
+        {...rest}
+      >
         {({ pressed }) => (
           <LinearGradient
             colors={gradients.cta.stops as unknown as [string, string]}
@@ -86,9 +125,12 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
             end={{ x: 1, y: 1 }}
             style={[styles.base, pad, styles.primary, pressed && styles.pressed, disabled && styles.disabled, style]}
           >
-            {leading}
-            <Text style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: '#0A0A12' }]}>{title}</Text>
-            {trailing}
+            <View style={[styles.base, hide]}>
+              {leading}
+              <Text style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: '#0A0A12' }]}>{title}</Text>
+              {trailing}
+            </View>
+            {spinner('#0A0A12')}
           </LinearGradient>
         )}
       </Pressable>
@@ -123,7 +165,13 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
   }
 
   return (
-    <Pressable accessibilityRole="button" onPress={press} {...rest}>
+    <Pressable
+      accessibilityRole="button"
+      onPress={press}
+      hitSlop={size === 'sm' ? SM_SLOP : undefined}
+      accessibilityState={a11yState}
+      {...rest}
+    >
       {({ pressed }) => (
         <View
           style={[
@@ -136,9 +184,12 @@ export function Button({ variant = 'default', tone, size = 'md', title, leading,
             style,
           ]}
         >
-          {leading}
-          <Text style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: textColor }]}>{title}</Text>
-          {trailing}
+          <View style={[styles.base, hide]}>
+            {leading}
+            <Text style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: textColor }]}>{title}</Text>
+            {trailing}
+          </View>
+          {spinner(textColor)}
         </View>
       )}
     </Pressable>
@@ -165,4 +216,7 @@ const styles = StyleSheet.create({
   // web `.lk-btn--tone-muted` (design onboarding .step-skip): faint, 12.5, padding 8
   textMuted: { fontSize: 12.5, lineHeight: 17, color: colors.textFaint },
   textRowMuted: { padding: 8 },
+  // loading: the content keeps its place (the width) under the centred spinner
+  hidden: { opacity: 0 },
+  spin: { ...absoluteFill, alignItems: 'center', justifyContent: 'center' },
 });

@@ -110,6 +110,7 @@ import { PushPreview } from '@lockin90/ui/admin';
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Root is `role="figure"` with `aria-label="<channel> preview"` — assistive tech announces it as
   a non-interactive preview, not a real notification.
 - The `close` glyph (in-app) and icon tiles are `aria-hidden` — they are chrome, not controls.

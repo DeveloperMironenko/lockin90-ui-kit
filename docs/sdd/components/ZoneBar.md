@@ -51,7 +51,7 @@ There are no variants — shape is driven entirely by the `zones` data, `current
 | Z5 (max) | `--zone-low` | `colors.zoneLow` | `#FF4D6D` |
 | Segment radius | `--r-pill` | `radii.pill` | `999` |
 | Marker fill | `--text` | `colors.text` | `#EEF1F8` |
-| Label (idle) | `--text-faint` | `colors.textFaint` | `#828B9F` |
+| Label (idle) | `--text-faint` | `colors.textFaint` | `#868FA3` |
 | Label (current) | `--text` | `colors.text` | `#EEF1F8` |
 | Label / mono | `--font-mono` | `fonts.mono` | JetBrains Mono, 9.5px / 600 / `.06em` |
 | Motion | `--ease` | n/a | width drift 1.1s, opacity/glow .3s |
@@ -108,6 +108,7 @@ There is **no capability gap** — the bar renders identically and is fully usab
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the track is `role="img"` with an `aria-label` enumerating the zones and which is current (e.g. _"Heart-rate zones: Z1, Z2, Z3 (current), Z4, Z5."_). The labels row + marker are `aria-hidden` (decorative — the label already names them).
 - **Native:** the track `View` is `accessibilityRole="image"` with the same `accessibilityLabel`.
 - **Contrast:** zone colors are bright spectrum tokens on the dark void; the lit/dim opacity split keeps the current zone distinguishable. Don't rely on color alone — pair `current` with the marker (default) and/or `showLabels` so the active zone is conveyed non-chromatically.

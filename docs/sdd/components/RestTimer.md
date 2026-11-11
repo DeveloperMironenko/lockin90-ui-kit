@@ -74,6 +74,7 @@ Shared geometry: **116px viewBox, r = 50, stroke 8**, `C = 2π·50 ≈ 314.16`; 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** container is `role="timer"` with `aria-label="{label}: {m:ss} remaining[, paused]"`; the SVG is `aria-hidden`; Skip is a real button.
 - **Native:** the same label via `accessibilityLabel`; Skip is the kit Button (accessible pressable).
 - Time is real text (not SVG text) on both — selectable/readable by AT.

@@ -17,6 +17,9 @@ export interface ToastProps extends Omit<ViewProps, 'children'> {
   icon?: ReactNode;
   /** show a × button; called when it's pressed */
   onDismiss?: () => void;
+  /** the × button's name, in the app's language (CONVENTIONS "Accessibility": names via props).
+   *  @default 'Dismiss' (an English fallback for older apps) */
+  dismissLabel?: string;
   /** fill the card with the tone's color (no rail), its text and icons dark on it */
   filled?: boolean;
 }
@@ -44,6 +47,7 @@ export function Toast({
   message,
   icon,
   onDismiss,
+  dismissLabel = 'Dismiss',
   filled = false,
   style,
   ...rest
@@ -56,7 +60,7 @@ export function Toast({
   return (
     <View
       accessibilityRole="alert"
-      accessibilityLiveRegion="polite"
+      accessibilityLiveRegion={tone === 'danger' ? 'assertive' : 'polite'}
       style={[styles.toast, fill, style]}
       {...rest}
     >
@@ -74,8 +78,9 @@ export function Toast({
         <Pressable
           onPress={onDismiss}
           accessibilityRole="button"
-          accessibilityLabel="Dismiss"
-          hitSlop={6}
+          accessibilityLabel={dismissLabel}
+          // the 20pt box reaches the 44pt touch target
+          hitSlop={12}
           style={styles.x}
         >
           <Svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke={ink ?? colors.textFaint} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">

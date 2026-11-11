@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, type TextInputProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { Icon } from './Icon';
@@ -42,15 +42,22 @@ export function PasswordInput({
 }: PasswordInputProps) {
   const [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState(defaultVisible);
+  const inputRef = useRef<TextInput>(null);
   const sm = inputSize === 'sm';
-  const borderColor = invalid ? colors.zoneLow : focused ? colors.accent : colors.border2;
+  const borderColor = invalid ? colors.zoneLow : focused ? colors.accent : colors.borderControl;
 
   return (
     <View style={styles.wrap}>
       {label ? <Text style={styles.label}>{label.toUpperCase()}</Text> : null}
-      <View style={[styles.field, sm && styles.fieldSm, { borderColor }]}>
+      {/* a tap on the padding focuses the field, as Input */}
+      <Pressable
+        accessible={false}
+        onPress={() => inputRef.current?.focus()}
+        style={[styles.field, sm && styles.fieldSm, { borderColor }]}
+      >
         {leading ? <View style={styles.lead}>{leading}</View> : null}
         <TextInput
+          ref={inputRef}
           style={[styles.input, sm && styles.inputSm, style]}
           placeholderTextColor={colors.textFaint}
           secureTextEntry={!visible}
@@ -67,13 +74,14 @@ export function PasswordInput({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={visible ? hideLabel : showLabel}
-          hitSlop={8}
+          // the 18pt eye reaches the 44pt touch target (CONVENTIONS "Accessibility")
+          hitSlop={13}
           onPress={() => setVisible((v) => !v)}
           style={styles.trail}
         >
           <Icon name={visible ? 'eyeOff' : 'eye'} size={18} color={colors.textFaint} />
         </Pressable>
-      </View>
+      </Pressable>
     </View>
   );
 }
@@ -102,7 +110,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.glass2,
   },
   // the web box: 9 + 14 × 1.4 + 9 + 2 borders = 39.6 (sm: 6 + 12.5 × 1.4 + 6 + 2 = 31.5)
-  fieldSm: { minHeight: 31.5, paddingVertical: 6, paddingHorizontal: 10 },
+  fieldSm: { minHeight: 31.5, paddingVertical: 5, paddingHorizontal: 10 },
   lead: { flexShrink: 0 },
   input: {
     flex: 1,
@@ -110,11 +118,12 @@ const styles = StyleSheet.create({
     padding: 0,
     color: colors.text,
     fontFamily: fonts.ui,
-    fontSize: 14,
+    // 16, as the web field (no iOS zoom there); the box keeps its 39.6 height
+    fontSize: 16,
     // centred by the field's height, as Input (an explicit lineHeight biases the glyph)
     textAlignVertical: 'center',
     includeFontPadding: false,
   },
-  inputSm: { fontSize: 12.5 },
+  inputSm: { fontSize: 16 },
   trail: { flexShrink: 0 },
 });

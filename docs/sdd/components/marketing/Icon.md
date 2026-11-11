@@ -76,6 +76,7 @@ Icon is **static** — no hover / focus / pressed / disabled / loading states of
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Always renders `aria-hidden="true"` — the glyph is **decorative** and hidden from assistive tech by design.
 - Because it can't take an `aria-label` (no rest-spread), an icon that conveys meaning on its own (e.g. a bare social link) must get its accessible name from the **wrapping** element — put `aria-label` on the `<a>`/`<button>` (as in the footer example above), or pair the icon with visible text.
 - Never use a marketing `Icon` as the sole content of an interactive control without an accessible name on the parent.

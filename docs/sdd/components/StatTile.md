@@ -114,6 +114,7 @@ Standalone chartlet — composes nothing from the kit; typically the **body of a
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<svg role="img">` with a computed `aria-label` (e.g. `"ENERGY: 74, +6 VS YESTERDAY"`; stat-list joins all rows). Override via `aria-label` in rest.
 - **Native:** root `View` with `accessibilityRole="image"` + the same computed label.
 - Non-interactive — no focus/keyboard surface; fully static (reduced-motion safe).

@@ -77,6 +77,7 @@ It is a thin presentational wrapper: it renders the marketing `Icon` at a fixed 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Renders a **non-interactive `<span>`** containing an inline SVG; the glyph is decorative framing, so the badge carries no role or label by itself.
 - **Always supply meaning elsewhere** — the adjacent `Heading`/`Body` text is the accessible content. If the badge is the *only* thing conveying meaning (rare), give the wrapping element an `aria-label`.
 - When wrapped in a link/button for interaction, put the focus styling + `aria-label` on **that** wrapper — `IconBadge` provides no focus ring.

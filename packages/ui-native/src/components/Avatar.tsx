@@ -3,6 +3,7 @@ import { View, Text, Image, Animated, Easing, StyleSheet, type ViewProps } from 
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, fonts, gradients, nativeShadows } from '@lockin90/tokens';
 import { absoluteFill } from '../internal/absoluteFill';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 export interface AvatarProps extends ViewProps {
   /** Display name — used to derive monogram initials when `initials` is omitted. */
@@ -105,7 +106,9 @@ function AuraOrb({
 }: { size: number; radius: number; name?: string } & ViewProps) {
   const spin = useRef(new Animated.Value(0)).current;
 
+  const reduced = useReducedMotion();
   useEffect(() => {
+    if (reduced) return;
     const loop = Animated.loop(
       Animated.timing(spin, {
         toValue: 1,
@@ -116,7 +119,7 @@ function AuraOrb({
     );
     loop.start();
     return () => loop.stop();
-  }, [spin]);
+  }, [spin, reduced]);
 
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 

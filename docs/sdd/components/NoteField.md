@@ -88,6 +88,7 @@ No capability gap blocks use; the field is equivalent on both platforms.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the textarea is inside a `<label>`, so the caption focuses the field on click. Pass `aria-label` only
   when there's no visible label. `maxLength` (via rest) is announced by AT.
 - **Native:** `TextInput multiline` with the label as a sibling `Text`; pass `accessibilityLabel` for an

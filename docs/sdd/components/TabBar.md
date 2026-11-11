@@ -122,6 +122,7 @@ No capability gap blocks use — both render an equivalent bottom nav + FAB.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **TabBar:** web `<nav aria-label="Primary">`; the active tab carries `aria-current="page"`. Native is `accessibilityRole="tablist"` with each tab `accessibilityRole="tab"` + `accessibilityState={{ selected }}`.
 - **FAB:** always has an accessible name — web `aria-label` defaults to `'Add'` (icon-only) or the `label`; native `accessibilityLabel` defaults the same and sets `accessibilityRole="button"`.
 - **Hit target:** tabs span equal flex columns with `8px` bar padding; the FAB is ≥52px — both ≥44px touch targets.

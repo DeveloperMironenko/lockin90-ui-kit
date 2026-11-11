@@ -27,8 +27,8 @@
 .lk-sso:hover,
 .lk-sso:focus-visible {
   background: var(--glass-2);
-  outline: none;
 }
+/* the focus ring is the kit's shared one (primitives.css) */
 
 .lk-sso:disabled {
   opacity: 0.5;

@@ -67,7 +67,10 @@
 .lk-listrow-tappable:hover,
 .lk-listrow-tappable:focus-visible {
   background: var(--glass);
-  outline: none;
+}
+/* the focus ring is the kit's shared one (primitives.css), inset so a row inside a card isn't clipped */
+.lk-listrow-tappable:focus-visible {
+  outline-offset: -2px;
 }
 /* keep the hairline reading right when the prior row is a hovered button */
 .lk-listrow-tappable:hover + .lk-listrow,

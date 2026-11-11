@@ -123,6 +123,7 @@ No capability gap blocks use; the chart is fully usable and visually equivalent 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the SVG is `role="img"` with `aria-label={ariaLabel}` — **pass `ariaLabel`** with a one-line summary of the shape (e.g. "Caffeine peaks at 9am, dropping below the sleep threshold by 6pm"). Tick/axis text is decorative (`aria-hidden`).
 - **Native:** no SVG a11y label is wired; if the chart conveys essential data, wrap it in an `accessibilityLabel`'d parent View at the call site.
 - **Color:** the danger tint + threshold are reinforced by the dashed line and the labelled tag — not color-only.
@@ -148,3 +149,7 @@ No capability gap blocks use; the chart is fully usable and visually equivalent 
 - **New need → both platforms.** A new overlay (second threshold, intake annotations) ships to web **and** native with the same prop name + tokens, never a one-off.
 - **Tokens only.** Curve/threshold/tint/tag colors must resolve from `@lockin90/tokens` (or a token-valued `color`); hardcoded hex will drift on a token rename.
 - **Parity gate.** Before shipping a screen with `PkChart`, confirm the web phone-width render ≡ native render (same doses, threshold, peak, axis) — accepting the documented curve-glow gap.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native reduced motion:** the heartbeat stops while `useReducedMotion()` is true.

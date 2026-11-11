@@ -91,6 +91,7 @@ documented substrate gap). No capability gap blocks use.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - With the center number suppressed, a bare `MiniRing` is **purely decorative** — the SVG is `aria-hidden`
   (web) / decorative (native) and nothing announces the value. In a grid, put the value in the cell's
   accessible name: web `aria-label` via rest (`<MiniRing value={72} aria-label="Jun 14 — energy 72" />`),

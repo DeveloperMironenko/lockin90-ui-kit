@@ -128,6 +128,7 @@ No hover/focus/disabled — presentational.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Classic root is a plain `<div>`; variant web SVG is `aria-hidden` unless an `aria-label` is spread onto the root — provide one whenever the chart carries meaning (native: `accessibilityLabel` via `style`-adjacent wrapper).
 - In-SVG text (title, values, labels) gives a sighted readout; keep labels short and mono-friendly.
 - Zone/spectrum colors are supporting encodings — don't make color the only signal in surrounding copy.

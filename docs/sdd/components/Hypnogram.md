@@ -134,6 +134,7 @@ No capability gap — fully usable on both.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the `<svg>` has `role="img"` + the optional `ariaLabel`. Stage gutter and day-letter row are `aria-hidden` (visual aids). Always pass a meaningful `ariaLabel` naming the variant's story (e.g. "94% asleep, 22 minutes awake").
 - **Native:** no built-in label; wrap in a `View` with `accessibilityRole="image"` + `accessibilityLabel`.
 - Color carries meaning (violet asleep/on-target · amber awake/under · coral late · mint target/window) — keep the token mapping intact; tags/labels double-encode the key facts in text.

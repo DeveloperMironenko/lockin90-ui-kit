@@ -26,7 +26,8 @@
   min-width: 0;
   padding: 9px 12px;
   border-radius: var(--r-sm);
-  border: 1px solid var(--border-2);
+  /* a field's edge at 3:1 on the card (CONVENTIONS "Accessibility") */
+  border: 1px solid var(--border-control);
   background: var(--glass-2);
   color: var(--text);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
@@ -60,8 +61,9 @@
   background: none;
   color: var(--text);
   font-family: var(--font-ui);
-  font-size: 14px;
-  line-height: 1.4;
+  /* 16px so iOS Safari never zooms into the field; the line keeps the 14px × 1.4 box (39.6 tall) */
+  font-size: 16px;
+  line-height: 19.6px;
 }
 .lk-input::placeholder { color: var(--text-faint); }
 
@@ -86,7 +88,7 @@
 
 /* sm — tighter density */
 .lk-input-field.lk-input-sm { padding: 6px 10px; gap: 6px; }
-.lk-input-sm .lk-input { font-size: 12.5px; }
+.lk-input-sm .lk-input { font-size: 16px; line-height: 17.5px; } /* the 12.5px × 1.4 line: 31.5 tall */
 .lk-input-sm .lk-input-lead svg { width: 14px; height: 14px; }
 .lk-input-sm .lk-input-unit { font-size: 10px; }
 
@@ -103,6 +105,7 @@
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 20px;
+  line-height: 1.4;
   font-feature-settings: "tnum" 1;
 }
 .lk-input-numeral .lk-input-unit { font-family: var(--font-ui); font-size: 11px; font-weight: 400; color: var(--text-dim); margin-left: 1px; }

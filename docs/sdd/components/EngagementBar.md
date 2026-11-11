@@ -89,6 +89,7 @@ The only difference is substrate-shaped: web styles the glyph via `currentColor`
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** each action is a real `<button type="button">` with `aria-label` (`'Unlike'`/`'Like'`, `'Comments'`, `'Share'`, `'Saved'`/`'Save'`) and `aria-pressed={active}` on the toggleable like/save — focusable, Enter/Space activate.
 - **Native:** each `Pressable` has `accessibilityRole="button"`, `accessibilityLabel` (same strings), and `accessibilityState={{ selected: active }}`.
 - **Label changes with state** so screen readers announce the next action ("Unlike" when liked).

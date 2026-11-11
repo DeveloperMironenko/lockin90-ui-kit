@@ -19,6 +19,9 @@ export interface BackLinkProps extends Omit<PressableProps, 'children' | 'style'
   variant?: 'default' | 'pill';
 }
 
+// the row is 26pt (default) / 30pt (pill) tall: the slop reaches the 44pt touch target, same look
+const SLOP = { default: { top: 9, bottom: 9, left: 4, right: 4 }, pill: { top: 7, bottom: 7 } } as const;
+
 /** "‹ Back" navigation affordance — chevron-left glyph + label, in accent. */
 export function BackLink({ label = 'Back', onClick, style, variant = 'default', ...rest }: BackLinkProps) {
   const isPill = variant === 'pill';
@@ -28,6 +31,7 @@ export function BackLink({ label = 'Back', onClick, style, variant = 'default', 
     <Pressable
       accessibilityRole="button"
       onPress={onClick}
+      hitSlop={SLOP[variant]}
       style={({ pressed }) => [
         isPill ? pillStyles.row : styles.row,
         pressed && styles.pressed,

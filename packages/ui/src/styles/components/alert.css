@@ -75,6 +75,7 @@
 
 /* dismiss × — mirrors .lk-modal-close */
 .lk-alert-close {
+  position: relative;
   flex: none;
   display: inline-flex;
   align-items: center;

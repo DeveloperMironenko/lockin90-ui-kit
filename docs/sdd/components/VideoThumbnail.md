@@ -88,6 +88,7 @@ No capability gap blocks the tile — it's fully usable and visually equivalent 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** interactive tiles are real `<button type="button">` (focusable, Enter/Space activate) with a `:focus-visible` accent ring; pass a meaningful `alt` (it's the poster's alt text — for an icon-only tile add an `aria-label` via `...rest`). The play disc + duration are `aria-hidden` decoration.
 - **Native:** interactive tiles are `Pressable` with `accessibilityRole="button"` and `accessibilityLabel={alt}`; the play disc + duration are `pointerEvents="none"` decoration.
 - **Hit target:** the entire tile is the target — at the default `150×107` it comfortably exceeds 44px. Keep the handler on the whole tile (don't shrink the target to just the play disc).

@@ -155,6 +155,7 @@ No genuine (inherent) capability gap — `size="sm"` is buildable and now built 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a `<span>` — purely presentational. When the chip conveys state not otherwise in the text, ensure the surrounding context names it (color is not the only signal — the mono label carries the meaning).
 - **Native:** a `<View>` + `<Text>` — the label is read by SRs. The dot is decorative.
 - **Contrast:** zone tones use the bright signal colors on a low-opacity tinted bg — high contrast against the void. Don't lower the tint or swap the text color off-tone.

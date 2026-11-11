@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { Animated, Easing, View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, ClipPath, Defs, FeGaussianBlur, Filter, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedRect = Animated.createAnimatedComponent(Rect);
@@ -195,14 +196,16 @@ function Tag({
 function PulseDot({ x, y, color, still = false }: { x: number; y: number; color: string; still?: boolean }) {
   const anim = useRef(new Animated.Value(0)).current;
 
+  const reduced = useReducedMotion();
   useEffect(() => {
+    if (reduced) return;
     if (still) return;
     const loop = Animated.loop(
       Animated.timing(anim, { toValue: 1, duration: 1800, easing: Easing.linear, useNativeDriver: false }),
     );
     loop.start();
     return () => loop.stop();
-  }, [still, anim]);
+  }, [still, anim, reduced]);
 
   const r = anim.interpolate({ inputRange: [0, 1], outputRange: [3.6, 11] });
   const ringOpacity = anim.interpolate({ inputRange: [0, 1], outputRange: [0.8, 0] });
@@ -231,13 +234,15 @@ function LiveEcgTrace({ run, color, shine }: { run: EcgRun; color: string; shine
   const clipId = `lk-vt-clip-${uid}`;
   const progress = useRef(new Animated.Value(0)).current;
 
+  const reduced = useReducedMotion();
   useEffect(() => {
+    if (reduced) return;
     const loop = Animated.loop(
       Animated.timing(progress, { toValue: 1, duration: SWEEP_MS, easing: Easing.linear, useNativeDriver: false }),
     );
     loop.start();
     return () => loop.stop();
-  }, [progress]);
+  }, [progress, reduced]);
 
   const xs = run.pts.map((p) => p.x);
   const ys = run.pts.map((p) => p.y);

@@ -84,6 +84,7 @@ const [on, setOn] = useState(false);
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** real `role="switch"` button, Enter/Space, `:focus-visible` ring, knob `aria-hidden`.
 - **Native:** `accessibilityRole="switch"` + `accessibilityState={{ checked, disabled }}`; labelled row is one tap target.
 - **State is not color-only:** `aria-checked` / `accessibilityState.checked` convey on/off to AT.

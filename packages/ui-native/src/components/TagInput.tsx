@@ -246,7 +246,7 @@ export function CodeInput({
             ? colors.zoneLow
             : filled
               ? 'rgba(34,211,238,0.45)'
-              : colors.border2;
+              : colors.borderControl;
         const backgroundColor = isFocused
           ? 'rgba(124,92,255,0.06)'
           : isInvalid
@@ -293,7 +293,8 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: radii.sm,
     borderWidth: 1,
-    borderColor: colors.border2,
+    // a field's edge at 3:1 on the card (CONVENTIONS "Accessibility")
+    borderColor: colors.borderControl,
     backgroundColor: colors.glass2,
   },
   // invalid: red border + soft red glow standing in for the web's 3px ring

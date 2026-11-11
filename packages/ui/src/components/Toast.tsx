@@ -20,6 +20,9 @@ export interface ToastProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   icon?: ReactNode;
   /** show a × button; called when it's clicked */
   onDismiss?: () => void;
+  /** the × button's name, in the app's language (CONVENTIONS "Accessibility": names via props).
+   *  @default 'Dismiss' (an English fallback for older apps) */
+  dismissLabel?: string;
   /** fill the card with the tone's color (no rail), its text and icons dark on it */
   filled?: boolean;
 }
@@ -41,11 +44,12 @@ const TONE_ICON: Record<ToastTone, IconName> = {
 
 /** Compact floating notification card — tone-tinted icon + title/message + optional dismiss. */
 export const Toast = forwardRef<HTMLDivElement, ToastProps>(function Toast(
-  { tone = 'default', title = 'Saved', message, icon, onDismiss, filled = false, className, ...rest },
+  { tone = 'default', title = 'Saved', message, icon, onDismiss, dismissLabel = 'Dismiss', filled = false, className, ...rest },
   ref,
 ) {
   return (
-    <div ref={ref} role="status" className={cn('lk-toast', TOAST_TONE[tone], filled && 'lk-toast-filled', className)} {...rest}>
+    // an error interrupts (alert); every other tone is a polite status
+    <div ref={ref} role={tone === 'danger' ? 'alert' : 'status'} className={cn('lk-toast', TOAST_TONE[tone], filled && 'lk-toast-filled', className)} {...rest}>
       <span className="lk-toast-icon" aria-hidden="true">
         {icon ?? <Icon name={TONE_ICON[tone]} size={17} />}
       </span>
@@ -54,7 +58,7 @@ export const Toast = forwardRef<HTMLDivElement, ToastProps>(function Toast(
         {message != null && <div className="lk-toast-msg">{message}</div>}
       </div>
       {onDismiss && (
-        <button type="button" className="lk-toast-x" aria-label="Dismiss" onClick={onDismiss}>
+        <button type="button" className="lk-toast-x" aria-label={dismissLabel} onClick={onDismiss}>
           ×
         </button>
       )}

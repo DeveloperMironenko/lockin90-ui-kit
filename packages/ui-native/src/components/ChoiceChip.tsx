@@ -48,6 +48,8 @@ export function ChoiceChip({
       disabled={disabled}
       accessibilityRole="button"
       accessibilityState={{ selected, disabled }}
+      // md is 7 + 16 + 7 + 2 = 32 tall, sm 28: the slop reaches the 44pt touch target, same look
+      hitSlop={stacked ? undefined : size === 'sm' ? 8 : 6}
       style={({ pressed }) => [
         styles.chip,
         size === 'sm' && styles.chipSm,

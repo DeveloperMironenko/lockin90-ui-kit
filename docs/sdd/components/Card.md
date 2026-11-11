@@ -105,6 +105,7 @@ It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parit
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a plain `<div>` — semantically neutral. When the card is the click target, pass `role="button"`, `tabIndex={0}`, and a key handler, or wrap a real `<button>`/`<a>` around the content rather than making the div clickable silently.
 - **Native:** a `<View>` — wrap in `Pressable` with `accessibilityRole="button"`/`accessibilityLabel` for tap targets.
 - **Contrast:** `tone` surfaces keep their tinted text/border within AA against the void background; don't lower the tint opacity.

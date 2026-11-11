@@ -100,6 +100,7 @@ This file also documents **`CopyButton`** (lives in the same source file): a cop
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** default trigger is a `<button>` with `aria-haspopup="dialog"` + `aria-expanded`; the panel is `role="dialog"`. A custom trigger uses an inline wrapper (with the same `aria-haspopup`/`expanded`) to avoid nesting a `<button>`. ESC + outside-click dismiss. `CopyButton` toggles `aria-label` between "Copy" and "Copied".
 - **Native:** trigger and backdrop are `Pressable` with `accessibilityRole="button"`; `CopyButton` swaps `accessibilityLabel` between "Copy"/"Copied". Android back dismisses.
 - **Hit target:** trigger ≥28px; CopyButton ≥28–30px tall.

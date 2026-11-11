@@ -91,6 +91,7 @@ The single difference is the **divider**: web draws the inter-row hairline with 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a `<div>` row (not interactive by default); pass an `onClick`/`role` via `...rest` if the row navigates. The medal `Icon` is decorative; the rank/name/value are real text.
 - **Native:** a `View` (`ViewProps` spread); add `accessibilityRole`/`onPress` via rest if tappable. `Text` nodes are read in order (rank, name, sublabel, value).
 - **Value is pre-formatted text** — format numbers (`1,240 pts`) before passing so AT reads them correctly.

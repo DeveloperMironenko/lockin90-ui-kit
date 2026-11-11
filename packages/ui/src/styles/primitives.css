@@ -108,15 +108,17 @@
 @media (hover: hover) { .lk-icon-btn:hover { transform: translateY(-1px); } }
 .lk-icon-btn:active { transform: scale(.96); }
 .lk-icon-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-/* the kit's focus ring, keyboard only */
-.lk-icon-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent); }
+/* the kit's focus ring (keyboard only) is the shared one below */
 .lk-icon-btn-sm { width: 32px; height: 32px; }
 /* the touch target reaches 44px around the 32px box */
 .lk-icon-btn-sm::before { content: ''; position: absolute; inset: -6px; }
+/* md (40px) at phone width: a 44px target, same look */
+@media (max-width: 540px) { .lk-icon-btn:not(.lk-icon-btn-sm)::before { content: ''; position: absolute; inset: -2px; } }
 /* text: a bare action inside a line of mono meta text ("Resend code" beside the code's hint):
    no surface, no padding, `--accent-2`; underlined on hover, `--text-faint` when disabled.
    Two classes, so it wins over the surface rules wherever they sit (Button skips size/tone). */
 .lk-btn.lk-btn-text {
+  position: relative;
   padding: 0; border: 0; border-radius: 0; background: none;
   font-family: var(--font-mono); font-weight: 400; font-size: 11.5px; line-height: 17px;
   color: var(--accent-2); will-change: auto; transition: color .2s var(--ease);
@@ -128,6 +130,41 @@
 /* muted text — a quiet way out (design onboarding .step-skip): faint, brighter on hover, no underline */
 .lk-btn.lk-btn-text.lk-btn--tone-muted { padding: var(--space-2); font-size: 12.5px; color: var(--text-faint); }
 @media (hover: hover) { .lk-btn.lk-btn-text.lk-btn--tone-muted:hover { color: var(--text-dim); text-decoration: none; } }
+/* ---- focus and hit areas (CONVENTIONS "Accessibility") ----
+   The kit's focus ring, keyboard only: 2px solid --accent-2 (10:1 on the card), 2px off the edge, on every
+   pressable primitive. It follows the control's radius (outline does). */
+.lk-btn:focus-visible,
+.lk-icon-btn:focus-visible,
+.lk-sso:focus-visible,
+.lk-backlink:focus-visible,
+.lk-listrow-tappable:focus-visible,
+.lk-input-trail:focus-visible,
+.lk-search-clear:focus-visible,
+.lk-alert-close:focus-visible,
+.lk-toast-x:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+/* A control drawn smaller than the target keeps its look; an invisible ::before, centred on it, is the
+   target: 24px, 44px at phone width (--bp-phone). The control is its positioning box. */
+.lk-btn-text, .lk-backlink, .lk-input-trail, .lk-search-clear, .lk-alert-close, .lk-toast-x { --lk-hit: 24px; }
+@media (max-width: 540px) {
+  .lk-btn-text, .lk-backlink, .lk-input-trail, .lk-search-clear, .lk-alert-close, .lk-toast-x { --lk-hit: 44px; }
+}
+.lk-btn.lk-btn-text::before,
+.lk-backlink::before,
+.lk-input-trail::before,
+.lk-search-clear::before,
+.lk-alert-close::before,
+.lk-toast-x::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, var(--lk-hit));
+  height: max(100%, var(--lk-hit));
+  transform: translate(-50%, -50%);
+}
 /* SSO / social sign-in: full-width, roomy rounded-square (not the pill) with a
    brand logo left of the label. Sits in a 2-up SSO grid. */
 .lk-btn-sso {
@@ -153,6 +190,13 @@
   border-color: color-mix(in srgb, var(--bad) 60%, transparent);
   color: var(--bad);
 }
+/* loading — the kit Spinner over the label, which stays (hidden) so the width never changes and the
+   button keeps its name; no lift while busy. Two classes and last, so it wins over every variant. */
+.lk-btn.lk-btn-loading { position: relative; color: transparent; cursor: progress; }
+.lk-btn.lk-btn-loading:hover, .lk-btn.lk-btn-loading:active { transform: none; text-decoration: none; }
+.lk-btn.lk-btn-loading > :not(.lk-btn-spin) { opacity: 0; }
+.lk-btn-spin { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.lk-btn .lk-btn-spin svg { width: 100%; height: 100%; }
 
 /* ---- chips / badges / pills ---- */
 /* Canonical tone pill. `.lk-chip-sm` is the compact count/status badge size (the

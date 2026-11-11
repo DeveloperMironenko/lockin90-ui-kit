@@ -84,6 +84,7 @@ There is **no capability gap** — a cross-platform "scan to enrol" flow can use
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the wrapper is `role="img"` with `aria-label="QR code"`. The payload itself is **not** read aloud (a screen-reader user can't scan a screen anyway) — always pair the QR with the **plaintext fallback** (e.g. the TOTP secret as copyable text, or the URL as a link) so non-scanning users can complete the flow.
 - **Contrast:** functional black-on-white module contrast is fixed and not theme-dependent — do not restyle the module colors.
 

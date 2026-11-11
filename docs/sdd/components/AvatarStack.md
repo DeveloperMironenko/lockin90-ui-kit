@@ -87,6 +87,7 @@ No capability gap blocks use.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - The stack is **decorative grouping** — pass meaningful `name`s so each composed `Avatar` carries identity (web `alt`, native `accessibilityLabel`).
 - The "+N" chip is plain text (e.g. "+2"); consider a surrounding label ("12 members") for screen readers when the count matters.
 - Hit targets: at small `size` (≤32) the overlapping tiles aren't good touch targets — make the whole row a single control if it's tappable.

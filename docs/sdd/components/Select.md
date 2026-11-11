@@ -124,6 +124,7 @@ The overlay differences are expected substrate, not capability gaps that block u
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the combobox always has a name: `aria-label` goes on the trigger (and the search input), never
   only on the wrapper; a visible `label` names it via `aria-labelledby`.
 - **Web:** trigger is `role="combobox"` with `aria-haspopup="listbox"`, `aria-expanded`, `aria-controls`,
@@ -180,3 +181,11 @@ The overlay differences are expected substrate, not capability gaps that block u
 - **Native `md` field:** the value takes the row (`flex: 1`) and sits left after the leading icon, as on web;
   the three parts were spread with `space-between`, which put the value in the middle. The field has the web's
   height (`minHeight` 39.6, as `Input`). `sm` (the language chip) keeps hugging its content and its height.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Edge:** the trigger (`md` and `sm`) uses `--border-control` / `colors.borderControl` (3.3:1 on the card);
+  `sm` no longer has its own fainter `--border` hairline or hover line.
+- **Native targets:** `sm` (27 tall) `hitSlop` 9 above / below and 4 at the sides, `md` (39.6) 3 above / below:
+  44pt, same look.
+- **Native `accessibilityHint`** prop: read after the name (a `FormField` passes its error or help).

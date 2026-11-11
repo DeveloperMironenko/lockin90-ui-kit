@@ -120,6 +120,7 @@ import { gradients } from '@lockin90/tokens';
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the inner `<svg>` is `aria-hidden`; the **center content carries the meaning** — render a real number/label (or pass `aria-label` via `...rest`) so the value is announced. The delta chip is real text and is read.
 - **Native:** SVG is decorative; supply an `accessibilityLabel` on a wrapping View when the value matters (name all values for `dual`/`triple`).
 - **Contrast:** center number uses `--text` (or the zone color — all three zone tokens pass on the void surface); keep custom center content at `--text`/`--text-dim`.

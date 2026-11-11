@@ -77,6 +77,7 @@ No capability gap blocks use — the overline is visually equivalent on both pla
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** defaults to a presentational `<span>`. When the overline *is* the section heading, pass `as="h2"`/`"h3"` so it participates in the document outline; otherwise leave it a span so it isn't announced as a heading.
 - **Native:** a `<Text>` — read inline by SRs. Pass `accessibilityRole="header"` via rest props if it functions as a section heading.
 - **Contrast:** `--text-faint` is intentionally low-emphasis; reserve `Eyebrow` for supporting captions, not primary content that must meet body-text contrast.

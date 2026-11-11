@@ -88,6 +88,7 @@ Check transitions honor `prefers-reduced-motion` (transition removed).
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** real `<table>` semantics; check is a `<button aria-pressed>` with `aria-label="Set {label} done"`; row click targets are supplemented by the always-focusable check button.
 - **Native:** rows and checks are `accessibilityRole="button"`; check carries `accessibilityState={{ selected }}` + the same label; `hitSlop={6}` pads the 32px check to ≥44px effective target.
 - Set types are distinguished by **letter + color**, not color alone.

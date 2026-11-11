@@ -112,6 +112,7 @@ None block use; app code reads 1:1 (same `label`/`help`/`error`/`required`, same
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** real `<label>`; set `htmlFor` to the control `id` so clicking the label focuses it. The error row is
   `role="alert"` (announced on appearance). `SearchInput` uses `type="search"`; the clear button has `aria-label="Clear search"`.
 - **Native:** label is a plain `Text` (associate by layout proximity). The search clear `Pressable` carries
@@ -149,3 +150,19 @@ None block use; app code reads 1:1 (same `label`/`help`/`error`/`required`, same
 
 ## Update — 2026-11-02 (native sizes match web)
 - **Native label = the label the web shows:** 11px / 500, `text-dim`, 0.12em, line height 17 (was 10px `text-faint`). On web this look comes from a rule that leaks out of the marketing `Field`; FormField's own web CSS adopts it in a following web PR.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **The label names the control (web):** a single control child gets an `id` (its own, `htmlFor`, or a
+  generated `useId` one) and the label's `for` points at it; the error (`role="alert"`, kept) or help gets an
+  id and is added to the child's `aria-describedby` (after any of its own); `required` sets `aria-required`.
+  Several children or a fragment are left as they are (pass `htmlFor` / ids yourself).
+- **Native:** the one control child gets `accessibilityLabel` = the label (plus `", " + requiredLabel` when
+  `required` and the new `requiredLabel` prop is given — the word in the app's language), unless it sets its
+  own; `accessibilityHint` = the error (or the help) when they are text. The error `Text` is
+  `accessibilityRole="alert"` with `accessibilityLiveRegion="polite"`, and a new error is announced with
+  `AccessibilityInfo.announceForAccessibility` (iOS has no live regions). Native `Select` and `SegmentedTabs`
+  take `accessibilityHint` for this.
+- **SearchInput:** `clearLabel` names the × (default `'Clear search'`, an English fallback; apps pass it). Its
+  edge is `--border-control` / `colors.borderControl`; the field text is 16px (no iOS zoom), line 19.6 so the box
+  keeps its height. The × reaches 24px web (44 at phone width, `::before`) and 44pt native (`hitSlop` 12).

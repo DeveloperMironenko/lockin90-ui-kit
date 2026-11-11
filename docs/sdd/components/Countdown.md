@@ -85,6 +85,7 @@ The only substrate difference is the **lit cell's gradient**: web fills with the
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the row is `role="timer"` with `aria-live="polite"` so screen readers announce updates; the `pad`-formatted numbers and unit labels are real text.
 - **Native:** the row is `accessibilityRole="timer"`; `Text` nodes carry the values.
 - **Reduced motion:** the countdown is a value update (not a transform animation), so it's unaffected by reduced-motion; only the value changes once per second.

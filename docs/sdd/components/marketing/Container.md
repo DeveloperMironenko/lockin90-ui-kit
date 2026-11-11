@@ -76,6 +76,7 @@ Container is **static** — no hover / focus / pressed / disabled / loading / er
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Renders a plain non-semantic `<div>` — it carries no role and is invisible to assistive tech (correct: it is pure layout).
 - Adds no focusable elements and no `aria-*`.
 - Width capping aids readability (`prose` keeps line length in the comfortable ~60–75ch band) but imposes no a11y requirement of its own.

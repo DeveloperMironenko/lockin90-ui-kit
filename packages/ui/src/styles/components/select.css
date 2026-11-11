@@ -29,7 +29,8 @@
   min-width: 0;
   padding: 9px 11px 9px 12px;
   border-radius: var(--r-sm);
-  border: 1px solid var(--border-2);
+  /* a field's edge at 3:1 on the card (CONVENTIONS "Accessibility") */
+  border: 1px solid var(--border-control);
   background: var(--glass-2);
   color: var(--text);
   font-family: var(--font-ui);
@@ -64,18 +65,14 @@
 }
 
 /* `size="sm"` — the design settings `.pref-select`: a compact mono glass pill
-   (`--glass-2` fill, `--border` hairline, padding 8×14) that hugs its content. */
+   (`--glass-2` fill, the field's `--border-control` edge, padding 8×14) that hugs its content. */
 .lk-select-trigger.lk-select-sm {
   width: auto;
   gap: 5px;
   padding: 8px 12px 8px 14px;
-  border-color: var(--border);
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.2;
-}
-.lk-select-trigger.lk-select-sm:hover {
-  border-color: var(--border-2);
 }
 .lk-select-trigger.lk-select-sm .lk-select-chevron {
   width: 13px;

@@ -82,6 +82,7 @@ No capability gap blocks use — the tooltip is fully usable and visually equiva
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** bubble is `role="tooltip"` with an `id`; the trigger sets `aria-describedby` while open. Opens on `focus` (not just hover) and the default badge is keyboard-focusable (`tabIndex={0}`). Decorative badge text is `aria-hidden`.
 - **Native:** the trigger is a `Pressable` (`accessibilityRole="button"`); reveal is a deliberate tap (works without a pointer). Android back / backdrop dismiss.
 - **Contrast:** bubble uses `--text` on `--bg-1` — full-strength text (not dimmed) for legibility at 12px.

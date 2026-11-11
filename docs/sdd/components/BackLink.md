@@ -79,6 +79,7 @@ No capability gap blocks use — both are a fully usable back control.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** real `<a>`/`<button>` — focusable, Enter/Space (button) or Enter (link) activate; `:focus-visible` shows the accent ring. The chevron is part of the kit `Icon` (decorative); the `label` carries the text.
 - **Native:** `Pressable` with `accessibilityRole="button"`; pass an `accessibilityLabel` via `...rest` if `label` alone isn't descriptive enough.
 - **Hit target:** small by design (`4px`/`2px` padding) — keep it in a header row with surrounding space; don't place two back controls adjacent.
@@ -103,3 +104,10 @@ No capability gap blocks use — both are a fully usable back control.
 - **New need → both platforms.** A back control variant (e.g. icon-only) goes on `BackLink` web **and** native (same props, same tokens), never a one-off.
 - **Tokens only.** `--accent`/`--accent-2`, `--font-ui`, and the focus ring color come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping a sub-screen, confirm the web phone-width and native back controls have the same label, the same destination, and a working parent fallback.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Targets, same look:** native `hitSlop` — `default` (26 tall) 9 above / below and 4 at the sides, `pill` (30)
+  7 above / below: 44pt. Web (already ≥ 24: 26 / 30 / 36 tall): an invisible centred `::before` makes it 44px at
+  phone width.
+- **Focus ring (web):** the kit's shared `2px solid --accent-2` (the old `--accent` 45% ring was 1.79:1).

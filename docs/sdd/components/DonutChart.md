@@ -125,6 +125,7 @@ No capability gap.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the `<svg>` has `role="img"` + an auto-built `aria-label` listing each segment's `label` + rounded % (both renderers). Always supply `label`s.
 - **Native:** provide an external legend or an `accessibilityLabel` on a wrapping `View`.
 - Callout chip text is 8px decorative duplication of the legend — don't make it the only naming surface for screen readers (the aria-label covers it on web).

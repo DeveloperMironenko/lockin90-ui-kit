@@ -11,6 +11,7 @@ import {
 import Svg, { Circle, Defs, G, Line, Mask, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { colors } from '@lockin90/tokens';
 import { absoluteFill } from '../internal/absoluteFill';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 export interface AuroraBackgroundProps {
   /** Intensity of the drifting blobs + grid veil. Default `'default'`. */
@@ -41,6 +42,8 @@ export function AuroraBackground({
   style,
 }: AuroraBackgroundProps) {
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
+  // the OS Reduce Motion setting holds it still, as `still` does
+  const calm = useReducedMotion() || still;
   const intensity = variant === 'subtle' ? 0.55 : variant === 'vivid' ? 1 : 0.78;
 
   const onLayout = (e: LayoutChangeEvent) => {
@@ -74,7 +77,7 @@ export function AuroraBackground({
           </Svg>
 
           {BLOBS.map((b, i) => (
-            <Blob key={i} blob={b} size={size} intensity={intensity} still={still} index={i} />
+            <Blob key={i} blob={b} size={size} intensity={intensity} still={calm} index={i} />
           ))}
 
           {grid ? <GridVeil size={size} opacity={GRID_OPACITY[variant]} /> : null}

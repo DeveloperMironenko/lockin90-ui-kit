@@ -121,6 +121,7 @@ No capability gap blocks use; only the animated pulse degrades to a static glow 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **KeyValue web:** real `<dl>`/`<dt>`/`<dd>` — assistive tech reads each key as the term and value as its
   definition. Keep `key` human-readable.
 - **KeyValue native:** `<Text>` pairs read in order; no list semantics — add `accessibilityRole` only if needed.

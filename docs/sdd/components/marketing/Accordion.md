@@ -95,6 +95,7 @@ const faqs: AccordionItem[] = [
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Each trigger is a real **`<button type="button">`** carrying **`aria-expanded={isOpen}`**, so screen readers announce expanded/collapsed; Enter/Space toggle natively and the button is keyboard-focusable in order.
 - The `+`/`×` indicator span is **`aria-hidden`** — it's decorative; the expanded state is conveyed by `aria-expanded`, not the glyph.
 - The answer panel is always in the DOM (height-animated, not unmounted) and is hidden only via `0fr`/`opacity` — content remains reachable; ensure answers are concise plain strings as the contract enforces.

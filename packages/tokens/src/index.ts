@@ -18,10 +18,12 @@ export const colors = {
   glass2: 'rgba(255,255,255,0.075)',
   border: 'rgba(255,255,255,0.09)',
   border2: 'rgba(255,255,255,0.16)',
+  // a field's edge (Input, Select, CodeInput, TagInput): 3.3:1 on the card (CONVENTIONS "Accessibility")
+  borderControl: 'rgba(255,255,255,0.36)',
   // text
   text: '#EEF1F8',
   textDim: '#AAB2C6',
-  textFaint: '#828B9F',
+  textFaint: '#868FA3', // 4.6:1 on a field's fill (CONVENTIONS "Accessibility")
   // energy spectrum
   lime: '#A8FF35',
   mint: '#34F5C5',
@@ -159,7 +161,7 @@ export type Tokens = typeof tokens;
 /** Map a color token to its CSS custom property, e.g. `cssVar('zoneHigh')` → `var(--zone-high)`. */
 const cssVarName: Record<ColorToken, string> = {
   void: '--void', bg0: '--bg-0', bg1: '--bg-1', bg2: '--bg-2',
-  glass: '--glass', glass2: '--glass-2', border: '--border', border2: '--border-2',
+  glass: '--glass', glass2: '--glass-2', border: '--border', border2: '--border-2', borderControl: '--border-control',
   text: '--text', textDim: '--text-dim', textFaint: '--text-faint',
   lime: '--lime', mint: '--mint', cyan: '--cyan', indigo: '--indigo', violet: '--violet', magenta: '--magenta', orange: '--orange',
   accent: '--accent', accent2: '--accent-2', accent3: '--accent-3',

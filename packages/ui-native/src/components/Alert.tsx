@@ -18,7 +18,15 @@ export interface AlertProps extends Omit<ViewProps, 'children'> {
   icon?: ReactNode;
   /** when provided, renders a top-right × close button */
   onDismiss?: () => void;
+  /** the × button's name, in the app's language (CONVENTIONS "Accessibility": names via props).
+   *  @default 'Dismiss' (an English fallback for older apps) */
+  dismissLabel?: string;
+  /** the title's level, as web: a heading level (`h2`…`h6`) makes the title a header; `p` (the default)
+   *  keeps it plain text (an alert's title is not the screen's header). */
+  titleAs?: AlertTitleLevel;
 }
+
+export type AlertTitleLevel = 'p' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
 const TONE: Record<AlertTone, { c: string; bg: string; border: string }> = {
   info: { c: colors.accent, bg: 'rgba(124,92,255,0.08)', border: 'rgba(124,92,255,0.3)' },
@@ -104,20 +112,37 @@ function defaultIcon(tone: AlertTone, color: string): ReactNode {
 }
 
 /** Tinted callout box — info / success / warn / danger banner (or a quiet neutral / cyan note) with optional dismiss. */
-export function Alert({ tone = 'info', title, children, icon, onDismiss, style, ...rest }: AlertProps) {
+export function Alert({
+  tone = 'info',
+  title,
+  children,
+  icon,
+  onDismiss,
+  dismissLabel = 'Dismiss',
+  titleAs = 'p',
+  style,
+  ...rest
+}: AlertProps) {
   const t = TONE[tone];
   const note = NOTE[tone];
   // a text-only neutral note centres its icon; with a title or a dismiss it top-aligns like every tone
   const centred = tone === 'neutral' && title == null && !onDismiss;
   return (
     <View
+      // an error is an alert and read as soon as it shows; every tone is a live region (web: alert / status)
+      accessibilityRole={tone === 'danger' ? 'alert' : undefined}
+      accessibilityLiveRegion={tone === 'danger' ? 'assertive' : 'polite'}
       style={[styles.alert, { backgroundColor: t.bg, borderColor: t.border }, note?.box, centred && styles.centred, style]}
       {...rest}
     >
       {!note && <View style={[styles.bar, { backgroundColor: t.c }]} pointerEvents="none" />}
       <View style={[styles.icon, centred && styles.iconCentered]}>{icon ?? defaultIcon(tone, t.c)}</View>
       <View style={styles.body}>
-        {title != null && <Text style={styles.title}>{title}</Text>}
+        {title != null && (
+          <Text style={styles.title} accessibilityRole={titleAs === 'p' ? undefined : 'header'}>
+            {title}
+          </Text>
+        )}
         {children != null && (isText(children)
           ? <Text style={[styles.text, note?.text, note && title == null && styles.textAlone]}>{children}</Text>
           : children)}
@@ -126,8 +151,9 @@ export function Alert({ tone = 'info', title, children, icon, onDismiss, style, 
         <Pressable
           onPress={onDismiss}
           accessibilityRole="button"
-          accessibilityLabel="Dismiss"
-          hitSlop={6}
+          accessibilityLabel={dismissLabel}
+          // the 26pt box reaches the 44pt touch target
+          hitSlop={9}
           style={styles.close}
         >
           <Svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke={colors.textFaint} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">

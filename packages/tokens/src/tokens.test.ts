@@ -45,3 +45,44 @@ describe('spacing + breakpoints (layout rules)', () => {
     expect(tw['4']).toBe('1rem');
   });
 });
+
+/* CONVENTIONS "Accessibility": a field's edge 3:1 on the card, faint text 4.5:1 on a field's fill. */
+describe('contrast (accessibility rule)', () => {
+  const rgb = (c: string): number[] =>
+    c.startsWith('#')
+      ? [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16))
+      : (c.match(/[\d.]+/g) ?? []).map(Number);
+  const over = (fg: string, bg: number[]) => {
+    const [r, g, b, a = 1] = rgb(fg);
+    return [r, g, b].map((v, i) => v * a + bg[i] * (1 - a));
+  };
+  const lum = (c: number[]) => {
+    const [r, g, b] = c.map((v) => {
+      const s = v / 255;
+      return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const ratio = (a: number[], b: number[]) => {
+    const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+    return (hi + 0.05) / (lo + 0.05);
+  };
+  const card = over(colors.glass, rgb(colors.bg0));
+  const field = over(colors.glass2, card);
+
+  it('the control edge reaches 3:1 on the card and on the page', () => {
+    expect(ratio(over(colors.borderControl, card), card)).toBeGreaterThanOrEqual(3);
+    expect(ratio(over(colors.borderControl, rgb(colors.bg0)), rgb(colors.bg0))).toBeGreaterThanOrEqual(3);
+  });
+
+  it('faint text reaches 4.5:1 on a field', () => {
+    expect(ratio(rgb(colors.textFaint), field)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('ships both in tokens.css with the typed values', () => {
+    const css = readFileSync(new URL('./tokens.css', import.meta.url), 'utf8');
+    expect(css).toContain('--border-control: rgba(255, 255, 255, 0.36)');
+    expect(css).toContain(`--text-faint: ${colors.textFaint}`);
+    expect(cssVar('borderControl')).toBe('var(--border-control)');
+  });
+});

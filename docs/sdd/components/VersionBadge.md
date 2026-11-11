@@ -47,7 +47,7 @@ Segments are pill-joined by hairline dividers and only render when their prop is
 | Segment padding | `4px / 10px` | per segment |
 | Segment divider | `1px` left border `--border` | between segments |
 | Version text | `--text-dim` / `colors.textDim` | `#AAB2C6` |
-| build/date text | `--text-faint` / `colors.textFaint` | `#828B9F` |
+| build/date text | `--text-faint` / `colors.textFaint` | `#868FA3` |
 | Env label | 600 weight, `0.06em` letter-spacing | tinted per env |
 | Status dot | `6px`, glow `0 0 7px <tint>` | tinted per env |
 
@@ -96,6 +96,7 @@ The only difference is implementation substrate: web selects a per-env CSS class
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** an inline `<span>`; the dot is `aria-hidden="true"` (decorative) and the version/build/date/env are real text read in order.
 - **Native:** a `View` of `Text` nodes; the dot is a plain `View` (no label) and the segments are read in order.
 - **Color is not the only signal** — the env label text (`PROD` / `STAGING` / `DEV`) always renders, so the environment is conveyed without relying on the tint alone.

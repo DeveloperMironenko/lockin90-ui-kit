@@ -82,6 +82,7 @@ No capability gap; the row is byte-for-byte equivalent in meaning and appearance
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the sign is rendered as a real glyph inside the value, so the signed magnitude is read as text (e.g. "+12pts"). The icon is decorative (via `Icon`). Plain `<div>` — no role needed.
 - **Native:** value/sign/unit/label are `Text`; the signed magnitude reads correctly. Icon is decorative.
 - **Color independence:** the explicit `+`/`−`/`±` sign conveys valence without relying on the mint/red color — so positive vs negative is distinguishable color-blind.

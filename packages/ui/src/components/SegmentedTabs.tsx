@@ -92,6 +92,22 @@ export interface SegmentedTabsProps extends Omit<HTMLAttributes<HTMLDivElement>,
   fill?: boolean;
   /** the line in `--zone-low`, as an invalid `Input`: a required choice not made (onboarding Profile) */
   invalid?: boolean;
+  /**
+   * What the control is. `'tabs'` (default) switches views: a `tablist` of `tab`s. `'choice'` is a form
+   * value (units, sex, activity level): a `radiogroup` of `radio`s with `aria-checked`, one Tab stop
+   * (the chosen segment) and the arrow keys (Home / End too) moving and choosing, skipping locked
+   * segments. Name the group with `aria-label` / `aria-labelledby`. Mirrors native `kind`.
+   */
+  kind?: 'tabs' | 'choice';
+}
+
+/** The next unlocked index from `from` in `step` direction (wrapping), or `from` when none. */
+export function nextSegment(count: number, from: number, step: 1 | -1, locked: number[] = []): number {
+  for (let n = 1; n <= count; n++) {
+    const i = (((from + step * n) % count) + count) % count;
+    if (!locked.includes(i)) return i;
+  }
+  return from;
 }
 
 /** iOS-style segmented control — a pill track of equal-width segments; the
@@ -107,9 +123,34 @@ export function SegmentedTabs({
   appearance = 'raised',
   fill = false,
   invalid = false,
+  kind = 'tabs',
   className,
   ...rest
 }: SegmentedTabsProps) {
+  const choice = kind === 'choice';
+  // a choice is one Tab stop: the chosen segment, or the first unlocked one
+  const stop = choice
+    ? active >= 0 && active < tabs.length && !locked?.includes(active)
+      ? active
+      : nextSegment(tabs.length, -1, 1, locked)
+    : -1;
+  const move = (from: number, key: string) => {
+    const last = tabs.length - 1;
+    const to =
+      key === 'ArrowRight' || key === 'ArrowDown'
+        ? nextSegment(tabs.length, from, 1, locked)
+        : key === 'ArrowLeft' || key === 'ArrowUp'
+          ? nextSegment(tabs.length, from, -1, locked)
+          : key === 'Home'
+            ? nextSegment(tabs.length, -1, 1, locked)
+            : key === 'End'
+              ? nextSegment(tabs.length, last + 1, -1, locked)
+              : null;
+    if (to == null) return false;
+    ref.current?.querySelectorAll<HTMLElement>('.lk-seg-tab')[to]?.focus();
+    if (to !== active) onChange?.(to);
+    return true;
+  };
   const ref = useRef<HTMLDivElement>(null);
   const labels = tabs.map((item) => toTab(item).label).join('\u0000');
 
@@ -164,7 +205,7 @@ export function SegmentedTabs({
       ref={ref}
       className={cn('lk-seg', size === 'sm' && 'lk-seg-sm', fill && 'lk-seg--fill', invalid && 'lk-seg--invalid', className)}
       aria-invalid={invalid || undefined}
-      role="tablist"
+      role={choice ? 'radiogroup' : 'tablist'}
       data-tone={tone !== 'accent' ? tone : undefined}
       data-appearance={appearance !== 'raised' ? appearance : undefined}
       {...rest}
@@ -177,8 +218,17 @@ export function SegmentedTabs({
           <button
             key={i}
             type="button"
-            role="tab"
-            aria-selected={i === active}
+            role={choice ? 'radio' : 'tab'}
+            aria-selected={choice ? undefined : i === active}
+            aria-checked={choice ? i === active : undefined}
+            tabIndex={choice ? (i === stop ? 0 : -1) : undefined}
+            onKeyDown={
+              choice
+                ? (e) => {
+                    if (move(i, e.key)) e.preventDefault();
+                  }
+                : undefined
+            }
             aria-disabled={isLocked || undefined}
             disabled={isLocked}
             className={cn(

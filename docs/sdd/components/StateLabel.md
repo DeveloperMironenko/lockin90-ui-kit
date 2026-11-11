@@ -80,6 +80,7 @@ the 12px gap / `0 2px 14px` outer spacing, the identical cyan chip (border, bg, 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the rule is `aria-hidden` (decorative); the chip + label are real text, announced together as
   "01 Sign in". No role is set — add `role="heading"`/`aria-level` via rest if the section structure should
   appear in heading navigation.

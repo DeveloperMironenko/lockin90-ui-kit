@@ -105,6 +105,7 @@ No capability gap — the alert is visually equivalent on both.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `role="status"` (polite live region). Close button is a real `<button>` with `aria-label="Dismiss"`; leading icon is `aria-hidden`.
 - **Native:** close `Pressable` has `accessibilityRole="button"` + `accessibilityLabel="Dismiss"` + `hitSlop={6}` for a comfortable tap target.
 - **Tone is not the only signal** — the `title`/body text must carry the meaning (don't rely on color alone for colorblind users).
@@ -138,3 +139,15 @@ No capability gap — the alert is visually equivalent on both.
   `Trans`) rendered raw, which React Native refuses. Now a string **or a `<Text>` element** gets the alert's
   text style (the app puts its sentence in a plain `<Text>`, which inherits it), as any text inside the web alert
   does. Views, fragments and components still render as given. Needed by the mobile Create account timezone note.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **`dismissLabel`** (web + native) names the × (default `'Dismiss'`, an English fallback; apps pass it).
+- **Roles:** web `role="alert"` for `danger`, `role="status"` for every other tone (was `status` for all).
+  Native `danger` is `accessibilityRole="alert"` with `accessibilityLiveRegion="assertive"`, every other tone
+  `polite`.
+- **`titleAs`** (web + native, `'p' | 'h2'…'h6'`, default `'p'`): the title is no longer an `h5`; pass a level
+  when the alert starts a section. Native: a heading level makes the title `accessibilityRole="header"`.
+  Type `AlertTitleLevel` is exported.
+- **Close target:** native `hitSlop` 9 (26 + 18 = 44pt); web an invisible `::before` 24px (44 at phone width);
+  its focus ring is the kit's shared one.

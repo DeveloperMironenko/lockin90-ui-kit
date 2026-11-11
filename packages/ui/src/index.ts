@@ -7,7 +7,7 @@ export { useReveal } from './hooks/useReveal';
 export { Accordion } from './components/Accordion';
 export type { AccordionItemData, AccordionProps } from './components/Accordion';
 export { Alert, AlertStrong } from './components/Alert';
-export type { AlertTone, AlertProps } from './components/Alert';
+export type { AlertTone, AlertProps, AlertTitleLevel } from './components/Alert';
 export { Avatar } from './components/Avatar';
 export type { AvatarProps } from './components/Avatar';
 export { ShareCard } from './components/ShareCard';

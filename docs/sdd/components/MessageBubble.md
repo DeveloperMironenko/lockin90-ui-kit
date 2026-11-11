@@ -87,6 +87,7 @@ No capability gap — the bubble is fully usable and visually equivalent on both
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** plain `<div>` — content is read as text. The status `<span>` carries a visually-hidden `.lk-sr-only` label (`Sent`/`Delivered`/`Read`) so the delivery state is announced; the SVG itself is `aria-hidden`.
 - **Native:** the unicode glyph has no screen-reader label — apps that need the delivery state announced should add `accessibilityLabel` via the bubble `style`'d wrapper (gap vs web; flag if announcing status matters).
 - **Contrast:** outgoing `#ece8ff` on the violet tint and incoming `--text` on `--glass-2` both meet body-text contrast on the void background.

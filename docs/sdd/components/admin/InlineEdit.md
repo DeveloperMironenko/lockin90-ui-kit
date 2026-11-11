@@ -104,6 +104,7 @@ import { InlineEdit } from '@lockin90/ui/admin';
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Display affordance** is a real `<button type="button">` (Enter/Space begin editing) with an
   `aria-label` of `Edit value` (+ ` (suffix)` when a suffix is set).
 - **Edit input** carries `aria-label="Edit value"`; `type`/`inputMode` adapt for numeric entry.

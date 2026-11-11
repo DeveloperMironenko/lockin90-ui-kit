@@ -80,7 +80,7 @@ It is intentionally the *only* sanctioned way to render a button-shaped action i
 | Pressed / active | `:active scale(.98)` | `pressed` → opacity .85 + `scale(.98)` |
 | Focus | native focus ring (`<button>`) | platform focus ring (Pressable) |
 | Disabled | `:disabled` opacity .5, `cursor: not-allowed`, no transform | `disabled` → the surface at opacity .5, as web (the `text` variant fades its label instead) |
-| Loading | not built-in — compose with `Spinner` in `leading` and disable | same |
+| Loading | `loading`: Spinner over the kept label, `aria-busy`, clicks ignored (Update 2026-11-10) | `loading`: same, `accessibilityState.busy` |
 
 ## 5. Web ↔ native parity
 
@@ -101,7 +101,7 @@ There is **no capability gap** that blocks use — the button is fully usable an
 - **Trailing-arrow CTA:** `trailing={<Icon name="arrow-right" />}` — symmetric with `leading`, rendered after the label.
 - **Quantity ± / steppers:** use `NumberStepper`, not two `Button`s.
 - **Used by:** `ReauthDialog` (password + Google SSO step-up), auth screens, `PricingTierCard` CTA, `EmptyState` action, modals' footer actions.
-- **Composition with Spinner:** for an async action, put `<Spinner size="sm" />` in `leading` and set `disabled` while pending.
+- **Async action:** pass `loading` while it runs (Update 2026-11-10); don't hand-build a spinner button.
 
 - **Destructive action:** `<Button tone="danger">Delete</Button>` for the solid destructive CTA; `<Button variant="ghost" tone="danger">` for the low-emphasis "danger zone" delete (account settings).
 
@@ -123,9 +123,10 @@ There is **no capability gap** that blocks use — the button is fully usable an
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** real `<button>` (focusable, Enter/Space activate). `type="button"` by default — set `type="submit"` explicitly for form submits. Pass `aria-label` when the label is icon-only. Disabled via native `disabled`.
 - **Native:** `Pressable` with `accessibilityRole="button"` built in (as the web `<button>`); pass `accessibilityLabel` / `accessibilityState={{ disabled }}` via rest props when needed.
-- **Hit target:** `md` padding yields a ≥44px height target; prefer `md` for touch. `sm` is for dense desktop/admin contexts.
+- **Hit target:** `md` is 45.7 tall; native `sm` gets a `hitSlop` to 44pt, web `text` a `::before` (24px, 44 at phone width).
 - **Contrast:** primary uses `#0A0A12` on the bright gradient — meets contrast on every gradient stop (chosen deliberately over white).
 
 ## 8. Usage rules — Do / Don't
@@ -192,3 +193,17 @@ There is **no capability gap** that blocks use — the button is fully usable an
   `disabled` prop dims: it is the only one that stops `Pressable`'s presses (`aria-disabled` and
   `accessibilityState.disabled` only change what is announced), so a dimmed button never takes a press.
   The `text` variant keeps its faint label at full opacity (2026-11-05).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **`loading` (web + native, same name):** the kit `Spinner` (14 / 16 / 18 for sm / md / lg, 12 on `text`;
+  thickness 2, in the label's colour) centred over the label, which stays in place but hidden (web
+  `color: transparent` + `opacity: 0` on the icons; native `opacity: 0`), so the width never changes and the
+  button keeps its name. Web: `aria-busy="true"`, `.lk-btn-loading` (no lift, `cursor: progress`), a click is
+  ignored and a `type="submit"` doesn't submit; it stays focusable (not `disabled`). Native:
+  `accessibilityState.busy`, the press is ignored (no haptic). Replaces "compose with `Spinner` in `leading`"
+  (§4, §6): apps drop their hand-built busy buttons.
+- **Targets:** native `sm` (36.2 tall) gets `hitSlop` 4 above and below (44); `text` keeps its 14 slop. Web
+  `.lk-btn-text` gets an invisible centred `::before` of 24px (44px at phone width).
+- **Focus ring (web):** `:focus-visible` is the kit's shared ring, `2px solid --accent-2`, offset 2 (10:1 on the
+  card); it had none of its own.

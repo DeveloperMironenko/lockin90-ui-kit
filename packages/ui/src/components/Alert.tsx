@@ -17,7 +17,16 @@ export interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   icon?: ReactNode;
   /** when provided, renders a top-right × close button */
   onDismiss?: () => void;
+  /** the × button's name, in the app's language (CONVENTIONS "Accessibility": names via props).
+   *  @default 'Dismiss' (an English fallback for older apps) */
+  dismissLabel?: string;
+  /** the title's element: a heading level when the alert starts a section of the page, else a plain
+   *  `p` (the default: an alert's title is not a page heading). Native: a heading level makes the title
+   *  a header. */
+  titleAs?: AlertTitleLevel;
 }
+
+export type AlertTitleLevel = 'p' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
 const TONE: Record<AlertTone, string> = {
   info: 'lk-alert-info',
@@ -74,27 +83,30 @@ export function Alert({
   children,
   icon,
   onDismiss,
+  dismissLabel = 'Dismiss',
+  titleAs: Title = 'p',
   className,
   ...rest
 }: AlertProps) {
   return (
     <div
       className={cn('lk-alert', TONE[tone], !title && !onDismiss && 'lk-alert--text-only', className)}
-      role="status"
+      // an error interrupts (alert); every other tone is a polite status
+      role={tone === 'danger' ? 'alert' : 'status'}
       {...rest}
     >
       <span className="lk-alert-icon" aria-hidden="true">
         {icon ?? DEFAULT_ICON[tone]}
       </span>
       <div className="lk-alert-body">
-        {title && <h5 className="lk-alert-title">{title}</h5>}
+        {title && <Title className="lk-alert-title">{title}</Title>}
         {children && <p className="lk-alert-text">{children}</p>}
       </div>
       {onDismiss && (
         <button
           type="button"
           className="lk-alert-close"
-          aria-label="Dismiss"
+          aria-label={dismissLabel}
           onClick={onDismiss}
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">

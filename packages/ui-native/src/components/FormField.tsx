@@ -1,5 +1,6 @@
-import { useState, type ReactNode } from 'react';
+import { Children, cloneElement, Fragment, isValidElement, useEffect, useState, type ReactElement, type ReactNode } from 'react';
 import {
+  AccessibilityInfo,
   View,
   Text,
   TextInput,
@@ -20,23 +21,50 @@ export interface FormFieldProps extends ViewProps {
   error?: ReactNode;
   /** appends a small accent `*` after the label */
   required?: boolean;
+  /** the word read after the label when `required` ("required", in the app's language). Without it the
+   *  control's name is the label alone. */
+  requiredLabel?: string;
   /** a link or action at the end of the label row (e.g. "Forgot password?") */
   labelAction?: ReactNode;
   /** the form control to wrap */
   children?: ReactNode;
 }
 
-/** Labeled form-control wrapper — mono label, the control, then faint help or red error. */
+type ControlProps = { accessibilityLabel?: string; accessibilityHint?: string };
+
+const textOf = (node: ReactNode): string | undefined =>
+  typeof node === 'string' || typeof node === 'number' ? String(node) : undefined;
+
+/** Labeled form-control wrapper — mono label, the control, then faint help or red error. The one control
+ *  child is named by the label (its `accessibilityLabel`, unless it sets its own) and hinted by the error
+ *  or help; a new error is announced (FormField.md §7). */
 export function FormField({
   label,
   help,
   error,
   required = false,
+  requiredLabel,
   labelAction,
   children,
   style,
   ...rest
 }: FormFieldProps) {
+  const errorText = textOf(error);
+  useEffect(() => {
+    if (errorText) AccessibilityInfo.announceForAccessibility(errorText);
+  }, [errorText]);
+
+  const only = Children.count(children) === 1 ? Children.toArray(children)[0] : null;
+  const control =
+    isValidElement<ControlProps>(only) && only.type !== Fragment ? (only as ReactElement<ControlProps>) : null;
+  const name = label ? (required && requiredLabel ? `${label}, ${requiredLabel}` : label) : undefined;
+  const hint = error ? errorText : textOf(help);
+  const body = control
+    ? cloneElement(control, {
+        accessibilityLabel: control.props.accessibilityLabel ?? name,
+        accessibilityHint: control.props.accessibilityHint ?? hint,
+      })
+    : children;
   return (
     <View style={[styles.field, style]} {...rest}>
       {label || labelAction ? (
@@ -51,9 +79,11 @@ export function FormField({
           {labelAction}
         </View>
       ) : null}
-      <View style={styles.control}>{children}</View>
+      <View style={styles.control}>{body}</View>
       {error ? (
-        <Text style={styles.errorText}>{error}</Text>
+        <Text style={styles.errorText} accessibilityLiveRegion="polite" accessibilityRole="alert">
+          {error}
+        </Text>
       ) : help ? (
         <Text style={styles.helpText}>{help}</Text>
       ) : null}
@@ -70,6 +100,9 @@ export interface SearchInputProps extends Omit<TextInputProps, 'onChange' | 'val
   placeholder?: string;
   /** invoked by the trailing × clear button (in addition to `onChange('')`) */
   onClear?: () => void;
+  /** the clear button's name, in the app's language (CONVENTIONS "Accessibility": names via props).
+   *  @default 'Clear search' (an English fallback for older apps) */
+  clearLabel?: string;
   /** shell shape — `'pill'` (default, standalone search) or `'sm'` (the standard
    *  Input radius, for menus/sheets where the search sits among other fields). */
   shape?: 'pill' | 'sm';
@@ -81,6 +114,7 @@ export function SearchInput({
   onChange,
   placeholder = 'Search…',
   onClear,
+  clearLabel = 'Clear search',
   shape = 'pill',
   style,
   onFocus,
@@ -100,7 +134,7 @@ export function SearchInput({
       style={[
         styles.search,
         shape === 'sm' && styles.searchSm,
-        { borderColor: focused ? colors.accent : colors.border2 },
+        { borderColor: focused ? colors.accent : colors.borderControl },
       ]}
     >
       <View style={styles.searchLead}>
@@ -136,7 +170,8 @@ export function SearchInput({
       {hasValue ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Clear search"
+          accessibilityLabel={clearLabel}
+          hitSlop={12}
           onPress={clear}
           style={styles.searchClear}
         >
@@ -215,7 +250,8 @@ const styles = StyleSheet.create({
     padding: 0,
     color: colors.text,
     fontFamily: fonts.ui,
-    fontSize: 14,
+    // 16, as the web field; the 20 line keeps the box height
+    fontSize: 16,
     lineHeight: 20,
   },
   searchClear: {

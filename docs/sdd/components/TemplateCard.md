@@ -69,6 +69,7 @@ The **workout-template row card**: a glass row with the template name in the dis
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** tappable card is a real `<button type="button">` — keyboard + AT for free; the tint bar is `aria-hidden`.
 - **Native:** `accessibilityRole="button"`; the name/meta Texts are read in order.
 - Source is conveyed by the pill **text** (COACH/AI), not color alone.

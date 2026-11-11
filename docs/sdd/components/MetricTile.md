@@ -137,6 +137,7 @@ shipping a native screen where the dots convey required state.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **MetricTile web/native:** presentational text; the mono label provides context for the value. No interactive
   role — don't wrap it in a button unless the whole tile is a real action (then add `accessibilityRole`).
 - **ProgressDots web:** exposes `progressbar` with `aria-valuemin=0`, `aria-valuemax=total`, `aria-valuenow=filled`

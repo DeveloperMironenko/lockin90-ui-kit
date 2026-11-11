@@ -49,6 +49,8 @@ export interface SelectProps {
   /** the field's name for screen readers when there is no visible `label`
    *  (falls back to `label`). Mirrors web `aria-label`. */
   accessibilityLabel?: string;
+  /** read after the name (a `FormField` passes its error or help here). */
+  accessibilityHint?: string;
   /**
    * Field scale. `'md'` (default) is the standard form field. `'sm'` is the
    * design settings compact glass pill (`.pref-select`): mono 11px value,
@@ -121,6 +123,7 @@ export function Select({
   title,
   closeLabel = 'Close',
   accessibilityLabel,
+  accessibilityHint,
   size = 'md',
   leading,
 }: SelectProps) {
@@ -155,9 +158,12 @@ export function Select({
         ]}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel ?? label}
+        accessibilityHint={accessibilityHint}
         accessibilityValue={selected ? { text: selected.label } : undefined}
         accessibilityState={{ disabled, expanded: open }}
         disabled={disabled}
+        // sm is 6 + 13 + 6 + 2 = 27 tall, md 39.6: the slop reaches the 44pt touch target, same look
+        hitSlop={isSm ? { top: 9, bottom: 9, left: 4, right: 4 } : { top: 3, bottom: 3 }}
         onPress={() => { hapticSelection(); setOpen(true); }}
       >
         {leading != null ? <View style={styles.leading}>{leading}</View> : null}
@@ -264,7 +270,8 @@ const styles = StyleSheet.create({
     gap: 8,
     borderRadius: radii.sm,
     borderWidth: 1,
-    borderColor: colors.border2,
+    // a field's edge at 3:1 on the card (CONVENTIONS "Accessibility")
+    borderColor: colors.borderControl,
     backgroundColor: colors.glass2,
     // the web field's height (as Input): 9 + 14 × 1.4 + 9 + 2 borders = 39.6
     minHeight: 39.6,
@@ -277,7 +284,6 @@ const styles = StyleSheet.create({
   fieldSm: {
     minHeight: 0,
     gap: 5,
-    borderColor: colors.border,
     paddingVertical: 6,
     paddingLeft: 9,
     paddingRight: 8,

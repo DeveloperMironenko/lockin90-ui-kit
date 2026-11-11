@@ -118,6 +118,7 @@ No capability gap blocks use — both render equivalent steppers.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Stepper:** display-only; nodes/labels convey progress visually. Web nodes are `aria-hidden` decorations; the consumer should expose flow progress textually (e.g. "Step 2 of 4") near the rail. Native renders plain `Text`/`View`.
 - **NumberStepper:** web `−`/`+` are real `<button>`s with `aria-label="Decrease"/"Increase"`; the value is `aria-live="polite"` so changes are announced; ends use the native `disabled` attribute. Native mirrors this — `accessibilityRole="button"` + `accessibilityLabel`, `accessibilityState={{ disabled }}`, value `accessibilityLiveRegion="polite"`.
 - **Hit target:** `30×30` `±` buttons — acceptable for desktop; on touch-dense native screens consider surrounding spacing.

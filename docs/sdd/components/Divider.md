@@ -88,6 +88,7 @@ There is **no capability gap**.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the plain/gradient `<hr>` is a semantic separator (implicit `role="separator"`); the labeled form is a `<div role="separator" aria-label={label}>` so the caption is announced as the separator's name (the flanking hairlines are `aria-hidden`). Decorative use needs no extra aria.
 - **Native:** plain `View`s with no interactive role — correct for a decorative rule; the labeled caption `Text` is readable in order.
 - **Contrast:** the line is intentionally low-contrast (`--border` ≈ `rgba(255,255,255,.09)`); it is decoration, exempt from text-contrast minimums. The labeled caption is faint by design (a low-emphasis section marker, not body content).

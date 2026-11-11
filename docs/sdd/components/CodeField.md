@@ -96,6 +96,7 @@ App code reads 1:1 (`value`/`onChange(string)` both sides) — no capability gap
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a real `<textarea>` with `aria-invalid` set when `invalid`; `spellCheck/autoComplete/autoCorrect/
   autoCapitalize` are all off (code, not prose). The dot row is `aria-hidden`.
 - **Native:** `TextInput` with `autoCapitalize="none"`, `autoCorrect={false}`, `spellCheck={false}`; the dot

@@ -91,6 +91,7 @@ No capability gap; the two pills render identically.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** renders a `<span>` (not focusable). The arrow `svg` is `aria-hidden`; the **value text carries the meaning**. For `iconOnly`, supply an `aria-label` via `...rest` (e.g. `aria-label="up 12 percent"`) since there's no visible text.
 - **Native:** the pill is a non-interactive `View`/`Text`; for `iconOnly`, add an `accessibilityLabel` on a wrapping element (no rest-spread for a11y on the pill itself).
 - **Color independence:** direction is conveyed by the **arrow shape** as well as the tint — not color-only (except `iconOnly`, where the label must say it).

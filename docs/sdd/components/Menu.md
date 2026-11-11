@@ -113,6 +113,7 @@ No capability gap blocks use — the menu is fully usable and visually equivalen
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** trigger `<button aria-haspopup="menu" aria-expanded>` (with `aria-label` from `label`); panel `role="menu"`, action rows `role="menuitem"`, dividers `role="separator"`. ESC + outside-click dismiss; a row click closes and fires `onClick`.
 - **Native:** trigger + backdrop are `Pressable` (`accessibilityRole="button"`); rows are `accessibilityRole="menuitem"`. Android back dismisses.
 - **Hit target:** trigger ≥30px; rows `8px 10px` padding (comfortable touch). Labels `numberOfLines={1}` on native (truncate, no wrap).

@@ -18,7 +18,8 @@
 .lk-modal {
   width: 100%;
   max-width: 460px;
-  max-height: calc(100vh - 48px);
+  max-height: calc(100vh - 48px); /* fallback for browsers without dvh */
+  max-height: calc(100dvh - 48px);
   display: flex;
   flex-direction: column;
   background: var(--bg-1, var(--glass-2));
@@ -95,3 +96,5 @@
   padding: 16px 20px;
   border-top: 1px solid var(--border);
 }
+/* the panel takes focus only so its name is read (useDialogFocus); its controls show the ring */
+.lk-modal:focus { outline: none; }
