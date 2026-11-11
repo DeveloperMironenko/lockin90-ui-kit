@@ -317,8 +317,13 @@ export function ProgressBar(props: ProgressBarProps) {
   const sweep = useRef(new Animated.Value(0)).current;
   const reduced = useReducedMotion();
   useEffect(() => {
-    if (reduced) return;
     if (!indeterminate || trackW <= 0) return;
+    // Reduce Motion: a calm band, still, in the middle of the track (web: no sweep, a centred band)
+    if (reduced) {
+      const band = trackW * BAND_FRACTION;
+      sweep.setValue((band + (trackW - band) / 2) / (trackW + band));
+      return;
+    }
     sweep.setValue(0);
     const loop = Animated.loop(
       Animated.timing(sweep, {

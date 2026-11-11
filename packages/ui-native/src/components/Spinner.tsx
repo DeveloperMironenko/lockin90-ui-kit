@@ -48,11 +48,11 @@ export function Spinner({
 
   const reduced = useReducedMotion();
   useEffect(() => {
-    if (reduced) return;
     const loop = Animated.loop(
       Animated.timing(spin, {
         toValue: 1,
-        duration: 1000,
+        // Reduce Motion: slowed right down (8s), as web, so it still reads busy without a fast spin
+        duration: reduced ? 8000 : 1000,
         easing: Easing.linear,
         useNativeDriver: true,
       }),

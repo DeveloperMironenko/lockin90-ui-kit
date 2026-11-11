@@ -14,7 +14,6 @@ import { IconButton } from '../IconButton';
 import { SegmentedTabs } from '../SegmentedTabs';
 import { Select } from '../Select';
 import { Toast } from '../Toast';
-import { useReducedMotion } from '../../internal/useReducedMotion';
 import { click, mount, propOf, target } from './dom';
 
 afterEach(() => vi.restoreAllMocks());
@@ -92,7 +91,10 @@ describe('Button loading', () => {
     // RN reads accessibilityState (react-native-web doesn't render `busy`)
     expect(propOf(button, 'accessibilityState')).toMatchObject({ busy: true });
     expect(host.textContent).toContain('Save');
+    // the spinner is shown but hidden from screen readers: the button reads its title once
     expect(host.querySelector('[role="progressbar"]')).toBeTruthy();
+    expect(button.getAttribute('aria-label')).toBe('Save');
+    expect(propOf(host.querySelector('[role="progressbar"]')!, 'importantForAccessibility')).toBe('no-hide-descendants');
     click(button);
     expect(onPress).not.toHaveBeenCalled();
     rerender(<Button title="Save" onPress={onPress} />);
@@ -147,23 +149,43 @@ describe('SegmentedTabs kind="choice"', () => {
 });
 
 describe('useReducedMotion', () => {
-  test('follows the OS setting and its changes', async () => {
+  test('one native read and listener for every user; follows the setting and its changes', async () => {
     let listener: ((on: boolean) => void) | undefined;
-    vi.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
-    vi.spyOn(AccessibilityInfo, 'addEventListener').mockImplementation(((_e: string, fn: (on: boolean) => void) => {
+    const read = vi.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+    const listen = vi.spyOn(AccessibilityInfo, 'addEventListener').mockImplementation(((_e: string, fn: (on: boolean) => void) => {
       listener = fn;
       return { remove: () => {} };
     }) as never);
-    const seen: boolean[] = [];
-    function Probe() {
-      seen.push(useReducedMotion());
+    vi.resetModules();
+    const { useReducedMotion: hook } = await import('../../internal/useReducedMotion');
+    const seen: boolean[][] = [[], []];
+    function Probe({ i }: { i: number }) {
+      seen[i].push(hook());
       return null;
     }
-    const { unmount } = mount(<Probe />);
+    const { unmount } = mount(
+      <>
+        <Probe i={0} />
+        <Probe i={1} />
+      </>,
+    );
     await act(async () => {});
-    expect(seen[seen.length - 1]).toBe(true);
+    expect(read).toHaveBeenCalledTimes(1);
+    expect(listen).toHaveBeenCalledTimes(1);
+    expect(seen.map((s) => s[s.length - 1])).toEqual([true, true]);
     act(() => listener?.(false));
-    expect(seen[seen.length - 1]).toBe(false);
+    expect(seen.map((s) => s[s.length - 1])).toEqual([false, false]);
     unmount();
+    // a later user starts from the known value, with no second native read
+    const later: boolean[] = [];
+    function Late() {
+      later.push(hook());
+      return null;
+    }
+    act(() => listener?.(true));
+    const again = mount(<Late />);
+    expect(later[0]).toBe(true);
+    expect(read).toHaveBeenCalledTimes(1);
+    again.unmount();
   });
 });

@@ -21,6 +21,8 @@ const TEXT_SLOP = { top: 14, bottom: 14, left: 8, right: 8 };
 // sm is 8 + 13 × 1.55 + 8 = 36.2 tall: 4 above and below make the 44pt touch target, same look
 const SM_SLOP = { top: 4, bottom: 4 };
 const SPIN_SIZE = { sm: 14, md: 16, lg: 18 } as const;
+// the dark label on a bright surface (primary's gradient, solid danger), as web: label and spinner
+const INK_ON_BRIGHT = '#0A0A12';
 
 export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> {
   variant?: ButtonVariant;
@@ -83,8 +85,9 @@ export function Button({
   const hide = loading ? styles.hidden : undefined;
   const spinner = (color: string) =>
     loading ? (
-      <View style={styles.spin} pointerEvents="none">
-        <Spinner size={variant === 'text' ? 12 : SPIN_SIZE[size]} thickness={2} color={color} label={title} />
+      // hidden from screen readers: the button is named by its title and announced busy
+      <View style={styles.spin} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+        <Spinner size={variant === 'text' ? 12 : SPIN_SIZE[size]} thickness={2} color={color} />
       </View>
     ) : null;
 
@@ -92,7 +95,14 @@ export function Button({
     // no surface: the label is the button (web `.lk-btn-text`); faint when disabled. The
     // 17-tall line gets a slop to the 44pt touch target.
     return (
-      <Pressable accessibilityRole="button" onPress={press} hitSlop={TEXT_SLOP} accessibilityState={a11yState} {...rest}>
+      <Pressable
+        accessibilityRole="button"
+        onPress={press}
+        hitSlop={TEXT_SLOP}
+        accessibilityState={a11yState}
+        accessibilityLabel={title}
+        {...rest}
+      >
         {({ pressed }) => (
           <View style={[styles.textRow, tone === 'muted' && styles.textRowMuted, pressed && styles.textPressed, style]}>
             <View style={[styles.textRow, hide]}>
@@ -116,6 +126,7 @@ export function Button({
         onPress={press}
         hitSlop={size === 'sm' ? SM_SLOP : undefined}
         accessibilityState={a11yState}
+        accessibilityLabel={title}
         {...rest}
       >
         {({ pressed }) => (
@@ -127,10 +138,10 @@ export function Button({
           >
             <View style={[styles.base, hide]}>
               {leading}
-              <Text style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: '#0A0A12' }]}>{title}</Text>
+              <Text style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: INK_ON_BRIGHT }]}>{title}</Text>
               {trailing}
             </View>
-            {spinner('#0A0A12')}
+            {spinner(INK_ON_BRIGHT)}
           </LinearGradient>
         )}
       </Pressable>
@@ -151,7 +162,7 @@ export function Button({
     backgroundColor = colors.bad;
     borderColor = colors.bad;
     borderWidth = 0;
-    textColor = '#0A0A12';
+    textColor = INK_ON_BRIGHT;
     surfaceShadow = styles.dangerGlow;
   } else if (danger) {
     // ghost danger — red-tinted transparent
@@ -170,6 +181,7 @@ export function Button({
       onPress={press}
       hitSlop={size === 'sm' ? SM_SLOP : undefined}
       accessibilityState={a11yState}
+      accessibilityLabel={title}
       {...rest}
     >
       {({ pressed }) => (

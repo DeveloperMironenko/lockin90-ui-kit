@@ -190,6 +190,13 @@
   border-color: color-mix(in srgb, var(--bad) 60%, transparent);
   color: var(--bad);
 }
+/* --lk-btn-ink: each variant's label colour, which the loading spinner draws in (loading hides the label) */
+.lk-btn { --lk-btn-ink: var(--text); }
+.lk-btn-primary, .lk-btn--tone-danger { --lk-btn-ink: #0A0A12; }
+.lk-btn-ghost { --lk-btn-ink: var(--text-dim); }
+.lk-btn-ghost.lk-btn--tone-danger { --lk-btn-ink: var(--bad); }
+.lk-btn.lk-btn-text { --lk-btn-ink: var(--accent-2); }
+.lk-btn.lk-btn-text.lk-btn--tone-muted { --lk-btn-ink: var(--text-faint); }
 /* loading — the kit Spinner over the label, which stays (hidden) so the width never changes and the
    button keeps its name; no lift while busy. Two classes and last, so it wins over every variant. */
 .lk-btn.lk-btn-loading { position: relative; color: transparent; cursor: progress; }

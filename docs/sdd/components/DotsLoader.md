@@ -114,3 +114,4 @@ Substrate differences: web uses CSS `@keyframes` + custom properties; native use
 - **`label`** (web + native) is what screen readers read (default `'Loading'`, an English fallback).
 - **Native reduced motion:** the dots stay still while `useReducedMotion()` is true (web: the global
   `prefers-reduced-motion` rule).
+- **Review fix:** native Reduce Motion stops the dots at full strength (a defined still frame).

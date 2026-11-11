@@ -26,7 +26,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
 }
 
-// the spinner's size per button size, and its colour per surface (the label's colour, which loading hides)
+// the spinner's size per button size (its colour is the variant's label colour, `--lk-btn-ink` in CSS)
 const SPIN_SIZE = { sm: 14, md: 16, lg: 18 } as const;
 
 /** Pill button. `primary` = animated energy-gradient CTA. `text` = a bare mono accent
@@ -52,8 +52,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 ) {
   // `text` has no surface: size and the danger tone don't apply; `muted` is its own (Button.md)
   const surface = variant !== 'text';
-  const dark = variant === 'primary' || (surface && tone === 'danger' && variant !== 'ghost');
-  const spinColor = dark ? '#0A0A12' : variant === 'text' ? 'var(--accent-2)' : variant === 'ghost' && tone === 'danger' ? 'var(--bad)' : 'var(--text)';
   const click = (e: MouseEvent<HTMLButtonElement>) => {
     if (loading) {
       e.preventDefault();
@@ -87,7 +85,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       {trailing}
       {loading ? (
         <span className="lk-btn-spin" aria-hidden="true">
-          <Spinner size={variant === 'text' ? 12 : SPIN_SIZE[size]} thickness={2} color={spinColor} />
+          <Spinner size={variant === 'text' ? 12 : SPIN_SIZE[size]} thickness={2} color="var(--lk-btn-ink)" />
         </span>
       ) : null}
     </button>

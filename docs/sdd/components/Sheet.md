@@ -141,3 +141,4 @@ No gap blocks use — the sheet/drawer is fully usable and visually equivalent (
 - **Native home indicator:** the bottom sheet's bottom padding is 18 + the safe-area bottom inset, read from
   `react-native-safe-area-context`'s `SafeAreaInsetsContext` — a new OPTIONAL peer (Expo Router apps have it;
   the app's `SafeAreaProvider` must be above). Without the package or the provider the inset is 0, as before.
+- **Review fixes:** as `Modal` — the opener is kept from before an `autoFocus` child takes focus; only the topmost open dialog traps Tab.

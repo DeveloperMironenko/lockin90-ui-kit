@@ -207,3 +207,4 @@ There is **no capability gap** that blocks use — the button is fully usable an
   `.lk-btn-text` gets an invisible centred `::before` of 24px (44px at phone width).
 - **Focus ring (web):** `:focus-visible` is the kit's shared ring, `2px solid --accent-2`, offset 2 (10:1 on the
   card); it had none of its own.
+- **Review fixes:** web — the spinner draws in `--lk-btn-ink`, each variant's label colour set in `primitives.css` (no colour list in the component). Native — the spinner is hidden from screen readers and the button is named by its `title` (`accessibilityLabel`), so it reads "Save, busy" once, not "Save, Save"; the dark-on-bright ink is one constant for label and spinner.

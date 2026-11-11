@@ -70,3 +70,27 @@ describe('FormField names and describes its control', () => {
     expect(attr(html, 'input', 'aria-required')).toBeUndefined();
   });
 });
+
+describe('FormField names controls a label can’t (aria-labelledby)', () => {
+  const attr = (html: string, sel: RegExp) => html.match(sel)?.[1];
+
+  it('points the control at the label, so a group (CodeInput) or radiogroup is named too', () => {
+    const html = renderToStaticMarkup(
+      <FormField label="Reset code">
+        <div role="group" />
+      </FormField>,
+    );
+    const labelId = attr(html, /<label id="([^"]+)"/);
+    expect(labelId).toBeTruthy();
+    expect(attr(html, /<div role="group"[^>]*aria-labelledby="([^"]+)"/) ?? attr(html, /aria-labelledby="([^"]+)"[^>]*role="group"/)).toBe(labelId);
+  });
+
+  it('keeps a control’s own name', () => {
+    const html = renderToStaticMarkup(
+      <FormField label="Code">
+        <div role="group" aria-label="Six-digit code" />
+      </FormField>,
+    );
+    expect(html).not.toContain('aria-labelledby');
+  });
+});

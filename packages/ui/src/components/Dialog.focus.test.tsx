@@ -82,3 +82,68 @@ describe.each(['modal', 'sheet'] as const)('%s focus', (kind) => {
     expect(document.activeElement).toBe(opener);
   });
 });
+
+describe('dialog focus edge cases', () => {
+  it('gives focus back to the opener even when an autoFocus field took it on open', () => {
+    function Auto() {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <button id="opener2" onClick={() => setOpen(true)}>
+            Open
+          </button>
+          <Modal open={open} onClose={() => setOpen(false)} title="Rename">
+            <input id="auto" autoFocus />
+          </Modal>
+        </>
+      );
+    }
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    const root = createRoot(host);
+    act(() => root.render(<Auto />));
+    const opener = document.getElementById('opener2')!;
+    opener.focus();
+    act(() => opener.click());
+    expect(document.activeElement).toBe(document.getElementById('auto'));
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    });
+    expect(document.activeElement).toBe(opener);
+    act(() => root.unmount());
+    host.remove();
+  });
+
+  it('only the top dialog traps Tab', () => {
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <>
+          <Sheet title="Settings">
+            <button id="under">Under</button>
+          </Sheet>
+          <Modal title="Sure?">
+            <button id="yes">Yes</button>
+            <button id="no">No</button>
+          </Modal>
+        </>,
+      ),
+    );
+    // inside the top dialog, mid-list: nobody intervenes (the dialog underneath used to pull focus to itself)
+    document.getElementById('yes')!.focus();
+    const e = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+    act(() => {
+      document.dispatchEvent(e);
+    });
+    expect(e.defaultPrevented).toBe(false);
+    expect(document.activeElement).toBe(document.getElementById('yes'));
+    // at its end, the top dialog wraps to its own first control
+    document.getElementById('no')!.focus();
+    tab();
+    expect(document.activeElement).toBe(document.getElementById('yes'));
+    act(() => root.unmount());
+    host.remove();
+  });
+});

@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 /// <reference lib="dom" />
 /* FormField (native): the label names the control, the error / help is its hint, a new error is announced. */
-import { AccessibilityInfo } from 'react-native';
+import { AccessibilityInfo, Platform } from 'react-native';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { FormField, SearchInput } from '../FormField';
 import { Input } from '../Input';
@@ -32,22 +32,68 @@ describe('FormField names and describes its control', () => {
     unmount();
   });
 
-  test('an error becomes the hint, sits in a live region and is announced when it appears', () => {
+  test('an error becomes the hint and sits in a live region; iOS announces a new one, once', () => {
+    const os = Platform.OS;
+    Object.defineProperty(Platform, 'OS', { value: 'ios', configurable: true });
     const announce = vi.spyOn(AccessibilityInfo, 'announceForAccessibility').mockImplementation(() => {});
     const { host, rerender, unmount } = mount(
       <FormField label="Email">
         <Input />
       </FormField>,
     );
-    expect(announce).not.toHaveBeenCalled();
     rerender(
       <FormField label="Email" error="Enter your email">
         <Input />
       </FormField>,
     );
+    expect(announce).toHaveBeenCalledTimes(1);
     expect(announce).toHaveBeenCalledWith('Enter your email');
     expect(propOf(host.querySelector('input')!, 'accessibilityHint')).toBe('Enter your email');
     expect(host.querySelector('[aria-live="polite"]')?.textContent).toBe('Enter your email');
+    unmount();
+    Object.defineProperty(Platform, 'OS', { value: os, configurable: true });
+  });
+
+  test('an error already there on mount is not announced, nor on Android (its live region reads it)', () => {
+    const os = Platform.OS;
+    const announce = vi.spyOn(AccessibilityInfo, 'announceForAccessibility').mockImplementation(() => {});
+    Object.defineProperty(Platform, 'OS', { value: 'ios', configurable: true });
+    const a = mount(
+      <FormField label="Email" error="Enter your email">
+        <Input />
+      </FormField>,
+    );
+    a.unmount();
+    Object.defineProperty(Platform, 'OS', { value: 'android', configurable: true });
+    const b = mount(
+      <FormField label="Email">
+        <Input />
+      </FormField>,
+    );
+    b.rerender(
+      <FormField label="Email" error="Enter your email">
+        <Input />
+      </FormField>,
+    );
+    expect(announce).not.toHaveBeenCalled();
+    b.unmount();
+    Object.defineProperty(Platform, 'OS', { value: os, configurable: true });
+  });
+
+  test('going from one child to several keeps the control mounted', () => {
+    const { host, rerender, unmount } = mount(
+      <FormField label="Email">
+        <Input />
+      </FormField>,
+    );
+    const input = host.querySelector('input');
+    rerender(
+      <FormField label="Email">
+        <Input />
+        <Input />
+      </FormField>,
+    );
+    expect(host.querySelector('input')).toBe(input);
     unmount();
   });
 });

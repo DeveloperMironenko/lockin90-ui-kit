@@ -1,6 +1,7 @@
-import { Children, cloneElement, Fragment, isValidElement, useEffect, useState, type ReactElement, type ReactNode } from 'react';
+import { Children, cloneElement, Fragment, isValidElement, useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   AccessibilityInfo,
+  Platform,
   View,
   Text,
   TextInput,
@@ -50,21 +51,27 @@ export function FormField({
   ...rest
 }: FormFieldProps) {
   const errorText = textOf(error);
+  // a new error is read once: Android by the error's live region, iOS (no live regions) by an
+  // announcement; an error already there when the field mounts is not announced
+  const mounted = useRef(false);
   useEffect(() => {
-    if (errorText) AccessibilityInfo.announceForAccessibility(errorText);
+    if (mounted.current && errorText && Platform.OS === 'ios') AccessibilityInfo.announceForAccessibility(errorText);
+    mounted.current = true;
   }, [errorText]);
 
-  const only = Children.count(children) === 1 ? Children.toArray(children)[0] : null;
-  const control =
-    isValidElement<ControlProps>(only) && only.type !== Fragment ? (only as ReactElement<ControlProps>) : null;
+  // the one control child gets the name and hint; mapped (never swapped for a bare element), so going
+  // between one and several children never remounts the control
+  const single = Children.count(children) === 1;
   const name = label ? (required && requiredLabel ? `${label}, ${requiredLabel}` : label) : undefined;
   const hint = error ? errorText : textOf(help);
-  const body = control
-    ? cloneElement(control, {
-        accessibilityLabel: control.props.accessibilityLabel ?? name,
-        accessibilityHint: control.props.accessibilityHint ?? hint,
-      })
-    : children;
+  const body = Children.map(children, (child) =>
+    single && isValidElement<ControlProps>(child) && child.type !== Fragment
+      ? cloneElement(child, {
+          accessibilityLabel: child.props.accessibilityLabel ?? name,
+          accessibilityHint: child.props.accessibilityHint ?? hint,
+        })
+      : child,
+  );
   return (
     <View style={[styles.field, style]} {...rest}>
       {label || labelAction ? (

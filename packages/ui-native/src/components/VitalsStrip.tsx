@@ -198,8 +198,7 @@ function PulseDot({ x, y, color, still = false }: { x: number; y: number; color:
 
   const reduced = useReducedMotion();
   useEffect(() => {
-    if (reduced) return;
-    if (still) return;
+    if (reduced || still) return;
     const loop = Animated.loop(
       Animated.timing(anim, { toValue: 1, duration: 1800, easing: Easing.linear, useNativeDriver: false }),
     );
@@ -214,7 +213,7 @@ function PulseDot({ x, y, color, still = false }: { x: number; y: number; color:
     <G>
       <Circle cx={rd(x)} cy={rd(y)} r={6.6} fill={color} opacity={0.35} />
       <Circle cx={rd(x)} cy={rd(y)} r={3.6} fill={color} />
-      {still ? (
+      {still || reduced ? (
         <Circle cx={rd(x)} cy={rd(y)} r={7} fill="none" stroke={color} strokeWidth={1.4} opacity={0.4} />
       ) : (
         <AnimatedCircle cx={rd(x)} cy={rd(y)} r={r} fill="none" stroke={color} strokeWidth={1.4} opacity={ringOpacity} />
@@ -236,7 +235,11 @@ function LiveEcgTrace({ run, color, shine }: { run: EcgRun; color: string; shine
 
   const reduced = useReducedMotion();
   useEffect(() => {
-    if (reduced) return;
+    // Reduce Motion: the whole trace, the write head at its end
+    if (reduced) {
+      progress.setValue(1);
+      return;
+    }
     const loop = Animated.loop(
       Animated.timing(progress, { toValue: 1, duration: SWEEP_MS, easing: Easing.linear, useNativeDriver: false }),
     );

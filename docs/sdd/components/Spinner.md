@@ -111,3 +111,4 @@ Substrate differences: web rotates via CSS `@keyframes` and glows via `drop-shad
 
 - **Native reduced motion:** the ring stops rotating while `useReducedMotion()` is true (web: the
   `prefers-reduced-motion` rule). Inside `Button loading` it is named by the button's title.
+- **Review fix:** under Reduce Motion the native ring keeps turning, slowed to 8s, as web's rule, so it still reads busy (no fast spin).

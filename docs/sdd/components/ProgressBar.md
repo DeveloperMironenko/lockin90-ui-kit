@@ -144,3 +144,4 @@ Variant mode (both platforms, catalog-exact):
 ## Update — 2026-11-10 (accessibility, 1.35)
 
 - **Native reduced motion:** the indeterminate sweep stops while `useReducedMotion()` is true.
+- **Review fix:** under Reduce Motion the native indeterminate band stays still in the middle of the track (web: a centred band), never off-track.

@@ -414,7 +414,11 @@ function PulseRing({ color }: { color: string }) {
   const v = useRef(new Animated.Value(0)).current;
   const reduced = useReducedMotion();
   useEffect(() => {
-    if (reduced) return;
+    // Reduce Motion: a defined still frame, not wherever the loop stopped
+    if (reduced) {
+      v.setValue(1);
+      return;
+    }
     const loop = Animated.loop(
       Animated.timing(v, { toValue: 1, duration: 1800, easing: Easing.out(Easing.quad), useNativeDriver: true }),
     );

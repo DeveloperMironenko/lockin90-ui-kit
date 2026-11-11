@@ -108,7 +108,11 @@ function AuraOrb({
 
   const reduced = useReducedMotion();
   useEffect(() => {
-    if (reduced) return;
+    // Reduce Motion: a defined still frame, not wherever the loop stopped
+    if (reduced) {
+      spin.setValue(0);
+      return;
+    }
     const loop = Animated.loop(
       Animated.timing(spin, {
         toValue: 1,

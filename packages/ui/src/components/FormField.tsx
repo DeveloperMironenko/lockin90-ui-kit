@@ -30,7 +30,13 @@ export interface FormFieldProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ch
   children?: ReactNode;
 }
 
-type ControlProps = { id?: string; 'aria-describedby'?: string; 'aria-required'?: boolean };
+type ControlProps = {
+  id?: string;
+  'aria-describedby'?: string;
+  'aria-required'?: boolean;
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
+};
 
 /** Labeled form-control wrapper — mono label, the control, then faint help or red error. The one control
  *  child is named by the label (`htmlFor` / its `id`), described by the error or help
@@ -47,25 +53,33 @@ export function FormField({
   ...rest
 }: FormFieldProps) {
   const baseId = useId();
+  const labelId = label ? `${baseId}-label` : undefined;
   const noteId = error ? `${baseId}-error` : help ? `${baseId}-help` : undefined;
   const only = Children.count(children) === 1 ? Children.toArray(children)[0] : null;
   const control =
     isValidElement<ControlProps>(only) && only.type !== Fragment ? (only as ReactElement<ControlProps>) : null;
   const controlId = htmlFor ?? control?.props.id ?? (control ? `${baseId}-control` : undefined);
   const describedBy = [control?.props['aria-describedby'], noteId].filter(Boolean).join(' ') || undefined;
-  const body = control
-    ? cloneElement(control, {
-        id: control.props.id ?? controlId,
-        'aria-describedby': describedBy,
-        'aria-required': required || control.props['aria-required'] || undefined,
-      })
-    : children;
+  // mapped (never swapped for a bare element), so going between one and several children never remounts
+  // the control. aria-labelledby names it too where a label's `for` can't (a CodeInput group, a choice
+  // SegmentedTabs radiogroup), unless it is named already.
+  const body = Children.map(children, (child) =>
+    control && isValidElement<ControlProps>(child) && child.type !== Fragment
+      ? cloneElement(child, {
+          id: child.props.id ?? controlId,
+          'aria-describedby': describedBy,
+          'aria-required': required || child.props['aria-required'] || undefined,
+          'aria-labelledby':
+            child.props['aria-labelledby'] ?? (child.props['aria-label'] ? undefined : labelId),
+        })
+      : child,
+  );
   return (
     <div className={cn('lk-field', className)} {...rest}>
       {label || labelAction ? (
         <div className="lk-field-label-row">
           {label ? (
-            <label className="lk-field-label" htmlFor={controlId}>
+            <label id={labelId} className="lk-field-label" htmlFor={controlId}>
               {label}
               {required ? <span className="lk-field-req" aria-hidden="true">*</span> : null}
             </label>

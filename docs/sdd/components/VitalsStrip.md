@@ -142,3 +142,4 @@ Standalone chart — the live HR widget (VT-01), the HRV explainer (VT-02), the 
 ## Update — 2026-11-10 (accessibility, 1.35)
 
 - **Native reduced motion:** the pulse dot and the live ECG trace stop while `useReducedMotion()` is true.
+- **Review fix:** under Reduce Motion the live trace shows whole, the write head at its end, and the pulse dot draws its static halo (as `still`).

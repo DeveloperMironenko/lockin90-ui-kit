@@ -130,3 +130,4 @@ No capability gap blocks use — the dialog is fully usable and visually equival
   The dialog is named by its title (`aria-labelledby` → the `h2`'s id). `closeLabel` (web + native) names the ×.
 - **Native close target:** `hitSlop` 7 (30 + 14 = 44pt).
 - **`100dvh`:** the card's `max-height` is `calc(100dvh - 48px)` with a `100vh` fallback.
+- **Review fixes:** the opener is read in the render that opens the dialog (an `autoFocus` field takes focus before effects run), so focus always returns to it; with dialogs stacked, only the topmost traps Tab.

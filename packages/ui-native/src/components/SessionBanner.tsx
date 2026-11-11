@@ -45,7 +45,11 @@ function LiveDot() {
   const v = useRef(new Animated.Value(0)).current;
   const reduced = useReducedMotion();
   useEffect(() => {
-    if (reduced) return;
+    // Reduce Motion: a defined still frame, not wherever the loop stopped
+    if (reduced) {
+      v.setValue(0);
+      return;
+    }
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(v, { toValue: 1, duration: 800, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),

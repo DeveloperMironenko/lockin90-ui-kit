@@ -34,7 +34,11 @@ export function DotsLoader({ size = 7, color = colors.accent, count = 3, gap = 6
 
   const reduced = useReducedMotion();
   useEffect(() => {
-    if (reduced) return;
+    // Reduce Motion: a defined still frame, not wherever the loop stopped
+    if (reduced) {
+      vals.forEach((v) => v.setValue(1));
+      return;
+    }
     const loops = vals.map((v, i) =>
       Animated.loop(
         Animated.sequence([

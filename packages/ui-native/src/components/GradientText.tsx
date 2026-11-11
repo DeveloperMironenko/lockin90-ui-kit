@@ -37,7 +37,11 @@ export function GradientText({ gradient = 'flux', still = false, style, children
   // is false because SVG gradient coords aren't native-drivable — fine at this low rate.
   const reduced = useReducedMotion();
   useEffect(() => {
-    if (reduced) return;
+    // Reduce Motion: a defined still frame, not wherever the loop stopped
+    if (reduced) {
+      anim.setValue(0);
+      return;
+    }
     if (!size || still) return;
     const loop = Animated.loop(
       Animated.timing(anim, { toValue: 1, duration: 9000, easing: Easing.linear, useNativeDriver: false }),

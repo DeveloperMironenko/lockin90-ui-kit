@@ -150,3 +150,4 @@ Ambient-decoration deltas only; the two shells read as one design.
 
 - **Native reduced motion:** the blobs hold still (as `still`) while the OS Reduce Motion setting is on, read
   with the kit's `useReducedMotion()` (exported from `@lockin90/ui-native` for apps' own motion).
+- **`useReducedMotion` store:** one native read and one listener for the whole app (`useSyncExternalStore`); later mounts start from the known value. Every kit loop sets a defined still frame when it stops.

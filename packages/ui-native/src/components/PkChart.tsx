@@ -206,7 +206,11 @@ export function PkChart({
 
   const reduced = useReducedMotion();
   useEffect(() => {
-    if (reduced) return;
+    // Reduce Motion: a defined still frame, not wherever the loop stopped
+    if (reduced) {
+      beat.setValue(1);
+      return;
+    }
     if (!beating) return;
     beat.setValue(0);
     const loop = Animated.loop(
