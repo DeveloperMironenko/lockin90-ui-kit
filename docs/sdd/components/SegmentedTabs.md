@@ -163,3 +163,4 @@ No capability gap blocks use.
 
 - **Web fit:** when one word needs the segments on rows, every tab is fitted again in the rows layout, so none stays shrunk for the one-row widths.
 - **Native count text** line height 13 (was 12) for the 11 font.
+- **No ellipsis at all (native):** each label's one-line width is measured (hidden copies after the segments); when one can't fit its segment even at the shrink floor (iOS 0.5, Android 1: it doesn't shrink), the segments stack, each the full width, and the labels wrap freely ("Imperial" was "Imperia" at the largest text size). Web already puts the segments on rows (`.lk-seg--rows`).

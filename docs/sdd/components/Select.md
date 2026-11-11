@@ -197,3 +197,7 @@ The overlay differences are expected substrate, not capability gaps that block u
 ## Update — 2026-11-10 (simulator check, 1.35)
 
 - **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more`): faint / dim text and the edge step up.
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **The value wraps** (web and native): no one-line clamp or ellipsis on the trigger's value or the options; the trigger grows taller ("UTC…", "Engl…" were cut at the largest text size).

@@ -170,8 +170,8 @@ export function Select({
       >
         {leading != null ? <View style={styles.leading}>{leading}</View> : null}
         <Text
+          // wraps to more lines (the field grows): a value is never cut at a large text size
           style={[styles.value, isSm && styles.valueSm, !selected && { color: c.textFaint }]}
-          numberOfLines={1}
         >
           {selected ? selected.label : (placeholder ?? '')}
         </Text>
@@ -236,7 +236,6 @@ export function Select({
                   >
                     <Text
                       style={[styles.rowLabel, isSel && styles.rowLabelSel, opt.disabled && styles.rowLabelDisabled]}
-                      numberOfLines={1}
                     >
                       {opt.label}
                     </Text>

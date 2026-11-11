@@ -1,4 +1,5 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Text, Pressable, Platform, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
 import { hapticSelection } from "../internal/optionalHaptics";
@@ -163,12 +164,31 @@ export function SegmentedTabs({
   const isSm = size === 'sm';
   const isTint = appearance === 'tint';
   const choice = kind === 'choice';
+  // Nothing is cut off: each label's natural width is measured (hidden copies); when one can't fit its
+  // segment even at the shrink floor (iOS shrinks to 0.5, Android not at all), the segments stack, each
+  // the full width, with labels free to wrap — never an ellipsis (CONVENTIONS "Accessibility").
+  const [trackW, setTrackW] = useState(0);
+  const [natural, setNatural] = useState<Record<number, number>>({});
+  const labels = tabs.map((t) => toTab(t).label);
+  const floor = Platform.OS === 'ios' ? 0.5 : 1;
+  const segment = trackW > 0 ? (trackW - 10 - 4 * (labels.length - 1)) / labels.length - 12 : 0;
+  const stacked =
+    !isSm &&
+    segment > 0 &&
+    labels.some((l, i) => (natural[i] ?? 0) * floor > segment * (/\s/.test(l.trim()) ? 2 : 1));
   return (
     <View
-      style={[styles.track, isSm && styles.trackSm, isTint && styles.trackTint, invalid && styles.trackInvalid]}
+      style={[
+        styles.track,
+        isSm && styles.trackSm,
+        isTint && styles.trackTint,
+        invalid && styles.trackInvalid,
+        stacked && styles.trackStacked,
+      ]}
       accessibilityRole={choice ? 'radiogroup' : 'tablist'}
       accessibilityLabel={accessibilityLabel}
       accessibilityHint={accessibilityHint}
+      onLayout={isSm ? undefined : (e) => setTrackW(e.nativeEvent.layout.width)}
     >
       {tabs.map((item, i) => {
         const { label, count, tone: itemTone, icon } = toTab(item);
@@ -212,6 +232,7 @@ export function SegmentedTabs({
             onPress={isLocked ? undefined : () => { hapticSelection(); onChange?.(i); }}
             style={({ pressed }) => [
               styles.tab,
+              stacked && styles.tabStacked,
               isSm && styles.tabSm,
               isTint && styles.tabTint,
               fill && styles.tabFill,
@@ -250,9 +271,9 @@ export function SegmentedTabs({
             {/* never broken inside a word: one word stays one line and shrinks to fit (down to 50%); several
                 words may wrap at a space onto a second line (and shrink). As web. */}
             <Text
-              numberOfLines={/\s/.test(label.trim()) ? 2 : 1}
-              adjustsFontSizeToFit
-              minimumFontScale={0.5}
+              {...(stacked
+                ? {}
+                : { numberOfLines: /\s/.test(label.trim()) ? 2 : 1, adjustsFontSizeToFit: true, minimumFontScale: 0.5 })}
               style={[styles.label, isSm && styles.labelSm, fill && styles.labelFill, { color: labelColor }]}
             >
               {label}
@@ -275,6 +296,22 @@ export function SegmentedTabs({
           </Pressable>
         );
       })}
+      {/* after the segments: hidden copies that measure each label's one-line width */}
+      {!isSm &&
+        labels.map((l, i) => (
+          <Text
+            key={`m${i}`}
+            style={[styles.label, fill && styles.labelFill, styles.measure]}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+            onLayout={(e) => {
+              const w = e.nativeEvent.layout.width;
+              setNatural((cur) => (cur[i] === w ? cur : { ...cur, [i]: w }));
+            }}
+          >
+            {l}
+          </Text>
+        ))}
     </View>
   );
 }
@@ -332,6 +369,11 @@ const styles = StyleSheet.create({
   trackInvalid: {
     borderColor: colors.zoneLow,
   },
+  // a label that can't fit: the segments stack, each the full width (labels wrap, never cut)
+  trackStacked: { flexDirection: 'column', alignItems: 'stretch' },
+  tabStacked: { flex: 0 },
+  // the hidden copy that measures a label's natural one-line width
+  measure: { position: 'absolute', opacity: 0, left: 0, top: 0, width: 'auto' },
   // sm segments hug their label (design `.seg button`: padding 5px 11px)
   tabSm: {
     flex: 0,
