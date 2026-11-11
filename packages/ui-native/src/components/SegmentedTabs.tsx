@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View, Text, Pressable, Platform, StyleSheet } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { View, Text, Pressable, Platform, StyleSheet, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
 import { hapticSelection } from "../internal/optionalHaptics";
@@ -164,18 +164,56 @@ export function SegmentedTabs({
   const isSm = size === 'sm';
   const isTint = appearance === 'tint';
   const choice = kind === 'choice';
-  // Nothing is cut off: each label's natural width is measured (hidden copies); when one can't fit its
-  // segment even at the shrink floor (iOS shrinks to 0.5, Android not at all), the segments stack, each
-  // the full width, with labels free to wrap — never an ellipsis (CONVENTIONS "Accessibility").
-  const [trackW, setTrackW] = useState(0);
-  const [natural, setNatural] = useState<Record<number, number>>({});
+  // Nothing is cut off (CONVENTIONS "Accessibility"). In the row layout, each label's room (its own
+  // container, so icons, badges, the lock, borders and padding are already taken out) is compared with the
+  // label's longest WORD, measured unconstrained (a hidden 10000-wide box, so Yoga never caps it). A word
+  // that doesn't fit even at the shrink floor (iOS shrinks to 0.5; Android doesn't shrink) stacks the
+  // segments, each the full width, labels free to wrap. Measurements are batched in refs and decided once
+  // per key (labels, text scale, track width, size); a stacked decision holds until the key changes, so
+  // the row ↔ column switch never loops. Until decided, labels render unclamped (no 1-line flash).
   const labels = tabs.map((t) => toTab(t).label);
-  const floor = Platform.OS === 'ios' ? 0.5 : 1;
-  const segment = trackW > 0 ? (trackW - 10 - 4 * (labels.length - 1)) / labels.length - 12 : 0;
-  const stacked =
-    !isSm &&
-    segment > 0 &&
-    labels.some((l, i) => (natural[i] ?? 0) * floor > segment * (/\s/.test(l.trim()) ? 2 : 1));
+  const { fontScale } = useWindowDimensions();
+  const [trackW, setTrackW] = useState(0);
+  // words depend on the labels and the text size; the rooms on those and the track width too
+  const wordKey = `${labels.join('\u0000')}|${fontScale}|${fill}`;
+  const key = `${wordKey}|${Math.round(trackW)}`;
+  const [decision, setDecision] = useState<{ key: string; stacked: boolean } | null>(null);
+  const decided = !isSm && decision?.key === key;
+  const stacked = decided && decision!.stacked;
+  const words = useRef<Record<number, number[]>>({});
+  const rooms = useRef<Record<number, number>>({});
+  const wordsFor = useRef('');
+  if (wordsFor.current !== wordKey) {
+    wordsFor.current = wordKey;
+    words.current = {};
+  }
+  const wordsOf = (l: string) => l.trim().split(/\s+/).filter(Boolean);
+  const decide = () => {
+    if (isSm || decided || trackW <= 0) return;
+    const complete = labels.every(
+      (l, i) => rooms.current[i] != null && (words.current[i]?.filter((w) => w != null).length ?? 0) === wordsOf(l).length,
+    );
+    if (!complete) return;
+    const floor = Platform.OS === 'ios' ? 0.5 : 1;
+    const needs = labels.some((_, i) => Math.max(...words.current[i]) * floor > rooms.current[i] + 0.5);
+    setDecision({ key, stacked: needs });
+  };
+  const onWord = (i: number, j: number, w: number) => {
+    if (decided) return;
+    (words.current[i] ??= [])[j] = w;
+    decide();
+  };
+  const onRoom = (i: number, w: number) => {
+    // only the row layout's room counts (the latest one); while stacked the full-width rooms are ignored,
+    // and a new key renders the row layout again, whose rooms then arrive
+    if (stacked) return;
+    rooms.current[i] = w;
+    decide();
+  };
+  // the track's width can arrive after the labels' (one frame): decide once everything is there
+  useEffect(() => {
+    decide();
+  });
   return (
     <View
       style={[
@@ -270,14 +308,21 @@ export function SegmentedTabs({
             {icon != null && <Icon name={icon} size={13} color={labelColor} />}
             {/* never broken inside a word: one word stays one line and shrinks to fit (down to 50%); several
                 words may wrap at a space onto a second line (and shrink). As web. */}
-            <Text
-              {...(stacked
-                ? {}
-                : { numberOfLines: /\s/.test(label.trim()) ? 2 : 1, adjustsFontSizeToFit: true, minimumFontScale: 0.5 })}
-              style={[styles.label, isSm && styles.labelSm, fill && styles.labelFill, { color: labelColor }]}
+            {/* the label's room: its own container (onLayout), inside the segment's icons / badge / lock */}
+            <View
+              style={styles.labelRoom}
+              testID={`lk-seg-room-${i}`}
+              onLayout={isSm ? undefined : (e) => onRoom(i, e.nativeEvent.layout.width)}
             >
-              {label}
-            </Text>
+              <Text
+                {...(isSm || (decided && !stacked)
+                  ? { numberOfLines: /\s/.test(label.trim()) ? 2 : 1, adjustsFontSizeToFit: true, minimumFontScale: 0.5 }
+                  : {})}
+                style={[styles.label, isSm && styles.labelSm, fill && styles.labelFill, { color: labelColor }]}
+              >
+                {label}
+              </Text>
+            </View>
             {count != null && (
               <View
                 style={[
@@ -296,22 +341,28 @@ export function SegmentedTabs({
           </Pressable>
         );
       })}
-      {/* after the segments: hidden copies that measure each label's one-line width */}
-      {!isSm &&
-        labels.map((l, i) => (
-          <Text
-            key={`m${i}`}
-            style={[styles.label, fill && styles.labelFill, styles.measure]}
-            accessibilityElementsHidden
-            importantForAccessibility="no-hide-descendants"
-            onLayout={(e) => {
-              const w = e.nativeEvent.layout.width;
-              setNatural((cur) => (cur[i] === w ? cur : { ...cur, [i]: w }));
-            }}
-          >
-            {l}
-          </Text>
-        ))}
+      {/* after the segments: each label's words, measured unconstrained (a 10000-wide hidden box) */}
+      {!isSm && !decided ? (
+        <View
+          style={styles.measureBox}
+          pointerEvents="none"
+          testID="lk-seg-measure"
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+        >
+          {labels.map((l, i) =>
+            wordsOf(l).map((w, j) => (
+              <Text
+                key={`${i}-${j}`}
+                style={[styles.label, fill && styles.labelFill, styles.measureWord]}
+                onLayout={(e) => onWord(i, j, e.nativeEvent.layout.width)}
+              >
+                {w}
+              </Text>
+            )),
+          )}
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -372,8 +423,10 @@ const styles = StyleSheet.create({
   // a label that can't fit: the segments stack, each the full width (labels wrap, never cut)
   trackStacked: { flexDirection: 'column', alignItems: 'stretch' },
   tabStacked: { flex: 0 },
-  // the hidden copy that measures a label's natural one-line width
-  measure: { position: 'absolute', opacity: 0, left: 0, top: 0, width: 'auto' },
+  // the label's container (its measured room) and the unconstrained word measurer
+  labelRoom: { flexShrink: 1, minWidth: 0, alignItems: 'center' },
+  measureBox: { position: 'absolute', left: 0, top: 0, width: 10000, flexDirection: 'row', flexWrap: 'nowrap', opacity: 0 },
+  measureWord: { flexShrink: 0 },
   // sm segments hug their label (design `.seg button`: padding 5px 11px)
   tabSm: {
     flex: 0,
