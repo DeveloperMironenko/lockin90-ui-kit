@@ -14,6 +14,7 @@ import Svg, { Path } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { hapticSelection } from "../internal/optionalHaptics";
 import { SearchInput } from './FormField';
+import { useContrastColors } from '../internal/useHighContrast';
 
 /** A single option in a {@link Select}. */
 export interface SelectOption {
@@ -131,6 +132,8 @@ export function Select({
   const [query, setQuery] = useState('');
   const selected = options.find((o) => o.value === value);
   const isSm = size === 'sm';
+  // Increase Contrast steps the edge, placeholder and label up
+  const c = useContrastColors();
 
   const shown =
     searchable && query.trim()
@@ -148,11 +151,12 @@ export function Select({
 
   return (
     <View style={[styles.wrap, isSm && styles.wrapSm]}>
-      {label ? <Text style={styles.label}>{label.toUpperCase()}</Text> : null}
+      {label ? <Text style={[styles.label, { color: c.textDim }]}>{label.toUpperCase()}</Text> : null}
       <Pressable
         style={[
           styles.field,
           isSm && styles.fieldSm,
+          { borderColor: c.borderControl },
           invalid && styles.fieldInvalid,
           disabled && styles.fieldDisabled,
         ]}
@@ -166,7 +170,7 @@ export function Select({
       >
         {leading != null ? <View style={styles.leading}>{leading}</View> : null}
         <Text
-          style={[styles.value, isSm && styles.valueSm, !selected && styles.placeholder]}
+          style={[styles.value, isSm && styles.valueSm, !selected && { color: c.textFaint }]}
           numberOfLines={1}
         >
           {selected ? selected.label : (placeholder ?? '')}

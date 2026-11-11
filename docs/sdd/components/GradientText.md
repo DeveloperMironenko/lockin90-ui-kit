@@ -148,3 +148,7 @@ No blocking gap — the gradient look and 9s flow match; native requires string 
 ## Update — 2026-11-10 (accessibility, 1.35)
 
 - **Native reduced motion:** the gradient stops scrolling while `useReducedMotion()` is true (as `still`).
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Follows the OS text size:** the SVG glyphs are drawn at `fontSize × fontScale` (the measuring `Text` already scaled, the SVG didn't), and it re-measures when the scale changes. So `Stat tone="gradient"` grows with the text.

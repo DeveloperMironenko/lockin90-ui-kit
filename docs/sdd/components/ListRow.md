@@ -145,3 +145,9 @@ There is **no capability gap** — both render the same row.
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **Narrow settings rows stack (`variant="pref"` / `"action"`, web + native):** a row under 300 wide (a phone at 360 / 320) puts its trailing control on its own line under the text, the full row wide and start-aligned (row gap 8), so "Timezone", "Часовий пояс", "Пройти налаштування знову" no longer shrink to a word per line and spill out. Web: the row is a size container (`container-type: inline-size`, `flex-wrap: wrap`) with `@container (max-width: 300px)`; native: the row's width from `onLayout` (an app's `onLayout` still fires). The text always wraps inside its column (`overflow-wrap: anywhere`). Wider rows keep the control on the right, as before. At 402 (a ~326 row in a Settings card) nothing changes.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Large text stacks too (native):** a `pref` / `action` row also puts its control under the text when the OS text scale is over 1.35 (`useWindowDimensions().fontScale`), whatever its width (a 350 row at the largest size left the text 20 wide). Web: the container query is in em (`18.75em`, 300px at 16px text), so a larger browser text size stacks it sooner.
+- **A plain row's title wraps** (native had `numberOfLines={1}`: "Data sour…" at the largest size). The subtitle of a plain row stays one line.
+- **Increase Contrast** steps the subtitle up (`useContrastColors`).

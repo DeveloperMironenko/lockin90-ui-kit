@@ -85,6 +85,13 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
   `accessibilityLabel` and its error / help as its `accessibilityHint`.
 - **Reduced motion:** web `prefers-reduced-motion` (the global rule in `base.css`); native every
   `Animated.loop` and large movement stops when the kit's `useReducedMotion()` is true.
+- **Increase Contrast:** native `useHighContrast()` / `useContrastColors()` (exported; Android high text
+  contrast, iOS darker system colours or bold text; one shared store, as `useReducedMotion`) step faint →
+  dim, dim → full text, `--border-2` → the control edge, the control edge → `.5`; web the same under
+  `@media (prefers-contrast: more)` in tokens.css. Used by FormField, Input, PasswordInput, SearchInput,
+  Select, ListRow, Eyebrow, Divider and Alert.
+- **Loading indicators slow, never stop, under Reduce Motion** (Spinner 2.5s, DotsLoader ×3): they still
+  say busy. Other loops stop at a defined still frame.
 - **Text scaling is never disabled:** no `allowFontScaling={false}` or `maxFontSizeMultiplier`; inputs are
   16px / 16pt (no iOS zoom on web), with the box height kept by their padding and line height.
 - **Over the aurora:** a card's fill is `--card` (79% opaque: the old glass colour on the page, but the

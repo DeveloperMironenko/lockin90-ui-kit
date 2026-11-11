@@ -65,12 +65,11 @@ describe('SegmentedTabs fill and invalid', () => {
   });
 });
 
-describe('SegmentedTabs fill keeps labels inside their segment', () => {
-  test('a long label shrinks, then wraps to two lines at most (never out of the segment)', () => {
-    const root = parse(render(SegmentedTabs, { tabs: ['Чоловіча', 'Жіноча'], fill: true }))
-    const label = findByText(root, 'Чоловіча')!
-    // numberOfLines={2}: a two-line clamp on react-native-web, not nowrap
-    expect(hasDeclaration(label, 'white-space:nowrap')).toBe(false)
-    expect(label.attrs.style).toContain('-webkit-line-clamp:2')
+describe('SegmentedTabs labels never break inside a word', () => {
+  test('one word stays one line and shrinks to fit; several words may wrap at a space', () => {
+    const root = parse(render(SegmentedTabs, { tabs: ['Чоловіча', 'Very active'], fill: true }))
+    // numberOfLines={1}: nowrap on react-native-web — the word shrinks (adjustsFontSizeToFit), never splits
+    expect(hasDeclaration(findByText(root, 'Чоловіча')!, 'white-space:nowrap')).toBe(true)
+    expect(findByText(root, 'Very active')!.attrs.style).toContain('-webkit-line-clamp:2')
   })
 })

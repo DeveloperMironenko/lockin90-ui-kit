@@ -247,11 +247,12 @@ export function SegmentedTabs({
               <View style={[styles.dot, { backgroundColor: toneColor }]} />
             )}
             {icon != null && <Icon name={icon} size={13} color={labelColor} />}
-            {/* shrinks to fit (down to 80%), then wraps to a second line, as web: the label never leaves its segment */}
+            {/* never broken inside a word: one word stays one line and shrinks to fit (down to 50%); several
+                words may wrap at a space onto a second line (and shrink). As web. */}
             <Text
-              numberOfLines={2}
+              numberOfLines={/\s/.test(label.trim()) ? 2 : 1}
               adjustsFontSizeToFit
-              minimumFontScale={0.8}
+              minimumFontScale={0.5}
               style={[styles.label, isSm && styles.labelSm, fill && styles.labelFill, { color: labelColor }]}
             >
               {label}

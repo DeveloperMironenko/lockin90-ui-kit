@@ -1,7 +1,8 @@
-import { isValidElement, type ReactNode } from 'react';
-import { View, Text, Pressable, StyleSheet, type TextStyle, type ViewProps, type ViewStyle } from 'react-native';
+import { isValidElement, useEffect, type ReactNode } from 'react';
+import { AccessibilityInfo, Platform, View, Text, Pressable, StyleSheet, type TextStyle, type ViewProps, type ViewStyle } from 'react-native';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { useContrastColors } from '../internal/useHighContrast';
 
 export type AlertTone = 'info' | 'success' | 'warn' | 'danger' | 'neutral' | 'cyan' | 'violet';
 
@@ -138,6 +139,17 @@ export function Alert({
       }
     : {};
   const t = TONE[tone];
+  // Increase Contrast steps the body text up
+  const c = useContrastColors();
+  // iOS has no live regions: a danger / warn alert says itself when it appears or its text changes
+  // (Android reads the live region below); `live={false}` opts out
+  const spoken = [title, typeof children === 'string' || typeof children === 'number' ? String(children) : '']
+    .filter(Boolean)
+    .join('. ');
+  useEffect(() => {
+    if (!live || !spoken || Platform.OS !== 'ios' || (tone !== 'danger' && tone !== 'warn')) return;
+    AccessibilityInfo.announceForAccessibility(spoken);
+  }, [spoken, live, tone]);
   const note = NOTE[tone];
   // a text-only neutral note centres its icon; with a title or a dismiss it top-aligns like every tone
   const centred = tone === 'neutral' && title == null && !onDismiss;
@@ -158,7 +170,7 @@ export function Alert({
             </Text>
           )}
           {children != null && (isText(children)
-            ? <Text style={[styles.text, note?.text, note && title == null && styles.textAlone]}>{children}</Text>
+            ? <Text style={[styles.text, { color: c.textDim }, note?.text, note && title == null && styles.textAlone]}>{children}</Text>
             : children)}
         </View>
         {footer != null ? <View style={styles.footer}>{typeof footer === 'string' ? <Text style={styles.text}>{footer}</Text> : footer}</View> : null}

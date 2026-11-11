@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, StyleSheet, Text, type LayoutChangeEvent, type TextProps, type TextStyle } from 'react-native';
+import { Animated, Easing, StyleSheet, Text, useWindowDimensions, type LayoutChangeEvent, type TextProps, type TextStyle } from 'react-native';
 import Svg, { Defs, LinearGradient, Stop, Text as SvgText } from 'react-native-svg';
 import { gradients, fonts } from '@lockin90/tokens';
 import { useReducedMotion } from '../internal/useReducedMotion';
@@ -29,7 +29,10 @@ export interface GradientTextProps extends TextProps {
  *  width per loop makes the flow seamless (the return leg passes back through the
  *  same hues, so it never jumps lime→magenta). */
 export function GradientText({ gradient = 'flux', still = false, style, children, ...rest }: GradientTextProps) {
-  const [size, setSize] = useState<{ w: number; h: number } | null>(null);
+  const [size, setSize] = useState<{ w: number; h: number; scale: number } | null>(null);
+  // the OS text size: the measured Text follows it, so the SVG glyphs must too (CONVENTIONS "Accessibility")
+  const { fontScale } = useWindowDimensions();
+  const measured = size && size.scale === fontScale ? size : null;
   const anim = useRef(new Animated.Value(0)).current;
   const g = gradients[gradient] ?? gradients.flux;
 
@@ -42,16 +45,16 @@ export function GradientText({ gradient = 'flux', still = false, style, children
       anim.setValue(0);
       return;
     }
-    if (!size || still) return;
+    if (!measured || still) return;
     const loop = Animated.loop(
       Animated.timing(anim, { toValue: 1, duration: 9000, easing: Easing.linear, useNativeDriver: false }),
     );
     loop.start();
     return () => loop.stop();
-  }, [size, still, anim, reduced]);
+  }, [measured, still, anim, reduced]);
 
   const flat = (StyleSheet.flatten(style) ?? {}) as TextStyle;
-  const fontSize = typeof flat.fontSize === 'number' ? flat.fontSize : 28;
+  const fontSize = (typeof flat.fontSize === 'number' ? flat.fontSize : 28) * (fontScale || 1);
   const fontWeight = String(flat.fontWeight ?? '700');
   const fontFamily = typeof flat.fontFamily === 'string' ? flat.fontFamily : fonts.display;
   const letterSpacing = typeof flat.letterSpacing === 'number' ? flat.letterSpacing : undefined;
@@ -64,13 +67,13 @@ export function GradientText({ gradient = 'flux', still = false, style, children
   const pad = Math.max(3, Math.round(fontSize * 0.14));
 
   // pass 1 — lay out the real text (hidden) to measure it; pass 2 draws the SVG
-  if (!size || !text) {
+  if (!measured || !text) {
     return (
       <Text
         {...rest}
         onLayout={(e: LayoutChangeEvent) => {
           const { width, height } = e.nativeEvent.layout;
-          if (width && height) setSize({ w: Math.ceil(width) + pad * 2, h: Math.ceil(height) });
+          if (width && height) setSize({ w: Math.ceil(width) + pad * 2, h: Math.ceil(height), scale: fontScale });
         }}
         // alignSelf:'flex-start' so the hidden measurer shrinks to the glyphs' INTRINSIC
         // width instead of stretching to the parent (which made the SVG full-width and
@@ -85,13 +88,13 @@ export function GradientText({ gradient = 'flux', still = false, style, children
 
   const id = `lk-gt-${gradient}`;
   // The gradient window is 2× the text width; scroll it left by one width over the loop.
-  const x1 = still ? 0 : anim.interpolate({ inputRange: [0, 1], outputRange: [0, -size.w] });
-  const x2 = still ? size.w : anim.interpolate({ inputRange: [0, 1], outputRange: [2 * size.w, size.w] });
+  const x1 = still ? 0 : anim.interpolate({ inputRange: [0, 1], outputRange: [0, -measured.w] });
+  const x2 = still ? measured.w : anim.interpolate({ inputRange: [0, 1], outputRange: [2 * measured.w, measured.w] });
   // still → plain spectrum; animated → mirrored spectrum (seamless loop).
   const stops = gradientTextStops(g.stops, still);
 
   return (
-    <Svg width={size.w} height={size.h} accessibilityLabel={text}>
+    <Svg width={measured.w} height={measured.h} accessibilityLabel={text}>
       <Defs>
         {/* userSpaceOnUse (explicit px coords), NOT the default objectBoundingBox:
             on the New Architecture react-native-svg computes a degenerate bbox for
@@ -111,8 +114,8 @@ export function GradientText({ gradient = 'flux', still = false, style, children
         fontFamily={fontFamily}
         letterSpacing={letterSpacing}
         textAnchor="middle"
-        x={size.w / 2}
-        y={size.h * 0.78}
+        x={measured.w / 2}
+        y={measured.h * 0.78}
       >
         {text}
       </SvgText>

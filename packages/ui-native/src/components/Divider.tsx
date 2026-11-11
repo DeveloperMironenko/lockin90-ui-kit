@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, fonts } from '@lockin90/tokens';
+import { useContrastColors } from '../internal/useHighContrast';
 
 export interface DividerProps {
   /** fade-to-transparent gradient rule (mirrors the web `gradient` variant) */
@@ -17,11 +18,13 @@ export interface DividerProps {
  *  the native analogue of web `linear-gradient(90deg, transparent, var(--border-2), transparent)`.
  *  With `label`, renders a flat hairline on each side of a centered label. */
 export function Divider({ gradient, label, style }: DividerProps) {
+  // Increase Contrast steps the faint label up
+  const c = useContrastColors();
   if (label != null) {
     return (
       <View style={[styles.labelRow, style]}>
         <View style={styles.labelLine} />
-        <Text style={styles.label}>{label}</Text>
+        <Text style={[styles.label, { color: c.textFaint }]}>{label}</Text>
         <View style={styles.labelLine} />
       </View>
     );

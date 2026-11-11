@@ -115,3 +115,7 @@ Substrate differences: web uses CSS `@keyframes` + custom properties; native use
 - **Native reduced motion:** the dots stay still while `useReducedMotion()` is true (web: the global
   `prefers-reduced-motion` rule).
 - **Review fix:** native Reduce Motion stops the dots at full strength (a defined still frame).
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Reduce Motion slows it instead of stopping it** (a loading indicator still says busy, as Spinner): native ×3 (1080 / 1440 ms per bounce), web 3.6s (wins over `base.css`'s freeze). Replaces the still frame.

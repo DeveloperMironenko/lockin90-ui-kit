@@ -192,3 +192,7 @@ No genuine (inherent) capability gap — `size="sm"` is buildable and now built 
 
 - **sm 11px** (was 10), native `Badge` too: no meaningful text under 11px.
 - **A long label wraps** (`md`; web `white-space: normal` + `overflow-wrap: anywhere`, `max-width: 100%`; native label `flexShrink: 1`, chip `maxWidth: '100%'`) instead of overflowing ("Paso 2 de 2 · creación de la cuenta" at 320). A label that fits stays one line, as before. `sm` (the count badge) stays one line.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Native `Badge`:** no fixed height (`minHeight` 16, padding 1.5, line 13), so its text never clips at the largest text size.

@@ -155,3 +155,8 @@ No capability gap — the alert is visually equivalent on both.
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **`live`** (default `true`; `false`: no live region) and **`footer`** (web + native): content under the text that is not announced when it changes — a ticking countdown. With a footer the role / live region sits on the title + text only.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **iOS says it:** iOS has no live regions, so a `danger` or `warn` Alert calls `AccessibilityInfo.announceForAccessibility` (title. text) when it appears or its text changes; `live={false}` opts out; Android keeps its live region. Apps no longer announce alerts themselves.
+- **Increase Contrast** steps the body text up.

@@ -222,11 +222,21 @@
   flex: 1 1 0;
   min-width: 0;
 }
-/* set by the fit when even 80% doesn't fit: the label wraps inside its segment (never leaves it) */
+/* set by the fit when even its smallest size doesn't fit: the label wraps at a space inside its segment,
+   never inside a word */
 .lk-seg.lk-seg--fill .lk-seg-tab.lk-seg-wrap {
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: keep-all;
   line-height: 1.2;
+}
+/* a single word still doesn't fit: the segments take the width they need, on more than one row */
+.lk-seg.lk-seg--fill.lk-seg--rows {
+  flex-wrap: wrap;
+}
+.lk-seg.lk-seg--fill.lk-seg--rows .lk-seg-tab {
+  flex: 1 1 auto;
+  min-width: max-content;
 }
 @media (max-width: 540px) {
   .lk-seg.lk-seg--fill .lk-seg-tab {

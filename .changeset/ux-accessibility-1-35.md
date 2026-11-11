@@ -36,3 +36,13 @@ UX and accessibility (1.35b–h, CONVENTIONS "Accessibility"):
   - **ListRow `pref` / `action`:** under 300 wide the trailing control drops under the text (full width, start-aligned) instead of squeezing it (web container query, native `onLayout`).
   - **Narrow phones:** new `--bp-narrow` / `breakpoints.narrow` (360, max-width; Tailwind preset `narrow`); Card `padLg` drops to 16 there (native by window width) so an 8-box CodeInput fits 320; Chip labels wrap instead of overflowing (web and native).
   - **ReauthDialog (web):** `hasApple`, `onApple`, `appleLabel`, as native; Google and Apple both show when both are linked, disabled while loading.
+  - **Simulator check (native, web twin where it applies):**
+    - **CodeInput** boxes are measured: 44 wide where 44 fits (6 digits in 300, gap down to 4), 44 tall always; new `codeBoxLayout`.
+    - **SegmentedTabs** never break a word: shrink first, wrap only at spaces; web segments go on two rows as a last resort.
+    - **ListRow** `pref` / `action` stack at a text scale over 1.35 (web: an em container query); a plain row's title wraps.
+    - **Text size:** Badge grows with its text; Avatar initials fit the circle; GradientText / Stat gradient follow the text size.
+    - **Avatar** `accessible={false}` hides its initials.
+    - **FormField** native error has its icon.
+    - **DotsLoader** slows under Reduce Motion.
+    - **Increase Contrast:** new `useHighContrast` / `useContrastColors` / `contrastColors` (native) and `prefers-contrast: more` (web tokens).
+    - **Alert:** a danger / warn Alert announces itself on iOS.

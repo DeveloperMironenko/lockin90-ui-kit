@@ -193,3 +193,7 @@ The overlay differences are expected substrate, not capability gaps that block u
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **Fill** `--field`; **focus ring** (web) 2px `--accent-2`; **44 tall** at phone width (web, both sizes) and on native (the sm hitSlop is gone, the box is 44). **`aria-required`** from a `FormField` now lands on the `combobox` button, not the wrapper (axe aria-allowed-attr). Label 11px.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more`): faint / dim text and the edge step up.

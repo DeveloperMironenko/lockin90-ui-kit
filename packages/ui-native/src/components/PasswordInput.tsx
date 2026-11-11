@@ -11,6 +11,7 @@ import { View, Text, TextInput, Pressable, StyleSheet, type TextInputProps } fro
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { Icon } from './Icon';
 import type { TextInputRef } from './Input';
+import { useContrastColors } from '../internal/useHighContrast';
 
 export interface PasswordInputProps extends Omit<TextInputProps, 'secureTextEntry'> {
   /** small mono uppercase label rendered above the field */
@@ -62,11 +63,13 @@ export const PasswordInput: ForwardRefExoticComponent<PasswordInputProps & RefAt
   // the app's ref is the TextInput itself (focus the next field on Return)
   useImperativeHandle(ref, () => inputRef.current as TextInputRef, []);
   const sm = inputSize === 'sm';
-  const borderColor = invalid ? colors.zoneLow : focused ? colors.accent : colors.borderControl;
+  // Increase Contrast steps the edge, placeholder and label up (CONVENTIONS "Accessibility")
+  const c = useContrastColors();
+  const borderColor = invalid ? colors.zoneLow : focused ? colors.accent : c.borderControl;
 
   return (
     <View style={styles.wrap}>
-      {label ? <Text style={styles.label}>{label.toUpperCase()}</Text> : null}
+      {label ? <Text style={[styles.label, { color: c.textDim }]}>{label.toUpperCase()}</Text> : null}
       {/* a tap on the padding focuses the field, as Input */}
       <Pressable
         accessible={false}
@@ -77,7 +80,7 @@ export const PasswordInput: ForwardRefExoticComponent<PasswordInputProps & RefAt
         <TextInput
           ref={inputRef}
           style={[styles.input, sm && styles.inputSm, style]}
-          placeholderTextColor={colors.textFaint}
+          placeholderTextColor={c.textFaint}
           secureTextEntry={!visible}
           onFocus={(e) => {
             setFocused(true);

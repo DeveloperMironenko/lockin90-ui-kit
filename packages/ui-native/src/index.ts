@@ -325,3 +325,4 @@ export type { SourceChipSize, SourceChipProps } from './components/SourceChip';
 // native module never crash.
 export { hapticSelection, hapticLift, hapticDrop } from './internal/optionalHaptics';
 export { useReducedMotion } from './internal/useReducedMotion';
+export { useHighContrast, useContrastColors, contrastColors } from './internal/useHighContrast';

@@ -197,3 +197,7 @@ No blocking gap remains.
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **Labels and sub 11px** (were 10 / 10.5).
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **`tone="gradient"` scales with the text size** (GradientText follows `fontScale`).

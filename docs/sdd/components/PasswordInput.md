@@ -151,3 +151,7 @@ No capability gap blocks use.
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - As `Input`: `--field` fill, the focus ring, 44 at phone width / native.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more`): faint / dim text and the edge step up.

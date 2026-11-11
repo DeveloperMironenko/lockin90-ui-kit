@@ -70,8 +70,14 @@ export function Avatar({
     return <AuraOrb size={size} radius={radius} name={name} style={style} {...rest} />;
   }
 
+  // accessible={false}: a decoration, so its initials are hidden too (not read as a separate element)
+  const hidden =
+    rest.accessible === false
+      ? { importantForAccessibility: 'no-hide-descendants' as const, accessibilityElementsHidden: true }
+      : {};
+
   return (
-    <View style={[styles.avatar, box, style]} {...rest}>
+    <View style={[styles.avatar, box, style]} {...hidden} {...rest}>
       {src ? (
         <Image source={{ uri: src }} style={styles.img} resizeMode="cover" />
       ) : (
@@ -81,7 +87,14 @@ export function Avatar({
           end={{ x: 1, y: 1 }}
           style={styles.mono}
         >
-          <Text style={[styles.monoText, { fontSize: Math.round(size * 0.38) }]}>
+          {/* sized from the circle; at a large text size it shrinks to fit the circle instead of being cut
+              (scaling stays on: no allowFontScaling / maxFontSizeMultiplier, CONVENTIONS) */}
+          <Text
+            style={[styles.monoText, { fontSize: Math.round(size * 0.38), maxWidth: size * 0.8, maxHeight: size * 0.8 }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
+          >
             {initials ?? initialsFor(name ?? '')}
           </Text>
         </LinearGradient>

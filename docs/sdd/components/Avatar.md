@@ -127,3 +127,8 @@ No capability gap blocks use — the aura difference is platform-shaped motion, 
 ## Update — 2026-11-10 (accessibility, 1.35)
 
 - **Native reduced motion:** the aura orb stops spinning while `useReducedMotion()` is true.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Initials fit the circle:** one line, `adjustsFontSizeToFit` (down to 0.5) inside 80% of the circle, so a large text size shrinks them instead of cutting them; text scaling stays on (no `allowFontScaling={false}` / `maxFontSizeMultiplier`, CONVENTIONS).
+- **`accessible={false}`** hides the initials too (`importantForAccessibility="no-hide-descendants"`, `accessibilityElementsHidden`).

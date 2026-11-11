@@ -154,3 +154,7 @@ No capability gap blocks use.
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **44 tall** segments at phone width (web) and on native (`minHeight`; the hitSlop is gone). **`fill` labels never leave their segment:** web shrinks to 80% then wraps (`.lk-seg-wrap`), native shrinks then wraps to two lines (`numberOfLines={2}`). Counts are 11px.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Never broken inside a word.** Native: a one-word label is one line and shrinks to fit (`adjustsFontSizeToFit`, down to 0.5); a label with a space may wrap at the space onto two lines (and shrink). Web `fill`: shrinks to 60% (was 80), then wraps only at a space (`word-break: keep-all`, no `overflow-wrap: anywhere`); a single word that still doesn't fit puts the segments on more than one row (`.lk-seg--rows`, each segment its content's width).

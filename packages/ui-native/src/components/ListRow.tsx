@@ -1,7 +1,8 @@
 import { useState, type ReactNode } from 'react';
-import { View, Text, Pressable, StyleSheet, type ViewProps } from 'react-native';
+import { View, Text, Pressable, StyleSheet, useWindowDimensions, type ViewProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { hapticSelection } from "../internal/optionalHaptics";
+import { useContrastColors } from '../internal/useHighContrast';
 
 export interface ListRowProps extends ViewProps {
   /** Leading slot — an icon, avatar, badge, or letter chip. */
@@ -73,6 +74,8 @@ export function ListRow({
   style,
   ...rest
 }: ListRowProps) {
+  // Increase Contrast steps the subtitle up
+  const c = useContrastColors();
   const titleStyle = [
     styles.title,
     boxed && styles.titleBoxed,
@@ -86,7 +89,9 @@ export function ListRow({
   // a narrow settings row (a phone at 360 / 320: under 300 wide) puts its control under the text, the
   // full row wide and start-aligned, as web's container query; the text never spills out
   const [width, setWidth] = useState(0);
-  const stacked = variant != null && trailing != null && width > 0 && width < NARROW;
+  // …and at a large text size (> 1.35×), where even a wide row leaves the text a letter per line
+  const { fontScale } = useWindowDimensions();
+  const stacked = variant != null && trailing != null && ((width > 0 && width < NARROW) || fontScale > LARGE_TEXT);
   const onLayout: ViewProps['onLayout'] =
     variant != null
       ? (e) => {
@@ -99,11 +104,12 @@ export function ListRow({
     <>
       {leading != null && <View style={styles.leading}>{leading}</View>}
       <View style={styles.main}>
-        {asText(title, titleStyle, variant == null)}
+        {/* the title always wraps: never cut at a large text size ("Data sour…") */}
+        {asText(title, titleStyle, false)}
         {subtitle != null &&
           asText(
             subtitle,
-            [styles.subtitle, boxed && styles.subtitleBoxed, variant && styles.subtitleSetting],
+            [styles.subtitle, { color: c.textDim }, boxed && styles.subtitleBoxed, variant && styles.subtitleSetting],
             !wraps,
           )}
       </View>
@@ -246,3 +252,5 @@ const styles = StyleSheet.create({
 
 /** A settings row narrower than this (pt) stacks its control under the text (web: the container query). */
 const NARROW = 300;
+/** Above this OS text scale a settings row stacks its control under the text whatever its width. */
+const LARGE_TEXT = 1.35;

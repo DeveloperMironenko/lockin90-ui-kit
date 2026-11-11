@@ -124,3 +124,7 @@ There is **no capability gap**.
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **A long label wraps** (centred), each line keeping 16px; it never overflows at 320 (web `flex: 0 1 auto` + `overflow-wrap: anywhere`, native `flexShrink: 1`).
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more`): faint / dim text and the edge step up.

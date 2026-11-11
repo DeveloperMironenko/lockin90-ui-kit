@@ -185,6 +185,20 @@ export function resizeBoxes(boxes: readonly string[], length: number): string[] 
   return Array.from({ length }, (_, i) => boxes[i] ?? '');
 }
 
+/** The boxes' size in a row `width` wide (CONVENTIONS "Accessibility"): 8 apart and as wide as the row
+ *  allows (at most 60, the web's cap); when 44-wide boxes don't fit 8 apart, the gap shrinks (down to 4) so
+ *  they stay 44 wide (6 digits in 300: 44, gap 7.2). Past that (8 digits on a phone) the boxes go narrower
+ *  but stay 44 tall: each is still a ≥ 24 target and the boxes keep their spacing (WCAG 2.5.8's spacing
+ *  exception), the row being one control. Height: 1.18 × width, at least 44. */
+export function codeBoxLayout(width: number, length: number): { gap: number; width: number; height: number } {
+  const n = Math.max(1, length);
+  const gaps = n - 1;
+  let gap = 8;
+  if (gaps > 0 && n * 44 + gaps * gap > width) gap = Math.max(4, Math.min(8, (width - n * 44) / gaps));
+  const w = Math.min(60, (width - gap * gaps) / n);
+  return { gap, width: w, height: Math.max(44, w * 1.18) };
+}
+
 /** Segmented N-digit verification code — auto-advance + backspace + paste / autofill into box 0. */
 export const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(function CodeInput(
   {
@@ -225,6 +239,9 @@ export const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(function Co
   const focusBox = (index: number) => {
     refs.current[Math.max(0, Math.min(length - 1, index))]?.focus();
   };
+  // measured boxes (explicit width / height): the flex + aspect-ratio fallback let iOS draw them under 44
+  const [rowWidth, setRowWidth] = useState(0);
+  const fit = rowWidth > 0 ? codeBoxLayout(rowWidth, length) : null;
 
   useImperativeHandle(
     ref,
@@ -260,7 +277,14 @@ export const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(function Co
   };
 
   return (
-    <View style={[styles.code, style]} {...rest}>
+    <View
+      style={[styles.code, fit && { gap: fit.gap }, style]}
+      {...rest}
+      onLayout={(e) => {
+        setRowWidth(e.nativeEvent.layout.width);
+        rest.onLayout?.(e);
+      }}
+    >
       {boxes.map((ch, i) => {
         const filled = !!ch;
         const isFocused = focused === i;
@@ -284,7 +308,7 @@ export const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(function Co
             ref={(el) => {
               refs.current[i] = el;
             }}
-            style={[styles.codeBox, { borderColor, backgroundColor }]}
+            style={[styles.codeBox, fit && { flex: 0, width: fit.width, height: fit.height, aspectRatio: undefined }, { borderColor, backgroundColor }]}
             keyboardType="number-pad"
             textContentType={i === 0 ? 'oneTimeCode' : 'none'}
             // box 0 accepts the full code so paste / iOS SMS autofill lands and

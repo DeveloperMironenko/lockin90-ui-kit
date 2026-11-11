@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, type TextInputProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { useContrastColors } from '../internal/useHighContrast';
 
 /** The field's ref: the TextInput instance (`ComponentRef`, so the type has `focus()` on RN 0.81 and 0.88).
  *  Exported so the emitted types keep the `ComponentRef` form instead of the kit's RN version's class. */
@@ -63,11 +64,13 @@ export const Input: ForwardRefExoticComponent<InputProps & RefAttributes<TextInp
   const sm = inputSize === 'sm';
   const numeral = variant === 'numeral';
 
-  const borderColor = invalid ? colors.zoneLow : focused ? colors.accent : colors.borderControl;
+  // Increase Contrast steps the edge, placeholder and label up (CONVENTIONS "Accessibility")
+  const c = useContrastColors();
+  const borderColor = invalid ? colors.zoneLow : focused ? colors.accent : c.borderControl;
 
   return (
     <View style={styles.wrap}>
-      {label ? <Text style={styles.label}>{label.toUpperCase()}</Text> : null}
+      {label ? <Text style={[styles.label, { color: c.textDim }]}>{label.toUpperCase()}</Text> : null}
       {/* a tap on the padding, the icon or the unit focuses the field (the whole box is its target) */}
       <Pressable
         accessible={false}
@@ -78,7 +81,7 @@ export const Input: ForwardRefExoticComponent<InputProps & RefAttributes<TextInp
         <TextInput
           ref={inputRef}
           style={[styles.input, sm && styles.inputSm, numeral && styles.inputNumeral, style]}
-          placeholderTextColor={colors.textFaint}
+          placeholderTextColor={c.textFaint}
           onFocus={(e) => {
             setFocused(true);
             onFocus?.(e);

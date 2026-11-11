@@ -1,5 +1,6 @@
 import { Text, StyleSheet, type TextProps } from 'react-native';
 import { colors, fonts } from '@lockin90/tokens';
+import { useContrastColors } from '../internal/useHighContrast';
 
 export type EyebrowProps = TextProps;
 
@@ -7,7 +8,9 @@ export type EyebrowProps = TextProps;
  *  The native twin of the web `Eyebrow` (always renders a `<Text>`; the web-only
  *  `as` prop has no native equivalent). */
 export function Eyebrow({ style, ...rest }: EyebrowProps) {
-  return <Text style={[styles.eyebrow, style]} {...rest} />;
+  // Increase Contrast steps the faint label up
+  const c = useContrastColors();
+  return <Text style={[styles.eyebrow, { color: c.textFaint }, style]} {...rest} />;
 }
 
 const styles = StyleSheet.create({

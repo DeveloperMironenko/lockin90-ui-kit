@@ -34,18 +34,16 @@ export function DotsLoader({ size = 7, color = colors.accent, count = 3, gap = 6
 
   const reduced = useReducedMotion();
   useEffect(() => {
-    // Reduce Motion: a defined still frame, not wherever the loop stopped
-    if (reduced) {
-      vals.forEach((v) => v.setValue(1));
-      return;
-    }
+    // Reduce Motion: a loading indicator slows (×3) instead of stopping, as Spinner, so it still says busy
+    const k = reduced ? 3 : 1;
+    vals.forEach((v) => v.setValue(0));
     const loops = vals.map((v, i) =>
       Animated.loop(
         Animated.sequence([
-          Animated.delay(i * 160), // staggered start (matches web 0/.16/.32s)
-          Animated.timing(v, { toValue: 1, duration: 360, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-          Animated.timing(v, { toValue: 0, duration: 480, easing: Easing.in(Easing.quad), useNativeDriver: true }),
-          Animated.delay(Math.max(0, (n - 1 - i) * 160)), // pad so cycles realign
+          Animated.delay(i * 160 * k), // staggered start (matches web 0/.16/.32s)
+          Animated.timing(v, { toValue: 1, duration: 360 * k, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+          Animated.timing(v, { toValue: 0, duration: 480 * k, easing: Easing.in(Easing.quad), useNativeDriver: true }),
+          Animated.delay(Math.max(0, (n - 1 - i) * 160 * k)), // pad so cycles realign
         ]),
       ),
     );

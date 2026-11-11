@@ -15,19 +15,8 @@ async function withReducedMotion() {
   vi.resetModules();
 }
 
-describe('Reduce Motion still frames', () => {
-  test('DotsLoader stops with every dot at full strength', async () => {
-    await withReducedMotion();
-    const { DotsLoader } = await import('../DotsLoader');
-    const { host, unmount } = mount(<DotsLoader label="Loading" />);
-    await act(async () => {});
-    const dots = Array.from(host.querySelectorAll('[aria-label="Loading"] > div')) as HTMLElement[];
-    expect(dots.length).toBe(3);
-    for (const d of dots) expect(d.style.opacity).toBe('1');
-    unmount();
-  });
-
-  test('no loop starts once the setting is known', async () => {
+describe('Reduce Motion', () => {
+  test('DotsLoader keeps looping, three times slower (a loading indicator slows, still says busy)', async () => {
     await withReducedMotion();
     const { useReducedMotion } = await import('../../internal/useReducedMotion');
     function Probe() {
@@ -37,17 +26,30 @@ describe('Reduce Motion still frames', () => {
     const first = mount(<Probe />);
     await act(async () => {});
     first.unmount();
+    const timing = vi.spyOn(Animated, 'timing');
     const loop = vi.spyOn(Animated, 'loop');
-    const { Spinner } = await import('../Spinner');
     const { DotsLoader } = await import('../DotsLoader');
-    const view = mount(
-      <>
-        <DotsLoader />
-        <Spinner />
-      </>,
-    );
-    // DotsLoader runs none; Spinner keeps one, slowed right down (8s), as web
+    const view = mount(<DotsLoader count={1} />);
     expect(loop).toHaveBeenCalledTimes(1);
+    const durations = timing.mock.calls.map((c) => (c[1] as { duration: number }).duration);
+    expect(durations).toEqual([1080, 1440]);
+    view.unmount();
+  });
+
+  test('Spinner keeps one loop, slowed (2.5s)', async () => {
+    await withReducedMotion();
+    const { useReducedMotion } = await import('../../internal/useReducedMotion');
+    function Probe() {
+      useReducedMotion();
+      return null;
+    }
+    const first = mount(<Probe />);
+    await act(async () => {});
+    first.unmount();
+    const timing = vi.spyOn(Animated, 'timing');
+    const { Spinner } = await import('../Spinner');
+    const view = mount(<Spinner />);
+    expect((timing.mock.calls[0][1] as { duration: number }).duration).toBe(2500);
     view.unmount();
   });
 });

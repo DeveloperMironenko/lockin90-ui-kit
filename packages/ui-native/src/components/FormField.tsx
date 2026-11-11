@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import Svg, { Circle, Line } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { useContrastColors } from '../internal/useHighContrast';
+import { Icon } from './Icon';
 
 export interface FormFieldProps extends ViewProps {
   /** small mono uppercase label rendered above the control */
@@ -51,6 +53,8 @@ export function FormField({
   ...rest
 }: FormFieldProps) {
   const errorText = textOf(error);
+  // Increase Contrast steps the label and help up
+  const c = useContrastColors();
   // a new error is read once: Android by the error's live region, iOS (no live regions) by an
   // announcement; an error already there when the field mounts is not announced
   const mounted = useRef(false);
@@ -77,7 +81,7 @@ export function FormField({
       {label || labelAction ? (
         <View style={styles.labelRow}>
           {label ? (
-            <Text style={styles.fieldLabel}>
+            <Text style={[styles.fieldLabel, { color: c.textDim }]}>
               {label.toUpperCase()}
               {/* a thin space, as the web's 3px gap (a full space read twice as wide) */}
               {required ? <Text style={styles.req}>{'\u2009*'}</Text> : null}
@@ -88,11 +92,17 @@ export function FormField({
       ) : null}
       <View style={styles.control}>{body}</View>
       {error ? (
-        <Text style={styles.errorText} accessibilityLiveRegion="polite" accessibilityRole="alert">
-          {error}
-        </Text>
+        // an icon before the text, as web: the colour is never the only cue
+        <View style={styles.errorRow}>
+          <View style={styles.errorIcon} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
+            <Icon name="info" size={12} color={colors.zoneLow} />
+          </View>
+          <Text style={styles.errorText} accessibilityLiveRegion="polite" accessibilityRole="alert">
+            {error}
+          </Text>
+        </View>
       ) : help ? (
-        <Text style={styles.helpText}>{help}</Text>
+        <Text style={[styles.helpText, { color: c.textFaint }]}>{help}</Text>
       ) : null}
     </View>
   );
@@ -129,6 +139,7 @@ export function SearchInput({
   ...rest
 }: SearchInputProps) {
   const [focused, setFocused] = useState(false);
+  const c = useContrastColors();
   const hasValue = !!value && value.length > 0;
 
   function clear() {
@@ -141,7 +152,7 @@ export function SearchInput({
       style={[
         styles.search,
         shape === 'sm' && styles.searchSm,
-        { borderColor: focused ? colors.accent : colors.borderControl },
+        { borderColor: focused ? colors.accent : c.borderControl },
       ]}
     >
       <View style={styles.searchLead}>
@@ -162,7 +173,7 @@ export function SearchInput({
         style={[styles.searchInput, style]}
         value={value}
         placeholder={placeholder}
-        placeholderTextColor={colors.textFaint}
+        placeholderTextColor={c.textFaint}
         onChangeText={(t) => onChange?.(t)}
         onFocus={(e) => {
           setFocused(true);
@@ -238,7 +249,11 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     color: colors.textFaint,
   },
+  errorRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 5 },
+  // centred on the 17 line
+  errorIcon: { marginTop: 2.5 },
   errorText: {
+    flexShrink: 1,
     fontFamily: fonts.ui,
     fontSize: 11.5,
     lineHeight: 17,

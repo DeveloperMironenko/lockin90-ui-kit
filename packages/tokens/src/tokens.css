@@ -110,3 +110,14 @@
   --font-ui: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
+
+/* Increase Contrast (prefers-contrast: more): faint and dim text and the lines step up, as native's
+   useContrastColors (CONVENTIONS "Accessibility") */
+@media (prefers-contrast: more) {
+  :root {
+    --text-faint: #AAB2C6;
+    --text-dim: #EEF1F8;
+    --border-2: rgba(255, 255, 255, 0.36);
+    --border-control: rgba(255, 255, 255, 0.5);
+  }
+}

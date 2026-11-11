@@ -105,3 +105,7 @@ No capability gap blocks use — the overline is visually equivalent on both pla
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **11px** (was 10): no meaningful text under 11px (CONVENTIONS).
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more`): faint / dim text and the edge step up.

@@ -143,3 +143,7 @@ No capability gap blocks use — the field is fully usable and visually equivale
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **Fill:** the opaque `--field` / `colors.field` (`#25272E`), so the placeholder keeps 4.6:1 over the aurora. **Focus (web):** the kit's 2px `--accent-2` ring (offset 2) on the field box. **Height:** at least 44 at phone width (web) and on native (all sizes), CONVENTIONS. Label 11px.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more`): faint / dim text and the edge step up.

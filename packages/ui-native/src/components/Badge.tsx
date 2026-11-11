@@ -66,9 +66,11 @@ export function Badge({ children = '3', tone = 'accent', dot, style, ...rest }: 
 
 const styles = StyleSheet.create({
   badge: {
+    // grows with the text (no fixed height: the label never clips at the largest text size)
     minWidth: 16,
-    height: 16,
+    minHeight: 16,
     paddingHorizontal: 6,
+    paddingVertical: 1.5,
     borderRadius: radii.pill,
     alignItems: 'center',
     justifyContent: 'center',
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.mono,
     fontSize: 11,
     fontWeight: '600',
-    lineHeight: 12,
+    lineHeight: 13,
   },
   dot: {
     width: 8,

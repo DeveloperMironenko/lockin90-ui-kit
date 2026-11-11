@@ -149,7 +149,8 @@
 .lk-listrow-action { container-type: inline-size; flex-wrap: wrap; row-gap: var(--space-2); }
 .lk-listrow-pref .lk-listrow-main,
 .lk-listrow-action .lk-listrow-main { flex-basis: 0; overflow-wrap: anywhere; }
-@container (max-width: 300px) {
+/* in em, so a larger browser text size stacks it sooner (300px at a 16px text) */
+@container (max-width: 18.75em) {
   .lk-listrow-pref .lk-listrow-trailing,
   .lk-listrow-action .lk-listrow-trailing { flex-basis: 100%; margin-left: 0; justify-content: flex-start; }
 }
