@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet, type ViewProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { hapticSelection } from "../internal/optionalHaptics";
@@ -83,6 +83,17 @@ export function ListRow({
   // a boxed or settings row's line wraps, as on web (a settings row's title too: a long setting's
   // name in another language)
   const wraps = boxed || variant != null;
+  // a narrow settings row (a phone at 360 / 320: under 300 wide) puts its control under the text, the
+  // full row wide and start-aligned, as web's container query; the text never spills out
+  const [width, setWidth] = useState(0);
+  const stacked = variant != null && trailing != null && width > 0 && width < NARROW;
+  const onLayout: ViewProps['onLayout'] =
+    variant != null
+      ? (e) => {
+          setWidth(e.nativeEvent.layout.width);
+          rest.onLayout?.(e);
+        }
+      : rest.onLayout;
 
   const body = (
     <>
@@ -96,7 +107,7 @@ export function ListRow({
             !wraps,
           )}
       </View>
-      {trailing != null && <View style={styles.trailing}>{trailing}</View>}
+      {trailing != null && <View style={[styles.trailing, stacked && styles.trailingStacked]}>{trailing}</View>}
     </>
   );
 
@@ -106,6 +117,7 @@ export function ListRow({
     !boxed && variant === 'pref' && styles.pref,
     !boxed && variant === 'action' && styles.action,
     boxed ? styles.boxed : divider && styles.divider,
+    stacked && styles.stacked,
     active && (activeTint != null ? { backgroundColor: activeTint } : styles.active),
     disabled && styles.disabled,
     style,
@@ -118,6 +130,7 @@ export function ListRow({
         onPress={onPress ? () => { hapticSelection(); onPress(); } : undefined}
         style={({ pressed }) => [...rowStyle, pressed && (boxed ? styles.pressedBoxed : styles.pressed)]}
         {...rest}
+        onLayout={onLayout}
         accessibilityState={{ ...rest.accessibilityState, disabled }}
       >
         {body}
@@ -129,6 +142,7 @@ export function ListRow({
     <View
       style={rowStyle}
       {...rest}
+      onLayout={onLayout}
       // disabled: one accessibility element announced unavailable (a plain View isn't one)
       {...(disabled
         ? {
@@ -225,4 +239,10 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     marginLeft: 'auto',
   },
+  // narrow: the control on its own line under the text, start-aligned
+  stacked: { flexWrap: 'wrap', rowGap: 8 },
+  trailingStacked: { flexBasis: '100%', marginLeft: 0, alignItems: 'flex-start' },
 });
+
+/** A settings row narrower than this (pt) stacks its control under the text (web: the container query). */
+const NARROW = 300;

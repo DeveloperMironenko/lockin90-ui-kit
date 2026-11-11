@@ -141,3 +141,7 @@ There is **no capability gap** — both render the same row.
 
 - **Focus ring (web):** a tappable row shows the kit's shared `2px solid --accent-2` ring, inset 2px (it had
   `outline: none` with only a glass tint).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Narrow settings rows stack (`variant="pref"` / `"action"`, web + native):** a row under 300 wide (a phone at 360 / 320) puts its trailing control on its own line under the text, the full row wide and start-aligned (row gap 8), so "Timezone", "Часовий пояс", "Пройти налаштування знову" no longer shrink to a word per line and spill out. Web: the row is a size container (`container-type: inline-size`, `flex-wrap: wrap`) with `@container (max-width: 300px)`; native: the row's width from `onLayout` (an app's `onLayout` still fires). The text always wraps inside its column (`overflow-wrap: anywhere`). Wider rows keep the control on the right, as before. At 402 (a ~326 row in a Settings card) nothing changes.
