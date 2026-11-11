@@ -1,4 +1,4 @@
-import { useRef, useState, type HTMLAttributes, type KeyboardEvent } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState, type HTMLAttributes, type KeyboardEvent } from 'react';
 import { cn } from '../cn';
 
 /* ============================================================================
@@ -105,6 +105,12 @@ export function TagInput({
    fills across boxes. Focused box gets accent border + glow; filled box a tint.
    ========================================================================== */
 
+/** A CodeInput's ref: `focus()` puts the caret in the first empty box (the last when all are filled),
+ *  so Return in the field before it can move into the code. */
+export interface CodeInputHandle {
+  focus(): void;
+}
+
 export interface CodeInputProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /** number of code boxes */
   length?: number;
@@ -160,15 +166,18 @@ export function typeIntoBox(
 }
 
 /** Segmented N-digit verification code — auto-advance, backspace, paste, one-time-code autofill. */
-export function CodeInput({
-  length = 6,
-  value = '',
-  onChange,
-  invalid = false,
-  digitLabel = defaultDigitLabel,
-  className,
-  ...rest
-}: CodeInputProps) {
+export const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(function CodeInput(
+  {
+    length = 6,
+    value = '',
+    onChange,
+    invalid = false,
+    digitLabel = defaultDigitLabel,
+    className,
+    ...rest
+  },
+  ref,
+) {
   // One entry per box, so clearing a middle box leaves a gap instead of shifting later digits.
   const [boxes, setBoxes] = useState<string[]>(() => codeToBoxes(value, length));
   // A new `value` from the app (e.g. cleared after a wrong code) replaces what's shown; the app echoing
@@ -199,6 +208,17 @@ export function CodeInput({
       if (box && document.activeElement === box) box.select();
     });
   };
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus: () => {
+        const empty = boxes.findIndex((b) => !b);
+        focusBox(empty === -1 ? length - 1 : empty);
+      },
+    }),
+    [boxes, length],
+  );
 
   // Typing replaces the box's digit (its text is selected on focus); box 0 also takes a whole
   // autofilled code (`one-time-code`), spread like a paste.
@@ -273,4 +293,4 @@ export function CodeInput({
       ))}
     </div>
   );
-}
+});

@@ -121,7 +121,7 @@ export type { TableColumn, TableProps } from './components/Table';
 export { Tabs } from './components/Tabs';
 export type { TabsProps } from './components/Tabs';
 export { TagInput, CodeInput } from './components/TagInput';
-export type { TagInputProps, CodeInputProps } from './components/TagInput';
+export type { TagInputProps, CodeInputProps, CodeInputHandle } from './components/TagInput';
 export { Timeline } from './components/Timeline';
 export type { TimelineStatus, TimelineItem, TimelineProps } from './components/Timeline';
 export { Toast, Badge } from './components/Toast';

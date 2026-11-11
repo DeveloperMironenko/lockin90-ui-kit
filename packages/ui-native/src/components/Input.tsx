@@ -1,6 +1,19 @@
-import { forwardRef, useImperativeHandle, useRef, useState, type ReactNode } from 'react';
+import {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type ForwardRefExoticComponent,
+  type RefAttributes,
+  type ComponentRef,
+  type ReactNode,
+} from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, type TextInputProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
+
+/** The field's ref: the TextInput instance (`ComponentRef`, so the type has `focus()` on RN 0.81 and 0.88).
+ *  Exported so the emitted types keep the `ComponentRef` form instead of the kit's RN version's class. */
+export type TextInputRef = ComponentRef<typeof TextInput>;
 
 export interface InputProps extends TextInputProps {
   /** small mono uppercase label rendered above the field */
@@ -24,7 +37,11 @@ export interface InputProps extends TextInputProps {
 }
 
 /** Dark glassy text input — mono label, faint unit suffix, accent focus border. */
-export const Input = forwardRef<TextInput, InputProps>(function Input(
+// annotated, so the emitted .d.ts keeps `TextInputRef` (TS would print the kit's RN 0.81 `TextInput` class)
+export const Input: ForwardRefExoticComponent<InputProps & RefAttributes<TextInputRef>> = forwardRef<
+  TextInputRef,
+  InputProps
+>(function Input(
   {
     label,
     unit,
@@ -40,9 +57,9 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
   ref,
 ) {
   const [focused, setFocused] = useState(false);
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<TextInputRef>(null);
   // the app's ref is the TextInput itself (focus the next field on Return)
-  useImperativeHandle(ref, () => inputRef.current as TextInput, []);
+  useImperativeHandle(ref, () => inputRef.current as TextInputRef, []);
   const sm = inputSize === 'sm';
   const numeral = variant === 'numeral';
 

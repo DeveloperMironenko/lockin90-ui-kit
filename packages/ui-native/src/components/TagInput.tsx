@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -117,6 +117,12 @@ export function TagInput({
    `@lockin90/ui` CodeInput.
    ========================================================================== */
 
+/** A CodeInput's ref: `focus()` puts the caret in the first empty box (the last when all are filled),
+ *  so Return in the field before it can move into the code. */
+export interface CodeInputHandle {
+  focus(): void;
+}
+
 export interface CodeInputProps extends ViewProps {
   /** number of code boxes */
   length?: number;
@@ -178,16 +184,19 @@ export function resizeBoxes(boxes: readonly string[], length: number): string[] 
 }
 
 /** Segmented N-digit verification code — auto-advance + backspace + paste / autofill into box 0. */
-export function CodeInput({
-  length = 6,
-  value = '',
-  onChange,
-  error = false,
-  invalid = false,
-  digitLabel = defaultDigitLabel,
-  style,
-  ...rest
-}: CodeInputProps) {
+export const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(function CodeInput(
+  {
+    length = 6,
+    value = '',
+    onChange,
+    error = false,
+    invalid = false,
+    digitLabel = defaultDigitLabel,
+    style,
+    ...rest
+  },
+  ref,
+) {
   const isInvalid = invalid || error;
   // One entry per box, so clearing a middle box leaves a gap instead of shifting later digits.
   const [boxes, setBoxes] = useState<string[]>(() => codeToBoxes(value, length));
@@ -212,6 +221,17 @@ export function CodeInput({
   const focusBox = (index: number) => {
     refs.current[Math.max(0, Math.min(length - 1, index))]?.focus();
   };
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus: () => {
+        const empty = boxes.findIndex((b) => !b);
+        focusBox(empty === -1 ? length - 1 : empty);
+      },
+    }),
+    [boxes, length],
+  );
 
   const onBoxChange = (index: number, raw: string) => {
     const typed = typeIntoBox(boxes, index, raw);
@@ -281,7 +301,7 @@ export function CodeInput({
       })}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   /* ---- TagInput ---- */

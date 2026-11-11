@@ -45,7 +45,7 @@ export type { GradientTextProps } from './components/GradientText';
 export { Icon, BRAND_COLORS } from './components/Icon';
 export type { IconName, IconProps } from './components/Icon';
 export { Input } from './components/Input';
-export type { InputProps } from './components/Input';
+export type { InputProps, TextInputRef } from './components/Input';
 export { PasswordInput } from './components/PasswordInput';
 export type { PasswordInputProps } from './components/PasswordInput';
 
@@ -120,7 +120,7 @@ export type { TableColumn, TableProps } from './components/Table';
 export { Tabs } from './components/Tabs';
 export type { TabsProps } from './components/Tabs';
 export { TagInput, CodeInput } from './components/TagInput';
-export type { TagInputProps, CodeInputProps } from './components/TagInput';
+export type { TagInputProps, CodeInputProps, CodeInputHandle } from './components/TagInput';
 export { Timeline } from './components/Timeline';
 export type { TimelineStatus, TimelineItem, TimelineProps } from './components/Timeline';
 export { Toast } from './components/Toast';

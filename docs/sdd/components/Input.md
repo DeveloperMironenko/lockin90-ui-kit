@@ -138,3 +138,4 @@ No capability gap blocks use — the field is fully usable and visually equivale
 - **Native:** the field box is a `Pressable` (`accessible={false}`): a tap on its padding, icon or unit focuses
   the `TextInput`.
 - **`ref`** (web + native): forwarded to the field itself — web the `<input>` (`forwardRef<HTMLInputElement>`), native the `TextInput` — so an app moves focus to the next field on Return (`returnKeyType="next"` + `onSubmitEditing={() => next.current?.focus()}`). Works on React 18 and 19.
+- **Native ref type:** `TextInputRef` = `ComponentRef<typeof TextInput>` (exported), and the component is annotated `ForwardRefExoticComponent<InputProps & RefAttributes<TextInputRef>>`, so the emitted `.d.ts` keeps that form. On RN 0.88 the type `TextInput` is the component (no `focus()`), so the old emitted `RefAttributes<TextInput>` broke apps there; the `ComponentRef` form has `focus()` on 0.81 and 0.88 (checked against the mobile app's RN 0.88.1 types).

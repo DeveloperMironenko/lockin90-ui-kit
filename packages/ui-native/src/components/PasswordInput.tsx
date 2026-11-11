@@ -1,7 +1,16 @@
-import { forwardRef, useImperativeHandle, useRef, useState, type ReactNode } from 'react';
+import {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type ForwardRefExoticComponent,
+  type RefAttributes,
+  type ReactNode,
+} from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, type TextInputProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { Icon } from './Icon';
+import type { TextInputRef } from './Input';
 
 export interface PasswordInputProps extends Omit<TextInputProps, 'secureTextEntry'> {
   /** small mono uppercase label rendered above the field */
@@ -27,7 +36,11 @@ export interface PasswordInputProps extends Omit<TextInputProps, 'secureTextEntr
  * Mirrors `Input` (same `label` / `leading` / `invalid` / `inputSize` + glass
  * shell); `secureTextEntry` is owned internally and flipped by the eye button.
  */
-export const PasswordInput = forwardRef<TextInput, PasswordInputProps>(function PasswordInput(
+// annotated, so the emitted .d.ts keeps `TextInputRef` (TS would print the kit's RN 0.81 `TextInput` class)
+export const PasswordInput: ForwardRefExoticComponent<PasswordInputProps & RefAttributes<TextInputRef>> = forwardRef<
+  TextInputRef,
+  PasswordInputProps
+>(function PasswordInput(
   {
     label,
     invalid = false,
@@ -45,9 +58,9 @@ export const PasswordInput = forwardRef<TextInput, PasswordInputProps>(function 
 ) {
   const [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState(defaultVisible);
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<TextInputRef>(null);
   // the app's ref is the TextInput itself (focus the next field on Return)
-  useImperativeHandle(ref, () => inputRef.current as TextInput, []);
+  useImperativeHandle(ref, () => inputRef.current as TextInputRef, []);
   const sm = inputSize === 'sm';
   const borderColor = invalid ? colors.zoneLow : focused ? colors.accent : colors.borderControl;
 

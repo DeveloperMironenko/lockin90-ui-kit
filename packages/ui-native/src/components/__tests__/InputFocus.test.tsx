@@ -6,6 +6,7 @@ import type { TextInput } from 'react-native';
 import { describe, expect, test } from 'vitest';
 import { Input } from '../Input';
 import { PasswordInput } from '../PasswordInput';
+import { CodeInput, type CodeInputHandle } from '../TagInput';
 import { click, mount, target } from './dom';
 
 describe('a tap on the field box focuses the input', () => {
@@ -37,6 +38,21 @@ describe('ref is the TextInput', () => {
     expect(typeof ref.current?.focus).toBe('function');
     ref.current!.focus();
     expect(document.activeElement).toBe(host.querySelector('input'));
+    unmount();
+  });
+});
+
+/* CodeInput: focus() lands in the first empty box (the last when the code is complete). */
+describe('CodeInput ref', () => {
+  test.each([
+    ['', 0],
+    ['12', 2],
+    ['123456', 5],
+  ])('value %j: focus() focuses box %i', (value, box) => {
+    const ref = createRef<CodeInputHandle>();
+    const { host, unmount } = mount(<CodeInput ref={ref} value={value} />);
+    ref.current!.focus();
+    expect(document.activeElement).toBe(host.querySelectorAll('input')[box]);
     unmount();
   });
 });

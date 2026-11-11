@@ -192,3 +192,4 @@ limitation.
 - **Edge:** the TagInput box and every CodeInput box use `--border-control` / `colors.borderControl` (3.3:1 on
   the card); filled, focus and invalid still recolour them. The TagInput's 12px text input is unchanged (an
   admin CMS field; not yet 16px).
+- **CodeInput `ref`** (web + native, type `CodeInputHandle`): `focus()` puts the caret in the first empty box, or the last box when the code is complete, so Return in the field before can move into the code. Web keeps the digit selected, as on any box focus.
