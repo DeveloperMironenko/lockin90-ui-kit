@@ -95,7 +95,7 @@ export { SectionDivider } from './components/SectionDivider';
 export type { SectionDividerProps } from './components/SectionDivider';
 export { FitText } from './components/FitText';
 export type { FitTextProps } from './components/FitText';
-export { useWordFit } from './internal/wordFit';
+export { breakableAddress, useWordFit } from './internal/wordFit';
 export { SegmentedTabs } from './components/SegmentedTabs';
 export type { SegmentedTabsProps, SegmentedTone, SegmentedTab, SegmentedTabItem } from './components/SegmentedTabs';
 export { SsoButton } from './components/SsoButton';

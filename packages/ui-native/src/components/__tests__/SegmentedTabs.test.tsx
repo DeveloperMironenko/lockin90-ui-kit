@@ -69,7 +69,7 @@ describe('SegmentedTabs fill and invalid', () => {
 });
 
 describe('SegmentedTabs before its labels are measured', () => {
-  test('labels render unclamped (no one-line flash); the clamp comes with the measured decision (NothingCut.test)', () => {
+  test('labels render unclamped: no one-line clamp before or after they are measured (the fit: NothingCut.test)', () => {
     const root = parse(render(SegmentedTabs, { tabs: ['Чоловіча', 'Very active'], fill: true }))
     expect(hasDeclaration(findByText(root, 'Чоловіча')!, 'white-space:nowrap')).toBe(false)
     expect(findByText(root, 'Very active')!.attrs.style ?? '').not.toContain('-webkit-line-clamp')

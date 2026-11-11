@@ -181,5 +181,5 @@ None block use; app code reads 1:1 (same `label`/`help`/`error`/`required`, same
 ## Update — 2026-11-11 (no word split, 1.35)
 
 - **A word never splits (native):** the label is `FitText`: a word wider than the field (a half-width column
-  at AX sizes: "НАРОДЖЕННЯ") shrinks the label until it fits, down to 50 %. Apps still go to one column at
+  at AX sizes: "НАРОДЖЕННЯ") shrinks the label until it fits, never below the default text size or 11pt. Apps still go to one column at
   large text first.

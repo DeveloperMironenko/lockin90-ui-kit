@@ -2,6 +2,7 @@ import { type HTMLAttributes, useLayoutEffect, useRef } from 'react';
 import { cn } from '../cn';
 import { Icon, type IconName } from './Icon';
 import { segFitPercent } from './segFit';
+import { fitFloorPercent } from '../hooks/useWordFit';
 
 /** Per-segment tone. Two families:
  *  - SEMANTIC tones (`ok`/`canary`/`danger`) — a leading dot + active-only
@@ -101,9 +102,6 @@ export interface SegmentedTabsProps extends Omit<HTMLAttributes<HTMLDivElement>,
   kind?: 'tabs' | 'choice';
 }
 
-/** How far a `fill` label shrinks to fit before it wraps (percent of its size), as native's 0.5 floor is
- *  for one word: 60 keeps it readable. */
-const MIN_FIT = 60;
 
 /** The next unlocked index from `from` in `step` direction (wrapping), or `from` when none. */
 export function nextSegment(count: number, from: number, step: 1 | -1, locked: number[] = []): number {
@@ -158,9 +156,9 @@ export function SegmentedTabs({
   const ref = useRef<HTMLDivElement>(null);
   const labels = tabs.map((item) => toTab(item).label).join('\u0000');
 
-  // fill: a label wider than its segment shrinks to fit, down to MIN_FIT (native's adjustsFontSizeToFit
-  // goes to 0.5) — long words in uk / ru / es / ja on a phone row; then wraps at a space, never inside a
-  // word, and as a last resort the segments go on two rows. Labels that fit keep their
+  // fill: a label wider than its segment shrinks to fit, down to `fitFloorPercent` (never below the
+  // default text size or 11px, as native) — long words in uk / ru / es / ja on a phone row; then wraps at
+  // a space, never inside a word, and as a last resort the segments go on two rows. Labels that fit keep their
   // size (the stylesheet's, for every size and appearance: the fit only ever sets an inline size).
   useLayoutEffect(() => {
     const track = ref.current;
@@ -175,8 +173,9 @@ export function SegmentedTabs({
         const style = getComputedStyle(tab);
         const base = parseFloat(style.fontSize);
         const padding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+        const floor = fitFloorPercent(base, parseFloat(getComputedStyle(document.documentElement).fontSize) || 16);
         // one measure, then whole-percent steps for what rounding leaves over
-        for (let percent = segFitPercent(tab.clientWidth, tab.scrollWidth, padding); percent >= MIN_FIT; percent -= 2) {
+        for (let percent = Math.max(floor, segFitPercent(tab.clientWidth, tab.scrollWidth, padding)); percent >= floor && floor < 100; percent -= 2) {
           tab.style.fontSize = `${(base * percent) / 100}px`;
           if (tab.scrollWidth <= tab.clientWidth) break;
         }

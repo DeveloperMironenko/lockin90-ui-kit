@@ -102,6 +102,12 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
   a narrow box, any title at a large text size) is a native `FitText` (or measured by the shared
   `internal/wordFit.tsx` measurer, as SegmentedTabs and Select), which shrinks it until its widest word
   fits; web primitives use `useWordFit`. Never `numberOfLines` + `adjustsFontSizeToFit` on wrapping text.
+  **The shrink never goes below the default text size or 11pt** (`fitFloor`: at a larger OS text size only
+  that enlargement is taken back, `1 / fontScale`; at the default size nothing shrinks). A word still too
+  wide at that floor is the layout's to fix (a column fewer: MetricTile `onMinWidth`; segments stacked;
+  the text above its icon); the word breaks only as the last resort. Lines break where iOS and Android
+  break them (spaces, after a hyphen or a slash, between CJK characters); an email or web address never
+  shrinks its paragraph (`breakableAddress` lets it break after "@" and ".").
 - **No meaningful text under 11px** (chips, badges, eyebrows, labels, counts).
 - **Narrow breakpoint:** `--bp-narrow` / `breakpoints.narrow` = 360 (max-width), alongside phone (540) and tablet (980); a large-padded Card tightens to 16 there.
 - **44 at phone width (web) = 44 on native:** at ≤ 540px every Button (not `text`), SsoButton, Input,

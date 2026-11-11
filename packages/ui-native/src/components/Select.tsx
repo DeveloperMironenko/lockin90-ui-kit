@@ -136,10 +136,12 @@ export function Select({
   const isSm = size === 'sm';
   // Increase Contrast steps the edge, placeholder and label up
   const c = useContrastColors();
-  // A word of the value never breaks (CONVENTIONS "Accessibility"): its widest word is measured on one
+  // A word of the value never breaks (CONVENTIONS "Accessibility"): its widest piece a line can't break
+  // (`breakableWords`: a time zone breaks after its "/", as iOS and Android do) is measured on one
   // unconstrained line, and the select is at least that wide plus its chrome (padding, edge, icon,
-  // chevron) — wider than a parent's maxWidth if it must, as CSS min-width beats max-width — never wider
-  // than the screen less its 16pt gutters. Words still wrap between them, so the field grows taller.
+  // chevron), never wider than the screen less its 16pt gutters. Words still wrap between them, so the
+  // field grows taller. A parent's maxWidth narrower than that minimum is overflowed: the app's
+  // maxWidth is for the default text size.
   const shownText = selected ? selected.label : (placeholder ?? '');
   const words = breakableWords(shownText);
   const { width: screenW } = useWindowDimensions();
@@ -154,13 +156,16 @@ export function Select({
   // Fabric (SegmentedTabs has the same guard)
   const wordRefs = useRef<Record<string, Text | null>>({});
   const fieldRef = useRef<View>(null);
+  const leadRef = useRef<View>(null);
+  const hasLeading = leading != null;
   useLayoutEffect(() => {
     fieldRef.current?.measure?.((_x, _y, fw) => {
       if (!(fw > 0)) return;
       words.forEach((_, k) => wordRefs.current[String(k)]?.measure?.((_wx, _wy, w) => recordWord(k, w)));
+      leadRef.current?.measure?.((_lx, _ly, lw) => setLeadW(lw));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- words follow shownText
-  }, [shownText]);
+  }, [shownText, hasLeading]);
   const recordWord = (k: number, w: number) =>
     setWordW((prev) => {
       const base = prev.text === shownText ? prev.w : [];
@@ -204,7 +209,7 @@ export function Select({
         onPress={() => { hapticSelection(); setOpen(true); }}
       >
         {leading != null ? (
-          <View style={styles.leading} onLayout={(e) => setLeadW(e.nativeEvent.layout.width)}>
+          <View ref={leadRef} style={styles.leading} onLayout={(e) => setLeadW(e.nativeEvent.layout.width)}>
             {leading}
           </View>
         ) : null}

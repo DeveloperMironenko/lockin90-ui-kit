@@ -135,7 +135,7 @@ export function Button({
             end={{ x: 1, y: 1 }}
             style={[styles.base, pad, styles.primary, pressed && styles.pressed, disabled && styles.disabled, style]}
           >
-            <View style={[styles.base, hide]}>
+            <View style={[styles.base, styles.inner, hide]}>
               {leading}
               <FitText style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: INK_ON_BRIGHT }]}>{title}</FitText>
               {trailing}
@@ -194,7 +194,7 @@ export function Button({
             style,
           ]}
         >
-          <View style={[styles.base, hide]}>
+          <View style={[styles.base, styles.inner, hide]}>
             {leading}
             <FitText style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: textColor }]}>{title}</FitText>
             {trailing}
@@ -218,12 +218,15 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },
   // web `.lk-btn:disabled`: the whole surface at half strength
   disabled: { opacity: 0.5 },
-  label: { fontFamily: fonts.ui, fontWeight: '600' },
+  // the label and the row that holds it can shrink, so a label's room is the button's, not its own
+  // content's (FitText fits a word to it)
+  inner: { flexShrink: 1, minWidth: 0 },
+  label: { flexShrink: 1, minWidth: 0, fontFamily: fonts.ui, fontWeight: '600' },
   // shrinks with its line, so a long label wraps (a long translation) instead of overflowing, as web
   textRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, flexShrink: 1 },
   textPressed: { opacity: 0.85 },
   // wraps when its line is too narrow (never cut), as web
-  textLabel: { flexShrink: 1, fontFamily: fonts.mono, fontSize: 11.5, lineHeight: 17, color: colors.accent2 },
+  textLabel: { flexShrink: 1, minWidth: 0, fontFamily: fonts.mono, fontSize: 11.5, lineHeight: 17, color: colors.accent2 },
   textDisabled: { color: colors.textFaint },
   // web `.lk-btn--tone-muted` (design onboarding .step-skip): faint, 12.5, padding 8
   textMuted: { fontSize: 12.5, lineHeight: 17, color: colors.textFaint },

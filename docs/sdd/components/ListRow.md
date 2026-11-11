@@ -155,7 +155,7 @@ There is **no capability gap** — both render the same row.
 ## Update — 2026-11-11 (no word split, 1.35)
 
 - **A word never splits (web + native):** a wrapping title or subtitle ("Run onboarding again" at AX sizes:
-  "onboardin/g") shrinks until its widest word fits the row, down to 50 % (native `FitText`; web
+  "onboardin/g") shrinks until its widest word fits the row, never below the default text size or 11pt (native `FitText`; web
   `useWordFit` on `.lk-listrow-title` / `.lk-listrow-subtitle`). One-line rows are unchanged.
 - **Native, large text:** a plain row's subtitle (one line, as drawn) wraps above text size 1.35 instead of
   being cut with an ellipsis ("Physiology,…" on Account at AX3).

@@ -168,6 +168,6 @@ No capability gap — the alert is visually equivalent on both.
 ## Update — 2026-11-11 (no word split, 1.35)
 
 - **A word never splits (native):** the title and a text body are `FitText`: a word wider than the body
-  ("обновлённым", "перераховує" at AX sizes) shrinks the text until it fits, down to 50 %. A rich body
+  ("обновлённым", "перераховує" at AX sizes) shrinks the text until it fits, never below the default text size or 11pt. A rich body
   (a `Text` with styled parts, i18n `Trans`) renders as given. Web: its words already overflow-wrap only when
   a single word is wider than the box (no change).

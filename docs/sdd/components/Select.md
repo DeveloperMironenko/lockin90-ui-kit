@@ -206,9 +206,11 @@ The overlay differences are expected substrate, not capability gaps that block u
 
 - **Native:** the value's words are measured on one unconstrained line (an invisible, unreadable absolute
   `View`, `testID="lk-select-measure"`), and the select is at least its widest word + 1pt + the chrome wide
-  (`md` 12 + 11 padding, 2 edge, 8 gap, 16 chevron; `sm` 9 + 8, 2, 5, 13; plus a `leading` icon and its gap):
-  wider than a parent's `maxWidth` if it must be (as CSS `min-width` beats `max-width`), never wider than the
-  screen less 2 × 16. The value still wraps between words, so the field grows taller ("Europ/e/Kyiv",
+  (`md` 12 + 11 padding, 2 edge, 8 gap, 16 chevron; `sm` 9 + 8, 2, 5, 13; plus a `leading` icon and its gap),
+  never wider than the screen less 2 × 16. (2026-11-11 review: a time zone breaks after its "/", so the
+  widest piece of "America/Argentina/Buenos_Aires · GMT-3" is "Buenos_Aires" and the select fits the
+  design's 178pt picker; a parent `maxWidth` narrower than one piece is still overflowed, so an app sets its
+  `maxWidth` for the default text size only.) The value still wraps between words, so the field grows taller ("Europ/e/Kyiv",
   "Engli/sh" at AX sizes are gone). The words are measured on `onLayout` and again from refs in a layout
   effect (a tree mounted while hidden gets no `onLayout` on iOS Fabric, as SegmentedTabs).
 - **Web:** the wrapper, trigger and value have `min-width: min-content` (was 0), so the trigger is never
@@ -217,4 +219,7 @@ The overlay differences are expected substrate, not capability gaps that block u
 ## Update — 2026-11-11 (shared measurer, 1.35)
 
 - The word measurer is the kit's shared `WordMeasurer` (`internal/wordFit.tsx`, as SegmentedTabs and
-  FitText), and the words come from `breakableWords` (CJK characters are separate words; a slash stays inside).
+  FitText), and the words come from `breakableWords` (CJK characters are separate words; a line breaks after
+  a slash, as iOS and Android do: "Europe/" "Kyiv").
+- **Leading icon:** its width is measured on `onLayout` and from its ref in the layout effect (a tree
+  mounted hidden gets no `onLayout` on iOS Fabric).

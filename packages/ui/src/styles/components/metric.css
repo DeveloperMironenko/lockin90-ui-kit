@@ -29,6 +29,10 @@
 }
 
 .lk-metric-label {
+  /* shrinkable in its row (the icon beside it): its width is the tile's, so useWordFit can see a word
+     overflow; past its floor a word breaks (the last resort) instead of spilling out */
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 500;
@@ -57,6 +61,8 @@
 }
 
 .lk-metric-value {
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 24px;

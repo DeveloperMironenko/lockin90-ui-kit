@@ -179,6 +179,18 @@ shipping a native screen where the dots convey required state.
 ## Update — 2026-11-11 (no word split, 1.35)
 
 - **A word never splits (web + native):** the label and the value are measured: a word wider than the tile
-  ("Нейтральный" at 3 across in ru / uk, even at the default text size) shrinks the text until it fits,
-  down to 50 % (native `FitText`; web `useWordFit` on `.lk-metric-label` and `.lk-metric-value`), and wraps
-  only between words. `overflow-wrap: anywhere` stays as the last resort below 50 %.
+  at a larger text size shrinks the text until it fits, never below the default text size or 11pt (native
+  `FitText`; web `useWordFit` on `.lk-metric-label` and `.lk-metric-value`), and wraps only between words.
+  `overflow-wrap: anywhere` stays as the last resort.
+
+## Update — 2026-11-11 (word-fit review fixes, 1.35)
+
+- **`onMinWidth` (native):** called with the narrowest width (pt) at which the tile shows every word of its
+  label and value whole (each at the floor: the default text size), plus its padding and edge (and the
+  icon and its gap beside the label). A grid chooses its columns by it: "ФИЗИОЛОГИЧЕСКИЙ" or "Нейтральный"
+  in a third of a phone at the default size gets two across instead of breaking (the app's Settings
+  physiology grid).
+- **Shrinkable text:** native label and value `flexShrink: 1, minWidth: 0` (md too: the label sits in a row
+  beside the icon, so its room is the row's); web `.lk-metric-label` / `.lk-metric-value` `min-width: 0`
+  (the md ones had none, so `useWordFit` never saw a word overflow) and `overflow-wrap: anywhere` as the
+  last resort.

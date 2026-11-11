@@ -218,3 +218,9 @@ There is **no capability gap** that blocks use — the button is fully usable an
 
 - **Native:** the label is `FitText`: a word wider than the button ("Попробовать" at AX3) shrinks the label
   until it fits, never splits. The button's name is its `accessibilityLabel` (the title), unchanged.
+
+## Update — 2026-11-11 (word-fit review fixes, 1.35)
+
+- **Native:** the label (and the row holding it, `leading` / `trailing`) has `flexShrink: 1, minWidth: 0`, so
+  its room is the button's: a label as wide as its content gave FitText nothing to fit to. It shrinks at a
+  larger text size only, never below the default text size or 11pt.

@@ -112,4 +112,4 @@ No capability gap blocks use — the overline is visually equivalent on both pla
 
 ## Update — 2026-11-11 (no word split, 1.35)
 
-- **Native:** renders a `FitText`: a word wider than its room shrinks until it fits, down to 50 %.
+- **Native:** renders a `FitText`: a word wider than its room shrinks until it fits, never below the default text size or 11pt.
