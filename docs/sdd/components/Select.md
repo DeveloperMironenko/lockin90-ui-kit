@@ -213,3 +213,8 @@ The overlay differences are expected substrate, not capability gaps that block u
   effect (a tree mounted while hidden gets no `onLayout` on iOS Fabric, as SegmentedTabs).
 - **Web:** the wrapper, trigger and value have `min-width: min-content` (was 0), so the trigger is never
   narrower than the value's widest word; `overflow-wrap: break-word` stays only as the last resort.
+
+## Update — 2026-11-11 (shared measurer, 1.35)
+
+- The word measurer is the kit's shared `WordMeasurer` (`internal/wordFit.tsx`, as SegmentedTabs and
+  FitText), and the words come from `breakableWords` (CJK characters are separate words; a slash stays inside).

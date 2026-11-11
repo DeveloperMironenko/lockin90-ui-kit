@@ -177,3 +177,9 @@ None block use; app code reads 1:1 (same `label`/`help`/`error`/`required`, same
 
 - **Native error icon:** the error has the alert icon before its text, as web (colour is never the only cue); the icon is hidden from screen readers.
 - **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more` in tokens.css) steps the label, help, placeholder and edge up.
+
+## Update — 2026-11-11 (no word split, 1.35)
+
+- **A word never splits (native):** the label is `FitText`: a word wider than the field (a half-width column
+  at AX sizes: "НАРОДЖЕННЯ") shrinks the label until it fits, down to 50 %. Apps still go to one column at
+  large text first.

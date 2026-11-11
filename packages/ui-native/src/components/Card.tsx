@@ -27,8 +27,11 @@ export interface CardProps extends ViewProps {
 export function Card({ lit, padLg, pad, flat, blur, tone, variant, style, children, ...rest }: CardProps) {
   // a narrow phone (≤ breakpoints.narrow, 360): the large padding drops to 16, as web, so an 8-box
   // CodeInput fits a 320 screen
-  const { width } = useWindowDimensions();
+  // …and at an accessibility text size (> 1.35×) every padding but `none` is 16: the room goes to the
+  // text, whose long words would otherwise have to shrink further
+  const { width, fontScale } = useWindowDimensions();
   const narrow = width > 0 && width <= breakpoints.narrow; // 0: not measured (a static render)
+  const large = fontScale > LARGE_TEXT;
   const lg = padLg || pad === 'lg';
   const composed = [
     styles.card,
@@ -36,6 +39,7 @@ export function Card({ lit, padLg, pad, flat, blur, tone, variant, style, childr
     pad === 'none' && styles.padNone,
     pad === 'sm' && styles.padSm,
     pad === 'md' && styles.padMd,
+    large && pad !== 'none' && styles.padSm,
     flat && styles.flat,
     tone === 'warn' && styles.toneWarn,
     tone === 'danger' && styles.toneDanger,
@@ -150,3 +154,6 @@ const styles = StyleSheet.create({
     height: 1,
   },
 });
+
+/** Above this OS text scale a card's padding is 16 (as ListRow's and SegmentedTabs' large-text rule). */
+const LARGE_TEXT = 1.35;

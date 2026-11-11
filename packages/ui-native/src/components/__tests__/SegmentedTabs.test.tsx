@@ -39,9 +39,12 @@ describe('SegmentedTabs color tones', () => {
     const root = parse(render(SegmentedTabs, { tabs, active: 1 }));
     const label = findByText(root, 'Working')!;
     expect(carriesColor(label, '34,211,238')).toBe(true); // cyan label
-    const tab = ancestors(label).find((a) => (a.attrs.style ?? '').includes('rgba(34,211,238,0.16'));
-    expect(tab).toBeDefined(); // 16% fill
-    expect((tab!.attrs.style ?? '').includes('rgba(34,211,238,0.5')).toBe(true); // 50% border
+    // the paint is the segment's inset pill (a sibling of the label), not the segment (the target)
+    const segment = ancestors(label).find((a) => a.attrs.role === 'tab')!;
+    const pill = findAll(segment, (el) => (el.attrs.style ?? '').includes('rgba(34,211,238,0.16'))[0];
+    expect(pill).toBeDefined(); // 16% fill
+    expect((pill!.attrs.style ?? '').includes('rgba(34,211,238,0.5')).toBe(true); // 50% border
+    expect((segment.attrs.style ?? '').includes('rgba(34,211,238,0.16')).toBe(false);
   });
 
   test('an INACTIVE color-tone segment has no fill/border paint', () => {

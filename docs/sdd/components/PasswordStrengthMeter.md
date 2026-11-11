@@ -201,3 +201,9 @@ up two by hand.
   last rule beside an empty cell keeps its column's width), the tick on the first line (`alignItems:
   'flex-start'`, `marginTop: (12 × 1.55 − 16) / 2`), each label wrapping in its column. Apps bump both kits
   together, so web and mobile never differ.
+
+## Update — 2026-11-11 (no word split, 1.35)
+
+- **Native:** above text size 1.35 the rules are one column (half the width left "numb/er", "symb/ol" at
+  AX sizes); each rule's text and the hint are `FitText` (a word wider than its line shrinks, never splits).
+  Two columns at every other size, as web.

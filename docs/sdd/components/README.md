@@ -22,7 +22,7 @@ Parity legend: ✅ identical API · 🟡 same API, platform-shaped impl · 🔵 
 ## Foundations & brand
 [BrandMark](./BrandMark.md) · [GradientText](./GradientText.md) · [Icon](./Icon.md) ·
 [Divider](./Divider.md) · [Pulse](./Pulse.md) · [Skeleton](./Skeleton.md) · [Avatar](./Avatar.md) ·
-[AvatarStack](./AvatarStack.md) · [Eyebrow](./Eyebrow.md) · [SectionHeader](./SectionHeader.md) ·
+[AvatarStack](./AvatarStack.md) · [Eyebrow](./Eyebrow.md) · [FitText](./FitText.md) · [SectionHeader](./SectionHeader.md) ·
 [StateLabel](./StateLabel.md) · [AuroraBackground](./AuroraBackground.md) ·
 [ScrollProgress](./ScrollProgress.md) · [VersionBadge](./VersionBadge.md) · [QRCode](./QRCode.md) ·
 [ShareCard](./ShareCard.md) · [ZoneBar](./ZoneBar.md)

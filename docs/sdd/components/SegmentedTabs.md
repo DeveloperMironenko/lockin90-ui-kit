@@ -197,3 +197,18 @@ gone (`labelProblem` too). Native now decides from widths it measures, so it can
 - **Stacked shape:** a stacked track is a tall box, so it takes a container's corners (`radii.md`) and its
   segments (and the gradient fill) a control's (`radii.sm`), never the pill that drew a stadium at AX sizes.
   Web: `.lk-seg--rows` likewise takes `--r`, its segments `--r-sm`.
+
+## Update — 2026-11-11 (inline with a field, shared measurer, 1.35)
+
+- **The same height as a field (owner, 2026-11-11: "the select of gender have to have the same height like
+  input, they have to be inline"):** an `md` track is 44 tall with its edge, as Input (it was 54: 4 padding
+  around 44 segments). Its segments sit edge to edge (track padding 0 × 2) and take the track's whole height
+  (42, plus a 1pt `hitSlop` above and below: the 44pt target is kept); the pill (active fill, tint, tone
+  border, gradient and glow) is a separate view drawn inset — 4 from the top and bottom, 2 from each side
+  (so 4 at the ends and between pills). Stacked: track padding 2, segments 44, pills inset 2. `sm` is
+  unchanged (pill = segment). Label padding inside the pill is kept (segment padding 8, `fill` 6).
+- **Web at phone width** (`fill`, not rows, not `tint`): the track is `min-height: 44px` with `padding: 0 2px`,
+  segments 42 tall with a transparent `4px 2px` border and `background-clip: padding-box`, so the pill is
+  drawn inset as on native.
+- The measurer is the shared `WordMeasurer`, and `stackedScales` uses the shared `wordFitScale`
+  (`internal/wordFit.tsx`, as FitText).

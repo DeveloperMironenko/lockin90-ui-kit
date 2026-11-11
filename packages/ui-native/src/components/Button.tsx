@@ -1,10 +1,11 @@
 import { type ReactNode } from 'react';
-import { Pressable, Text, StyleSheet, View, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, View, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, gradients, fonts, nativeShadows } from '@lockin90/tokens';
 import { hapticSelection } from '../internal/optionalHaptics';
 import { absoluteFill } from '../internal/absoluteFill';
 import { Spinner } from './Spinner';
+import { FitText } from './FitText';
 
 // the web's body line height (1.55): the md button is 12 + 14 × 1.55 + 12 = 45.7, as on web
 const LINE = 1.55;
@@ -106,9 +107,9 @@ export function Button({
           <View style={[styles.textRow, tone === 'muted' && styles.textRowMuted, pressed && styles.textPressed, style]}>
             <View style={[styles.textRow, hide]}>
               {leading}
-              <Text style={[styles.textLabel, tone === 'muted' && styles.textMuted, disabled && styles.textDisabled]}>
+              <FitText style={[styles.textLabel, tone === 'muted' && styles.textMuted, disabled && styles.textDisabled]}>
                 {title}
-              </Text>
+              </FitText>
               {trailing}
             </View>
             {spinner(colors.accent2)}
@@ -136,7 +137,7 @@ export function Button({
           >
             <View style={[styles.base, hide]}>
               {leading}
-              <Text style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: INK_ON_BRIGHT }]}>{title}</Text>
+              <FitText style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: INK_ON_BRIGHT }]}>{title}</FitText>
               {trailing}
             </View>
             {spinner(INK_ON_BRIGHT)}
@@ -195,7 +196,7 @@ export function Button({
         >
           <View style={[styles.base, hide]}>
             {leading}
-            <Text style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: textColor }]}>{title}</Text>
+            <FitText style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: textColor }]}>{title}</FitText>
             {trailing}
           </View>
           {spinner(textColor)}

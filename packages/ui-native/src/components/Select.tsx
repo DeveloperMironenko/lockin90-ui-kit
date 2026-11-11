@@ -16,6 +16,7 @@ import { colors, radii, fonts } from '@lockin90/tokens';
 import { hapticSelection } from "../internal/optionalHaptics";
 import { SearchInput } from './FormField';
 import { useContrastColors } from '../internal/useHighContrast';
+import { breakableWords, WordMeasurer } from '../internal/wordFit';
 
 /** A single option in a {@link Select}. */
 export interface SelectOption {
@@ -140,7 +141,7 @@ export function Select({
   // chevron) — wider than a parent's maxWidth if it must, as CSS min-width beats max-width — never wider
   // than the screen less its 16pt gutters. Words still wrap between them, so the field grows taller.
   const shownText = selected ? selected.label : (placeholder ?? '');
-  const words = shownText.trim().split(/\s+/).filter(Boolean);
+  const words = breakableWords(shownText);
   const { width: screenW } = useWindowDimensions();
   const [wordW, setWordW] = useState<{ text: string; w: number[] }>({ text: '', w: [] });
   const [leadW, setLeadW] = useState(0);
@@ -151,12 +152,12 @@ export function Select({
   const minWidth = need ? (screenW > 32 ? Math.min(screenW - 32, need) : need) : undefined;
   // also measured from refs in a layout effect: a tree mounted while hidden gets no `onLayout` on iOS
   // Fabric (SegmentedTabs has the same guard)
-  const wordRefs = useRef<(Text | null)[]>([]);
+  const wordRefs = useRef<Record<string, Text | null>>({});
   const fieldRef = useRef<View>(null);
   useLayoutEffect(() => {
     fieldRef.current?.measure?.((_x, _y, fw) => {
       if (!(fw > 0)) return;
-      words.forEach((_, k) => wordRefs.current[k]?.measure?.((_wx, _wy, w) => recordWord(k, w)));
+      words.forEach((_, k) => wordRefs.current[String(k)]?.measure?.((_wx, _wy, w) => recordWord(k, w)));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- words follow shownText
   }, [shownText]);
@@ -214,30 +215,13 @@ export function Select({
           {selected ? selected.label : (placeholder ?? '')}
         </Text>
         <Chevron color={isSm ? colors.textFaint : colors.textDim} size={isSm ? 13 : 16} />
-        <View
+        <WordMeasurer
           testID="lk-select-measure"
-          pointerEvents="none"
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
-          style={styles.measure}
-        >
-          {words.map((w, k) => (
-            <Text
-              key={`${shownText}:${k}`}
-              ref={(el) => {
-                wordRefs.current[k] = el;
-              }}
-              numberOfLines={1}
-              accessible={false}
-              accessibilityElementsHidden
-              importantForAccessibility="no"
-              onLayout={(e) => recordWord(k, e.nativeEvent.layout.width)}
-              style={[styles.value, styles.measureText, isSm && styles.valueSm]}
-            >
-              {w}
-            </Text>
-          ))}
-        </View>
+          probes={words.map((w, k) => ({ id: String(k), text: w, style: [styles.value, styles.measureText, isSm && styles.valueSm] }))}
+          record={(id, w) => recordWord(Number(id), w)}
+          refs={wordRefs}
+          keyPrefix={shownText}
+        />
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={close}>
@@ -353,17 +337,6 @@ const styles = StyleSheet.create({
   },
   fieldInvalid: { borderColor: colors.zoneLow },
   fieldDisabled: { opacity: 0.55 },
-  // the word measurer: one unconstrained line per word, laid out but never seen or read
-  measure: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    width: 10000,
-    height: 0,
-    overflow: 'hidden',
-    opacity: 0,
-    alignItems: 'flex-start',
-  },
   measureText: { flex: 0 },
   leading: { flexShrink: 0, alignItems: 'center', justifyContent: 'center' },
   // the value takes the row and sits left after the icon, as on web; `sm` hugs its content

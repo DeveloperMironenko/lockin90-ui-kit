@@ -213,3 +213,8 @@ There is **no capability gap** that blocks use — the button is fully usable an
 
 - **44 at phone width / native:** at ≤ 540px every surface variant (sm included) is at least 44px tall; native `sm` is 44 (`minHeight`) instead of the 36 box + slop. `text` keeps its slop / `::before`.
 - **`text` wraps:** its label wraps when the line is too narrow (web `white-space: normal`, native `flexShrink: 1`), instead of staying one line and overflowing (replaces "the label never shrinks", 2026-11-05).
+
+## Update — 2026-11-11 (no word split, 1.35)
+
+- **Native:** the label is `FitText`: a word wider than the button ("Попробовать" at AX3) shrinks the label
+  until it fits, never splits. The button's name is its `accessibilityLabel` (the title), unchanged.

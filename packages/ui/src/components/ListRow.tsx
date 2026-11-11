@@ -1,5 +1,6 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
+import { useWordFit } from '../hooks/useWordFit';
 
 export interface ListRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'onClick'> {
   /** Leading slot — an icon, avatar, badge, or letter chip (flex-shrink 0). */
@@ -55,12 +56,15 @@ export const ListRow = forwardRef<HTMLDivElement, ListRowProps>(function ListRow
       ? ({ ...style, '--lk-listrow-active-bg': activeTint } as React.CSSProperties)
       : style;
 
+  const titleRef = useWordFit<HTMLSpanElement>(title);
+  const subtitleRef = useWordFit<HTMLSpanElement>(subtitle);
   const body = (
     <>
       {leading != null && <span className="lk-listrow-leading">{leading}</span>}
       <span className="lk-listrow-main">
-        <span className="lk-listrow-title">{title}</span>
-        {subtitle != null && <span className="lk-listrow-subtitle">{subtitle}</span>}
+        {/* a word never splits: it shrinks to fit the row (as native FitText) */}
+        <span ref={titleRef} className="lk-listrow-title">{title}</span>
+        {subtitle != null && <span ref={subtitleRef} className="lk-listrow-subtitle">{subtitle}</span>}
       </span>
       {trailing != null && <span className="lk-listrow-trailing">{trailing}</span>}
     </>

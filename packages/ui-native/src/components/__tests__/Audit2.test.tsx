@@ -29,7 +29,9 @@ describe('Alert footer', () => {
         Wait a moment.
       </Alert>,
     );
-    const live = host.querySelector('[aria-live="assertive"]')!;
+    const live = host.querySelector('[aria-live="assertive"]')!.cloneNode(true) as Element;
+    // the word measurers' probes are laid out but never read
+    live.querySelectorAll('[data-testid="lk-fit-measure"]').forEach((m) => m.remove());
     expect(live.textContent).toBe('Too many triesWait a moment.');
     expect(host.textContent).toContain('Try again in 0:42');
     unmount();

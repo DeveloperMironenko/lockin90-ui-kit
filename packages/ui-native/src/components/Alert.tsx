@@ -3,6 +3,7 @@ import { AccessibilityInfo, Platform, View, Text, Pressable, StyleSheet, type Te
 import Svg, { Path, Circle } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { useContrastColors } from '../internal/useHighContrast';
+import { FitText } from './FitText';
 
 export type AlertTone = 'info' | 'success' | 'warn' | 'danger' | 'neutral' | 'cyan' | 'violet';
 
@@ -34,6 +35,10 @@ export interface AlertProps extends Omit<ViewProps, 'children'> {
    *  error usually mounts in answer to an action (a failed submit); a `warn` note present when the screen
    *  opens isn't read out on top of the screen. (Android's live region and web's role do their own.) */
   announceOnMount?: boolean;
+  /** A rich text body's plain words (an i18n `Trans` inside a `Text`), so a word too wide for the body
+   *  shrinks the text instead of splitting (FitText). Plain strings and nested `Text` are measured
+   *  without it. */
+  measureText?: string;
 }
 
 export type AlertTitleLevel = 'p' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
@@ -133,6 +138,7 @@ export function Alert({
   live = true,
   footer,
   announceOnMount,
+  measureText,
   style,
   ...rest
 }: AlertProps) {
@@ -175,12 +181,12 @@ export function Alert({
       <View style={styles.body}>
         <View {...(footer == null ? {} : liveProps)}>
           {title != null && (
-            <Text style={styles.title} accessibilityRole={titleAs === 'p' ? undefined : 'header'}>
+            <FitText style={styles.title} accessibilityRole={titleAs === 'p' ? undefined : 'header'}>
               {title}
-            </Text>
+            </FitText>
           )}
           {children != null && (isText(children)
-            ? <Text style={[styles.text, { color: c.textDim }, note?.text, note && title == null && styles.textAlone]}>{children}</Text>
+            ? <FitText measureText={measureText} style={[styles.text, { color: c.textDim }, note?.text, note && title == null && styles.textAlone]}>{children}</FitText>
             : children)}
         </View>
         {footer != null ? <View style={styles.footer}>{typeof footer === 'string' ? <Text style={styles.text}>{footer}</Text> : footer}</View> : null}

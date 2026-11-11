@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, useWindowDimensions, type StyleProp, type ViewStyle, type ViewProps } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { colors, fonts, radii } from '@lockin90/tokens';
+import { FitText } from './FitText';
 
 export type PasswordStrengthScore = 0 | 1 | 2 | 3 | 4;
 
@@ -118,11 +119,12 @@ export function PasswordStrengthMeter({
         ) : (
           level
         )}
-        {hint != null && <Text style={styles.hint}>{hint}</Text>}
+        {hint != null && <FitText style={styles.hint}>{hint}</FitText>}
       </View>
       {rules?.length ? (
         <View style={styles.rules}>
-          {pairs(rules).map((pair) => (
+          {/* two columns; one above text size 1.35, where half the width leaves a word per line */}
+          {pairs(rules, fontScale > LARGE_TEXT ? 1 : 2).map((pair) => (
             <View key={pair[0].id} style={styles.rulesRow}>
               {pair.map((rule) => (
                 <View
@@ -138,10 +140,10 @@ export function PasswordStrengthMeter({
                       </Svg>
                     ) : null}
                   </View>
-                  <Text style={[styles.ruleText, rule.met && styles.ruleTextMet]}>{rule.label}</Text>
+                  <FitText style={[styles.ruleText, rule.met && styles.ruleTextMet]}>{rule.label}</FitText>
                 </View>
               ))}
-              {pair.length === 1 ? <View style={styles.cell} /> : null}
+              {pair.length === 1 && fontScale <= LARGE_TEXT ? <View style={styles.cell} /> : null}
             </View>
           ))}
         </View>
@@ -150,12 +152,15 @@ export function PasswordStrengthMeter({
   );
 }
 
-// the rules two by two (an odd last rule gets an empty cell beside it, so it keeps its column's width)
-function pairs<T>(items: T[]): T[][] {
+// the rules `n` by `n` (two: an odd last rule gets an empty cell beside it, so it keeps its column's width)
+function pairs<T>(items: T[], n: number): T[][] {
   const rows: T[][] = [];
-  for (let i = 0; i < items.length; i += 2) rows.push(items.slice(i, i + 2));
+  for (let i = 0; i < items.length; i += n) rows.push(items.slice(i, i + n));
   return rows;
 }
+
+/** Above this OS text scale the rules are one column (as ListRow's and SegmentedTabs' large-text rule). */
+const LARGE_TEXT = 1.35;
 
 const styles = StyleSheet.create({
   root: { width: '100%', gap: 8 },

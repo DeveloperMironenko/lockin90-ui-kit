@@ -135,3 +135,9 @@ It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parit
 
 - **Fill:** `--card` / `colors.card` (`rgba(22,24,32,.79)`) instead of `--glass`: the same `#13151D` on the plain page, but the aurora behind no longer lifts dim or faint text below 4.5:1 (CONVENTIONS ratios). The tones mix into it (warn 7%, danger 4%); native `blur` keeps the frost behind the same fill.
 - **Narrow phone:** `padLg` / `pad="lg"` (30) drops to 16 at ≤ `--bp-narrow` (360) on web and when the window is ≤ `breakpoints.narrow` on native (`useWindowDimensions`), so an 8-box CodeInput (8 × 24 + 7 × 8 = 248) fits a 320 screen inside an AuthCard.
+
+## Update — 2026-11-11 (large text, 1.35)
+
+- **Native:** above text size 1.35 every padding but `none` is 16 (as `padLg` at a narrow phone): the room
+  goes to the text, whose long words would otherwise have to shrink further. Web: browser text sizes don't
+  change the padding (no change).

@@ -109,3 +109,7 @@ No capability gap blocks use — the overline is visually equivalent on both pla
 ## Update — 2026-11-10 (simulator check, 1.35)
 
 - **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more`): faint / dim text and the edge step up.
+
+## Update — 2026-11-11 (no word split, 1.35)
+
+- **Native:** renders a `FitText`: a word wider than its room shrinks until it fits, down to 50 %.

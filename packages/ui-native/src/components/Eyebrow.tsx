@@ -1,6 +1,7 @@
-import { Text, StyleSheet, type TextProps } from 'react-native';
+import { StyleSheet, type TextProps } from 'react-native';
 import { colors, fonts } from '@lockin90/tokens';
 import { useContrastColors } from '../internal/useHighContrast';
+import { FitText } from './FitText';
 
 export type EyebrowProps = TextProps;
 
@@ -10,7 +11,8 @@ export type EyebrowProps = TextProps;
 export function Eyebrow({ style, ...rest }: EyebrowProps) {
   // Increase Contrast steps the faint label up
   const c = useContrastColors();
-  return <Text style={[styles.eyebrow, { color: c.textFaint }, style]} {...rest} />;
+  // a word wider than its room shrinks to fit, never splits
+  return <FitText style={[styles.eyebrow, { color: c.textFaint }, style]} {...rest} />;
 }
 
 const styles = StyleSheet.create({

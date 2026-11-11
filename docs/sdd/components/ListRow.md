@@ -151,3 +151,11 @@ There is **no capability gap** — both render the same row.
 - **Large text stacks too (native):** a `pref` / `action` row also puts its control under the text when the OS text scale is over 1.35 (`useWindowDimensions().fontScale`), whatever its width (a 350 row at the largest size left the text 20 wide). Web: the container query is in em (`18.75em`, 300px at 16px text), so a larger browser text size stacks it sooner.
 - **A plain row's title wraps** (native had `numberOfLines={1}`: "Data sour…" at the largest size). The subtitle of a plain row stays one line.
 - **Increase Contrast** steps the subtitle up (`useContrastColors`).
+
+## Update — 2026-11-11 (no word split, 1.35)
+
+- **A word never splits (web + native):** a wrapping title or subtitle ("Run onboarding again" at AX sizes:
+  "onboardin/g") shrinks until its widest word fits the row, down to 50 % (native `FitText`; web
+  `useWordFit` on `.lk-listrow-title` / `.lk-listrow-subtitle`). One-line rows are unchanged.
+- **Native, large text:** a plain row's subtitle (one line, as drawn) wraps above text size 1.35 instead of
+  being cut with an ellipsis ("Physiology,…" on Account at AX3).

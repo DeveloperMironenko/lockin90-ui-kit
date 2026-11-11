@@ -3,8 +3,8 @@ import { View, Text, Pressable, StyleSheet, useWindowDimensions } from 'react-na
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
 import { hapticSelection } from "../internal/optionalHaptics";
+import { SLACK, WordMeasurer, wordFitScale, type Probe } from '../internal/wordFit';
 import { Icon, type IconName } from './Icon';
-import { absoluteFill } from '../internal/absoluteFill';
 
 /**
  * Per-segment tone — mirrors the web `SegmentedTone`. Two families:
@@ -85,9 +85,10 @@ const INK_ON_GRADIENT = '#07080D';
 const LARGE_TEXT = 1.35;
 /** `fill` labels shrink to fit their segment down to this scale before wrapping (web `MIN_FIT`). */
 const FILL_MIN_SCALE = 0.8;
-/** Room kept beside a measured width, so rounding never pushes the last letter onto a new line. */
-const SLACK = 1;
 const LABEL_SIZE = 11;
+/** A segment's side padding: the pill's (6, `fill` 4) plus the 2 it is inset. */
+const PAD_X = 8;
+const FILL_PAD_X = 6;
 const FILL_LABEL_SIZE = 12.5;
 
 /** A label's words (none for an empty or space-only label). */
@@ -143,12 +144,7 @@ const STACK_MIN_SCALE = 0.5;
 
 /** Stacked segments: each label's scale so its widest word fits its room (labels wrap between words). */
 export function stackedScales(widths: readonly LabelWidths[], rooms: readonly number[]): number[] {
-  return widths.map(({ words }, i) => {
-    const widest = Math.max(0, ...words);
-    const room = (rooms[i] ?? 0) - SLACK;
-    if (!widest || widest <= room) return 1;
-    return Math.max(STACK_MIN_SCALE, Math.floor((100 * room) / widest) / 100);
-  });
+  return widths.map(({ words }, i) => wordFitScale(Math.max(0, ...words), rooms[i] ?? 0, STACK_MIN_SCALE));
 }
 
 export interface SegmentedTabsProps {
@@ -292,7 +288,7 @@ export function SegmentedTabs({
     const roomsIn = (segW: number) =>
       items.map((t, i) => {
         const colorTone = t.tone != null && COLOR_TONES.has(t.tone);
-        let room = segW - 2 * (fill ? 4 : 6) - (isTint || colorTone ? 2 : 0);
+        let room = segW - 2 * (fill ? FILL_PAD_X : PAD_X) - (isTint || colorTone ? 2 : 0);
         if (t.tone != null && !colorTone) room -= 6 + gap;
         if (t.icon != null) room -= 13 + gap;
         if (t.count != null) room -= widths[`c${i}`]! + 12 + gap;
@@ -303,14 +299,14 @@ export function SegmentedTabs({
       full: widths[`f${i}`]!,
       words: wordsOf(t.label).map((_, k) => widths[`w${i}.${k}`]!),
     }));
-    // the row: the track (1 border + 4 padding each side, 4 between segments) shared equally
+    // the row: the track (1 border + 2 padding each side, segments edge to edge) shared equally
     if (!large) {
-      fit = segmentFit(measures, roomsIn((trackW - 2 * 1 - 2 * 4 - 4 * (n - 1)) / n), Math.max(0, widths.sp2! - widths.sp0!), fill ? FILL_MIN_SCALE : 1);
+      fit = segmentFit(measures, roomsIn((trackW - 2 * 1 - 2 * 2) / n), Math.max(0, widths.sp2! - widths.sp0!), fill ? FILL_MIN_SCALE : 1);
       stacked = fit.stacked;
     }
     // stacked: each segment the track's whole inner width; labels wrap between words, and a word wider
     // than that (a narrow column at a large text size) shrinks to fit (down to STACK_MIN_SCALE)
-    if (stacked) fit = { stacked: true, scales: stackedScales(measures, roomsIn(trackW - 2 * 1 - 2 * 4)) };
+    if (stacked) fit = { stacked: true, scales: stackedScales(measures, roomsIn(trackW - 2 * 1 - 2 * 2)) };
   }
   const pending = measuring && !ready;
   const baseSize = fill ? FILL_LABEL_SIZE : LABEL_SIZE;
@@ -370,27 +366,38 @@ export function SegmentedTabs({
             accessibilityState={choice ? { checked: isActive, disabled: isLocked } : { selected: isActive, disabled: isLocked }}
             disabled={isLocked}
             onPress={isLocked ? undefined : () => { hapticSelection(); onChange?.(i); }}
+            // the row's segments are the track's height less its edge (42): the target reaches 44
+            hitSlop={!isSm && !stacked ? { top: 1, bottom: 1 } : undefined}
             style={({ pressed }) => [
               styles.tab,
+              !isSm && !stacked && styles.tabRow,
               stacked && styles.tabStacked,
               isSm && styles.tabSm,
               isTint && styles.tabTint,
               fill && styles.tabFill,
-              // color-tone tabs always carry a transparent hairline so the
-              // active border doesn't shift layout (same trick as tabTint)
-              isColorTone && styles.tabColorTone,
-              // a color-toned ACTIVE segment paints the tone@16% fill +
-              // tone@50% border INSTEAD of the raised glass pill
-              isActive && tone === 'accent' && !isColorTone &&
-                (isTint ? styles.tabActiveTint : styles.tabActive),
-              isActive && !isGradActive && isColorTone && {
-                backgroundColor: TONE_TINT[itemTone!],
-                borderColor: TONE_BORDER[itemTone as SegmentedColorTone],
-              },
               pressed && !isActive && !isLocked && styles.tabPressed,
               isLocked && styles.tabLocked,
             ]}
           >
+            {/* the pill: drawn inset in the segment (the segment itself is the whole target) */}
+            <View
+              pointerEvents="none"
+              style={[
+                styles.pill,
+                isSm ? styles.pillSm : stacked ? styles.pillStacked : styles.pillRow,
+                // color-tone and tint segments always carry a hairline, so the active one's border
+                // doesn't change the pill's size
+                (isTint || isColorTone) && styles.pillHairline,
+                // a color-toned ACTIVE segment paints the tone@16% fill + tone@50% border INSTEAD of
+                // the raised glass pill
+                isActive && tone === 'accent' && !isColorTone &&
+                  (isTint ? styles.tabActiveTint : styles.tabActive),
+                isActive && !isGradActive && isColorTone && {
+                  backgroundColor: TONE_TINT[itemTone!],
+                  borderColor: TONE_BORDER[itemTone as SegmentedColorTone],
+                },
+              ]}
+            />
             {isGradActive && (
               <LinearGradient
                 colors={
@@ -401,7 +408,11 @@ export function SegmentedTabs({
                 }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                style={[styles.tabActiveFill, stacked && styles.tabStacked, tone === 'mint' ? styles.glowMint : styles.glowCta]}
+                style={[
+                  styles.pill,
+                  isSm ? styles.pillSm : stacked ? styles.pillStacked : styles.pillRow,
+                  tone === 'mint' ? styles.glowMint : styles.glowCta,
+                ]}
               />
             )}
             {toneColor != null && !isColorTone && (
@@ -439,30 +450,17 @@ export function SegmentedTabs({
         );
       })}
       {measuring && (
-        <View
+        <WordMeasurer
           testID="lk-seg-measure"
-          pointerEvents="none"
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
-          style={styles.measure}
-        >
-          {probes.map((p) => (
-            <Text
-              key={`${measureKey}:${p.id}`}
-              ref={(el) => {
-                probeRefs.current[p.id] = el;
-              }}
-              numberOfLines={1}
-              accessible={false}
-              accessibilityElementsHidden
-              importantForAccessibility="no"
-              onLayout={(e) => record(p.id, e.nativeEvent.layout.width)}
-              style={p.count ? [styles.countText, isTint && styles.countTextTint] : [styles.label, fill && styles.labelFill]}
-            >
-              {p.text}
-            </Text>
-          ))}
-        </View>
+          probes={probes.map((p): Probe => ({
+            id: p.id,
+            text: p.text,
+            style: p.count ? [styles.countText, isTint && styles.countTextTint] : [styles.label, fill && styles.labelFill],
+          }))}
+          record={record}
+          refs={probeRefs}
+          keyPrefix={measureKey}
+        />
       )}
     </View>
   );
@@ -483,10 +481,13 @@ const TINT_ACTIVE = {
 };
 
 const styles = StyleSheet.create({
+  // md: the track is a field's height (44 with its edge: inline with an Input, owner 2026-11-11), its
+  // segments edge to edge and the track's whole height (each a 44pt target with the edge), the pill
+  // drawn 4 in from the top and bottom and 2 from each side (4 at the ends and between pills)
   track: {
     flexDirection: 'row',
-    gap: 4,
-    padding: 4,
+    minHeight: 44,
+    paddingHorizontal: 2,
     borderRadius: radii.pill,
     backgroundColor: colors.bg1,
     borderWidth: 1,
@@ -496,6 +497,7 @@ const styles = StyleSheet.create({
   // `--border` hairline, glass fill
   trackSm: {
     alignSelf: 'flex-start',
+    minHeight: 0,
     gap: 2,
     padding: 3,
     backgroundColor: colors.glass,
@@ -510,36 +512,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 4,
     paddingVertical: 8,
-    paddingHorizontal: 6,
+    paddingHorizontal: PAD_X,
     borderRadius: radii.pill,
     backgroundColor: 'transparent',
   },
-  // fill — web `.lk-seg--fill` at phone width: padding 8 / 4
+  // in the row: the track's height less its edge
+  tabRow: { minHeight: 42 },
+  // fill — web `.lk-seg--fill` at phone width: padding 8 / 4 inside the pill
   tabFill: {
-    paddingHorizontal: 4,
+    paddingHorizontal: FILL_PAD_X,
   },
+  pill: { position: 'absolute', borderRadius: radii.pill, backgroundColor: 'transparent' },
+  pillRow: { top: 4, bottom: 4, left: 2, right: 2 },
+  // stacked: 2 in all round (4 between pills and at the track's edge)
+  pillStacked: { top: 2, bottom: 2, left: 2, right: 2, borderRadius: radii.sm },
+  pillSm: { top: 0, bottom: 0, left: 0, right: 0 },
+  pillHairline: { borderWidth: 1, borderColor: 'transparent' },
   trackInvalid: {
     borderColor: colors.zoneLow,
   },
   // a label that can't fit: the segments stack, each the full width (labels wrap, never cut)
   // stacked, the track is a tall box: a container's corners (radii.md), its segments a control's
   // (radii.sm, 16 − the 4 padding ≈ 10), never the pill that turns a tall box into a stadium
-  trackStacked: { flexDirection: 'column', alignItems: 'stretch', borderRadius: radii.md },
+  trackStacked: { flexDirection: 'column', alignItems: 'stretch', borderRadius: radii.md, padding: 2 },
   tabStacked: { flex: 0, borderRadius: radii.sm },
   // until the labels are measured the row is laid out but not shown (no visible jump to a stacked layout)
   pending: { opacity: 0 },
   shown: { opacity: 1 },
-  // the measurer: one unconstrained line per probe, laid out but never seen or read
-  measure: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    width: 10000,
-    height: 0,
-    overflow: 'hidden',
-    opacity: 0,
-    alignItems: 'flex-start',
-  },
   // sm segments hug their label (design `.seg button`: padding 5px 11px)
   tabSm: {
     flex: 0,
@@ -551,20 +550,11 @@ const styles = StyleSheet.create({
   trackTint: { backgroundColor: colors.glass },
   tabTint: {
     gap: 5,
-    paddingVertical: 7,
-    borderWidth: 1,
-    borderColor: 'transparent',
   },
   // design `.svc-btn[aria-pressed="true"]` — accent tint + accent border, no shadow
   tabActiveTint: {
     backgroundColor: TINT_ACTIVE.bg,
     borderColor: TINT_ACTIVE.border,
-  },
-  // color-tone segments (design `.sg`) — reserve the 1px active border so
-  // activation doesn't shift layout; active fill/border are inline per tone
-  tabColorTone: {
-    borderWidth: 1,
-    borderColor: 'transparent',
   },
   // design `.svc-count`: mono 8.5, padding 1×5, glass-2 + `--border` hairline
   countTint: {
@@ -590,10 +580,6 @@ const styles = StyleSheet.create({
   // gradient-tone active segment: a gradient fill (the LinearGradient is
   // absolutely positioned behind the label) + glow, mirroring web
   // `[data-tone='mint'|'gradient'] .is-active`. The label paints dark-on-bright.
-  tabActiveFill: {
-    ...absoluteFill,
-    borderRadius: radii.pill,
-  },
   glowMint: { ...nativeShadows.glowMint },
   // design `.seg button[aria-pressed="true"]`: 0 0 14px rgba(124,92,255,.4)
   glowCta: { boxShadow: '0 0 14px rgba(124,92,255,0.4)' },

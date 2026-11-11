@@ -246,6 +246,22 @@
     padding: var(--space-2) var(--space-1);
     font-size: 12.5px;
   }
+  /* a form choice sits inline with a field (owner, 2026-11-11), as native: the track is the field's 44px,
+     its segments edge to edge and the track's whole height (each a 44px target with the track's edge);
+     the pill is drawn 4px in from the top and bottom and 2px from each side by a transparent border with
+     the fill clipped to the padding box */
+  .lk-seg.lk-seg--fill:not(.lk-seg--rows):not([data-appearance='tint']) {
+    min-height: 44px;
+    padding: 0 2px;
+    gap: 0;
+  }
+  .lk-seg.lk-seg--fill:not(.lk-seg--rows):not([data-appearance='tint']) .lk-seg-tab {
+    min-height: 42px;
+    padding: var(--space-1);
+    border: solid transparent;
+    border-width: 4px 2px;
+    background-clip: padding-box;
+  }
 }
 
 /* invalid — a required choice not made: the line in --zone-low, as an invalid Input */

@@ -98,6 +98,10 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
   16px / 16pt (no iOS zoom on web), with the box height kept by their padding and line height.
 - **Over the aurora:** a card's fill is `--card` (79% opaque: the old glass colour on the page, but the
   aurora behind can't lift its text below 4.5:1); a field's fill is the opaque `--field`.
+- **No word splits:** lines wrap between words only. A text that can hold a long word (any translation in
+  a narrow box, any title at a large text size) is a native `FitText` (or measured by the shared
+  `internal/wordFit.tsx` measurer, as SegmentedTabs and Select), which shrinks it until its widest word
+  fits; web primitives use `useWordFit`. Never `numberOfLines` + `adjustsFontSizeToFit` on wrapping text.
 - **No meaningful text under 11px** (chips, badges, eyebrows, labels, counts).
 - **Narrow breakpoint:** `--bp-narrow` / `breakpoints.narrow` = 360 (max-width), alongside phone (540) and tablet (980); a large-padded Card tightens to 16 there.
 - **44 at phone width (web) = 44 on native:** at ≤ 540px every Button (not `text`), SsoButton, Input,

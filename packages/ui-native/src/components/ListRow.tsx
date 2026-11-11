@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, useWindowDimensions, type ViewProps 
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { hapticSelection } from "../internal/optionalHaptics";
 import { useContrastColors } from '../internal/useHighContrast';
+import { FitText } from './FitText';
 
 export interface ListRowProps extends ViewProps {
   /** Leading slot — an icon, avatar, badge, or letter chip. */
@@ -47,9 +48,14 @@ export interface ListRowProps extends ViewProps {
 /** Title/subtitle helpers: render strings as <Text>, pass nodes through. */
 function asText(node: ReactNode, textStyle: object, oneLine = true): ReactNode {
   return typeof node === 'string' || typeof node === 'number' ? (
-    <Text style={textStyle} numberOfLines={oneLine ? 1 : undefined}>
-      {node}
-    </Text>
+    oneLine ? (
+      <Text style={textStyle} numberOfLines={1}>
+        {node}
+      </Text>
+    ) : (
+      // wraps between words; a word wider than the row shrinks to fit, never splits
+      <FitText style={textStyle}>{node}</FitText>
+    )
   ) : (
     node
   );
@@ -110,7 +116,8 @@ export function ListRow({
           asText(
             subtitle,
             [styles.subtitle, { color: c.textDim }, boxed && styles.subtitleBoxed, variant && styles.subtitleSetting],
-            !wraps,
+            // one line on a plain row, as drawn; at a large text size it wraps (one line cut it: "Physiolo…")
+            !wraps && fontScale <= LARGE_TEXT,
           )}
       </View>
       {trailing != null && <View style={[styles.trailing, stacked && styles.trailingStacked]}>{trailing}</View>}

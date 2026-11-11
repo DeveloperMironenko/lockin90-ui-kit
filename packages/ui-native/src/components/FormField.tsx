@@ -14,6 +14,7 @@ import Svg, { Circle, Line } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { useContrastColors } from '../internal/useHighContrast';
 import { Icon } from './Icon';
+import { FitText } from './FitText';
 
 export interface FormFieldProps extends ViewProps {
   /** small mono uppercase label rendered above the control */
@@ -81,11 +82,12 @@ export function FormField({
       {label || labelAction ? (
         <View style={styles.labelRow}>
           {label ? (
-            <Text style={[styles.fieldLabel, { color: c.textDim }]}>
+            // a word wider than the field (a half-width column at a large text size) shrinks, never splits
+            <FitText style={[styles.fieldLabel, { color: c.textDim }]}>
               {label.toUpperCase()}
               {/* a thin space, as the web's 3px gap (a full space read twice as wide) */}
               {required ? <Text style={styles.req}>{'\u2009*'}</Text> : null}
-            </Text>
+            </FitText>
           ) : null}
           {labelAction != null ? <View style={styles.labelAction}>{labelAction}</View> : null}
         </View>

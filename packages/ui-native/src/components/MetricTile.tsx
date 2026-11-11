@@ -2,6 +2,7 @@ import { type ReactNode } from 'react';
 import { View, Text, StyleSheet, type ViewProps, type DimensionValue } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients } from '@lockin90/tokens';
+import { FitText } from './FitText';
 
 /* ── MetricTile ──────────────────────────────────────────────────────────── */
 
@@ -76,12 +77,12 @@ export function MetricTile({
 }: MetricTileProps) {
   const sm = size === 'sm';
   const labelStyle = [styles.label, sm && styles.labelSm];
-  // an sm label stays on one line, cut with an ellipsis when it doesn't fit (owner, 2026-11-10)
+  // label and value wrap between words; a word wider than the tile shrinks to fit (FitText), never splits
   if (empty) {
     return (
       <View style={[styles.tile, sm && styles.tileSm, style]} {...rest}>
         <View style={styles.top}>
-          <Text style={labelStyle}>{label}</Text>
+          <FitText style={labelStyle}>{label}</FitText>
           {icon != null && <View style={styles.icon}>{icon}</View>}
         </View>
         <View style={styles.body}>
@@ -95,15 +96,13 @@ export function MetricTile({
   return (
     <View style={[styles.tile, sm && styles.tileSm, style]} {...rest}>
       <View style={styles.top}>
-        <Text style={labelStyle}>{label}</Text>
+        <FitText style={labelStyle}>{label}</FitText>
         {icon != null && <View style={styles.icon}>{icon}</View>}
       </View>
       <View style={styles.body}>
-        <Text
-          style={[styles.value, sm && styles.valueSm, sm && textValue && styles.valueWord]}
-        >
+        <FitText style={[styles.value, sm && styles.valueSm, sm && textValue && styles.valueWord]}>
           {value}
-        </Text>
+        </FitText>
         {unit != null && <Text style={[styles.unit, sm && styles.unitSm]}>{unit}</Text>}
       </View>
       {delta != null && (

@@ -1,5 +1,6 @@
 import { type CSSProperties, type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
+import { useWordFit } from '../hooks/useWordFit';
 
 /* ── MetricTile ──────────────────────────────────────────────────────────── */
 
@@ -66,11 +67,14 @@ export function MetricTile({
   ...rest
 }: MetricTileProps) {
   const sized = size === 'sm' && 'lk-metric-sm';
+  // a word of the label or the value never splits: it shrinks to fit the tile (as native FitText)
+  const labelRef = useWordFit<HTMLSpanElement>(label);
+  const valueRef = useWordFit<HTMLSpanElement>(empty ? null : value);
   if (empty) {
     return (
       <div className={cn('lk-metric lk-metric-empty', sized, className)} {...rest}>
         <div className="lk-metric-top">
-          <span className="lk-metric-label">{label}</span>
+          <span ref={labelRef} className="lk-metric-label">{label}</span>
           {icon != null && <span className="lk-metric-icon">{icon}</span>}
         </div>
         <div className="lk-metric-body">
@@ -83,11 +87,11 @@ export function MetricTile({
   return (
     <div className={cn('lk-metric', sized, className)} {...rest}>
       <div className="lk-metric-top">
-        <span className="lk-metric-label">{label}</span>
+        <span ref={labelRef} className="lk-metric-label">{label}</span>
         {icon != null && <span className="lk-metric-icon">{icon}</span>}
       </div>
       <div className="lk-metric-body">
-        <span className={cn('lk-metric-value lk-tnum', textValue && 'lk-metric-word')}>{value}</span>
+        <span ref={valueRef} className={cn('lk-metric-value lk-tnum', textValue && 'lk-metric-word')}>{value}</span>
         {unit != null && <span className="lk-metric-unit">{unit}</span>}
       </div>
       {delta != null && (

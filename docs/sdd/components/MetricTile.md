@@ -175,3 +175,10 @@ shipping a native screen where the dots convey required state.
 - **Nothing is cut (web + native):** the `sm` label and a `textValue` word wrap inside the tile instead of one line with an ellipsis (Powerlifting, Пульс спокою, Макс. пульс, パワーリフティング were cut at 402). This replaces the earlier one-line rule. Web: `overflow-wrap: anywhere`, no `nowrap` / `text-overflow`. Native: no `numberOfLines` on the label or the word.
 - **11px at least:** the label (sm 10 → 11, md 10.5 → 11) and the hint (10.5 → 11), web and native.
 - **The unit wraps under the value** when the row doesn't fit ("205,9" + "фунт" in a 3-across `sm` tile at 402, uk/ru imperial): web `flex-wrap: wrap` (gap `0 4px`), native `flexWrap: 'wrap'` (`columnGap: 4`). When it fits, the row is the same baseline line as before.
+
+## Update — 2026-11-11 (no word split, 1.35)
+
+- **A word never splits (web + native):** the label and the value are measured: a word wider than the tile
+  ("Нейтральный" at 3 across in ru / uk, even at the default text size) shrinks the text until it fits,
+  down to 50 % (native `FitText`; web `useWordFit` on `.lk-metric-label` and `.lk-metric-value`), and wraps
+  only between words. `overflow-wrap: anywhere` stays as the last resort below 50 %.
