@@ -136,3 +136,14 @@ No capability gap blocks use — the aura difference is platform-shaped motion, 
 ## Update — 2026-11-11 (owner: every corner 10)
 
 - **Every corner 10** (owner, 2026-11-11): a rounded square at every size, web `--r-sm`, native `radii.sm`; `shape` is deprecated and ignored (was a circle / 30 %).
+
+## Update — 2026-11-11 (owner: the audit batch, V1 / V16)
+
+- **Initials fallback (V16, web + native):** a `src` that fails to load (`onError`) shows the monogram, never the
+  browser's broken-image icon or an empty tile; a new `src` is tried again.
+- **A thin control edge on a photo (owner):** `--border-control` / `colors.borderControl`, 1px, inside the tile
+  (web `.lk-avatar--photo::after`, native an overlay View), so a dark or light photo keeps its shape.
+- **Native initials always in the display font (V1):** no `adjustsFontSizeToFit` (on iOS's new architecture a
+  shrunk-to-fit Text lost its family and drew in a serif fallback — at ~137pt on the profile picture). The size
+  is 38% of the box, growing with the OS text size up to half the box, so two initials always fit; scaling
+  stays on.

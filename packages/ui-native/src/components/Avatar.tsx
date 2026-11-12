@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { View, Text, Image, Animated, Easing, StyleSheet, type ViewProps } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { View, Text, Image, Animated, Easing, StyleSheet, useWindowDimensions, type ViewProps } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, fonts, gradients, nativeShadows, radii } from '@lockin90/tokens';
 import { absoluteFill } from '../internal/absoluteFill';
@@ -10,7 +10,8 @@ export interface AvatarProps extends ViewProps {
   name?: string;
   /** Explicit monogram initials; overrides the value derived from `name`. */
   initials?: string;
-  /** Image URL. When present, an `<Image>` is rendered instead of the monogram. */
+  /** Image URL. When present, an `<Image>` is rendered instead of the monogram; when it fails to load,
+   *  the monogram shows instead (V16). */
   src?: string;
   /** Pixel size of the square avatar. @default 44 */
   size?: number;
@@ -67,6 +68,15 @@ export function Avatar({
   // a rounded square at every size, both shapes: every corner is 10 (owner, 2026-11-11)
   const radius = radii.sm;
   const box = { width: size, height: size, borderRadius: radius };
+  // a photo that fails to load falls back to the monogram (V16); a new src tries again
+  const [failed, setFailed] = useState<string | null>(null);
+  const photo = src && failed !== src ? src : undefined;
+  // The initials' size follows the box: 38% of it, growing with the OS text size up to half the box (they
+  // always fit, scaling stays on). Never adjustsFontSizeToFit: on iOS's new architecture a shrunk-to-fit
+  // Text lost its font family and drew in the serif fallback (V1).
+  const { fontScale } = useWindowDimensions();
+  const scale = fontScale > 0 ? fontScale : 1;
+  const initialsSize = Math.min(size * 0.38 * scale, size * 0.5) / scale;
 
   if (variant === 'aura') {
     return <AuraOrb size={size} radius={radius} name={name} style={style} {...rest} />;
@@ -80,8 +90,12 @@ export function Avatar({
 
   return (
     <View style={[styles.avatar, box, style]} {...hidden} {...rest}>
-      {src ? (
-        <Image source={{ uri: src }} style={styles.img} resizeMode="cover" />
+      {photo ? (
+        <>
+          <Image source={{ uri: photo }} style={styles.img} resizeMode="cover" onError={() => setFailed(photo)} />
+          {/* a thin control edge over the photo, so a dark or light photo still has a shape (owner) */}
+          <View style={[styles.photoEdge, { borderRadius: radius }]} pointerEvents="none" />
+        </>
       ) : (
         <LinearGradient
           colors={gradient as unknown as [string, string]}
@@ -89,14 +103,8 @@ export function Avatar({
           end={{ x: 1, y: 1 }}
           style={styles.mono}
         >
-          {/* sized from the circle; at a large text size it shrinks to fit the circle instead of being cut
-              (scaling stays on: no allowFontScaling / maxFontSizeMultiplier, CONVENTIONS) */}
-          <Text
-            style={[styles.monoText, { fontSize: Math.round(size * 0.38), maxWidth: size * 0.8, maxHeight: size * 0.8 }]}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.5}
-          >
+          {/* sized from the box and the text size (see initialsSize); the display font always */}
+          <Text style={[styles.monoText, { fontSize: initialsSize, lineHeight: Math.ceil(initialsSize * 1.15) }]} numberOfLines={1}>
             {initials ?? initialsFor(name ?? '')}
           </Text>
         </LinearGradient>
@@ -179,6 +187,7 @@ function AuraOrb({
 const styles = StyleSheet.create({
   avatar: { overflow: 'hidden' },
   img: { width: '100%', height: '100%' },
+  photoEdge: { ...absoluteFill, borderWidth: 1, borderColor: colors.borderControl },
   mono: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   monoText: { fontFamily: fonts.display, fontWeight: '700', color: colors.inkOnBright, letterSpacing: -0.3 },
   // backgroundColor anchors the glow's shape on iOS; it's fully hidden by the orb

@@ -6,10 +6,21 @@
    Mirrors the monogram treatment from .lk-pf-avatar / .lk-lb-av.
    ========================================================================== */
 .lk-avatar {
+  position: relative;
   display: inline-flex;
   flex: none;
   border-radius: var(--r-sm);
   overflow: hidden;
+}
+
+/* a thin control edge over a photo, so a dark or light photo still has a shape (owner, 2026-11-11) */
+.lk-avatar--photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--border-control);
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 .lk-avatar-img {
