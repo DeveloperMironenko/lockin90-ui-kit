@@ -53,7 +53,7 @@ describe('Alert footer', () => {
       </Alert>,
     );
     expect(out).toMatch(/^<div class="lk-alert[^"]*">/);
-    expect(out).toMatch(/<div role="alert"><p class="lk-alert-title">Too many tries<\/p><p class="lk-alert-text">Wait a moment.<\/p><\/div><div class="lk-alert-footer">Try again in 0:42<\/div>/);
+    expect(out).toMatch(/<div role="alert"><div class="lk-alert-words"[^>]*><p class="lk-alert-title">Too many tries<\/p><p class="lk-alert-text">Wait a moment.<\/p><\/div><\/div><div class="lk-alert-footer">Try again in 0:42<\/div>/);
   });
 
   it('live={false} has no live region', () => {
