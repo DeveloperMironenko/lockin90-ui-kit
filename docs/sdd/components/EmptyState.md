@@ -107,3 +107,7 @@ No capability gap — EmptyState renders identically on both platforms.
 - **New need → both platforms.** A new layout (e.g. an inline/left-aligned variant) or a secondary action must be added to `EmptyStateProps` on web **and** native with the same names/tokens.
 - **Tokens only.** Tile glass/border, accent glyph, display title, and dim description all come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping, confirm the web phone-width empty state and native match (same icon, title, description, action, compact-ness).
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The icon tile has IconTile's corners, `--r-sm` / `radii.sm` (10), both sizes (were 20 / 15).

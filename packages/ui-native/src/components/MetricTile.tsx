@@ -289,7 +289,8 @@ const styles = StyleSheet.create({
   },
   sparkFill: { height: '100%', borderRadius: 999 },
   /* size sm: the phone's settings readout (design mobile/account.html .fcell × 402/294) */
-  tileSm: { gap: 3, paddingVertical: 12, paddingHorizontal: PAD_X_SM, borderRadius: radii.md },
+  // a tile in a card: 16 less the card's padding is no radius, so a control's (CONVENTIONS "Corner radii")
+  tileSm: { gap: 3, paddingVertical: 12, paddingHorizontal: PAD_X_SM },
   labelSm: { fontSize: 11, fontWeight: '400', letterSpacing: 1 },
   valueSm: { fontWeight: '600', fontSize: 20, letterSpacing: -0.2 },
   valueWord: { fontSize: 15, letterSpacing: 0 },

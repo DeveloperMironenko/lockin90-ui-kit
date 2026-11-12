@@ -139,3 +139,7 @@ Both render the same pill with the same selected look — no capability gap.
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **Stacked label 11px** (was 10).
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- A control: `--r-sm` / `radii.sm` (10), the `stacked` cell too (was the pill / 16).

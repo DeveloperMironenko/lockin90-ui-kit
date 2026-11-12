@@ -200,3 +200,7 @@ No genuine (inherent) capability gap — `size="sm"` is buildable and now built 
 ## Update — 2026-11-11 (review fixes, 1.35)
 
 - **Native `sm` label line height 13** (was 11) so the 11 font never clips.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- Native Badge has the control's 10 (`radii.sm`, was the pill), as the web Badge (Chip `sm`).

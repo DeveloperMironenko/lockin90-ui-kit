@@ -87,14 +87,14 @@
   gap: 6px;
 }
 
-/* Trailing count badge — a small mono pill after the label. */
+/* Trailing count badge — a small mono badge after the label. */
 .lk-seg-count {
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
   padding: 2px 6px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-sm);
   background: var(--glass-2);
   color: var(--text-dim);
   transition: color .25s var(--ease), background .25s var(--ease);

@@ -367,7 +367,8 @@ const styles = StyleSheet.create({
     paddingBottom: 3,
     paddingLeft: 9,
     paddingRight: 6,
-    borderRadius: radii.pill,
+    // a chip's corners (CONVENTIONS "Corner radii")
+    borderRadius: radii.sm,
     borderWidth: 1,
     borderColor: 'rgba(34,211,238,0.3)',
     backgroundColor: 'rgba(34,211,238,0.1)',

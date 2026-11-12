@@ -77,7 +77,8 @@
   min-width: 160px;
   padding: 5px;
   border: 1px solid var(--border);
-  border-radius: var(--r-sm);
+  /* a container's corners; its items a control's (16 less the 5 padding and 1 edge) */
+  border-radius: var(--r);
   background: var(--bg-1, var(--glass-2));
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
   -webkit-backdrop-filter: blur(18px) saturate(130%);

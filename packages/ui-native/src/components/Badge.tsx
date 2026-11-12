@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
     minHeight: 16,
     paddingHorizontal: 6,
     paddingVertical: 1.5,
-    borderRadius: radii.pill,
+    // a control's corners, as the web Badge (Chip sm) (CONVENTIONS "Corner radii")
+    borderRadius: radii.sm,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'flex-start',

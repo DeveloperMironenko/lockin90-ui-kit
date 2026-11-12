@@ -123,7 +123,8 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radii.sm,
+    // a container's corners (CONVENTIONS "Corner radii")
+    borderRadius: radii.md,
     backgroundColor: colors.bg1,
     ...nativeShadows.elev2,
   },

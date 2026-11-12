@@ -750,7 +750,8 @@ const styles = StyleSheet.create({
   count: {
     paddingVertical: 2,
     paddingHorizontal: 6,
-    borderRadius: radii.pill,
+    // a badge's corners, as Badge
+    borderRadius: radii.sm,
   },
   countText: {
     fontFamily: fonts.mono,

@@ -236,3 +236,7 @@ The overlay differences are expected substrate, not capability gaps that block u
 - A focused field shows only its own edge: `--accent`, 2px (1px border + 1px inset shadow), on mouse and
   keyboard focus; no outer `--accent-2` ring, no glow (owner: "2 outlines"). Invalid: the same in `--zone-low`.
   Supersedes the ring / glow above; see CONVENTIONS "Focus (web)". Native was already edge-only.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The web dropdown panel is a container, `--r` (16, was 10), its options a control's 10 (was 6); the native list sheet's top corners are `radii.lg` (22, was 24).

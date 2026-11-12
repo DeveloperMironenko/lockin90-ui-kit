@@ -125,3 +125,7 @@ This file also documents **`CopyButton`** (lives in the same source file): a cop
 - **New need → both platforms.** A new `align`, a controlled `open`, or an arrow on native must be added to `PopoverProps` on web **and** native with the same name/tokens.
 - **Tokens only.** Trigger, panel, arrow, and CopyButton colors/radii all come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping, confirm the web phone-width popover and native popover match (same trigger, alignment, content) — accepting the documented arrow/frost differences.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The panel is a container, `--r` / `radii.md` (16, was 10); the round "?" trigger stays round (an icon circle).

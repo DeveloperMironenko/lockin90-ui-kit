@@ -146,7 +146,8 @@ const styles = StyleSheet.create({
     padding: 5,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radii.sm,
+    // a container's corners; its items a control's (16 less the 5 padding and 1 edge)
+    borderRadius: radii.md,
     backgroundColor: colors.bg1,
     ...nativeShadows.elev2,
   },

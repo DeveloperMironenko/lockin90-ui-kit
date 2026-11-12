@@ -87,12 +87,13 @@ const styles = StyleSheet.create({
     gap: 7,
     paddingVertical: 7,
     paddingHorizontal: 13,
-    borderRadius: radii.pill,
+    // a control's corners (CONVENTIONS "Corner radii"), stacked too
+    borderRadius: radii.sm,
     borderWidth: 1,
     alignSelf: 'flex-start',
   },
   chipSm: { paddingVertical: 5, paddingHorizontal: 10 },
-  // stacked grid cell — icon over label, rounded rect, fills the flex column.
+  // stacked grid cell — icon over label, the control's corners, fills the flex column.
   // alignItems:'center' overrides the base row alignment so the icon+label centre
   // horizontally; extra vertical padding keeps the top icon off the rounded edge.
   chipStacked: {
@@ -101,7 +102,6 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: 13,
     paddingHorizontal: 4,
-    borderRadius: radii.md,
     alignSelf: 'stretch',
     justifyContent: 'center',
   },

@@ -2,6 +2,7 @@ import { Fragment, type ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet, useWindowDimensions, type ViewProps } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
+import { innerRadius } from '../internal/radius';
 import { Icon } from './Icon';
 
 /* ============================================================================
@@ -368,7 +369,8 @@ const styles = StyleSheet.create({
     padding: 3,
     borderWidth: 1,
     borderColor: colors.border2,
-    borderRadius: radii.pill,
+    // a control's corners; its buttons 10 less their inset (1 edge + 3 padding)
+    borderRadius: radii.sm,
     backgroundColor: colors.glass2,
     alignSelf: 'flex-start',
   },
@@ -377,7 +379,7 @@ const styles = StyleSheet.create({
     height: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 15,
+    borderRadius: innerRadius(radii.sm, 4),
   },
   btnLabel: { fontFamily: fonts.display, fontSize: 18, fontWeight: '600', color: colors.textDim },
   btnLabelDisabled: { color: colors.textFaint, opacity: 0.35 },

@@ -122,8 +122,8 @@ export interface SearchInputProps extends Omit<TextInputProps, 'onChange' | 'val
   /** the clear button's name, in the app's language (CONVENTIONS "Accessibility": names via props).
    *  @default 'Clear search' (an English fallback for older apps) */
   clearLabel?: string;
-  /** shell shape — `'pill'` (default, standalone search) or `'sm'` (the standard
-   *  Input radius, for menus/sheets where the search sits among other fields). */
+  /** @deprecated 2026-11-11 (one radius for every control): ignored, every search field has the control
+   *  radius (10). Removed in the next major. */
   shape?: 'pill' | 'sm';
 }
 
@@ -134,7 +134,7 @@ export function SearchInput({
   placeholder = 'Search…',
   onClear,
   clearLabel = 'Clear search',
-  shape = 'pill',
+  shape: _shape,
   style,
   onFocus,
   onBlur,
@@ -153,7 +153,6 @@ export function SearchInput({
     <View
       style={[
         styles.search,
-        shape === 'sm' && styles.searchSm,
         { borderColor: focused ? colors.accent : c.borderControl },
       ]}
     >
@@ -269,12 +268,10 @@ const styles = StyleSheet.create({
     minWidth: 0,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: radii.pill,
+    // a control's corners, as every field (CONVENTIONS "Corner radii"; `shape="sm"` is the same now)
+    borderRadius: radii.sm,
     borderWidth: 1,
     backgroundColor: colors.field,
-  },
-  searchSm: {
-    borderRadius: radii.sm,
   },
   searchLead: { flexShrink: 0 },
   searchInput: {

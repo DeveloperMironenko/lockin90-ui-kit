@@ -142,3 +142,7 @@ No capability gap — the dialog is fully usable and visually equivalent on both
 ## Update — 2026-11-11 (review fixes, 1.35)
 
 - **Apple has its own classes** (`.lk-reauth-apple`, `.lk-reauth-apple-icon`), styled as Google's.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- Native Google / Apple buttons are controls, `radii.sm` (10, were the pill), as SsoButton.

@@ -153,3 +153,7 @@ No capability gap blocks use — the field is fully usable and visually equivale
 - A focused field shows only its own edge: `--accent`, 2px (1px border + 1px inset shadow), on mouse and
   keyboard focus; no outer `--accent-2` ring, no glow (owner: "2 outlines"). Invalid: the same in `--zone-low`.
   Supersedes the ring / glow above; see CONVENTIONS "Focus (web)". Native was already edge-only.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The `numeral` field has the control's 10 (was 9).

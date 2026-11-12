@@ -153,3 +153,7 @@ No capability gap blocks use — both render equivalent steppers.
   "Про…" / "Гот…" (CONVENTIONS "Accessibility": nothing cut off). The nodes grow with the text there
   (`max(40 | 30, number size × fontScale × 1.35)`, still circles), so the step number isn't clipped; the
   connectors sit under their centres. Normal sizes keep the one-line row and fixed nodes.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- NumberStepper's track is a control, `--r-sm` / `radii.sm` (10, was the pill); its buttons 10 less their inset (1 edge + 3 padding) = 6 (were circles). The step nodes stay round.

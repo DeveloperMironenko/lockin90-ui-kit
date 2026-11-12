@@ -9,7 +9,8 @@
   align-items: center;
   gap: 7px;
   padding: 7px 13px;
-  border-radius: var(--r-pill);
+  /* a control's corners (CONVENTIONS "Corner radii") */
+  border-radius: var(--r-sm);
   border: 1px solid var(--border);
   background: var(--glass);
   color: var(--text-dim);
@@ -49,13 +50,12 @@
   font-size: 12px;
 }
 
-/* stacked — icon-over-label grid cell (quick-action grids): rounded rect, centred,
+/* stacked — icon-over-label grid cell (quick-action grids): the same control corners, centred,
    fills its grid/flex cell. Mirrors the native ChoiceChip `stacked` variant. */
 .lk-choicechip-stacked {
   flex-direction: column;
   gap: 6px;
   padding: 11px 4px;
-  border-radius: var(--r-md);
   justify-content: center;
   text-align: center;
   font-family: var(--font-mono);

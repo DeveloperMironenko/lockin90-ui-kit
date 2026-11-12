@@ -53,7 +53,8 @@
   width: max-content;
   padding: 12px;
   border: 1px solid var(--border);
-  border-radius: var(--r-sm);
+  /* a container's corners (CONVENTIONS "Corner radii") */
+  border-radius: var(--r);
   background: var(--bg-1, var(--glass-2));
   box-shadow: 0 16px 44px rgba(0, 0, 0, 0.52);
   -webkit-backdrop-filter: blur(18px) saturate(130%);

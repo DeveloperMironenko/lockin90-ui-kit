@@ -141,3 +141,7 @@ No capability gap blocks use — the dialog is fully usable and visually equival
 - **Native:** the modal renders `TopLayerHost` (see `TopLayer.md`) as the last child of its window while `open`,
   so an app's `TopLayer` toast draws over the scrim and the card (an RN `Modal` is a native window the page
   can't draw over).
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The web close button is a control, `--r-sm` (10, was 16); the dialog stays `--r-lg` / `radii.lg` (22).

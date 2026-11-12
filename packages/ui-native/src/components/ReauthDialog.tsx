@@ -269,7 +269,8 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: radii.pill,
+    // a control's corners, as SsoButton (CONVENTIONS "Corner radii")
+    borderRadius: radii.sm,
     backgroundColor: colors.glass2,
     borderWidth: 1,
     borderColor: colors.border2,
@@ -288,7 +289,8 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: radii.pill,
+    // a control's corners, as SsoButton (CONVENTIONS "Corner radii")
+    borderRadius: radii.sm,
     backgroundColor: colors.glass2,
     borderWidth: 1,
     borderColor: colors.border2,

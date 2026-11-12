@@ -81,18 +81,14 @@
   gap: 8px;
   min-width: 0;
   padding: 8px 12px;
-  border-radius: var(--r-pill);
+  /* a control's corners, as every field (CONVENTIONS "Corner radii"; `shape="sm"` is the same now) */
+  border-radius: var(--r-sm);
   border: 1px solid var(--border-control);
   background: var(--field);
   color: var(--text);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-/* menu/sheet variant — the standard Input radius so an in-menu search matches
-   the surrounding fields instead of the standalone pill */
-.lk-search--sm {
-  border-radius: var(--r-sm);
-}
 .lk-search:focus-within {
   /* one focus indicator (owner, 2026-11-11: no ring around the border): the field's own edge in the
      accent, 2px (1px border + 1px inset, no layout shift; 3.4:1 on the field, 4.2:1 on the card) */

@@ -99,7 +99,7 @@
    `.strow .sv`): 20px bold display-font, centered, tabular-nums. The field +
    unit suffix hug the value as one centered group (content-hugging input)
    instead of the unit pinning to the field's far edge. */
-.lk-input-field.lk-input-numeral { justify-content: center; padding: 10px; border-radius: 9px; }
+.lk-input-field.lk-input-numeral { justify-content: center; padding: 10px; }
 .lk-input-numeral .lk-input {
   flex: none;
   width: auto;

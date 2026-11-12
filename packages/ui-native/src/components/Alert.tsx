@@ -221,7 +221,8 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     paddingBottom: 14,
     paddingLeft: 17,
-    borderRadius: radii.sm,
+    // a container's corners (CONVENTIONS "Corner radii")
+    borderRadius: radii.md,
     borderWidth: 1,
     overflow: 'hidden',
   },

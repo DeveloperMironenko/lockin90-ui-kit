@@ -359,8 +359,9 @@ const styles = StyleSheet.create({
   dismissArea: { flex: 1 },
   sheet: {
     backgroundColor: colors.bg1,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    // a big surface's corners, as Sheet (CONVENTIONS "Corner radii")
+    borderTopLeftRadius: radii.lg,
+    borderTopRightRadius: radii.lg,
     borderWidth: 1,
     borderColor: colors.border,
     paddingTop: 8,

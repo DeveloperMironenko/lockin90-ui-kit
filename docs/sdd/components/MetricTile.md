@@ -205,3 +205,6 @@ shipping a native screen where the dots convey required state.
 - `onMinWidth` stays (the narrowest width at the floor, now the lower one for a word value); the app no
   longer chooses its columns by it. Equal tile heights are the grid's (the app's) to set.
 
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The `sm` tile at phone width (web) and native `tileSm` is a control's 10 (was 16): it sits in a padded card, where 16 less the padding is no radius. The default tile stays 10.

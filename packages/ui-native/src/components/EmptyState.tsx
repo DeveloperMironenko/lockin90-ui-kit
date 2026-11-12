@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { View, Text, StyleSheet, type ViewProps } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { colors, fonts } from '@lockin90/tokens';
+import { colors, fonts, radii } from '@lockin90/tokens';
 
 export interface EmptyStateProps extends Omit<ViewProps, 'children'> {
   /** Illustration shown in the glass tile. Defaults to a faint star. */
@@ -64,7 +64,8 @@ const styles = StyleSheet.create({
   tile: {
     width: 64,
     height: 64,
-    borderRadius: 20,
+    // an icon tile's corners, as IconTile (CONVENTIONS "Corner radii")
+    borderRadius: radii.sm,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.glass2,
@@ -74,7 +75,6 @@ const styles = StyleSheet.create({
   tileCompact: {
     width: 48,
     height: 48,
-    borderRadius: 15,
   },
   title: {
     fontFamily: fonts.display,

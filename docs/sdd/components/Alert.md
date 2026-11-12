@@ -171,3 +171,7 @@ No capability gap — the alert is visually equivalent on both.
   ("обновлённым", "перераховує" at AX sizes) shrinks the text until it fits, never below the default text size or 11pt. A rich body
   (a `Text` with styled parts, i18n `Trans`) renders as given. Web: its words already overflow-wrap only when
   a single word is wider than the box (no change).
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The box is a container: `--r` / `radii.md` (16), web and native (was 10); the close button stays a control (10).

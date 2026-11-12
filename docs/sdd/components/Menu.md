@@ -146,3 +146,7 @@ No capability gap blocks use — the menu is fully usable and visually equivalen
 ## Update — 2026-11-11 (review fixes, 1.35)
 
 - **Tab inside the open menu** closes it and puts focus back on the trigger (the panel is portaled to `<body>`, so Tab would have landed after it). **Enter / Space on the trigger of an open menu** close it; the arrows go into it. A mouse open never moves focus (the keyboard request is reset when the menu closes).
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The panel is a container, `--r` / `radii.md` (16, was 10); items keep the control's 10 (16 less the 5 padding and 1 edge); the bare trigger stays round (it wraps an avatar).

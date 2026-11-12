@@ -58,7 +58,7 @@
   height: 30px;
   margin: -4px -4px -4px 0;
   border: 0;
-  border-radius: var(--r);
+  border-radius: var(--r-sm);
   background: transparent;
   color: var(--text-faint);
   cursor: pointer;

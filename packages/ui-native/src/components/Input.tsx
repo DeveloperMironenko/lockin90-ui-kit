@@ -126,8 +126,8 @@ const styles = StyleSheet.create({
   // at least 44 tall (all sizes), as the web field at phone width (CONVENTIONS "Accessibility")
   fieldSm: { minHeight: 44, paddingVertical: 5, paddingHorizontal: 10 },
   // design `.strow .sv` — glass-2 fill (already the field default), border-2
-  // (already default), 9px radius, roomier centered padding.
-  fieldNumeral: { minHeight: 44, justifyContent: 'center', paddingVertical: 10, paddingHorizontal: 10, borderRadius: 9 },
+  // (already default), the control radius, roomier centered padding.
+  fieldNumeral: { minHeight: 44, justifyContent: 'center', paddingVertical: 10, paddingHorizontal: 10 },
   lead: { flexShrink: 0 },
   input: {
     flex: 1,
