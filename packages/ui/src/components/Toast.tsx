@@ -34,8 +34,8 @@ export interface ToastProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   duration?: number;
   /** the countdown reached 0: do what the action could undo */
   onTimeout?: () => void;
-  /** @deprecated 2026-11-11 (owner: the solid fill "ruins the style"): ignored, every toast is the glass
-   *  card. Removed in the next major. */
+  /** @deprecated 2026-11-11 (owner: the solid fill "ruins the style"): ignored, every toast is the card's
+   *  surface. Removed in the next major. */
   filled?: boolean;
 }
 
@@ -107,7 +107,7 @@ function useCountdown(total: number, held: boolean, onEnd?: () => void) {
   return left;
 }
 
-/** Compact floating notification: the dark glass card (solid under reduced transparency) with the tone's
+/** Compact floating notification: the card's surface, opaque (`--card-solid`) with the tone's
  *  edge and a soft shadow, the tone icon in a small circle, the message in white, an optional filled
  *  action ("Undo") with a seconds ring, and ×. Fades in with a small slide (a fade under reduced motion). */
 export const Toast = forwardRef<HTMLDivElement, ToastProps>(function Toast(

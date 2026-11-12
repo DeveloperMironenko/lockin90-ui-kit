@@ -4,9 +4,7 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, gradients, radii, fonts, nativeShadows } from '@lockin90/tokens';
 import { Icon, type IconName } from './Icon';
-import { OptionalBlurView } from '../internal/optionalBlur';
 import { useReducedMotion } from '../internal/useReducedMotion';
-import { useReduceTransparency } from '../internal/useReduceTransparency';
 
 export type ToastTone = 'default' | 'success' | 'info' | 'warn' | 'danger';
 
@@ -36,13 +34,13 @@ export interface ToastProps extends Omit<ViewProps, 'children'> {
   duration?: number;
   /** the countdown reached 0 (or the screen reader's × was pressed): do what the action could undo */
   onTimeout?: () => void;
-  /** @deprecated 2026-11-11 (owner: the solid fill "ruins the style"): ignored, every toast is the glass
-   *  card. Removed in the next major. */
+  /** @deprecated 2026-11-11 (owner: the solid fill "ruins the style"): ignored, every toast is the card's
+   *  surface. Removed in the next major. */
   filled?: boolean;
 }
 
 /** Each tone's colour: the icon, its circle (14 %) and the edge (at an alpha that keeps it 3:1 on the card
- *  and on the solid fill: it marks the state). `default` is neutral. */
+ *  (cardSolid): it marks the state). `default` is neutral. */
 const TONE: Record<ToastTone, { ink: string; circle: string; edge: string }> = {
   default: { ink: colors.textDim, circle: colors.glass2, edge: colors.border2 },
   success: { ink: colors.ok, circle: 'rgba(52,245,197,0.14)', edge: 'rgba(52,245,197,0.45)' },
@@ -132,8 +130,8 @@ function useCountdown(total: number, held: boolean, stepped: boolean, onEnd?: ()
   return left;
 }
 
-/** Compact floating notification: the dark glass card (blurred where expo-blur is, solid under Reduce
- *  Transparency) with the tone's edge and a soft shadow, the tone icon in a small circle, the message in
+/** Compact floating notification: the card's surface, opaque (`cardSolid`: it floats over photos and
+ *  fields, so its text stays at 4.5:1 whatever is behind) with the tone's edge and a soft shadow, the tone icon in a small circle, the message in
  *  white, an optional filled action ("Undo") with a seconds ring, and ×. Fades in with a small slide. */
 export function Toast({
   tone = 'default',
@@ -152,7 +150,6 @@ export function Toast({
 }: ToastProps) {
   const t = TONE[tone];
   const reducedMotion = useReducedMotion();
-  const solid = useReduceTransparency();
   const enter = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(enter, { toValue: 1, duration: ENTER_MS, useNativeDriver: true }).start();
@@ -250,7 +247,7 @@ export function Toast({
     </>
   );
 
-  const card = [styles.toast, { borderColor: t.edge }, solid && styles.solid];
+  const card = [styles.toast, { borderColor: t.edge }];
   return (
     <Animated.View
       accessibilityRole="alert"
@@ -262,19 +259,13 @@ export function Toast({
       onTouchCancel={counting ? hold(false) : undefined}
       {...rest}
     >
-      {OptionalBlurView && !solid ? (
-        <OptionalBlurView intensity={24} tint="dark" style={card}>
-          {content}
-        </OptionalBlurView>
-      ) : (
-        <View style={card}>{content}</View>
-      )}
+      <View style={card}>{content}</View>
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  // the soft shadow on an unclipped box (a clipped one, for the blur's corners, would cut it)
+  // the soft shadow on the outer box
   shadow: {
     maxWidth: 360,
     borderRadius: radii.md,
@@ -290,12 +281,8 @@ const styles = StyleSheet.create({
     paddingRight: 6,
     borderRadius: radii.md,
     borderWidth: 1,
-    backgroundColor: colors.card,
-    // the blur clipped to the radius
-    overflow: 'hidden',
+    backgroundColor: colors.cardSolid,
   },
-  // Reduce Transparency: opaque
-  solid: { backgroundColor: colors.bg1 },
   icon: {
     width: 22,
     height: 22,

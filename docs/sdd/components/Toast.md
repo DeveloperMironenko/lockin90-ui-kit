@@ -226,3 +226,12 @@ Supersedes the sizes, the action and the countdown line of the update above.
   touched, or the action focused, and (native) while a screen reader is on, whose × ends it. Hidden from
   screen readers: they hear the app's announcement and an action named by its label only. `onTimeout` only
   at 0. **No bottom line.**
+
+## Update — 2026-11-11 (owner: the toast's surface is a card's)
+
+- **Surface (both):** the card's colour on `--bg-0`, opaque: `--card-solid` / `colors.cardSolid` (`#13151D`,
+  new token). A toast floats over photos and fields, where the translucent `--card` left `--text-dim` at 4.3:1
+  over white; opaque it reads as a card on the page and keeps the title 16:1, the message 8.6:1. No blur
+  (nothing shows through), and no Reduce Transparency variant (native `useReduceTransparency` is gone, it had
+  no other user). Edge and icon still follow the tone. Radius 16 (container), the action 10 (control), as
+  before.

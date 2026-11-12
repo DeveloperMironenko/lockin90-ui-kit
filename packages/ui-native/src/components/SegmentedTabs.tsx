@@ -4,6 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
 import { hapticSelection } from "../internal/optionalHaptics";
 import { SLACK, WordMeasurer, breakableWords, fitFloor, glueCJK, hasCJK, wordFitScale, type Probe } from '../internal/wordFit';
+import { innerRadius } from '../internal/radius';
+import { useHighContrast } from '../internal/useHighContrast';
 import { Icon, type IconName } from './Icon';
 
 /**
@@ -80,6 +82,21 @@ const TONE_BORDER: Record<SegmentedColorTone, string> = {
 /** The design's dark ink for labels on a bright CTA gradient
  *  (design `.seg button[aria-pressed="true"]` — #07080d). */
 const INK_ON_GRADIENT = '#07080D';
+
+/** The track's edge and the gaps that place the lit pill (styles below), so its corners are the track's
+ *  control radius less the pill's inset from the outer edge (CONVENTIONS "Corner radii"). */
+const EDGE = 1;
+const TRACK_PAD_X = 2;
+const TRACK_PAD_SM = 3;
+const TRACK_PAD_ROWS = 2;
+const PILL_INSET_X = 2;
+const PILL_INSET_Y = 4;
+const PILL_INSET_ROWS = 2;
+/** The lit pill's corners: on one row it is 5 in from the outer edge both ways (1 + 4 down, 1 + 2 + 2
+ *  across), sm 4 (1 + 3), on rows 5 (1 + 2 + 2). */
+const PILL_RADIUS = innerRadius(radii.sm, EDGE + PILL_INSET_Y);
+const PILL_RADIUS_SM = innerRadius(radii.sm, EDGE + TRACK_PAD_SM);
+const PILL_RADIUS_ROWS = innerRadius(radii.sm, EDGE + TRACK_PAD_ROWS + PILL_INSET_ROWS);
 
 /** Above this OS text scale an `sm` track wraps its pills onto more rows (as ListRow's settings rows stack). */
 const LARGE_TEXT = 1.35;
@@ -263,15 +280,14 @@ export interface SegmentedTabsProps {
   /**
    * Control scale. `'md'` (default) is the full-width tab bar (equal-width
    * segments). `'sm'` is the design settings compact control: a
-   * content-hugging pill track (padding 3, gap 2, `--border` hairline, glass
-   * fill) of mono 10.5px segments (padding 5×11) that size to their label.
+   * content-hugging track (padding 3, gap 2, the field's fill and edge) of mono 10.5px segments (padding 5×11) that size to their label.
    * Mirrors web `size="sm"` / design `.seg`.
    */
   size?: 'md' | 'sm';
   /**
    * Track/active treatment. `'raised'` (default) keeps the standard raised
    * glass active pill. `'tint'` is the design changelog `.svc-toggle`
-   * treatment: glass track, hairline-bordered segments, and an ACTIVE segment
+   * treatment: hairline-bordered segments, and an ACTIVE segment
    * painted with an accent tint + accent border (no shadow); count badges
    * shrink to mono 8.5 and tint cyan when active. Mirrors web
    * `appearance="tint"`.
@@ -316,6 +332,7 @@ export function SegmentedTabs({
 }: SegmentedTabsProps) {
   const isSm = size === 'sm';
   const isTint = appearance === 'tint';
+  const highContrast = useHighContrast();
   const choice = kind === 'choice';
   const items = tabs.map(toTab);
   const labels = items.map((t) => t.label);
@@ -532,8 +549,8 @@ export function SegmentedTabs({
       style={[
         styles.track,
         isSm && styles.trackSm,
-        isTint && styles.trackTint,
-        invalid && styles.trackInvalid,
+        // a field's edge, as the Input beside it (Increase Contrast: the strong one), red when invalid
+        invalid ? styles.trackInvalid : highContrast ? styles.trackEdgeStrong : styles.trackEdge,
         onRows && styles.trackRows,
         isSm && large && styles.trackSmWrap,
         // always set (iOS Fabric kept a dropped `opacity: 0` on the track: the row stayed invisible)
@@ -593,20 +610,23 @@ const styles = StyleSheet.create({
   track: {
     flexDirection: 'row',
     minHeight: 44,
-    paddingHorizontal: 2,
-    borderRadius: radii.pill,
-    backgroundColor: colors.bg1,
-    borderWidth: 1,
-    borderColor: colors.border,
+    paddingHorizontal: TRACK_PAD_X,
+    // a control's corners, as the field beside it (owner 2026-11-11: one radius for every control)
+    borderRadius: radii.sm,
+    // a field's fill and edge (owner 2026-11-11: fields, selects and option switches look alike); the
+    // edge's colour below (Increase Contrast, invalid)
+    backgroundColor: colors.field,
+    borderWidth: EDGE,
   },
-  // sm — design settings `.seg`: content-hugging track, padding 3, gap 2,
-  // `--border` hairline, glass fill
+  trackEdge: { borderColor: colors.borderControl },
+  trackEdgeStrong: { borderColor: colors.borderControlStrong },
+  trackInvalid: { borderColor: colors.zoneLow },
+  // sm — design settings `.seg`: content-hugging track, padding 3, gap 2 (the field's fill and edge)
   trackSm: {
     alignSelf: 'flex-start',
     minHeight: 0,
     gap: 2,
-    padding: 3,
-    backgroundColor: colors.glass,
+    padding: TRACK_PAD_SM,
   },
   tab: {
     flex: 1,
@@ -619,7 +639,7 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingVertical: 8,
     paddingHorizontal: PAD_X,
-    borderRadius: radii.pill,
+    borderRadius: PILL_RADIUS,
     backgroundColor: 'transparent',
   },
   // in the row: the track's height less its edge
@@ -628,36 +648,45 @@ const styles = StyleSheet.create({
   tabFill: {
     paddingHorizontal: FILL_PAD_X,
   },
-  pill: { position: 'absolute', borderRadius: radii.pill, backgroundColor: 'transparent' },
-  pillRow: { top: 4, bottom: 4, left: 2, right: 2 },
+  pill: { position: 'absolute', borderRadius: PILL_RADIUS, backgroundColor: 'transparent' },
+  pillRow: { top: PILL_INSET_Y, bottom: PILL_INSET_Y, left: PILL_INSET_X, right: PILL_INSET_X },
   // on rows: 2 in all round (4 between pills and at the track's edge)
-  pillOnRows: { top: 2, bottom: 2, left: 2, right: 2, borderRadius: radii.sm },
-  pillSm: { top: 0, bottom: 0, left: 0, right: 0 },
-  pillHairline: { borderWidth: 1, borderColor: 'transparent' },
-  trackInvalid: {
-    borderColor: colors.zoneLow,
+  pillOnRows: {
+    top: PILL_INSET_ROWS,
+    bottom: PILL_INSET_ROWS,
+    left: PILL_INSET_ROWS,
+    right: PILL_INSET_ROWS,
+    borderRadius: PILL_RADIUS_ROWS,
   },
+  pillSm: { top: 0, bottom: 0, left: 0, right: 0, borderRadius: PILL_RADIUS_SM },
+  pillHairline: { borderWidth: 1, borderColor: 'transparent' },
   // on rows (owner 2026-11-11: labels that don't fit one row wrap into balanced rows of pills, centred,
-  // never a column list as such) the track is a tall box: a container's corners (radii.md), its segments a
-  // control's (radii.sm, 16 − the 4 padding ≈ 10), never the pill that turns a tall box into a stadium;
-  // the parent's whole width (a parent that doesn't stretch would leave it as wide as its labels)
-  trackRows: { flexDirection: 'column', alignItems: 'stretch', alignSelf: 'stretch', borderRadius: radii.md, padding: 2 },
+  // never a column list as such) the track keeps the control's corners as on one row (radii.sm), its
+  // pills the same less their inset; the parent's whole width (a parent that doesn't stretch would leave
+  // it as wide as its labels)
+  trackRows: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    alignSelf: 'stretch',
+    borderRadius: radii.sm,
+    padding: TRACK_PAD_ROWS,
+  },
   row: { flexDirection: 'row', justifyContent: 'center' },
-  tabOnRows: { flex: 0, borderRadius: radii.sm },
+  tabOnRows: { flex: 0, borderRadius: PILL_RADIUS_ROWS },
   // sm at a large text size: its pills wrap onto more rows (never a column list)
-  trackSmWrap: { flexWrap: 'wrap', maxWidth: '100%', borderRadius: radii.md },
+  trackSmWrap: { flexWrap: 'wrap', maxWidth: '100%' },
   // until the labels are measured the row is laid out but not shown (no visible jump to a stacked layout)
   pending: { opacity: 0 },
   shown: { opacity: 1 },
   // sm segments hug their label (design `.seg button`: padding 5px 11px)
   tabSm: {
     flex: 0,
+    borderRadius: PILL_RADIUS_SM,
     paddingVertical: 5,
     paddingHorizontal: 11,
   },
-  // appearance="tint" — design changelog `.svc-toggle`: glass track; segments
+  // appearance="tint" — design changelog `.svc-toggle`: the field's track; segments
   // carry a transparent hairline so the active border doesn't shift layout
-  trackTint: { backgroundColor: colors.glass },
   tabTint: {
     gap: 5,
   },

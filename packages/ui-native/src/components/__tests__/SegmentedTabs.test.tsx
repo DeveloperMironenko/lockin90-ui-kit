@@ -75,3 +75,27 @@ describe('SegmentedTabs before its labels are measured', () => {
     expect(findByText(root, 'Very active')!.attrs.style ?? '').not.toContain('-webkit-line-clamp')
   })
 })
+
+describe('SegmentedTabs corners and surface (CONVENTIONS "Corner radii")', () => {
+  /** The segment's lit pill (the raised glass on the active one). */
+  const litPill = (root: El, label: string) => {
+    const segment = ancestors(findByText(root, label)!).find((a) => a.attrs.role === 'radio' || a.attrs.role === 'tab')!;
+    return findAll(segment, (el) => hasDeclaration(el, 'position:absolute'))[0]!;
+  };
+
+  test("the track is a field: the control's corners, the field's fill and edge", () => {
+    const root = parse(render(SegmentedTabs, { tabs: ['Metric', 'Imperial'], active: 0 }));
+    const track = root.children[0]!;
+    expect(hasDeclaration(track, 'border-top-left-radius:10px')).toBe(true);
+    expect(hasDeclaration(track, 'background-color:rgba(37,39,46,1.00)')).toBe(true);
+    expect(hasDeclaration(track, 'border-top-color:rgba(255,255,255,0.36)')).toBe(true);
+  });
+
+  test('the lit pill is the control radius less its inset: 5 on one row, 6 at sm', () => {
+    const md = parse(render(SegmentedTabs, { tabs: ['Metric', 'Imperial'], active: 0 }));
+    expect(hasDeclaration(litPill(md, 'Metric'), 'border-top-left-radius:5px')).toBe(true);
+    const sm = parse(render(SegmentedTabs, { tabs: ['Metric', 'Imperial'], active: 0, size: 'sm' }));
+    expect(hasDeclaration(litPill(sm, 'Metric'), 'border-top-left-radius:6px')).toBe(true);
+    expect(hasDeclaration(sm.children[0]!, 'border-top-left-radius:10px')).toBe(true);
+  });
+});

@@ -73,13 +73,13 @@ export interface SegmentedTabsProps extends Omit<HTMLAttributes<HTMLDivElement>,
   /**
    * Control scale. `'md'` (default) is the full-width tab bar (equal-width
    * segments). `'sm'` is the design settings compact control: a
-   * content-hugging pill track of mono segments (design `.seg`).
+   * content-hugging track of mono segments (design `.seg`).
    */
   size?: 'md' | 'sm';
   /**
    * Track/active treatment. `'raised'` (default) keeps the standard raised
    * glass active pill. `'tint'` is the design changelog `.svc-toggle`
-   * treatment: glass track, hairline-bordered segments, and an ACTIVE segment
+   * treatment: hairline-bordered segments, and an ACTIVE segment
    * painted with an accent tint + accent border (no shadow); count badges
    * shrink to mono 8.5 and tint cyan when active. Mirrors native
    * `appearance="tint"`.
@@ -122,7 +122,7 @@ function rowOf(rows: readonly number[], i: number): number {
   return rows.length - 1;
 }
 
-/** iOS-style segmented control — a pill track of equal-width segments; the
+/** iOS-style segmented control — a field-like track (the field's fill, edge and corners) of equal-width segments; the
  *  active one is a raised lighter pill. Locked segments are dimmed,
  *  non-interactive, and show a lock glyph. */
 export function SegmentedTabs({

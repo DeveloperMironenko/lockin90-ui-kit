@@ -92,7 +92,7 @@ describe('SegmentedTabs: nothing cut off', () => {
     unmount();
   });
 
-  test('labels too wide for one row go on balanced rows of pills, the track with a container\'s corners', () => {
+  test('labels too wide for one row go on balanced rows of pills, the track with a control\'s corners', () => {
     const { host, unmount } = mount(<SegmentedTabs kind="choice" fill tabs={['Sedentary', 'Light', 'Moderate', 'Active', 'Athlete']} />);
     layout(track(host), 300);
     // "Sedentary" 108: × 0.88 (11pt) still wider than a third's 86 room, so its row has 2 (147 wide);
@@ -102,7 +102,7 @@ describe('SegmentedTabs: nothing cut off', () => {
     expect(track(host).children).toHaveLength(3); // 2 rows and the measurer
     expect(track(host).children[0]!.querySelectorAll('[role="radio"]')).toHaveLength(2);
     expect(track(host).children[1]!.querySelectorAll('[role="radio"]')).toHaveLength(3);
-    expect(JSON.stringify(propOf(track(host), 'style'))).toContain('"borderRadius":16');
+    expect(JSON.stringify(propOf(track(host), 'style'))).toContain('"borderRadius":10');
     unmount();
   });
 

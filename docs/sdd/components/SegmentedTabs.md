@@ -255,9 +255,9 @@ widths measured on one unconstrained line (native: the hidden `WordMeasurer`; we
    label per row happens only when each needs the full width. Last resort: a word wider than the full width
    at the floor breaks (each label its own row, shrunk to the floor).
 
-- **Rows look:** the track is a tall box — a container's corners (native `radii.md`, web `--r`), padding 2,
+- **Rows look:** the track keeps a control's corners (superseded 2026-11-11, see below), padding 2,
   the segments edge to edge, each 44 tall (a 44pt / 44px target), the pill (glass, tint, the `gradient` /
-  `mint` fill and glow) drawn 2 in all round with a control's corners (`radii.sm` / `--r-sm`), so the
+  `mint` fill and glow) drawn 2 in all round, so the
   selected pill is right on either row. Native renders one `View` row per row (`justifyContent: center`,
   each segment its measured width); web keeps one flex track with `flex-wrap`, an inline width per segment
   and a `.lk-seg-break` (flex-basis 100%) after each row. Web rows keep the one row's side padding and gap,
@@ -272,3 +272,19 @@ widths measured on one unconstrained line (native: the hidden `WordMeasurer`; we
   scales, wraps); web `segFitPercent` is gone. The web fit no longer rewrites classes: the rows and sizes
   are React state, so a re-render (invalid, a choice made) keeps them.
 
+
+## Update — 2026-11-11 (owner: one radius for every control; a field's look)
+
+- **Corners** (CONVENTIONS "Corner radii"): the track is a control, `--r-sm` / `radii.sm` (10), at every size,
+  on one row and on rows (was the pill `999`; on rows `--r` / `radii.md` 16). The lit segment's corners are
+  10 less its inset from the track's outer edge, so they run parallel: **5** on one row (1 edge + 4 down,
+  1 + 2 + 2 across), **6** at `sm` (1 + 3), **5** on rows (1 + 2 + 2); web desktop 5 (1 + 4 padding). Native
+  derives them from the same constants that place the pill (`innerRadius`); web from `--lk-seg-inset`
+  (`calc(var(--r-sm) - var(--lk-seg-inset))`), at phone width adding the transparent border per axis
+  (`7px / 9px` on one row, `7px` on rows) because the fill is clipped to the padding box.
+- **Surface:** the field's fill (`--field` / `colors.field`) and edge (`--border-control` /
+  `colors.borderControl`; `borderControlStrong` under Increase Contrast), every size and appearance (`sm` and
+  `tint` drop their glass track); invalid is the field's `--zone-low` edge. Web: a keyboard-focused choice
+  (`kind="choice"`) draws the field's focus, the track's edge in `--accent` 2px (`--zone-low` when invalid);
+  a tab bar's focused tab the kit ring inside the track. Unselected labels stay `--text-dim` (7.0:1 on the
+  field). The lit segment keeps its fill (glass, tint, gradient, mint).

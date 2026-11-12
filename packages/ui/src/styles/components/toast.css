@@ -1,12 +1,13 @@
 /* ============================================================================
-   Toast — a compact floating notification card: the dark glass card, its edge,
-   icon circle and countdown line tinted by the tone.
+   Toast — a compact floating notification card: the card's surface, opaque
+   (--card-solid: it floats over photos and fields, its text stays at 4.5:1),
+   its edge, icon circle and countdown line tinted by the tone.
 
    (`Badge` used to live here too; it is now a thin wrapper over `Chip` at its
    `sm` size — see `.lk-chip-sm*` in primitives.css.)
    ========================================================================== */
 
-/* ---- Toast: the dark glass card (owner, 2026-11-11, variant C: slim, the tone's edge and icon) ---- */
+/* ---- Toast: the card's surface (owner, 2026-11-11, variant C: slim, the tone's edge and icon) ---- */
 .lk-toast {
   position: relative;
   display: flex;
@@ -17,9 +18,7 @@
   border-radius: var(--r);
   /* the tone's edge (3:1 on the card where it marks the state); neutral by default */
   border: 1px solid var(--border-2);
-  background: var(--card);
-  backdrop-filter: blur(16px) saturate(120%);
-  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  background: var(--card-solid);
   box-shadow: var(--elev-2);
   animation: lk-toast-in .2s var(--ease) both;
 }
@@ -33,9 +32,6 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .lk-toast.lk-toast { animation: lk-toast-fade .2s ease both !important; }
-}
-@media (prefers-reduced-transparency: reduce) {
-  .lk-toast { background: var(--bg-1); backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
 
 /* the icon in a 22px circle, in the tone's colour */

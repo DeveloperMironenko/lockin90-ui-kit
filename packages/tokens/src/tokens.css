@@ -19,6 +19,8 @@
   /* a card's fill: the glass look on the page (#13151D) but 79% opaque, so the aurora behind never lifts
      its text below 4.5:1; a field's fill: opaque, glass-2 over the card (placeholders 4.6:1) */
   --card: rgba(22, 24, 32, 0.79);
+  /* the card on bg-0, opaque: a surface that floats over anything (Toast) looks like a card on the page */
+  --card-solid: #13151D;
   --field: #25272E;
   --border: rgba(255, 255, 255, 0.09);
   --border-2: rgba(255, 255, 255, 0.16);

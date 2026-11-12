@@ -6,9 +6,9 @@ import { AccessibilityInfo } from 'react-native';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { Toast } from '../Toast';
 import { mount, propOf, propsWith } from './dom';
-import { render } from './markup';
+import { findAll, hasDeclaration, parse, render } from './markup';
 
-/* Toast (docs/sdd/components/Toast.md, owner 2026-11-11, variant C): the glass card with the tone's edge,
+/* Toast (docs/sdd/components/Toast.md, owner 2026-11-11, variant C): the card's surface, opaque, with the tone's edge,
  * the icon in a tone circle, white text; a filled action ("Undo") with a seconds ring that holds while
  * touched, focused or a screen reader is on, and calls onTimeout only at 0. */
 
@@ -20,8 +20,10 @@ const has = (html: string, hex: string) => {
 };
 
 describe('Toast look', () => {
-  test('the glass card, the tone on the edge and the icon circle; never a solid tone fill', () => {
+  test("the card's opaque surface, the tone on the edge and the icon circle; never a solid tone fill", () => {
     const html = render(Toast, { tone: 'success', title: 'Units updated' });
+    // the card on the page, opaque (it floats over photos and fields: its text keeps 4.5:1)
+    expect(findAll(parse(html), (el) => hasDeclaration(el, 'background-color:rgba(19,21,29,1.00)')).length).toBe(1);
     expect(html.replace(/\s/g, '')).toContain('rgba(52,245,197,0.45)');
     expect(html.replace(/\s/g, '')).toContain('rgba(52,245,197,0.14)');
     // `filled` is deprecated and ignored: the same card, no dark ink

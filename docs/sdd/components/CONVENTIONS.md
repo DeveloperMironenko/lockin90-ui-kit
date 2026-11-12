@@ -19,7 +19,7 @@ Inter (UI), JetBrains Mono (data).
 | --- | --- | --- | --- |
 | Surfaces | `--void` `--bg-0/1/2` | `colors.void` `colors.bg0/1/2` | `#05060B` `#080A12` `#0C0F1A` `#11151F` |
 | Glass | `--glass` `--glass-2` | `colors.glass` `colors.glass2` | `rgba(255,255,255,.045)` / `.075` |
-| Card / field fill | `--card` `--field` | `colors.card` `colors.field` | `rgba(22,24,32,.79)` (= `#13151D` on `--bg-0`) / `#25272E` (opaque) |
+| Card / field fill | `--card` `--card-solid` `--field` | `colors.card` `colors.cardSolid` `colors.field` | `rgba(22,24,32,.79)` / `#13151D` (the card on `--bg-0`, opaque) / `#25272E` (opaque) |
 | Borders | `--border` `--border-2` `--border-control` | `colors.border` `colors.border2` `colors.borderControl` | `rgba(255,255,255,.09)` / `.16` / `.36` |
 | Text | `--text` `--text-dim` `--text-faint` | `colors.text` `colors.textDim` `colors.textFaint` | `#EEF1F8` `#AAB2C6` `#868FA3` |
 | Spectrum | `--lime --mint --cyan --indigo --violet --magenta` | `colors.lime` … | `#A8FF35 #34F5C5 #22D3EE #6E7BFF #A855F7 #FF3D81` |
@@ -149,7 +149,7 @@ Every bordered box in the kit has one of two corner radii and the same neutral l
 
 | Kind | Radius | Which primitives |
 | --- | --- | --- |
-| **Control**: something you press, type into or pick (a box holding text or icons) | `--r-sm` / `radii.sm` (**10**) | Button (every variant, primary included), IconButton, SsoButton, SplitButton, FollowButton, BackLink, Input, PasswordInput, Select (`md` and `sm`), Combobox field, DateField, NoteField, CodeField cells, SearchInput (in `FormField`), TagInput (field and tags), Chip, ChoiceChip, Badge (native), DeltaPill, StateLabel, VersionBadge, TagCloud tags, SegmentedTabs (track and active segment), Pagination, Stepper buttons, Toolbar buttons |
+| **Control**: something you press, type into or pick (a box holding text or icons) — see "Corner radii" below | `--r-sm` / `radii.sm` (**10**) | Button (every variant, primary included), IconButton, SsoButton, SplitButton, FollowButton, BackLink, Input, PasswordInput, Select (`md` and `sm`), Combobox field, DateField, NoteField, CodeField cells, SearchInput (in `FormField`), TagInput (field and tags), Chip, ChoiceChip, Badge (native), DeltaPill, StateLabel, VersionBadge, TagCloud tags, SegmentedTabs (track and active segment), Pagination, Stepper buttons, Toolbar buttons |
 | **Container**: a surface that holds controls or content | `--r` / `radii.md` (**16**) | Card and every card surface (InsightCard, PrCard, TemplateCard, PricingTierCard, PendingPatternCard, MetricTile, StatTile, LeaderboardRow, Countdown, ShareCard, SessionBanner, AchievementBadge, MessageBubble), Alert, Toast, ForecastCallout, EmptyState, Modal, Sheet (top corners), Popover, Menu, Tooltip, Combobox / Select panels, CodeBlock, QRCode frame, VideoThumbnail |
 | **Shape, not a box** (unchanged) | as today | circles (Avatar, AvatarStack, StatusDot (native), Checkbox tick, Pulse), Toggle track and knob, Slider track and thumb, ProgressBar / Meter / PasswordStrengthMeter / ZoneBar / RangeBar / BarFill tracks and fills, chart marks, Ring, Gauge, the Sheet grab handle |
 
@@ -169,6 +169,29 @@ Every bordered box in the kit has one of two corner radii and the same neutral l
 - **Order:** this rule (docs) → web PR (`@lockin90/ui`) → native PR (`@lockin90/ui-native`), each with
   before/after screenshots of every changed primitive → one release → `lockin90-design` updated to the
   same shapes (the mockups are what apps are compared with) → the apps bump the kit.
+
+## Corner radii (owner rule, 2026-11-11 — "every control in every app has the same corner radius")
+
+Refines the table above: four radii, picked by what the box is, web and native alike.
+
+| Kind | Radius | Which |
+| --- | --- | --- |
+| **Control** | `--r-sm` / `radii.sm` (**10**) | Button, IconButton, SsoButton, SplitButton, Input / PasswordInput / SearchInput / TagInput / NoteField / CodeField fields, Select trigger, DateField, CodeInput boxes, **SegmentedTabs track** (every size, one row or wrapped rows), Chip, ChoiceChip, menu items, the Toast's action |
+| **Inside a control** | the control's 10 **less the piece's inset from the control's outer edge** (border included), so the corners run parallel | SegmentedTabs' lit segment: 5 on one row (1 edge + 4 down; 1 + 2 + 2 across), 6 at `sm` (1 + 3), 5 on rows (1 + 2 + 2). Native computes it (`innerRadius(outer, inset)`, `internal/radius.ts`); web `calc(var(--r-sm) - var(--lk-seg-inset))`, adding the transparent border per axis where the fill is clipped to the padding box |
+| **Container** | `--r` / `radii.md` (**16**) | Card, Toast, Alert, MetricTile group card, Menu / Popover / Select / Combobox panels, ListRow groups. A tile nested in a card: 16 less the card's padding when that leaves a sensible radius, else `radii.sm` (MetricTile in a padded card: 10) |
+| **Big surface** | `--r-lg` / `radii.lg` (**22**) | Modal / dialog, the Sheet's top corners (drawers: their inner side) |
+| **Round only** | `999` / `50%` | Avatars, status dots, icon circles, the Sheet grab handle, the Toast's seconds ring, Toggle, Slider, progress tracks, chart marks |
+
+- **Fields, selects and option switches look alike** (owner, 2026-11-11): the SegmentedTabs track has the
+  field's fill (`--field` / `colors.field`) and edge (`--border-control` / `colors.borderControl`,
+  `borderControlStrong` under Increase Contrast), red (`--zone-low`) when invalid; a keyboard-focused choice
+  (`kind="choice"`) gets the field's one focus indicator, its 2px accent edge. Unselected labels stay
+  `--text-dim` (7.0:1 on the field).
+- **A surface that floats over anything** (Toast) uses the card's colour composited on `--bg-0`, opaque
+  (`--card-solid` / `colors.cardSolid`, `#13151D`): it reads as a card on the page and keeps its text at 4.5:1
+  over a photo or a field (the translucent `--card` over white leaves `--text-dim` at 4.3:1).
+- A radius literal on a control or container is a bug; a piece inside a control derives its radius from the
+  control's and its real inset, never a guess.
 
 ## One primitive per role (owner rule, 2026-07-09 — "they have to be the same")
 The SAME interaction role always renders through the SAME kit primitive, everywhere —
