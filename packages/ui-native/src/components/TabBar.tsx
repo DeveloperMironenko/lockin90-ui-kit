@@ -18,6 +18,11 @@ export interface TabBarItem {
    *  to the tab's active/inactive color automatically. */
   icon: ReactNode | IconName;
   label: string;
+  /** Read by screen readers in place of `label` (e.g. the FAB's "Log a workout" under its "Log"). */
+  accessibilityLabel?: string;
+  /** Shown but not available yet: announced disabled and not pressable, drawn as usual (not
+   *  dimmed), so a bar can show a tab before its screen exists. */
+  disabled?: boolean;
 }
 
 export interface TabBarProps {
@@ -79,7 +84,9 @@ export function TabBar({
       <Pressable
         key={i}
         accessibilityRole="tab"
-        accessibilityState={{ selected: isActive }}
+        accessibilityLabel={item.accessibilityLabel}
+        accessibilityState={{ selected: isActive, disabled: !!item.disabled }}
+        disabled={item.disabled}
         onPress={() => {
           // selection tick on every tab/FAB press (no-op without expo-haptics)
           hapticSelection();

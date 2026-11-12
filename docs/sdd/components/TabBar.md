@@ -24,7 +24,7 @@ These are the *only* sanctioned bottom-nav and floating-action primitives. `TabB
 
 | Prop | Type | Default | Web | Native | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `items` | `TabBarItem[]` | 5-tab Home/Log/Coach/Stats/More | ✓ | ✓ | `TabBarItem = { icon: ReactNode \| IconName; label: string }` |
+| `items` | `TabBarItem[]` | 5-tab Home/Log/Coach/Stats/More | ✓ | ✓ | `TabBarItem = { icon: ReactNode \| IconName; label: string; accessibilityLabel?: string; disabled?: boolean }`. `accessibilityLabel` is read in place of the label (web `aria-label`). `disabled`: shown but not available yet — announced disabled (web `aria-disabled`, native `accessibilityState.disabled` + `Pressable disabled`), presses do nothing, drawn as usual (not dimmed: the app shows a tab before its screen exists) |
 | `active` | `number` | `0` | ✓ | ✓ | index of the active tab |
 | `onChange` | `(index: number) => void` | — | ✓ | ✓ | fires with the pressed tab index |
 | `fabIndex` | `number` | — | ✓ | ✓ | index rendered as the elevated center FAB tile |
