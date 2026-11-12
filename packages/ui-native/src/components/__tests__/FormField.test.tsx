@@ -34,3 +34,14 @@ describe('FormField label row wraps', () => {
     expect(hasDeclaration(label, 'white-space:nowrap')).toBe(false);
   });
 });
+
+/* The required star stays with the label's last word ("СТАТЬ ПРИ НАРОДЖЕННІ *" in a half-width column):
+ * joined by a no-break space, it never sits on a line of its own. */
+describe('FormField required star', () => {
+  test('is joined to the label by a no-break space', () => {
+    const html = render(FormField, { label: 'Стать при народженні', required: true });
+    expect(html).toContain('НАРОДЖЕННІ');
+    expect(html).toMatch(/> \*</);
+    expect(html).not.toMatch(/[  ]\*</);
+  });
+});

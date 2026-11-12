@@ -101,8 +101,9 @@ export function FormField({
             <View style={styles.labelBox} {...(carried ? SR_HIDDEN : null)}>
               <FitText style={[styles.fieldLabel, { color: c.textDim }]}>
                 {label.toUpperCase()}
-                {/* a thin space, as the web's 3px gap (a full space read twice as wide) */}
-                {required ? <Text style={styles.req}>{'\u2009*'}</Text> : null}
+                {/* a narrow no-break space, as the web's 3px gap (a full space read twice as wide): the star
+                    stays with the last word, never on a line of its own (as web, where nothing parts them) */}
+                {required ? <Text style={styles.req}>{'\u202F*'}</Text> : null}
               </FitText>
             </View>
           ) : null}
