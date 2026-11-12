@@ -91,3 +91,5 @@ UX and accessibility (1.35b–h, CONVENTIONS "Accessibility"):
   - **Avatar (V1 / V16):** a photo that fails to load shows the initials (web + native); a photo gets a thin `--border-control` edge; native initials drop `adjustsFontSizeToFit` (it lost the display font on iOS) and size from the box and the text size instead.
   - **ReauthDialog (U1 / U14):** Cancel and × never disabled while `loading`; the password field read-only + busy (not disabled); Google / Apple `aria-disabled` (presses ignored, focus kept). Web Button styles `aria-disabled="true"` as disabled.
   - **SsoButton `loading` (U6, web + native):** spinner over the kept content, busy, presses ignored.
+  - **Native icon slots (V17):** a kit `Icon` without its own size gets the slot's: Button 16 / 14 / 19, Input and Select leading 16 faint, ListRow leading 18, ChoiceChip 16 (other nodes untouched).
+  - **Native CodeInput (U20):** box 0 `autoComplete="sms-otp"` on Android (`one-time-code` elsewhere), so the SMS code autofills.

@@ -36,10 +36,10 @@ describe('Avatar', () => {
     unmount();
   });
 
-  test('the initials shrink to fit the circle (one line, scaling kept)', () => {
+  test('the initials fit the box (one line, scaling kept, never adjustsFontSizeToFit: V1)', () => {
     const { host, unmount } = mount(<Avatar name="Ann Lee" size={40} />);
     const initials = Array.from(host.querySelectorAll('div')).find((d) => d.textContent === 'AL' && !d.children.length)!;
-    expect(propOf(initials, 'adjustsFontSizeToFit')).toBe(true);
+    expect(propOf(initials, 'adjustsFontSizeToFit')).toBeUndefined();
     expect(propOf(initials, 'numberOfLines')).toBe(1);
     expect(propOf(initials, 'allowFontScaling')).toBeUndefined();
     unmount();

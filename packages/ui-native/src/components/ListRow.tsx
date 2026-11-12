@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet, useWindowDimensions, type ViewProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { sizedIcon } from '../internal/iconSlot';
 import { hapticSelection } from "../internal/optionalHaptics";
 import { useContrastColors } from '../internal/useHighContrast';
 import { FitText } from './FitText';
@@ -108,7 +109,8 @@ export function ListRow({
 
   const body = (
     <>
-      {leading != null && <View style={styles.leading}>{leading}</View>}
+      {/* a row's icon: 18 (CONVENTIONS "Type"), unless the app sets its own */}
+      {leading != null && <View style={styles.leading}>{sizedIcon(leading, 18)}</View>}
       <View style={styles.main}>
         {/* the title always wraps: never cut at a large text size ("Data sour…") */}
         {asText(title, titleStyle, false)}

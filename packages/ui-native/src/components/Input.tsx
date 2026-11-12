@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, type TextInputProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { sizedIcon } from '../internal/iconSlot';
 import { useContrastColors } from '../internal/useHighContrast';
 
 /** The field's ref: the TextInput instance (`ComponentRef`, so the type has `focus()` on RN 0.81 and 0.88).
@@ -77,7 +78,8 @@ export const Input: ForwardRefExoticComponent<InputProps & RefAttributes<TextInp
         onPress={() => inputRef.current?.focus()}
         style={[styles.field, sm && styles.fieldSm, numeral && styles.fieldNumeral, { borderColor }]}
       >
-        {leading ? <View style={styles.lead}>{leading}</View> : null}
+        {/* a field's icon: 16, faint (CONVENTIONS "Type"), unless the app sets its own */}
+        {leading ? <View style={styles.lead}>{sizedIcon(leading, 16, colors.textFaint)}</View> : null}
         <TextInput
           ref={inputRef}
           style={[styles.input, sm && styles.inputSm, numeral && styles.inputNumeral, style]}

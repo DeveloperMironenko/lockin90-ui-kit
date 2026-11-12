@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { Button, type ButtonProps } from '../Button';
 import { Text } from 'react-native';
+import { Icon } from '../Icon';
 import { ancestors, findAll, findByText, hasDeclaration, parse, render } from './markup';
 
 /* Screen readers announce every variant as a button. */
@@ -86,12 +87,14 @@ describe('Button audit', () => {
     expect(glow).toBeDefined();
     expect((glow!.attrs.style ?? '').includes('linear-gradient')).toBe(false);
   });
-  test('a leading icon without its own size gets the slot size (md 16, sm 14, lg 19)', () => {
-    const Probe = ({ size }: { size?: number }) => <Text>{`icon-${size}`}</Text>;
-    for (const [size, px] of [['md', 16], ['sm', 14], ['lg', 19]] as const) {
-      expect(render(Button, { title: 'Go', size, leading: <Probe /> })).toContain(`icon-${px}`);
+  test('a kit Icon without its own size gets the slot size (md 16, sm 14, lg 19); other nodes are left as given', () => {
+    const svgW = (html: string) => html.match(/<svg[^>]*width="(\d+)"/)?.[1];
+    for (const [size, px] of [['md', '16'], ['sm', '14'], ['lg', '19']] as const) {
+      expect(svgW(render(Button, { title: 'Go', size, leading: <Icon name="check" /> }))).toBe(px);
     }
-    expect(render(Button, { title: 'Go', leading: <Probe size={22} /> })).toContain('icon-22');
+    expect(svgW(render(Button, { title: 'Go', leading: <Icon name="check" size={22} /> }))).toBe('22');
+    const Probe = ({ size }: { size?: number }) => <Text>{`probe-${size}`}</Text>;
+    expect(render(Button, { title: 'Go', leading: <Probe /> })).toContain('probe-undefined');
   });
   test('the default variant is on the field fill', () => {
     expect(render(Button, { title: 'Edit' }).toLowerCase()).toContain('rgba(37,39,46,1.00)');

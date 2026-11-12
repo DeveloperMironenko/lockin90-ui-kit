@@ -163,3 +163,9 @@ No capability gap blocks use — the field is fully usable and visually equivale
 - **Label (V20):** mono 11 / 500, .14em, `--text-dim` (web was faint .12em). **Focused and invalid (U11, web):**
   the 2px red edge plus the red halo (`--lk-focus-invalid-halo`); also Select, SegmentedTabs `choice`,
   TagInput, CodeInput, CodeField and RichTextEditor.
+
+## Update — 2026-11-11 (owner: the audit batch, V17)
+
+- **Icons sized by the slot (native, as web's CSS):** a kit `Icon` passed without its own `size` gets the slot's
+  — a field's `leading` 16 in `textFaint`, a row's `leading` 18 (`internal/iconSlot.ts`); any other node (an
+  avatar, a brand mark) renders as given.

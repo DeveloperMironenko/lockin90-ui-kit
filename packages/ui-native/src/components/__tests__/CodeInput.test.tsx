@@ -133,3 +133,18 @@ describe('CodeInput rendering', () => {
     }
   });
 });
+
+/* U20: Android's autofill offers the SMS code (autoComplete sms-otp on box 0), iOS one-time-code. */
+describe('CodeInput autofill', () => {
+  test('box 0 asks for the one-time code on both platforms; the rest are off', async () => {
+    const { Platform } = await import('react-native');
+    const os = Platform.OS;
+    for (const [platform, hint] of [['android', 'sms-otp'], ['ios', 'one-time-code']] as const) {
+      Object.defineProperty(Platform, 'OS', { value: platform, configurable: true });
+      const boxes = render(CodeInput, { length: 6 }).match(/<input[^>]*>/g)!;
+      expect(boxes[0]).toContain(`autoComplete="${hint}"`);
+      expect(boxes[1]).toContain('autoComplete="off"');
+    }
+    Object.defineProperty(Platform, 'OS', { value: os, configurable: true });
+  });
+});

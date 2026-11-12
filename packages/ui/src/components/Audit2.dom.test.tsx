@@ -78,8 +78,10 @@ describe('ReauthDialog providers', () => {
     expect(byText('Continuar con Google')).toBeTruthy();
     done();
     mount(<ReauthDialog {...props} loading />);
-    expect(byText('Continuar con Apple').disabled).toBe(true);
-    expect(byText('Continuar con Google').disabled).toBe(true);
+    // unavailable but focusable (U14): aria-disabled, not disabled
+    expect(byText('Continuar con Apple').getAttribute('aria-disabled')).toBe('true');
+    expect(byText('Continuar con Google').getAttribute('aria-disabled')).toBe('true');
+    expect(byText('Continuar con Google').disabled).toBe(false);
   });
 });
 

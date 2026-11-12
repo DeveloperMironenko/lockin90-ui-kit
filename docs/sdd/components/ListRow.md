@@ -159,3 +159,9 @@ There is **no capability gap** — both render the same row.
   `useWordFit` on `.lk-listrow-title` / `.lk-listrow-subtitle`). One-line rows are unchanged.
 - **Native, large text:** a plain row's subtitle (one line, as drawn) wraps above text size 1.35 instead of
   being cut with an ellipsis ("Physiology,…" on Account at AX3).
+
+## Update — 2026-11-11 (owner: the audit batch, V17)
+
+- **Icons sized by the slot (native, as web's CSS):** a kit `Icon` passed without its own `size` gets the slot's
+  — a field's `leading` 16 in `textFaint`, a row's `leading` 18 (`internal/iconSlot.ts`); any other node (an
+  avatar, a brand mark) renders as given.

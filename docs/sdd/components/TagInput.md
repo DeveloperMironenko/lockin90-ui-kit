@@ -211,3 +211,9 @@ limitation.
 ## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
 
 - A tag is a chip: `--r-sm` / `radii.sm` (10, was the pill). CodeInput boxes stay 10.
+
+## Update — 2026-11-11 (owner: the audit batch, U20)
+
+- **CodeInput autofill on Android:** box 0 sets `autoComplete` `sms-otp` on Android (`one-time-code` elsewhere;
+  iOS also reads `textContentType="oneTimeCode"`), the other boxes `off`, so Android's autofill offers the
+  code from an SMS.

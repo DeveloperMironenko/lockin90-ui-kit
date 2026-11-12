@@ -8,6 +8,7 @@ import {
   type NativeSyntheticEvent,
   type TextInputKeyPressEventData,
   type ViewProps,
+  Platform,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
@@ -311,6 +312,8 @@ export const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(function Co
             style={[styles.codeBox, fit && { flex: 0, width: fit.width, height: fit.height, aspectRatio: undefined }, { borderColor, backgroundColor }]}
             keyboardType="number-pad"
             textContentType={i === 0 ? 'oneTimeCode' : 'none'}
+            // Android's autofill offers the SMS code on box 0 too (iOS reads textContentType)
+            autoComplete={i === 0 ? (Platform.OS === 'android' ? 'sms-otp' : 'one-time-code') : 'off'}
             // box 0 accepts the full code so paste / iOS SMS autofill lands and
             // spreads across boxes; the rest stay single-char for clean typing.
             maxLength={i === 0 ? length : 1}
