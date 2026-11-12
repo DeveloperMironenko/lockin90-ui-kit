@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
 /* Toast (docs/sdd/components/Toast.md, owner 2026-11-11): the glass card (no solid tone fill), an action
-   ("Undo") with a countdown line whose end is the timeout, and TopLayer above every dialog. The line's
-   hold on hover / focus / press is CSS, checked in a real browser (frontend live spec). */
+   ("Undo", filled) with a seconds ring whose 0 is the timeout, held while hovered, pressed or focused, and
+   TopLayer above every dialog. */
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Toast } from './Toast';
 import { TopLayer } from './TopLayer';
 
@@ -39,47 +39,65 @@ describe('Toast look', () => {
 });
 
 describe('Toast action and countdown', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
   const undo = (onTimeout = vi.fn(), onAction = vi.fn()) =>
     mount(<Toast tone="success" title="Photo removed" actionLabel="Undo" onAction={onAction} duration={6000} onTimeout={onTimeout} />);
+  const advance = (ms: number) => act(() => void vi.advanceTimersByTime(ms));
+  const number = (host: HTMLElement) => host.querySelector('.lk-toast-ring i')!.textContent;
 
-  it('the action is a button with its label; a click calls onAction', () => {
+  it('the action is a filled button named "Undo" (the ring and number hidden); a click calls onAction', () => {
     const onAction = vi.fn();
     const { host } = undo(vi.fn(), onAction);
     const button = host.querySelector<HTMLButtonElement>('.lk-toast-action')!;
-    expect(button.textContent).toBe('Undo');
+    expect(button.textContent).toBe('6Undo');
+    expect(host.querySelector('.lk-toast-ring')!.getAttribute('aria-hidden')).toBe('true');
     act(() => button.click());
     expect(onAction).toHaveBeenCalledTimes(1);
   });
 
-  it('the line runs for `duration` (whole seconds as its reduced-motion steps) and is hidden from screen readers', () => {
+  it('no bottom line; the seconds round up (6 at the start, 4 after 2.5 s, 1 in the last second)', () => {
     const { host } = undo();
-    const line = host.querySelector<HTMLElement>('.lk-toast-count')!;
-    expect(line.style.getPropertyValue('--lk-toast-ms')).toBe('6000ms');
-    expect(line.style.getPropertyValue('--lk-toast-steps')).toBe('6');
-    expect(line.getAttribute('aria-hidden')).toBe('true');
+    expect(host.querySelector('.lk-toast-count')).toBeNull();
+    expect(number(host)).toBe('6');
+    advance(2500);
+    expect(number(host)).toBe('4');
+    advance(3000);
+    expect(number(host)).toBe('1');
   });
 
-  it('onTimeout only when the line ends', () => {
+  it('onTimeout only at 0', () => {
     const onTimeout = vi.fn();
-    const { host } = undo(onTimeout);
+    undo(onTimeout);
+    advance(5900);
     expect(onTimeout).not.toHaveBeenCalled();
-    act(() => {
-      host.querySelector('.lk-toast-count')!.dispatchEvent(new Event('animationend', { bubbles: true }));
-    });
+    advance(200);
     expect(onTimeout).toHaveBeenCalledTimes(1);
   });
 
-  it('a press holds it (is-held while the pointer is down)', () => {
-    const { host } = undo();
+  it('hover, press and focus hold it; it resumes with the time that was left', () => {
+    const onTimeout = vi.fn();
+    const { host } = undo(onTimeout);
     const card = host.querySelector('.lk-toast')!;
-    act(() => {
-      card.dispatchEvent(new Event('pointerdown', { bubbles: true }));
-    });
-    expect(card.classList.contains('is-held')).toBe(true);
-    act(() => {
-      card.dispatchEvent(new Event('pointerup', { bubbles: true }));
-    });
-    expect(card.classList.contains('is-held')).toBe(false);
+    advance(2000);
+    act(() => void card.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, relatedTarget: document.body })));
+    advance(20000);
+    expect(onTimeout).not.toHaveBeenCalled();
+    expect(number(host)).toBe('4');
+    act(() => void card.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: document.body })));
+    act(() => void card.dispatchEvent(new Event('pointerdown', { bubbles: true })));
+    advance(20000);
+    expect(onTimeout).not.toHaveBeenCalled();
+    act(() => void card.dispatchEvent(new Event('pointerup', { bubbles: true })));
+    act(() => host.querySelector<HTMLButtonElement>('.lk-toast-action')!.focus());
+    advance(20000);
+    expect(onTimeout).not.toHaveBeenCalled();
+    act(() => host.querySelector<HTMLButtonElement>('.lk-toast-action')!.blur());
+    advance(3900);
+    expect(onTimeout).not.toHaveBeenCalled();
+    advance(200);
+    expect(onTimeout).toHaveBeenCalledTimes(1);
   });
 });
 

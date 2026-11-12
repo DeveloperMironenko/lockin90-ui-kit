@@ -1,4 +1,4 @@
-import { forwardRef, useState, type CSSProperties, type HTMLAttributes, type ReactNode } from 'react';
+import { forwardRef, useEffect, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
 import { Chip } from './Chip';
 import { Icon, type IconName } from './Icon';
@@ -7,12 +7,13 @@ import { Icon, type IconName } from './Icon';
    Toast + Badge — two tiny status primitives sharing one stylesheet.
    ========================================================================== */
 
-export type ToastTone = 'default' | 'success' | 'warn' | 'danger';
+export type ToastTone = 'default' | 'success' | 'info' | 'warn' | 'danger';
 
 export interface ToastProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
-  /** tints the edge and the icon's circle */
+  /** what happened: `success` (a save, a completed change), `danger` (a failure), `warn`, `info`; sets the
+   *  edge and the icon */
   tone?: ToastTone;
-  /** bold first line */
+  /** the message (bold) */
   title?: string;
   /** optional dimmer second line */
   message?: ReactNode;
@@ -27,11 +28,11 @@ export interface ToastProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   actionLabel?: string;
   /** called when the action is clicked */
   onAction?: () => void;
-  /** With an action: how long (ms) until `onTimeout`, shown as a line along the bottom edge that shrinks
-   *  to nothing. It holds while the toast is pressed, hovered or has focus (WCAG 2.2.1); under reduced
-   *  motion it steps down once a second. */
+  /** With an action: how long (ms) until `onTimeout`, shown as a seconds ring inside the action that
+   *  drains to 0. It holds while the toast is hovered, pressed or has focus (WCAG 2.2.1); under reduced
+   *  motion the ring steps once a second. */
   duration?: number;
-  /** the countdown ran out: do what the action could undo */
+  /** the countdown reached 0: do what the action could undo */
   onTimeout?: () => void;
   /** @deprecated 2026-11-11 (owner: the solid fill "ruins the style"): ignored, every toast is the glass
    *  card. Removed in the next major. */
@@ -41,21 +42,74 @@ export interface ToastProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
 const TOAST_TONE: Record<ToastTone, string> = {
   default: '',
   success: 'lk-toast-success',
+  info: 'lk-toast-info',
   warn: 'lk-toast-warn',
   danger: 'lk-toast-danger',
 };
 
-/** Default glyph per tone — info for default/warn, check for success. */
+/** Default glyph per tone — check for success, info for the others. */
 const TONE_ICON: Record<ToastTone, IconName> = {
   default: 'info',
   success: 'check',
+  info: 'info',
   warn: 'info',
   danger: 'info',
 };
 
-/** Compact floating notification: the dark glass card (solid under reduced transparency) with a
- *  tone-tinted edge and a soft shadow, the icon in a small tone-tinted circle, white text, an optional
- *  action ("Undo") with a countdown line, and ×. Fades in with a small slide (a fade under reduced motion). */
+/** The seconds ring: r 8 in a 20 box, drawn 16px. */
+const RING_C = 2 * Math.PI * 8;
+
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+/** A countdown of `total` ms that holds while `held`: the ms left (redrawn each frame, or each second
+ *  under reduced motion) and `onEnd` once it reaches 0. `total` 0: nothing runs. */
+function useCountdown(total: number, held: boolean, onEnd?: () => void) {
+  const [left, setLeft] = useState(total);
+  const remaining = useRef(total);
+  const endRef = useRef(onEnd);
+  const done = useRef(false);
+  useEffect(() => {
+    endRef.current = onEnd;
+  });
+  useEffect(() => {
+    if (!total || held || done.current) return;
+    if (remaining.current <= 0) remaining.current = total;
+    const startedAt = Date.now();
+    const from = remaining.current;
+    const now = () => Math.max(0, from - (Date.now() - startedAt));
+    const timer = setTimeout(() => {
+      done.current = true;
+      remaining.current = 0;
+      setLeft(0);
+      endRef.current?.();
+    }, from);
+    let frame = 0;
+    let steps: ReturnType<typeof setInterval> | undefined;
+    if (prefersReducedMotion()) {
+      steps = setInterval(() => setLeft(now()), 250);
+    } else {
+      const tick = () => {
+        setLeft(now());
+        frame = requestAnimationFrame(tick);
+      };
+      frame = requestAnimationFrame(tick);
+    }
+    return () => {
+      clearTimeout(timer);
+      cancelAnimationFrame(frame);
+      if (steps) clearInterval(steps);
+      if (done.current) return;
+      remaining.current = now();
+      setLeft(remaining.current);
+    };
+  }, [total, held]);
+  return left;
+}
+
+/** Compact floating notification: the dark glass card (solid under reduced transparency) with the tone's
+ *  edge and a soft shadow, the tone icon in a small circle, the message in white, an optional filled
+ *  action ("Undo") with a seconds ring, and ×. Fades in with a small slide (a fade under reduced motion). */
 export const Toast = forwardRef<HTMLDivElement, ToastProps>(function Toast(
   {
     tone = 'default',
@@ -76,23 +130,32 @@ export const Toast = forwardRef<HTMLDivElement, ToastProps>(function Toast(
 ) {
   const action = Boolean(onAction && actionLabel);
   const counting = action && Boolean(duration);
-  // a finger or a mouse button down on the toast holds the countdown (hover and focus hold it in CSS)
+  // hovered, pressed or focused: the countdown holds
+  const [hovered, setHovered] = useState(false);
   const [pressed, setPressed] = useState(false);
-  const press = (on: boolean) => () => setPressed(on);
+  const [focused, setFocused] = useState(false);
+  const left = useCountdown(counting ? duration! : 0, hovered || pressed || focused, onTimeout);
+  const seconds = Math.ceil(left / 1000);
+  // smooth, or whole seconds under reduced motion
+  const fraction = counting ? (prefersReducedMotion() ? (seconds * 1000) / duration! : left / duration!) : 0;
+  const on = (set: (v: boolean) => void, v: boolean) => (counting ? () => set(v) : undefined);
   return (
     // an error interrupts (alert); every other tone is a polite status
     <div
       ref={ref}
       role={tone === 'danger' ? 'alert' : 'status'}
-      className={cn('lk-toast', TOAST_TONE[tone], action && 'lk-toast-has-action', pressed && 'is-held', className)}
-      onPointerDown={counting ? press(true) : undefined}
-      onPointerUp={counting ? press(false) : undefined}
-      onPointerCancel={counting ? press(false) : undefined}
-      onPointerLeave={counting ? press(false) : undefined}
+      className={cn('lk-toast', TOAST_TONE[tone], action && 'lk-toast-has-action', className)}
+      onMouseEnter={on(setHovered, true)}
+      onMouseLeave={on(setHovered, false)}
+      onPointerDown={on(setPressed, true)}
+      onPointerUp={on(setPressed, false)}
+      onPointerCancel={on(setPressed, false)}
+      onFocus={on(setFocused, true)}
+      onBlur={on(setFocused, false)}
       {...rest}
     >
       <span className="lk-toast-icon" aria-hidden="true">
-        {icon ?? <Icon name={TONE_ICON[tone]} size={16} />}
+        {icon ?? <Icon name={TONE_ICON[tone]} size={13} />}
       </span>
       <div className="lk-toast-body">
         <div className="lk-toast-title">{title}</div>
@@ -100,23 +163,31 @@ export const Toast = forwardRef<HTMLDivElement, ToastProps>(function Toast(
       </div>
       {action && (
         <button type="button" className="lk-toast-action" onClick={onAction}>
-          {actionLabel}
+          {counting && (
+            // the seconds left: a ring draining to 0 and the number (hidden from screen readers, which
+            // hear only the action's name)
+            <span className="lk-toast-ring" aria-hidden="true" data-testid="toast-countdown">
+              <svg viewBox="0 0 20 20">
+                <circle className="lk-toast-ring-track" cx="10" cy="10" r="8" />
+                <circle
+                  className="lk-toast-ring-left"
+                  cx="10"
+                  cy="10"
+                  r="8"
+                  strokeDasharray={RING_C}
+                  strokeDashoffset={RING_C * (1 - fraction)}
+                />
+              </svg>
+              <i>{seconds}</i>
+            </span>
+          )}
+          <span>{actionLabel}</span>
         </button>
       )}
       {onDismiss && (
         <button type="button" className="lk-toast-x" aria-label={dismissLabel} onClick={onDismiss}>
           ×
         </button>
-      )}
-      {counting && (
-        // the time left, from full to nothing; its end is the timeout (not announced)
-        <span
-          className="lk-toast-count"
-          aria-hidden="true"
-          data-testid="toast-countdown"
-          style={{ '--lk-toast-ms': `${duration}ms`, '--lk-toast-steps': Math.max(1, Math.round(duration! / 1000)) } as CSSProperties}
-          onAnimationEnd={() => onTimeout?.()}
-        />
       )}
     </div>
   );

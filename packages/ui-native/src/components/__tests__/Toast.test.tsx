@@ -8,9 +8,9 @@ import { Toast } from '../Toast';
 import { mount, propOf, propsWith } from './dom';
 import { render } from './markup';
 
-/* Toast (docs/sdd/components/Toast.md, owner 2026-11-11): the glass card with a tone-tinted edge, the
- * icon in a tone circle, white text; an action ("Undo") with a countdown line that holds while touched
- * or focused and calls onTimeout only when it runs out. */
+/* Toast (docs/sdd/components/Toast.md, owner 2026-11-11, variant C): the glass card with the tone's edge,
+ * the icon in a tone circle, white text; a filled action ("Undo") with a seconds ring that holds while
+ * touched, focused or a screen reader is on, and calls onTimeout only at 0. */
 
 /** A colour as markup may write it: the hex, or its rgb() numbers. */
 const has = (html: string, hex: string) => {
@@ -23,15 +23,22 @@ describe('Toast look', () => {
   test('the glass card, the tone on the edge and the icon circle; never a solid tone fill', () => {
     const html = render(Toast, { tone: 'success', title: 'Units updated' });
     expect(html.replace(/\s/g, '')).toContain('rgba(52,245,197,0.45)');
-    expect(html.replace(/\s/g, '')).toContain('rgba(52,245,197,0.16)');
+    expect(html.replace(/\s/g, '')).toContain('rgba(52,245,197,0.14)');
     // `filled` is deprecated and ignored: the same card, no dark ink
     expect(render(Toast, { tone: 'success', title: 'Units updated', filled: true })).toBe(html);
     expect(has(html, colors.bg0)).toBe(false);
   });
 
-  test('no countdown line without an action', () => {
+  test('no seconds ring without an action, nor on an action without a duration ("Try again")', () => {
     const html = render(Toast, { tone: 'success', title: 'Units updated', duration: 4000, onTimeout: () => {} });
     expect(html).not.toContain('toast-countdown');
+    const retry = render(Toast, { tone: 'danger', title: 'Not removed', actionLabel: 'Try again', onAction: () => {} });
+    expect(retry).toContain('Try again');
+    expect(retry).not.toContain('toast-countdown');
+  });
+
+  test('the error tone: its red edge (.7, 3.3:1)', () => {
+    expect(render(Toast, { tone: 'danger', title: 'x' }).replace(/\s/g, '')).toMatch(/255,77,109,0\.70?\)/);
   });
 });
 
@@ -52,17 +59,31 @@ describe('Toast action and countdown', () => {
     );
   const advance = (ms: number) => act(() => void vi.advanceTimersByTime(ms));
 
-  test('the action is a button named by its label; it calls onAction', () => {
+  const seconds = (host: HTMLElement) =>
+    host.querySelector('[data-testid="toast-countdown"]')!.textContent;
+
+  test('the action is a button named by its label only (the ring is hidden); it calls onAction', () => {
     const onAction = vi.fn();
     const view = undoToast(() => {}, onAction);
     const button = view.host.querySelector('[aria-label="Undo"]')!;
     expect(button.getAttribute('role')).toBe('button');
+    expect(propOf(view.host.querySelector('[data-testid="toast-countdown"]')!, 'accessibilityElementsHidden')).toBe(true);
     act(() => (propOf(button, 'onPress') as () => void)());
     expect(onAction).toHaveBeenCalledTimes(1);
     view.unmount();
   });
 
-  test('onTimeout only when the line runs out', () => {
+  test('the seconds round up: 6, then 4 after 2.5 s, 1 in the last second', () => {
+    const view = undoToast(() => {});
+    expect(seconds(view.host)).toBe('6');
+    advance(2500);
+    expect(seconds(view.host)).toBe('4');
+    advance(3000);
+    expect(seconds(view.host)).toBe('1');
+    view.unmount();
+  });
+
+  test('onTimeout only at 0', () => {
     const onTimeout = vi.fn();
     const view = undoToast(onTimeout);
     expect(view.host.querySelector('[data-testid="toast-countdown"]')).not.toBeNull();
@@ -83,6 +104,7 @@ describe('Toast action and countdown', () => {
     act(() => (propOf(card, 'onTouchStart') as () => void)());
     advance(30000);
     expect(onTimeout).not.toHaveBeenCalled();
+    expect(seconds(view.host)).toBe('4');
     act(() => (propOf(card, 'onTouchEnd') as () => void)());
     advance(3900);
     expect(onTimeout).not.toHaveBeenCalled();

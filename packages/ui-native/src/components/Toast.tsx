@@ -1,57 +1,61 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { View, Text, Pressable, StyleSheet, Animated, AccessibilityInfo, Easing, type ViewProps } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
-import { colors, radii, fonts, nativeShadows } from '@lockin90/tokens';
+import { View, Text, Pressable, StyleSheet, Animated, AccessibilityInfo, type ViewProps } from 'react-native';
+import Svg, { Circle, Path } from 'react-native-svg';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, gradients, radii, fonts, nativeShadows } from '@lockin90/tokens';
 import { Icon, type IconName } from './Icon';
 import { OptionalBlurView } from '../internal/optionalBlur';
 import { useReducedMotion } from '../internal/useReducedMotion';
 import { useReduceTransparency } from '../internal/useReduceTransparency';
 
-export type ToastTone = 'default' | 'success' | 'warn' | 'danger';
+export type ToastTone = 'default' | 'success' | 'info' | 'warn' | 'danger';
 
 export interface ToastProps extends Omit<ViewProps, 'children'> {
-  /** tints the edge and the icon's circle */
+  /** what happened: `success` (a save, a completed change), `danger` (a failure), `warn`, `info`; sets the
+   *  edge and the icon */
   tone?: ToastTone;
-  /** bold first line */
+  /** the message (bold) */
   title?: string;
   /** optional dimmer second line */
   message?: ReactNode;
   /** override the default tone icon (pass any node, e.g. an <Icon />; give it the tone's colour:
-   *  success `colors.zoneHigh`, warn `zoneMid`, danger `zoneLow`; native has no colour inheritance) */
+   *  success `colors.ok`, info `info`, warn `warn`, danger `bad`; native has no colour inheritance) */
   icon?: ReactNode;
   /** show a × button; called when it's pressed */
   onDismiss?: () => void;
   /** the × button's name, in the app's language (CONVENTIONS "Accessibility": names via props).
    *  @default 'Dismiss' (an English fallback for older apps) */
   dismissLabel?: string;
-  /** an action's label ("Undo"), in the app's language; shown with `onAction` */
+  /** an action's label ("Undo", "Try again"), in the app's language; shown with `onAction` */
   actionLabel?: string;
   /** called when the action is pressed */
   onAction?: () => void;
-  /** With an action: how long (ms) until `onTimeout`, shown as a line along the bottom edge that shrinks
-   *  to nothing. It holds while the toast is touched or its action focused (WCAG 2.2.1), and while a
+  /** With an action: how long (ms) until `onTimeout`, shown as a seconds ring inside the action that
+   *  drains to 0. It holds while the toast is touched or its action focused (WCAG 2.2.1), and while a
    *  screen reader is on (VoiceOver's focus can't be seen from JS): then a × (`dismissLabel`) ends it. */
   duration?: number;
-  /** the countdown ran out (or the screen reader's × was pressed): do what the action could undo */
+  /** the countdown reached 0 (or the screen reader's × was pressed): do what the action could undo */
   onTimeout?: () => void;
   /** @deprecated 2026-11-11 (owner: the solid fill "ruins the style"): ignored, every toast is the glass
    *  card. Removed in the next major. */
   filled?: boolean;
 }
 
-/** Each tone's colour: the icon, its circle (16 %), the edge and the countdown line (at an alpha that
- *  keeps them 3:1 on the card and on the solid fill: they mark the state). `default` is neutral. */
-const TONE: Record<ToastTone, { ink: string; circle: string; edge: string; line: string }> = {
-  default: { ink: colors.textDim, circle: colors.glass2, edge: colors.border2, line: 'rgba(255,255,255,0.45)' },
-  success: { ink: colors.zoneHigh, circle: 'rgba(52,245,197,0.16)', edge: 'rgba(52,245,197,0.45)', line: 'rgba(52,245,197,0.45)' },
-  warn: { ink: colors.zoneMid, circle: 'rgba(255,176,32,0.16)', edge: 'rgba(255,176,32,0.5)', line: 'rgba(255,176,32,0.5)' },
-  danger: { ink: colors.zoneLow, circle: 'rgba(255,77,109,0.16)', edge: 'rgba(255,77,109,0.7)', line: 'rgba(255,77,109,0.7)' },
+/** Each tone's colour: the icon, its circle (14 %) and the edge (at an alpha that keeps it 3:1 on the card
+ *  and on the solid fill: it marks the state). `default` is neutral. */
+const TONE: Record<ToastTone, { ink: string; circle: string; edge: string }> = {
+  default: { ink: colors.textDim, circle: colors.glass2, edge: colors.border2 },
+  success: { ink: colors.ok, circle: 'rgba(52,245,197,0.14)', edge: 'rgba(52,245,197,0.45)' },
+  info: { ink: colors.info, circle: 'rgba(110,123,255,0.14)', edge: 'rgba(110,123,255,0.7)' },
+  warn: { ink: colors.warn, circle: 'rgba(255,176,32,0.14)', edge: 'rgba(255,176,32,0.5)' },
+  danger: { ink: colors.bad, circle: 'rgba(255,77,109,0.14)', edge: 'rgba(255,77,109,0.7)' },
 };
 
-/** Default glyph per tone — info for default/warn/danger, check for success. */
+/** Default glyph per tone — check for success, info for the others. */
 const TONE_ICON: Record<ToastTone, IconName> = {
   default: 'info',
   success: 'check',
+  info: 'info',
   warn: 'info',
   danger: 'info',
 };
@@ -59,6 +63,10 @@ const TONE_ICON: Record<ToastTone, IconName> = {
 /** How it comes in: a fade and a small slide down (a fade only under Reduce Motion). */
 const ENTER_MS = 200;
 const ENTER_DY = -8;
+/** The action's dark label on the CTA gradient (4.5:1 at every point of it). */
+const ON_CTA = '#080A12';
+/** The seconds ring: r 8 in a 20 box, drawn 16. */
+const RING_C = 2 * Math.PI * 8;
 
 /** Whether a screen reader is on (VoiceOver / TalkBack), live. */
 function useScreenReader() {
@@ -77,53 +85,56 @@ function useScreenReader() {
   return on;
 }
 
-/** A countdown of `total` ms that holds while `held`: the fraction left (1 → 0) to draw, `onEnd` once
- *  it runs out. Smooth, or under Reduce Motion one step per second. `total` 0: nothing runs. */
+/** A countdown of `total` ms that holds while `held`: the ms left (redrawn each frame, or four times a
+ *  second when `stepped`) and `onEnd` once it reaches 0. `total` 0: nothing runs. */
 function useCountdown(total: number, held: boolean, stepped: boolean, onEnd?: () => void) {
-  const left = useRef(new Animated.Value(1)).current;
+  const [left, setLeft] = useState(total);
   const remaining = useRef(total);
   const endRef = useRef(onEnd);
-  endRef.current = onEnd;
   const done = useRef(false);
+  useEffect(() => {
+    endRef.current = onEnd;
+  });
 
   useEffect(() => {
     if (!total || held || done.current) return;
     if (remaining.current <= 0) remaining.current = total;
     const startedAt = Date.now();
     const from = remaining.current;
-    const finish = () => {
+    const now = () => Math.max(0, from - (Date.now() - startedAt));
+    const timer = setTimeout(() => {
       done.current = true;
       remaining.current = 0;
-      left.setValue(0);
+      setLeft(0);
       endRef.current?.();
-    };
-    const timer = setTimeout(finish, from);
+    }, from);
+    let frame = 0;
     let steps: ReturnType<typeof setInterval> | undefined;
     if (stepped) {
-      // the whole seconds left, drawn once a second
-      const draw = () =>
-        left.setValue(Math.ceil(Math.max(0, from - (Date.now() - startedAt)) / 1000) * 1000 / total);
-      draw();
-      steps = setInterval(draw, 1000);
+      steps = setInterval(() => setLeft(now()), 250);
     } else {
-      Animated.timing(left, { toValue: 0, duration: from, easing: Easing.linear, useNativeDriver: true }).start();
+      const tick = () => {
+        setLeft(now());
+        frame = requestAnimationFrame(tick);
+      };
+      frame = requestAnimationFrame(tick);
     }
     return () => {
       clearTimeout(timer);
+      cancelAnimationFrame(frame);
       if (steps) clearInterval(steps);
-      left.stopAnimation();
       if (done.current) return;
-      remaining.current = Math.max(0, from - (Date.now() - startedAt));
-      left.setValue(remaining.current / total);
+      remaining.current = now();
+      setLeft(remaining.current);
     };
-  }, [total, held, stepped, left]);
+  }, [total, held, stepped]);
 
   return left;
 }
 
 /** Compact floating notification: the dark glass card (blurred where expo-blur is, solid under Reduce
- *  Transparency) with a tone-tinted edge and a soft shadow, the icon in a small tone-tinted circle, white
- *  text, an optional action ("Undo") and ×. Fades in with a small slide. */
+ *  Transparency) with the tone's edge and a soft shadow, the tone icon in a small circle, the message in
+ *  white, an optional filled action ("Undo") with a seconds ring, and ×. Fades in with a small slide. */
 export function Toast({
   tone = 'default',
   title = 'Saved',
@@ -151,11 +162,15 @@ export function Toast({
     transform: reducedMotion ? [] : [{ translateY: enter.interpolate({ inputRange: [0, 1], outputRange: [ENTER_DY, 0] }) }],
   };
 
-  const counting = Boolean(onAction && actionLabel && duration);
+  const action = Boolean(onAction && actionLabel);
+  const counting = action && Boolean(duration);
   const reader = useScreenReader();
   const [touched, setTouched] = useState(false);
   const [focused, setFocused] = useState(false);
   const left = useCountdown(counting ? duration! : 0, touched || focused || reader, reducedMotion, onTimeout);
+  const seconds = Math.ceil(left / 1000);
+  // smooth, or whole seconds under Reduce Motion
+  const fraction = counting ? (reducedMotion ? (seconds * 1000) / duration! : left / duration!) : 0;
   const hold = (on: boolean) => () => setTouched(on);
   // a screen reader holds the countdown: its × ends it (does what the action would undo, at once)
   const dismiss = onDismiss ?? (counting && reader ? onTimeout : undefined);
@@ -163,24 +178,59 @@ export function Toast({
   const content = (
     <>
       <View style={[styles.icon, { backgroundColor: t.circle }]}>
-        {icon ?? <Icon name={TONE_ICON[tone]} size={16} color={t.ink} />}
+        {icon ?? <Icon name={TONE_ICON[tone]} size={13} color={t.ink} />}
       </View>
       <View style={styles.body}>
         <Text style={styles.title}>{title}</Text>
         {message != null && (typeof message === 'string' ? <Text style={styles.msg}>{message}</Text> : message)}
       </View>
-      {onAction && actionLabel ? (
+      {action ? (
         <Pressable
           onPress={onAction}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           accessibilityRole="button"
+          // named by its label only: the ring and its number are not read
           accessibilityLabel={actionLabel}
-          // the label's box reaches the 44pt touch target
-          hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
-          style={({ pressed }) => [styles.action, pressed && styles.pressed]}
+          // the 26pt button reaches the 44pt touch target
+          hitSlop={{ top: 9, bottom: 9, left: 4, right: 4 }}
+          style={({ pressed }) => pressed && styles.pressed}
         >
-          <Text style={styles.actionText}>{actionLabel}</Text>
+          <LinearGradient
+            colors={gradients.cta.stops as unknown as [string, string]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.action}
+          >
+            {counting && (
+              <View
+                style={styles.ring}
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+                testID="toast-countdown"
+              >
+                <Svg width={16} height={16} viewBox="0 0 20 20" style={styles.ringSvg}>
+                  <Circle cx={10} cy={10} r={8} fill="none" stroke={ON_CTA} strokeWidth={1.8} opacity={0.22} />
+                  <Circle
+                    cx={10}
+                    cy={10}
+                    r={8}
+                    fill="none"
+                    stroke={ON_CTA}
+                    strokeWidth={1.8}
+                    strokeLinecap="round"
+                    strokeDasharray={`${RING_C}`}
+                    strokeDashoffset={RING_C * (1 - fraction)}
+                  />
+                </Svg>
+                {/* part of the 16pt ring graphic (hidden from screen readers): it keeps its size */}
+                <Text style={styles.ringNumber} allowFontScaling={false}>
+                  {seconds}
+                </Text>
+              </View>
+            )}
+            <Text style={styles.actionText}>{actionLabel}</Text>
+          </LinearGradient>
         </Pressable>
       ) : null}
       {dismiss && (
@@ -196,16 +246,6 @@ export function Toast({
             <Path d="m6 6 12 12M18 6 6 18" />
           </Svg>
         </Pressable>
-      )}
-      {counting && (
-        // the time left, from full to nothing (in the tone's colour, 3:1 on the card); not announced
-        <Animated.View
-          pointerEvents="none"
-          importantForAccessibility="no-hide-descendants"
-          accessibilityElementsHidden
-          testID="toast-countdown"
-          style={[styles.count, { backgroundColor: t.line, transform: [{ scaleX: left }] }]}
-        />
       )}
     </>
   );
@@ -240,38 +280,39 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     ...nativeShadows.elev2,
   },
+  // slim (owner, 2026-11-11, variant C): 6 / 6 / 6 / 10, 10 apart
   toast: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    minHeight: 48,
-    paddingVertical: 9,
+    paddingVertical: 6,
     paddingLeft: 10,
-    paddingRight: 12,
+    paddingRight: 6,
     borderRadius: radii.md,
     borderWidth: 1,
     backgroundColor: colors.card,
-    // the blur and the countdown line clipped to the radius
+    // the blur clipped to the radius
     overflow: 'hidden',
   },
   // Reduce Transparency: opaque
   solid: { backgroundColor: colors.bg1 },
   icon: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     alignItems: 'center',
     justifyContent: 'center',
   },
   body: {
     flex: 1,
     minWidth: 0,
+    paddingVertical: 4,
   },
   title: {
     fontFamily: fonts.ui,
-    fontSize: 14,
+    fontSize: 13.5,
     fontWeight: '600',
-    lineHeight: 19,
+    lineHeight: 18,
     color: colors.text,
   },
   msg: {
@@ -281,33 +322,37 @@ const styles = StyleSheet.create({
     lineHeight: 17.5,
     color: colors.textDim,
   },
+  // the filled action: 26 tall, corners 10 (the toast's 16 less its 6 padding), 0 10 0 5, 5 apart
   action: {
-    minHeight: 28,
-    paddingHorizontal: 10,
-    borderRadius: radii.sm,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 5,
+    height: 26,
+    paddingLeft: 5,
+    paddingRight: 10,
+    borderRadius: radii.sm,
   },
-  pressed: { opacity: 0.6 },
+  pressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },
   actionText: {
     fontFamily: fonts.ui,
-    fontSize: 14,
+    fontSize: 12.5,
     fontWeight: '600',
-    lineHeight: 19,
-    color: colors.accent2,
+    color: ON_CTA,
   },
-  // the countdown: 2pt along the bottom edge, shrinking toward the start
-  count: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 2,
-    transformOrigin: 'left',
+  ring: { width: 16, height: 16, alignItems: 'center', justifyContent: 'center' },
+  ringSvg: { position: 'absolute', transform: [{ rotate: '-90deg' }] },
+  ringNumber: {
+    fontFamily: fonts.ui,
+    fontSize: 8.5,
+    lineHeight: 10,
+    fontWeight: '700',
+    fontVariant: ['tabular-nums'],
+    color: ON_CTA,
   },
   x: {
     width: 20,
     height: 20,
+    marginHorizontal: 2,
     borderRadius: radii.sm,
     alignItems: 'center',
     justifyContent: 'center',

@@ -203,3 +203,26 @@ Supersedes the `filled` look and §3's rail: the owner said the solid green "rui
   countdown holds and a × (`dismissLabel`) ends it at once (`onTimeout`).
 - **Apps:** a confirmation for about 4 s; a toast with Undo about 6 s (its `duration`). The app announces it
   (the title and that it can be undone), never the countdown.
+
+## Update — 2026-11-11 (owner's pick: variant C — slim, filled Undo with a seconds ring)
+
+Supersedes the sizes, the action and the countdown line of the update above.
+
+- **Tones:** `success` (a save, a completed change, "Photo removed"), `danger` (a failure), `warn`, new
+  **`info`**; each sets the edge and the icon: ok `#34F5C5` edge .45 (3.5:1), bad `#FF4D6D` edge .7 (3.3:1),
+  warn `#FFB020` edge .5 (3.3:1), info `#6E7BFF` (`--info` / `colors.info`) edge .7 (3.2:1); the icon's circle
+  is the tone at .14. Text white; the glass surface as above.
+- **Slim:** padding 6 / 6 / 6 / 10, gap 10, icon circle 22 (glyph 13), message 13.5 / 600, radius 16
+  (`--r` / `radii.md`). No min height.
+- **Action** (`actionLabel` + `onAction`): **filled** with the CTA gradient, label `#080A12` 12.5 / 600
+  (4.5:1 at every point of the gradient), 26 tall with a 44px / 44pt hit area (web `::before`, native
+  `hitSlop` 9 / 4), corners 10 (`--r-sm` / `radii.sm`: the toast's 16 less its 6 padding), padding 0 10 0 5,
+  gap 5; pressed scales to .98, web focus the `--accent-2` ring. Without `duration` (a "Try again") it has no
+  ring.
+- **Seconds ring** (with `duration`): inside the action, left; 16, stroke 1.8 in the label's colour over a
+  .22 track, the whole seconds left in the middle (8.5 / 700, tabular, rounded up: 6, 5… 1); the arc drains
+  as time passes (the preview's geometry: `stroke-dashoffset = C × (1 − left)`, rotated −90°). Redrawn each
+  frame; under reduced motion it steps (whole seconds). It holds while the toast is hovered (web), pressed /
+  touched, or the action focused, and (native) while a screen reader is on, whose × ends it. Hidden from
+  screen readers: they hear the app's announcement and an action named by its label only. `onTimeout` only
+  at 0. **No bottom line.**
