@@ -22,7 +22,12 @@ export function SsoButton({ provider, loading = false, onPress, accessibilitySta
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`Continue with ${label}`}
-      accessibilityState={{ ...accessibilityState, disabled: rest.disabled === true, busy: loading || undefined }}
+      // the app may announce a button disabled without dimming it (no onPress); only `disabled` dims
+      accessibilityState={{
+        ...accessibilityState,
+        disabled: rest.disabled === true || accessibilityState?.disabled === true,
+        busy: loading || undefined,
+      }}
       onPress={onPress ? (e) => !loading && onPress(e) : undefined}
       {...rest}
       style={({ pressed }) => [

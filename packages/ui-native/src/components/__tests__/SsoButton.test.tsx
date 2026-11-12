@@ -29,3 +29,22 @@ describe('SsoButton loading', () => {
     view.unmount();
   });
 });
+
+/* The app may announce a provider disabled without dimming it (no onPress, owner 2026-11-02). */
+describe('SsoButton disabled state', () => {
+  test('keeps an app-set accessibilityState.disabled without the disabled prop', async () => {
+    const { mount, propOf } = await import('./dom');
+    const view = mount(<SsoButton provider="google" accessibilityState={{ disabled: true }} />);
+    const button = view.host.querySelector('[role="button"]')!;
+    expect((propOf(button, 'accessibilityState') as { disabled?: boolean }).disabled).toBe(true);
+    view.unmount();
+  });
+
+  test('is not announced disabled when nothing disables it', async () => {
+    const { mount, propOf } = await import('./dom');
+    const view = mount(<SsoButton provider="google" onPress={() => {}} />);
+    const button = view.host.querySelector('[role="button"]')!;
+    expect((propOf(button, 'accessibilityState') as { disabled?: boolean }).disabled).toBe(false);
+    view.unmount();
+  });
+});
