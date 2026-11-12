@@ -1,7 +1,7 @@
-import { type HTMLAttributes, useLayoutEffect, useRef } from 'react';
+import { Fragment, type HTMLAttributes, useLayoutEffect, useRef, useState } from 'react';
 import { cn } from '../cn';
 import { Icon, type IconName } from './Icon';
-import { segFitPercent } from './segFit';
+import { segmentRows, wordsOf, type SegmentLayout } from './segRows';
 import { fitFloorPercent } from '../hooks/useWordFit';
 
 /** Per-segment tone. Two families:
@@ -112,6 +112,16 @@ export function nextSegment(count: number, from: number, step: 1 | -1, locked: n
   return from;
 }
 
+/** The row (of `rows`, labels per row) segment `i` is on. */
+function rowOf(rows: readonly number[], i: number): number {
+  let end = 0;
+  for (let r = 0; r < rows.length; r += 1) {
+    end += rows[r]!;
+    if (i < end) return r;
+  }
+  return rows.length - 1;
+}
+
 /** iOS-style segmented control — a pill track of equal-width segments; the
  *  active one is a raised lighter pill. Locked segments are dimmed,
  *  non-interactive, and show a lock glyph. */
@@ -156,50 +166,67 @@ export function SegmentedTabs({
   const ref = useRef<HTMLDivElement>(null);
   const labels = tabs.map((item) => toTab(item).label).join('\u0000');
 
-  // fill: a label wider than its segment shrinks to fit, down to `fitFloorPercent` (never below the
-  // default text size or 11px, as native) — long words in uk / ru / es / ja on a phone row; then wraps at
-  // a space, never inside a word, and as a last resort the segments go on two rows. Labels that fit keep their
-  // size (the stylesheet's, for every size and appearance: the fit only ever sets an inline size).
+  // fill (owner 2026-11-11, as native): measured on one line (a hidden probe in the label's own font), the
+  // labels stay on one row when they fit it, a label too wide shrinking first (down to `fitFloorPercent`
+  // with `belowDefault`: 11px at the default text size, the default size at an enlarged one); else the
+  // segments go on as few balanced rows of pills as fit (3 + 2, 2 + 2, 2 + 2 + 1…), centred, a label wrapping
+  // between words there — never a column list as such (`segmentRows`). Labels that fit keep the
+  // stylesheet's size (the fit only ever sets an inline size). Again when the webfonts arrive and when the
+  // row's width changes.
+  const [layout, setLayout] = useState<(SegmentLayout & { base: number }) | null>(null);
   useLayoutEffect(() => {
     const track = ref.current;
-    if (!fill || !track) return;
-    // one pass over the tabs; true when a single word still doesn't fit (the segments need rows)
-    const fitTabs = () => {
-      let rows = false;
-      for (const tab of track.querySelectorAll<HTMLElement>('.lk-seg-tab')) {
-        tab.style.removeProperty('font-size');
-        tab.classList.remove('lk-seg-wrap');
-        if (tab.scrollWidth <= tab.clientWidth) continue;
-        const style = getComputedStyle(tab);
-        const base = parseFloat(style.fontSize);
-        const padding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
-        const floor = fitFloorPercent(base, parseFloat(getComputedStyle(document.documentElement).fontSize) || 16);
-        // one measure, then whole-percent steps for what rounding leaves over
-        for (let percent = Math.max(floor, segFitPercent(tab.clientWidth, tab.scrollWidth, padding)); percent >= floor && floor < 100; percent -= 2) {
-          tab.style.fontSize = `${(base * percent) / 100}px`;
-          if (tab.scrollWidth <= tab.clientWidth) break;
-        }
-        // still too wide: several words wrap at a space inside the segment; a single word never breaks
-        if (tab.scrollWidth > tab.clientWidth) {
-          tab.classList.add('lk-seg-wrap');
-          if (tab.scrollWidth > tab.clientWidth) rows = true;
-        }
-      }
-      return rows;
-    };
+    if (!fill || !track) {
+      setLayout(null);
+      return;
+    }
     const fit = () => {
-      track.classList.remove('lk-seg--rows');
-      // a word that never fits: the segments take the width they need, on as many rows as it takes, and
-      // every tab is fitted again in that layout (none stays shrunk for the one-row widths)
-      if (fitTabs()) {
-        track.classList.add('lk-seg--rows');
-        fitTabs();
-      }
+      const tabEls = Array.from(track.querySelectorAll<HTMLElement>('.lk-seg-tab:not(.lk-seg-probe)'));
+      const ts = getComputedStyle(track);
+      const px = (v: string) => parseFloat(v) || 0;
+      const inner = track.clientWidth - px(ts.paddingLeft) - px(ts.paddingRight);
+      if (!(track.clientWidth > 0) || !tabEls.length) return setLayout(null);
+      // the probe: a hidden segment (the stylesheet's label font, never an inline size) holding one text
+      const probe = document.createElement('span');
+      probe.className = 'lk-seg-tab lk-seg-probe';
+      probe.setAttribute('aria-hidden', 'true');
+      const text = document.createElement('span');
+      probe.appendChild(text);
+      track.appendChild(probe);
+      const widthOf = (t: string) => {
+        text.textContent = t;
+        return text.getBoundingClientRect().width;
+      };
+      const base = px(getComputedStyle(probe).fontSize) || 16;
+      const names = tabs.map((item) => toTab(item).label);
+      const measures = names.map((label) => ({ full: widthOf(label), words: wordsOf(label).map(widthOf) }));
+      const space = Math.max(0, widthOf('a a') - widthOf('aa'));
+      probe.remove();
+      // a label's room: the segment less its padding, edge, and the dot / icon / count / lock beside it
+      const extras = tabEls.map((tab) => {
+        const cs = getComputedStyle(tab);
+        const parts = Array.from(tab.children) as HTMLElement[];
+        return (
+          px(cs.paddingLeft) + px(cs.paddingRight) + px(cs.borderLeftWidth) + px(cs.borderRightWidth) +
+          parts.reduce((sum, el) => sum + el.getBoundingClientRect().width, 0) + px(cs.columnGap) * parts.length
+        );
+      });
+      const root = px(getComputedStyle(document.documentElement).fontSize) || 16;
+      // at a large text size (a root over 1.35 × 16, as native's 1.35) labels wrap onto rows at their size;
+      // only a label alone on its row that is still too wide shrinks, to the floor
+      const floor = fitFloorPercent(base, root, true) / 100;
+      const next = segmentRows(
+        measures,
+        (i, segW) => segW - (extras[i] ?? 0),
+        inner,
+        space,
+        root > 16 * 1.35 ? 1 : floor,
+        px(ts.columnGap),
+        floor,
+      );
+      setLayout((prev) => (prev && JSON.stringify(prev) === JSON.stringify({ ...next, base }) ? prev : { ...next, base }));
     };
     fit();
-    // again once the webfonts arrive (labels widen), and when the row's width changes (not its height,
-    // which the fit itself can move), next frame; without ResizeObserver (jsdom, old browsers) only
-    // the first fit
     let width = track.clientWidth;
     let frame = 0;
     const refit = () => {
@@ -220,14 +247,17 @@ export function SegmentedTabs({
       observer?.disconnect();
       cancelAnimationFrame(frame);
     };
-    // also after a render that rewrites the track's or a tab's class (invalid, the chosen tab): React
-    // replaces the whole class, dropping the fit's lk-seg--rows / lk-seg-wrap
-  }, [fill, labels, size, appearance, invalid, className, active]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the labels' text is `labels`
+  }, [fill, labels, size, appearance]);
+  const onRows = fill && layout != null && layout.rows.length > 1;
+  // the last segment of each row but the last: a break follows it
+  const rowEnds = new Set<number>();
+  if (onRows) layout!.rows.reduce((end, c) => (rowEnds.add(end + c - 1), end + c), 0);
 
   return (
     <div
       ref={ref}
-      className={cn('lk-seg', size === 'sm' && 'lk-seg-sm', fill && 'lk-seg--fill', invalid && 'lk-seg--invalid', className)}
+      className={cn('lk-seg', size === 'sm' && 'lk-seg-sm', fill && 'lk-seg--fill', onRows && 'lk-seg--rows', invalid && 'lk-seg--invalid', className)}
       aria-invalid={invalid || undefined}
       role={choice ? 'radiogroup' : 'tablist'}
       data-tone={tone !== 'accent' ? tone : undefined}
@@ -238,9 +268,10 @@ export function SegmentedTabs({
         const { label, count, tone, icon } = toTab(item);
         const isLocked = locked?.includes(i) ?? false;
         const isColorTone = tone != null && COLOR_TONES.has(tone);
+        const scale = fill && layout ? (layout.scales[i] ?? 1) : 1;
         return (
+          <Fragment key={i}>
           <button
-            key={i}
             type="button"
             role={choice ? 'radio' : 'tab'}
             aria-selected={choice ? undefined : i === active}
@@ -261,7 +292,16 @@ export function SegmentedTabs({
               isLocked && 'lk-seg-locked',
               tone && `lk-seg-${tone}`,
               isColorTone && 'lk-seg-colortone',
+              fill && layout?.wraps[i] && 'lk-seg-wrap',
             )}
+            style={
+              onRows || scale !== 1
+                ? {
+                    ...(onRows ? { flex: 'none', width: `${Math.floor(layout!.widths[rowOf(layout!.rows, i)]! * 100) / 100}px` } : {}),
+                    ...(scale !== 1 ? { fontSize: `${Math.round(layout!.base * scale * 100) / 100}px` } : {}),
+                  }
+                : undefined
+            }
             onClick={isLocked ? undefined : () => onChange?.(i)}
           >
             {tone && !isColorTone && <span className="lk-seg-dot" aria-hidden="true" />}
@@ -270,6 +310,8 @@ export function SegmentedTabs({
             {count != null && <span className="lk-seg-count">{count}</span>}
             {isLocked && <Icon name="lock" size={12} />}
           </button>
+          {rowEnds.has(i) && i < tabs.length - 1 && <span className="lk-seg-break" aria-hidden="true" />}
+          </Fragment>
         );
       })}
     </div>

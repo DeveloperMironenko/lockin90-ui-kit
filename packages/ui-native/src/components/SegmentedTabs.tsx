@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet, useWindowDimensions } from 'react-na
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
 import { hapticSelection } from "../internal/optionalHaptics";
-import { SLACK, WordMeasurer, breakableWords, fitFloor, wordFitScale, type Probe } from '../internal/wordFit';
+import { SLACK, WordMeasurer, breakableWords, fitFloor, glueCJK, hasCJK, wordFitScale, type Probe } from '../internal/wordFit';
 import { Icon, type IconName } from './Icon';
 
 /**
@@ -81,7 +81,7 @@ const TONE_BORDER: Record<SegmentedColorTone, string> = {
  *  (design `.seg button[aria-pressed="true"]` — #07080d). */
 const INK_ON_GRADIENT = '#07080D';
 
-/** Above this OS text scale the segments always stack (as ListRow's settings rows). */
+/** Above this OS text scale an `sm` track wraps its pills onto more rows (as ListRow's settings rows stack). */
 const LARGE_TEXT = 1.35;
 const LABEL_SIZE = 11;
 /** A segment's side padding: the pill's (6, `fill` 4) plus the 2 it is inset. */
@@ -89,10 +89,14 @@ const PAD_X = 8;
 const FILL_PAD_X = 6;
 const FILL_LABEL_SIZE = 12.5;
 
-/** A label's words: the pieces a line can't split (`breakableWords`: at spaces, and between CJK
- *  characters, so a zh / ja label wraps between them); none for an empty or space-only label. */
+/** A label's words: the pieces a line can't split (`breakableWords`: at spaces, after a hyphen or a
+ *  slash), a CJK run whole (a zh / ja option is one word, owner 2026-11-11: never "アスリー / ト"); none
+ *  for an empty or space-only label. */
 export function wordsOf(label: string): string[] {
-  return breakableWords(label);
+  return label
+    .split(/[ \t\n\r\u2009\u200a]+/)
+    .filter(Boolean)
+    .flatMap((chunk) => (hasCJK(chunk) ? [chunk] : breakableWords(chunk)));
 }
 
 /** One label measured on one line at its own font size: the whole label and each word. */
@@ -101,48 +105,131 @@ export interface LabelWidths {
   words: number[];
 }
 
-/**
- * How labels fit their segments, from widths measured on one unconstrained line (so it can't miss):
- * each label's font scale (1, or down to `minScale` to stay on one line) and whether the segments must
- * stack — a word wider than its room even at `minScale`, or a label that needs more than 2 lines when it
- * wraps between words. `rooms[i]` is the width label `i` has inside its segment; `space` a space's width.
- */
-export function segmentFit(
-  widths: readonly LabelWidths[],
-  rooms: readonly number[],
+/** How the segments are laid out: the labels per row (in order), each row's segment width, each label's
+ *  font scale and whether it wraps onto more lines. */
+export interface SegmentLayout {
+  rows: number[];
+  widths: number[];
+  scales: number[];
+  wraps: boolean[];
+}
+
+/** A label in `room`: on one line (shrunk as far as `minScale` if it must), else wrapping between words
+ *  onto at most `maxLines` (at full size if it can, else at `minScale`); null when it can't fit. */
+function fitLabel(
+  { full, words }: LabelWidths,
+  room: number,
   space: number,
   minScale: number,
-): { stacked: boolean; scales: number[] } {
-  let stacked = false;
-  const scales = widths.map(({ full, words }, i) => {
-    const room = (rooms[i] ?? 0) - SLACK;
-    if (!words.length || full <= room) return 1;
-    const shrink = Math.floor((100 * room) / full) / 100;
-    if (shrink >= minScale) return shrink;
-    // wraps at spaces, at the smallest size: every word fits its room, in at most 2 lines
+  maxLines: number,
+): { scale: number; wraps: boolean } | null {
+  const r = room - SLACK;
+  if (!words.length) return { scale: 1, wraps: false };
+  if (!(r > 0)) return null;
+  if (full <= r) return { scale: 1, wraps: false };
+  const shrink = Math.floor((100 * r) / full) / 100;
+  if (shrink >= minScale) return { scale: shrink, wraps: false };
+  if (maxLines < 2 || words.length < 2) return null;
+  for (const scale of [1, minScale]) {
     let lines = 1;
     let line = 0;
+    let fits = true;
     for (const w of words) {
-      const word = w * minScale;
-      if (word > room) stacked = true;
+      const word = w * scale;
+      if (word > r) fits = false;
       if (line === 0) line = word;
-      else if (line + space * minScale + word <= room) line += space * minScale + word;
+      else if (line + space * scale + word <= r) line += space * scale + word;
       else {
         lines += 1;
         line = word;
       }
     }
-    if (lines > 2) stacked = true;
-    return minScale;
-  });
-  return { stacked, scales: stacked ? widths.map(() => 1) : scales };
+    if (fits && lines <= maxLines) return { scale, wraps: true };
+  }
+  return null;
 }
 
-/** Stacked segments: each label's scale so its widest word fits its room (labels wrap between words),
- *  down to `minScale` (`fitFloor`: never below the default text size or 11pt; past it the word breaks,
- *  the last resort). */
-export function stackedScales(widths: readonly LabelWidths[], rooms: readonly number[], minScale: number): number[] {
-  return widths.map(({ words }, i) => wordFitScale(Math.max(0, ...words), rooms[i] ?? 0, minScale));
+/**
+ * How the segments fit `inner` (the track's width inside its edge), from widths measured on one
+ * unconstrained line (owner 2026-11-11): one row if every label fits it on one line, shrunk if it must (to
+ * `minScale`: `fitFloor`); else as few rows as fit, balanced and in order (5 → 3 + 2, 4 → 2 + 2, then
+ * 2 + 2 + 1…), a row's segments as wide as the fullest row's (a shorter row centred) unless a label needs
+ * the row's whole width shared by fewer (a label that needs the full width gets a row of its own). On rows,
+ * a label may wrap between words onto 2 lines, then more; never a column list as such. `roomOf(i, w)` is
+ * the room label `i` has in a segment `w` wide; `space` a space's width; `gap` the space between segments
+ * (0 here: they sit edge to edge). `aloneScale` is the floor of a label alone on its row (at a large text size
+ * labels wrap rather than shrink: `minScale` 1 there, and only a label too wide for the full width shrinks,
+ * down to `aloneScale`). A word wider than the full width even at `aloneScale` is the last resort:
+ * each label a row, shrunk to the floor, the word breaking. Web `segmentRows` is the same.
+ */
+export function segmentRows(
+  measures: readonly LabelWidths[],
+  roomOf: (i: number, segW: number) => number,
+  inner: number,
+  space: number,
+  minScale: number,
+  gap = 0,
+  aloneScale = minScale,
+): SegmentLayout {
+  const widthFor = (c: number) => (inner - gap * (c - 1)) / c;
+  const n = measures.length;
+  if (!n) return { rows: [], widths: [], scales: [], wraps: [] };
+  let best: { layout: SegmentLayout; score: number[] } | null = null;
+  for (const maxLines of [2, Infinity]) {
+    for (let mask = 0; mask < 1 << (n - 1); mask += 1) {
+      const rows: number[] = [];
+      let count = 1;
+      for (let g = 0; g < n - 1; g += 1) {
+        if (mask & (1 << g)) {
+          rows.push(count);
+          count = 1;
+        } else count += 1;
+      }
+      rows.push(count);
+      const lines = rows.length === 1 ? 1 : maxLines;
+      const fullest = Math.max(...rows);
+      const layout: SegmentLayout = { rows, widths: [], scales: [], wraps: [] };
+      let start = 0;
+      let ok = true;
+      for (const c of rows) {
+        const tryWidth = (segW: number) => {
+          const out: { scale: number; wraps: boolean }[] = [];
+          for (let k = 0; k < c; k += 1) {
+            const f = fitLabel(measures[start + k]!, roomOf(start + k, segW), space, c === 1 ? aloneScale : minScale, lines);
+            if (!f) return null;
+            out.push(f);
+          }
+          return out;
+        };
+        let segW = widthFor(fullest);
+        let fits = tryWidth(segW);
+        if (!fits && c < fullest) fits = tryWidth((segW = widthFor(c)));
+        if (!fits) {
+          ok = false;
+          break;
+        }
+        layout.widths.push(segW);
+        for (const f of fits) {
+          layout.scales.push(f.scale);
+          layout.wraps.push(f.wraps);
+        }
+        start += c;
+      }
+      if (!ok) continue;
+      // fewer rows, then balanced, then fewer labels wrapped, then the fuller rows first
+      const score = [rows.length, fullest - Math.min(...rows), layout.wraps.filter(Boolean).length, ...rows.map((r) => -r)];
+      const d = best ? score.findIndex((v, i) => v !== best!.score[i]) : -1;
+      const better = !best || (d !== -1 && score[d]! < best.score[d]!);
+      if (better) best = { layout, score };
+    }
+    if (best) return best.layout;
+  }
+  return {
+    rows: measures.map(() => 1),
+    widths: measures.map(() => inner),
+    scales: measures.map(({ words }, i) => wordFitScale(Math.max(0, ...words), roomOf(i, inner), aloneScale)),
+    wraps: measures.map(() => true),
+  };
 }
 
 export interface SegmentedTabsProps {
@@ -230,24 +317,24 @@ export function SegmentedTabs({
   const choice = kind === 'choice';
   const items = tabs.map(toTab);
   const labels = items.map((t) => t.label);
-  // Nothing is cut off and no word breaks (CONVENTIONS "Accessibility"), decided from measured widths:
-  // - a large OS text size (> 1.35, as ListRow) always stacks the segments, each the full width, labels
-  //   wrapping between words; a word wider than even that (a half-width column) shrinks to fit
-  //   (`stackedScales`, down to `fitFloor`: never below the default text size or 11pt);
-  // - `md` at any size: a hidden measurer lays every label, each of its words, a space and each count out
-  //   on one unconstrained line in the label's own font; with the track's width that gives each label's
-  //   room, and `segmentFit` says the label's scale (`fill`: down to `fitFloor` to stay on one line) or
-  //   that the segments stack (a word wider than its room, or more than 2 lines). The row stays invisible
-  //   until the widths are in, so it never shows one layout and then jumps to another.
-  // - `sm` hugs its labels (they never wrap) and stacks only at a large text size.
+  // Nothing is cut off and no word breaks (CONVENTIONS "Accessibility"), decided from measured widths
+  // (`md`): a hidden measurer lays every label, each of its words, a space and each count out on one
+  // unconstrained line in the label's own font; with the track's width that goes to `segmentRows`: one row
+  // when every label fits it on one line (a `fill` label shrinks first, down to `fitFloor` with
+  // `belowDefault`: 11pt at the default text size, the default size at a larger one), else as few balanced
+  // rows as fit (3 + 2, 2 + 2, 2 + 2 + 1…, owner 2026-11-11: never a column list as such), at any text size
+  // (above 1.35 without shrinking first: only a label alone on its row shrinks).
+  // The track stays invisible until the widths are in, so it never shows one layout and then jumps to another.
+  // `sm` hugs its labels (they never wrap); at a large text size its pills wrap onto more rows.
   const { fontScale, width: windowW } = useWindowDimensions();
   const large = fontScale > LARGE_TEXT;
   const measuring = !isSm;
   const [trackW, setTrack] = useState(0);
-  // stacked with a label shrunk, a track as wide as its content (in a parent that doesn't stretch it) is
+  // on rows with a label shrunk, a track as wide as its content (in a parent that doesn't stretch it) is
   // narrower than its room: that narrower width is not taken, or the labels would shrink again and again
-  const shrunkStack = useRef(false);
-  const setTrackW = (w: number) => setTrack((prev) => (shrunkStack.current && w < prev ? prev : w));
+  const shrunkRows = useRef(false);
+  const setTrackW = (w: number) => setTrack((prev) => (shrunkRows.current && w < prev ? prev : w));
+  const shown = labels.map(glueCJK);
   const measureKey = `${labels.join('\u0000')}|${items.map((t) => t.count ?? '').join(',')}|${fontScale}|${fill}|${windowW}`;
   const [measured, setMeasured] = useState<{ key: string; w: Record<string, number> }>({ key: measureKey, w: {} });
   const widths = measured.key === measureKey ? measured.w : {};
@@ -261,7 +348,7 @@ export function SegmentedTabs({
     { id: 'sp0', text: 'aa' },
   ];
   items.forEach((t, i) => {
-    probes.push({ id: `f${i}`, text: t.label });
+    probes.push({ id: `f${i}`, text: shown[i]! });
     wordsOf(t.label).forEach((w, k) => probes.push({ id: `w${i}.${k}`, text: w }));
     if (t.count != null) probes.push({ id: `c${i}`, text: String(t.count), count: true });
   });
@@ -281,57 +368,42 @@ export function SegmentedTabs({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- probes follow measureKey
   }, [measureKey, measuring]);
   const ready = measuring && trackW > 0 && probes.every((p) => widths[p.id] != null);
-  let fit: { stacked: boolean; scales: number[] } = { stacked: false, scales: labels.map(() => 1) };
-  let stacked = large;
+  let layout: SegmentLayout = { rows: [items.length], widths: [], scales: labels.map(() => 1), wraps: labels.map(() => false) };
   if (ready) {
-    const n = Math.max(items.length, 1);
     const gap = isTint ? 5 : 4;
     // a label's room in a segment `segW` wide: less its padding, dot, icon, count and lock (the hairline
     // of a tint or color-tone segment is on its absolute pill: it takes no room)
-    const roomsIn = (segW: number) =>
-      items.map((t, i) => {
-        const colorTone = t.tone != null && COLOR_TONES.has(t.tone);
-        let room = segW - 2 * (fill ? FILL_PAD_X : PAD_X);
-        if (t.tone != null && !colorTone) room -= 6 + gap;
-        if (t.icon != null) room -= 13 + gap;
-        if (t.count != null) room -= widths[`c${i}`]! + 12 + gap;
-        if (locked?.includes(i)) room -= 12 + gap;
-        return room;
-      });
+    const roomOf = (i: number, segW: number) => {
+      const t = items[i]!;
+      const colorTone = t.tone != null && COLOR_TONES.has(t.tone);
+      let room = segW - 2 * (fill ? FILL_PAD_X : PAD_X);
+      if (t.tone != null && !colorTone) room -= 6 + gap;
+      if (t.icon != null) room -= 13 + gap;
+      if (t.count != null) room -= widths[`c${i}`]! + 12 + gap;
+      if (locked?.includes(i)) room -= 12 + gap;
+      return room;
+    };
     const measures = items.map((t, i) => ({
       full: widths[`f${i}`]!,
       words: wordsOf(t.label).map((_, k) => widths[`w${i}.${k}`]!),
     }));
-    // the row: the track (1 border + 2 padding each side, segments edge to edge) shared equally
-    if (!large) {
-      fit = segmentFit(measures, roomsIn((trackW - 2 * 1 - 2 * 2) / n), Math.max(0, widths.sp2! - widths.sp0!), fill ? fitFloor(FILL_LABEL_SIZE, fontScale) : 1);
-      stacked = fit.stacked;
-    }
-    // stacked: each segment the track's whole inner width; labels wrap between words, and a word wider
-    // than that (a narrow column at a large text size) shrinks to fit (down to the default text size)
-    if (stacked) fit = { stacked: true, scales: stackedScales(measures, roomsIn(trackW - 2 * 1 - 2 * 2), fitFloor(fill ? FILL_LABEL_SIZE : LABEL_SIZE, fontScale)) };
+    // the track's inner width: 1 border + 2 padding each side, segments edge to edge (on rows too)
+    // at a large text size labels wrap onto rows at their size (owner 2026-11-11); only a label alone on
+    // its row that is still too wide shrinks, to the floor
+    const minScale = fitFloor(fill ? FILL_LABEL_SIZE : LABEL_SIZE, fontScale, fill);
+    const space = Math.max(0, widths.sp2! - widths.sp0!);
+    layout = segmentRows(measures, roomOf, trackW - 2 * 1 - 2 * 2, space, large ? 1 : minScale, 0, minScale);
   }
-  shrunkStack.current = stacked && fit.scales.some((k) => k !== 1);
+  const onRows = layout.rows.length > 1;
+  shrunkRows.current = onRows && layout.scales.some((k) => k !== 1);
   const pending = measuring && !ready;
   const baseSize = fill ? FILL_LABEL_SIZE : LABEL_SIZE;
-  return (
-    <View
-      style={[
-        styles.track,
-        isSm && styles.trackSm,
-        isTint && styles.trackTint,
-        invalid && styles.trackInvalid,
-        stacked && styles.trackStacked,
-        // always set (iOS Fabric kept a dropped `opacity: 0` on the track: the row stayed invisible)
-        pending ? styles.pending : styles.shown,
-      ]}
-      accessibilityRole={choice ? 'radiogroup' : 'tablist'}
-      accessibilityLabel={accessibilityLabel}
-      accessibilityHint={accessibilityHint}
-      ref={trackRef}
-      onLayout={measuring ? (e) => setTrackW(e.nativeEvent.layout.width) : undefined}
-    >
-      {items.map(({ label, count, tone: itemTone, icon }, i) => {
+  // each segment's row, for its width on rows
+  const rowOf: number[] = [];
+  layout.rows.forEach((c, r) => {
+    for (let k = 0; k < c; k += 1) rowOf.push(r);
+  });
+  const segments = items.map(({ count, tone: itemTone, icon }, i) => {
         const isActive = i === active;
         const isLocked = locked?.includes(i) ?? false;
         const isGradActive = isActive && tone !== 'accent';
@@ -371,11 +443,11 @@ export function SegmentedTabs({
             disabled={isLocked}
             onPress={isLocked ? undefined : () => { hapticSelection(); onChange?.(i); }}
             // the row's segments are the track's height less its edge (42): the target reaches 44
-            hitSlop={!isSm && !stacked ? { top: 1, bottom: 1 } : undefined}
+            hitSlop={!isSm && !onRows ? { top: 1, bottom: 1 } : undefined}
             style={({ pressed }) => [
               styles.tab,
-              !isSm && !stacked && styles.tabRow,
-              stacked && styles.tabStacked,
+              !isSm && !onRows && styles.tabRow,
+              onRows && [styles.tabOnRows, { width: layout.widths[rowOf[i]!] }],
               isSm && styles.tabSm,
               isTint && styles.tabTint,
               fill && styles.tabFill,
@@ -388,7 +460,7 @@ export function SegmentedTabs({
               pointerEvents="none"
               style={[
                 styles.pill,
-                isSm ? styles.pillSm : stacked ? styles.pillStacked : styles.pillRow,
+                isSm ? styles.pillSm : onRows ? styles.pillOnRows : styles.pillRow,
                 // color-tone and tint segments always carry a hairline, so the active one's border
                 // doesn't change the pill's size
                 (isTint || isColorTone) && styles.pillHairline,
@@ -414,7 +486,7 @@ export function SegmentedTabs({
                 end={{ x: 1, y: 1 }}
                 style={[
                   styles.pill,
-                  isSm ? styles.pillSm : stacked ? styles.pillStacked : styles.pillRow,
+                  isSm ? styles.pillSm : onRows ? styles.pillOnRows : styles.pillRow,
                   tone === 'mint' ? styles.glowMint : styles.glowCta,
                 ]}
               />
@@ -429,11 +501,11 @@ export function SegmentedTabs({
                 styles.label,
                 isSm && styles.labelSm,
                 fill && styles.labelFill,
-                fit.scales[i] !== 1 && { fontSize: baseSize * fit.scales[i]! },
+                layout.scales[i] !== 1 && { fontSize: baseSize * layout.scales[i]! },
                 { color: labelColor },
               ]}
             >
-              {label}
+              {shown[i]}
             </Text>
             {count != null && (
               <View
@@ -452,7 +524,35 @@ export function SegmentedTabs({
             {isLocked && <Icon name="lock" size={12} color={colors.textDim} />}
           </Pressable>
         );
-      })}
+  });
+  return (
+    <View
+      style={[
+        styles.track,
+        isSm && styles.trackSm,
+        isTint && styles.trackTint,
+        invalid && styles.trackInvalid,
+        onRows && styles.trackRows,
+        isSm && large && styles.trackSmWrap,
+        // always set (iOS Fabric kept a dropped `opacity: 0` on the track: the row stayed invisible)
+        pending ? styles.pending : styles.shown,
+      ]}
+      accessibilityRole={choice ? 'radiogroup' : 'tablist'}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      ref={trackRef}
+      onLayout={measuring ? (e) => setTrackW(e.nativeEvent.layout.width) : undefined}
+    >
+      {onRows
+        ? layout.rows.map((c, r) => {
+            const from = rowOf.indexOf(r);
+            return (
+              <View key={r} style={styles.row}>
+                {segments.slice(from, from + c)}
+              </View>
+            );
+          })
+        : segments}
       {measuring && (
         <WordMeasurer
           testID="lk-seg-measure"
@@ -528,19 +628,22 @@ const styles = StyleSheet.create({
   },
   pill: { position: 'absolute', borderRadius: radii.pill, backgroundColor: 'transparent' },
   pillRow: { top: 4, bottom: 4, left: 2, right: 2 },
-  // stacked: 2 in all round (4 between pills and at the track's edge)
-  pillStacked: { top: 2, bottom: 2, left: 2, right: 2, borderRadius: radii.sm },
+  // on rows: 2 in all round (4 between pills and at the track's edge)
+  pillOnRows: { top: 2, bottom: 2, left: 2, right: 2, borderRadius: radii.sm },
   pillSm: { top: 0, bottom: 0, left: 0, right: 0 },
   pillHairline: { borderWidth: 1, borderColor: 'transparent' },
   trackInvalid: {
     borderColor: colors.zoneLow,
   },
-  // a label that can't fit: the segments stack, each the full width (labels wrap, never cut)
-  // stacked, the track is a tall box: a container's corners (radii.md), its segments a control's
-  // (radii.sm, 16 − the 4 padding ≈ 10), never the pill that turns a tall box into a stadium
+  // on rows (owner 2026-11-11: labels that don't fit one row wrap into balanced rows of pills, centred,
+  // never a column list as such) the track is a tall box: a container's corners (radii.md), its segments a
+  // control's (radii.sm, 16 − the 4 padding ≈ 10), never the pill that turns a tall box into a stadium;
   // the parent's whole width (a parent that doesn't stretch would leave it as wide as its labels)
-  trackStacked: { flexDirection: 'column', alignItems: 'stretch', alignSelf: 'stretch', borderRadius: radii.md, padding: 2 },
-  tabStacked: { flex: 0, borderRadius: radii.sm },
+  trackRows: { flexDirection: 'column', alignItems: 'stretch', alignSelf: 'stretch', borderRadius: radii.md, padding: 2 },
+  row: { flexDirection: 'row', justifyContent: 'center' },
+  tabOnRows: { flex: 0, borderRadius: radii.sm },
+  // sm at a large text size: its pills wrap onto more rows (never a column list)
+  trackSmWrap: { flexWrap: 'wrap', maxWidth: '100%', borderRadius: radii.md },
   // until the labels are measured the row is laid out but not shown (no visible jump to a stacked layout)
   pending: { opacity: 0 },
   shown: { opacity: 1 },

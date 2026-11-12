@@ -1,14 +1,15 @@
 // @vitest-environment happy-dom
 /// <reference lib="dom" />
 /* Nothing is cut off and no word breaks: SegmentedTabs measures every label and word on one unconstrained
-   line (a hidden measurer) and, from the track's width, stacks the segments when a word doesn't fit; a
+   line (a hidden measurer) and, from the track's width, puts the segments on balanced rows when a label
+   doesn't fit one row; a
    Select is at least its widest word wide; a FitText (MetricTile, ListRow, Alert, FormField, Eyebrow)
    keeps the default text size at the default text size. (Shrinking at a larger OS text size is in
    WordFit.test.tsx, the large-text rule in LargeText.test.tsx: both need the text size set.) */
 import { act } from 'react';
 import { Text } from 'react-native';
 import { describe, expect, test } from 'vitest';
-import { segmentFit, SegmentedTabs, stackedScales } from '../SegmentedTabs';
+import { segmentRows, SegmentedTabs } from '../SegmentedTabs';
 import { Select } from '../Select';
 import { FitText, textOf } from '../FitText';
 import { breakableAddress, breakableWords, fitFloor, taggedWords, wordFitScale } from '../../internal/wordFit';
@@ -20,7 +21,7 @@ const layout = (el: Element, width: number) =>
   });
 
 const track = (host: Element) => host.querySelector('[role="radiogroup"], [role="tablist"]')!;
-const isStacked = (host: Element) => JSON.stringify(propOf(track(host), 'style')).includes('"flexDirection":"column"');
+const onRows = (host: Element) => JSON.stringify(propOf(track(host), 'style')).includes('"flexDirection":"column"');
 const isHidden = (host: Element) => JSON.stringify(propOf(track(host), 'style')).includes('"opacity":0');
 /** Lays every measurer probe out at `perChar` points per character (a space included). */
 const measureAll = (host: Element, perChar: number) => {
@@ -31,34 +32,45 @@ const measureAll = (host: Element, perChar: number) => {
 const shownLabel = (host: Element, text: string) =>
   Array.from(host.querySelectorAll('[role="radio"] div, [role="tab"] div')).filter((d) => d.textContent === text).pop()!;
 
-describe('segmentFit', () => {
-  const w = (full: number, ...words: number[]) => ({ full, words });
-  test('a label that fits keeps its size; one a little wide shrinks; a word wider than its room stacks', () => {
-    expect(segmentFit([w(50, 50)], [60], 5, 0.8)).toEqual({ stacked: false, scales: [1] });
-    expect(segmentFit([w(66, 66)], [61], 5, 0.8)).toEqual({ stacked: false, scales: [0.9] });
-    expect(segmentFit([w(90, 90)], [61], 5, 0.8).stacked).toBe(true);
-    // no shrink allowed (not `fill`): a word 1pt too wide stacks
-    expect(segmentFit([w(61, 61)], [61], 5, 1).stacked).toBe(true);
+describe('segmentRows', () => {
+  const w = (full: number, ...words: number[]) => ({ full, words: words.length ? words : [full] });
+  const room = (_i: number, segW: number) => segW;
+  test('one row when every label fits it on one line; one a little wide shrinks, as far as the floor', () => {
+    expect(segmentRows([w(50), w(50)], room, 122, 5, 0.88)).toEqual({ rows: [2], widths: [61], scales: [1, 1], wraps: [false, false] });
+    expect(segmentRows([w(66), w(50)], room, 122, 5, 0.88).scales).toEqual([0.9, 1]);
+    // no shrink allowed (not `fill` at the default text size): a label 1pt too wide goes to rows
+    expect(segmentRows([w(61), w(50)], room, 122, 5, 1).rows).toEqual([1, 1]);
   });
-  test('several words wrap between them onto at most 2 lines', () => {
-    // "Very active": 40 + 5 + 50, room 61 → two lines at 0.8, fine
-    expect(segmentFit([w(95, 40, 50)], [61], 5, 0.8)).toEqual({ stacked: false, scales: [0.8] });
-    // three words, each on its own line → stacks
-    expect(segmentFit([w(160, 50, 50, 50)], [61], 5, 0.8).stacked).toBe(true);
+  test('labels that still don\'t fit wrap into balanced rows, the fuller first, a shorter row\'s pills as wide', () => {
+    const five = [w(80), w(80), w(80), w(80), w(80)];
+    // one row: 60 each; 3 + 2: 100 each (the 2 centred, as wide as the 3)
+    expect(segmentRows(five, room, 300, 5, 1)).toEqual({ rows: [3, 2], widths: [100, 100], scales: [1, 1, 1, 1, 1], wraps: [false, false, false, false, false] });
+    expect(segmentRows([w(80), w(80), w(80), w(80)], room, 300, 5, 1).rows).toEqual([2, 2]);
+    // 160-wide labels: 2 + 2 + 1, never a column of 5
+    expect(segmentRows([w(140), w(140), w(140), w(140), w(140)], room, 300, 5, 1).rows).toEqual([2, 2, 1]);
   });
-  test('an empty label never stacks', () => {
-    expect(segmentFit([w(0)], [10], 5, 0.8)).toEqual({ stacked: false, scales: [1] });
+  test('only a label that needs the full width gets a row of its own', () => {
+    expect(segmentRows([w(50), w(50), w(200), w(50)], room, 300, 5, 1)).toMatchObject({ rows: [2, 1, 1], widths: [150, 300, 150] });
   });
-});
-
-describe('stackedScales', () => {
-  test('a stacked label keeps its size unless its widest word is wider than the segment; then it shrinks', () => {
-    expect(stackedScales([{ full: 95, words: [40, 50] }], [60], 0.5)).toEqual([1]);
-    // "Другой" 140 in a 130 column → 0.92
-    expect(stackedScales([{ full: 140, words: [140] }], [130], 0.5)).toEqual([0.92]);
-    // no further than the floor
-    expect(stackedScales([{ full: 400, words: [400] }], [100], 0.5)).toEqual([0.5]);
-    expect(stackedScales([{ full: 0, words: [] }], [100], 0.5)).toEqual([1]);
+  test('on rows a label wraps between words onto 2 lines (never on the one row)', () => {
+    // "Very active" 40 + 5 + 50 in a 61 room: 2 lines on rows of 2
+    const l = segmentRows([w(95, 40, 50), w(30), w(30), w(30)], room, 124, 5, 1);
+    expect(l.rows).toEqual([2, 2]);
+    expect(l.wraps[0]).toBe(true);
+  });
+  test('a word wider than the full width at the floor: each label a row, shrunk to the floor (the last resort)', () => {
+    expect(segmentRows([w(400), w(20)], room, 100, 5, 0.5)).toEqual({ rows: [1, 1], widths: [100, 100], scales: [0.5, 1], wraps: [true, true] });
+  });
+  test('large text: labels wrap onto rows at their size; only a label alone on its row shrinks', () => {
+    // minScale 1 for rows (no shrink first), 0.5 alone: two 80-wide labels in 150 → 1 + 1 at full size
+    expect(segmentRows([w(80), w(80)], room, 150, 5, 1, 0, 0.5)).toMatchObject({ rows: [1, 1], scales: [1, 1] });
+    // allowed to shrink (the default text size), the same labels stay on one row
+    expect(segmentRows([w(80), w(80)], room, 150, 5, 0.88, 0, 0.88)).toMatchObject({ rows: [2], scales: [0.92, 0.92] });
+    // a word wider than the full width, alone on its row, shrinks to fit
+    expect(segmentRows([w(200), w(20)], room, 150, 5, 1, 0, 0.5)).toMatchObject({ rows: [1, 1], scales: [0.74, 1] });
+  });
+  test('an empty label fits anywhere', () => {
+    expect(segmentRows([{ full: 0, words: [] }], room, 10, 5, 0.8).rows).toEqual([1]);
   });
 });
 
@@ -70,25 +82,38 @@ describe('SegmentedTabs: nothing cut off', () => {
     expect(isHidden(host)).toBe(true); // the track's width alone is not enough
     measureAll(host, 7);
     expect(isHidden(host)).toBe(false);
-    expect(isStacked(host)).toBe(false);
+    expect(onRows(host)).toBe(false);
     unmount();
   });
 
-  test('a word wider than its segment stacks the segments, the track with a container\'s corners', () => {
+  test('labels too wide for one row go on balanced rows of pills, the track with a container\'s corners', () => {
     const { host, unmount } = mount(<SegmentedTabs kind="choice" fill tabs={['Sedentary', 'Light', 'Moderate', 'Active', 'Athlete']} />);
     layout(track(host), 300);
-    measureAll(host, 12); // "Sedentary" 108 in a ~49 room
-    expect(isStacked(host)).toBe(true);
+    // "Sedentary" 108: × 0.88 (11pt) still wider than a third's 86 room, so its row has 2 (147 wide);
+    // "Moderate" 96 × 0.88 fits a third: 2 + 3
+    measureAll(host, 12);
+    expect(onRows(host)).toBe(true);
+    expect(track(host).children).toHaveLength(3); // 2 rows and the measurer
+    expect(track(host).children[0]!.querySelectorAll('[role="radio"]')).toHaveLength(2);
+    expect(track(host).children[1]!.querySelectorAll('[role="radio"]')).toHaveLength(3);
     expect(JSON.stringify(propOf(track(host), 'style'))).toContain('"borderRadius":16');
     unmount();
   });
 
-  test('at the default text size a fill label slightly too wide never shrinks below it: the segments stack', () => {
+  test('at the default text size a fill label slightly too wide shrinks (down to 11pt) and keeps the row', () => {
     const { host, unmount } = mount(<SegmentedTabs kind="choice" fill tabs={['Metric', 'Imperial']} />);
     layout(track(host), 150); // rooms (150 − 2 − 4) / 2 − 12 = 60
-    measureAll(host, 8); // "Imperial" 64
-    expect(isStacked(host)).toBe(true);
-    // no inline size: the stylesheet's 12.5
+    measureAll(host, 8); // "Imperial" 64 → (60 − 1) / 64 → 0.92: 11.5pt
+    expect(onRows(host)).toBe(false);
+    expect(JSON.stringify(propOf(shownLabel(host, 'Imperial'), 'style'))).toContain('"fontSize":"11.5px"');
+    unmount();
+  });
+
+  test('not fill: at the default text size a label never shrinks; too wide, the segments go on rows', () => {
+    const { host, unmount } = mount(<SegmentedTabs kind="choice" tabs={['Metric', 'Imperial']} />);
+    layout(track(host), 150); // rooms (150 − 2 − 4) / 2 − 16 = 56
+    measureAll(host, 8);
+    expect(onRows(host)).toBe(true);
     expect(JSON.stringify(propOf(shownLabel(host, 'Imperial'), 'style'))).not.toContain('fontSize');
     unmount();
   });
@@ -97,15 +122,17 @@ describe('SegmentedTabs: nothing cut off', () => {
     const { host, unmount } = mount(<SegmentedTabs appearance="tint" tabs={['Metric', 'Imperial']} />);
     layout(track(host), 150); // rooms (150 − 2 − 4) / 2 − 16 = 56
     measureAll(host, 6.8); // "Imperial" 54.4: fits 56 less the 1pt slack only without the old 2pt hairline
-    expect(isStacked(host)).toBe(false);
+    expect(onRows(host)).toBe(false);
     unmount();
   });
 
-  test('a zh / ja label wraps between its characters (no one-word label)', () => {
-    const { host, unmount } = mount(<SegmentedTabs kind="choice" tabs={['パワーリフティング']} />);
+  test('a zh / ja label is one word: measured whole, drawn with its characters joined', () => {
+    const { host, unmount } = mount(<SegmentedTabs kind="choice" tabs={['アスリート', '朝 型']} />);
     const probes = Array.from(host.querySelectorAll('[data-testid="lk-seg-measure"] > div')).map((p) => p.textContent);
-    expect(probes).toContain('パ');
-    expect(probes).not.toContain('パワ');
+    expect(probes).toContain('アスリート');
+    expect(probes).not.toContain('ア');
+    expect(probes).toContain('朝');
+    expect(host.querySelector('[role="radio"]')!.textContent).toBe('ア\u2060ス\u2060リ\u2060ー\u2060ト');
     unmount();
   });
 
@@ -113,18 +140,18 @@ describe('SegmentedTabs: nothing cut off', () => {
     const { host, unmount } = mount(<SegmentedTabs tabs={['Metric', 'Imperial']} />);
     layout(track(host), 120);
     measureAll(host, 10);
-    expect(isStacked(host)).toBe(true);
+    expect(onRows(host)).toBe(true);
     layout(track(host), 400);
-    expect(isStacked(host)).toBe(false);
+    expect(onRows(host)).toBe(false);
     unmount();
   });
 
-  test('an empty label never crashes or stacks', () => {
+  test('an empty label never crashes or puts the segments on rows', () => {
     const { host, unmount } = mount(<SegmentedTabs tabs={['', ' ', 'Rest']} />);
     layout(track(host), 300);
     measureAll(host, 7);
     expect(host.querySelectorAll('[role="tab"]')).toHaveLength(3);
-    expect(isStacked(host)).toBe(false);
+    expect(onRows(host)).toBe(false);
     unmount();
   });
 
@@ -223,6 +250,11 @@ describe('breakableWords / wordFitScale', () => {
     expect(fitFloor(11, 3)).toBe(0.34); // AX: 11pt, the default size and the minimum alike
     expect(fitFloor(11, 1.2)).toBe(0.84); // 11 × 1.2 × 0.84 = 11.1pt
     expect(fitFloor(14, 3.57)).toBe(0.29); // 14 × 3.57 × 0.29 ≈ 14.5pt, never under the default 14
+    // SegmentedTabs `fill` choice rows: at the default text size down to 11pt drawn; larger, the same rule
+    expect(fitFloor(12.5, 1, true)).toBe(0.88); // 12.5 × 0.88 = 11pt
+    expect(fitFloor(12.5, 0.85, true)).toBe(1); // 12.5 × 0.85 is already under 11: no shrink
+    expect(fitFloor(12.5, 1.2, true)).toBe(0.84); // as without: 1 / 1.2
+    expect(fitFloor(12.5, 3, true)).toBe(0.34);
   });
   test('a word that fits keeps the size; a wider one shrinks to fit, down to the floor', () => {
     expect(wordFitScale(100, 120, 0.5)).toBe(1);

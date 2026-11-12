@@ -52,8 +52,10 @@ is named by `accessibilityLabel`, so the measurer never joins its name). Apps us
   shrinks the sentence around it (Verify's subtitle was drawn at 46 % of the user's size at AX5). iOS and
   Android never break an address by themselves, so one wider than its line breaks at any letter; the app
   passes it through `breakableAddress` (a zero-width space after each "@", "." and "/") so it breaks there.
-- `fitFloor(fontSize, fontScale)`: `min(1, max(1 / max(1, fontScale), 11 / (fontSize × fontScale)))`,
-  rounded up to 2 decimals — the default text size, and never under 11pt.
+- `fitFloor(fontSize, fontScale, belowDefault = false)`: `min(1, max(1 / max(1, fontScale), 11 / (fontSize ×
+  fontScale)))`, rounded up to 2 decimals — the default text size, and never under 11pt. FitText never
+  passes `belowDefault`; only SegmentedTabs `fill` does (at a text size ≤ 1 its floor is `11 / (fontSize ×
+  fontScale)`: down to 11pt drawn; larger, as without).
 - `WordMeasurer`: one unconstrained line per word in the text's own style, absolutely placed, 0 tall,
   transparent, hidden from accessibility (also used by SegmentedTabs and Select).
 - `useWordFit(text, style)`: once measured the probes unmount (nothing extra stays in the tree a screen

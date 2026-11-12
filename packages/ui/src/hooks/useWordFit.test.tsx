@@ -56,6 +56,10 @@ describe('fitFloorPercent', () => {
     expect(fitFloorPercent(15, 32)).toBe(74); // 11px of 15
     expect(fitFloorPercent(10, 32)).toBe(100); // already under 11px: never smaller
   });
+  it('belowDefault (SegmentedTabs fill): at the default text size down to 11px; enlarged, the same rule', () => {
+    expect(fitFloorPercent(12.5, 16, true)).toBe(88);
+    expect(fitFloorPercent(24, 32, true)).toBe(50);
+  });
 });
 
 describe('useWordFit', () => {

@@ -103,8 +103,11 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
   `internal/wordFit.tsx` measurer, as SegmentedTabs and Select), which shrinks it until its widest word
   fits; web primitives use `useWordFit`. Never `numberOfLines` + `adjustsFontSizeToFit` on wrapping text.
   **The shrink never goes below the default text size or 11pt** (`fitFloor`: at a larger OS text size only
-  that enlargement is taken back, `1 / fontScale`; at the default size nothing shrinks). A word still too
-  wide at that floor is the layout's to fix (a column fewer: MetricTile `onMinWidth`; segments stacked;
+  that enlargement is taken back, `1 / fontScale`; at the default size nothing shrinks). The one exception
+  (owner, 2026-11-11): SegmentedTabs `fill` choice rows at the default text size may shrink below their
+  design size, to 11pt / 11px drawn (`fitFloor(…, true)` / `fitFloorPercent(…, true)`), before they wrap
+  into balanced rows of pills (never a column list). A word still too
+  wide at that floor is the layout's to fix (a column fewer: MetricTile `onMinWidth`; segments on rows;
   the text above its icon); the word breaks only as the last resort. Lines break where iOS and Android
   break them (spaces, after a hyphen or a slash, between CJK characters); an email or web address never
   shrinks its paragraph (`breakableAddress` lets it break after "@" and ".").

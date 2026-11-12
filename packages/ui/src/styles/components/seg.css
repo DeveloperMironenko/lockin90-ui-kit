@@ -227,24 +227,48 @@
 .lk-seg.lk-seg--fill:not(.lk-seg--rows):not([data-appearance='tint']) .lk-seg-tab:not(.lk-seg-wrap) {
   line-height: 15.6px;
 }
-/* set by the fit when even its smallest size doesn't fit: the label wraps at a space inside its segment,
-   never inside a word */
+/* a CJK label is one word (owner 2026-11-11: never "アスリー / ト"): it never breaks between its characters */
+.lk-seg.lk-seg--fill .lk-seg-tab {
+  word-break: keep-all;
+}
+/* set by the fit on rows: the label wraps between words inside its segment, never inside a word */
 .lk-seg.lk-seg--fill .lk-seg-tab.lk-seg-wrap {
   white-space: normal;
   overflow-wrap: normal;
-  word-break: keep-all;
   line-height: 1.2;
 }
-/* a single word still doesn't fit: the segments take the width they need, on more than one row */
+/* labels that don't fit one row (owner 2026-11-11): balanced rows of pills (3 + 2, 2 + 2…), each its
+   measured width (inline), a shorter row centred, a break after each row; never a column list as such.
+   A tall box: a container's corners, never the pill that draws it as a stadium (as native) */
 .lk-seg.lk-seg--fill.lk-seg--rows {
   flex-wrap: wrap;
-  /* a tall box: a container's corners, never the pill that draws it as a stadium (as native stacked) */
+  justify-content: center;
+  row-gap: 4px;
   border-radius: var(--r);
 }
 .lk-seg.lk-seg--fill.lk-seg--rows .lk-seg-tab {
-  flex: 1 1 auto;
-  min-width: max-content;
+  box-sizing: border-box;
   border-radius: var(--r-sm);
+}
+.lk-seg-break {
+  flex-basis: 100%;
+  height: 0;
+}
+/* the fit's measure: a hidden segment holding one text on one line, in the stylesheet's label font */
+.lk-seg .lk-seg-tab.lk-seg-probe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: pre;
+  width: auto;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+.lk-seg.lk-seg--fill {
+  position: relative;
 }
 @media (max-width: 540px) {
   .lk-seg.lk-seg--fill .lk-seg-tab {
@@ -265,6 +289,18 @@
     padding: var(--space-1);
     border: solid transparent;
     border-width: 4px 2px;
+    background-clip: padding-box;
+  }
+  /* on rows: the same side padding and edge as the one row (so the measure holds in both), segments 44
+     tall, the pill drawn 2px in all round */
+  .lk-seg.lk-seg--fill.lk-seg--rows:not([data-appearance='tint']) {
+    padding: 2px;
+    gap: 0;
+  }
+  .lk-seg.lk-seg--fill.lk-seg--rows:not([data-appearance='tint']) .lk-seg-tab {
+    min-height: 44px;
+    padding: var(--space-1);
+    border: 2px solid transparent;
     background-clip: padding-box;
   }
 }

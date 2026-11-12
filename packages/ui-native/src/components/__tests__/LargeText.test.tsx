@@ -39,14 +39,19 @@ describe('ListRow at a large text size', () => {
 });
 
 describe('SegmentedTabs at a large text size', () => {
+  test.each([1, 1.6])('fontScale %s: md is never a forced column list (its rows come from the measured fit)', (fs) => {
+    scale(fs);
+    const track = parse(render(SegmentedTabs, { tabs: ['Metric', 'Imperial'] })).children[0]!;
+    expect(hasDeclaration(track, 'flex-direction:row')).toBe(true);
+  });
   test.each([
     [1, false],
     [1.6, true],
-  ])('fontScale %s: the segments stack: %s', (fs, stacked) => {
+  ])('fontScale %s: sm wraps its pills onto more rows: %s', (fs, wraps) => {
     scale(fs);
-    const track = parse(render(SegmentedTabs, { tabs: ['Metric', 'Imperial'] })).children[0]!;
-    // the track is a row; stacked it is a column
-    expect(hasDeclaration(track, 'flex-direction:row')).toBe(!stacked);
+    const track = parse(render(SegmentedTabs, { size: 'sm', tabs: ['Metric', 'Imperial'] })).children[0]!;
+    expect(hasDeclaration(track, 'flex-wrap:wrap')).toBe(wraps);
+    expect(hasDeclaration(track, 'flex-direction:row')).toBe(true);
   });
 });
 

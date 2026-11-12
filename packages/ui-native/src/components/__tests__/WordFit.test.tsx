@@ -3,7 +3,7 @@
 /* The word fit at a larger OS text size (react-native-web's text size is fixed at 1, so it is set here):
    a word wider than its room shrinks the text, never below the default text size or 11pt; the room is
    followed while shrunk (a squeeze shrinks it more, a wider box draws it at full size again); an address
-   never shrinks its paragraph; a stacked SegmentedTabs track as wide as its labels doesn't shrink them
+   never shrinks its paragraph; a SegmentedTabs track on rows as wide as its labels doesn't shrink them
    again and again; a MetricTile says how wide it must be for its words to stay whole. */
 import { act } from 'react';
 import { Text } from 'react-native';
@@ -120,13 +120,13 @@ describe('an address never shrinks its paragraph', () => {
   });
 });
 
-describe('SegmentedTabs stacked in a parent that does not stretch it', () => {
-  test('the stacked track stretches, and its own narrower width while shrunk never shrinks it again', () => {
+describe('SegmentedTabs on rows in a parent that does not stretch it', () => {
+  test('the track on rows stretches, and its own narrower width while shrunk never shrinks it again', () => {
     dims.fontScale = 2;
     const { host, unmount } = mount(<SegmentedTabs kind="choice" tabs={['Нейтральный', 'Да']} />);
     const track = host.querySelector('[role="radiogroup"]')!;
     layout(track, 100);
-    measure(host, 12, 'lk-seg-measure'); // "Нейтральный" 132 in 100 − 6 − 16 = 78 → (78 − 1) / 132 → 0.58
+    measure(host, 12, 'lk-seg-measure'); // one row: 31 rooms; rows of 1: "Нейтральный" 132 in 100 − 6 − 16 = 78 → (78 − 1) / 132 → 0.58
     expect(style(track)).toContain('"flexDirection":"column"');
     expect(style(track)).toContain('"alignSelf":"stretch"');
     const label = () => Array.from(host.querySelectorAll('[role="radio"] div')).filter((d) => d.textContent === 'Нейтральный').pop()!;

@@ -15,12 +15,15 @@ export const MIN_TEXT = 11;
 /**
  * How far a text `fontSize` big may shrink so a word stays whole, at the OS text size `fontScale`: never
  * below the default text size (only the OS's enlargement is taken back: `1 / fontScale`; at the default size
- * or a smaller one nothing shrinks) and never drawn under 11pt. 1 when it can't shrink at all; rounded up to
- * 2 decimals, as the scales are.
+ * or a smaller one nothing shrinks) and never drawn under 11pt. `belowDefault` (SegmentedTabs `fill`
+ * choice rows only, owner 2026-11-11): at the default text size (or a smaller one) the text may shrink
+ * below its design size, down to 11pt drawn; at a larger one the rule above stands. 1 when it can't shrink
+ * at all; rounded up to 2 decimals, as the scales are.
  */
-export function fitFloor(fontSize: number, fontScale: number): number {
+export function fitFloor(fontSize: number, fontScale: number, belowDefault = false): number {
   const fs = fontScale > 0 ? fontScale : 1;
-  const floor = Math.max(1 / Math.max(1, fs), MIN_TEXT / ((fontSize > 0 ? fontSize : 14) * fs));
+  const minText = MIN_TEXT / ((fontSize > 0 ? fontSize : 14) * fs);
+  const floor = belowDefault && fs <= 1 ? minText : Math.max(1 / Math.max(1, fs), minText);
   return Math.min(1, Math.ceil(floor * 100 - 1e-9) / 100);
 }
 
@@ -50,6 +53,24 @@ function breaksBetween(before: string | undefined, a: string, b: string, address
   if (/[-‐–]/.test(a)) return !DIGIT.test(b);
   if (a === '/') return !(before != null && DIGIT.test(before) && DIGIT.test(b));
   return address && (a === '@' || a === '.');
+}
+
+/** Whether a text has a CJK character (Han, kana, Hangul, full-width forms). */
+export function hasCJK(text: string): boolean {
+  return CJK.test(text);
+}
+
+/** A text whose CJK characters never break apart: a word joiner between each two of them (a SegmentedTabs
+ *  label is one word in every script, owner 2026-11-11: "アスリー / ト" never). */
+export function glueCJK(text: string): string {
+  const chars = Array.from(text);
+  let out = '';
+  chars.forEach((ch, i) => {
+    const prev = chars[i - 1];
+    if (prev != null && !SPACE.test(prev) && !SPACE.test(ch) && (CJK.test(prev) || CJK.test(ch))) out += '\u2060';
+    out += ch;
+  });
+  return out;
 }
 
 /** A piece a line can't split; `address` when it is part of an email or web address. */

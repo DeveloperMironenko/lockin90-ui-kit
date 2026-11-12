@@ -228,3 +228,46 @@ Native decides from widths it measures, so it can't miss:
   `normal` line made it 43 in zh, 45 in ja).
 - **Web, fit kept:** the fit runs again when `invalid`, `className` or `active` change: React rewrites the
   whole class on those renders and dropped the fit's `lk-seg--rows` / `lk-seg-wrap`.
+
+## Update — 2026-11-11 (choice rows: shrink, then balanced rows; owner decision)
+
+Supersedes the stacking and the floor in the updates above. **Web and native follow the same rules**, from
+widths measured on one unconstrained line (native: the hidden `WordMeasurer`; web: a hidden probe segment,
+`.lk-seg-probe`, in the stylesheet's label font) and the track's width, decided by the pure
+`segmentRows` (exported from ui-native `SegmentedTabs`; web `components/segRows.ts`, the same function):
+
+1. **One row** when every label fits it on one line. A `fill` label too wide first **shrinks**, never below
+   **11pt / 11px drawn** at the default text size — the only shrink below the design size, and only for
+   `fill` (`fitFloor(size, fontScale, true)` / `fitFloorPercent(base, root, true)`); at a larger text size
+   the rule stays "never below the default text size": floor = `max(1 / fontScale, 11 / (size × fontScale))`.
+   A non-`fill` `md` label never shrinks at the default text size.
+2. Else **as few rows of pills as fit**, balanced and in order — 5 → 3 + 2, 4 → 2 + 2, then 2 + 2 + 1… —
+   at **every** text size (large text included: no forced list). Above text size 1.35 (native `fontScale`,
+   web a root over 1.35 × 16) the labels don't shrink first: they wrap onto rows at their size, and only a
+   label alone on its row that is still too wide shrinks, to the floor (`segmentRows`' `aloneScale`) — one
+   row of labels each shrunk to a different size read badly at AX sizes. A row's segments are as wide as the
+   fullest row's and a shorter row is centred; a row whose label needs more gets the row's width shared by
+   fewer, so **only a label that needs the full width gets a row of its own**. On rows a label may wrap
+   between words (2 lines first, then more); on the one row it never wraps (the track stays a field's 44).
+   Score: fewer rows, then balanced, then fewer labels wrapped, then the fuller rows first.
+3. **Never a column list as a layout mode** (owner, 2026-11-11: "i dont like the list in the column"); one
+   label per row happens only when each needs the full width. Last resort: a word wider than the full width
+   at the floor breaks (each label its own row, shrunk to the floor).
+
+- **Rows look:** the track is a tall box — a container's corners (native `radii.md`, web `--r`), padding 2,
+  the segments edge to edge, each 44 tall (a 44pt / 44px target), the pill (glass, tint, the `gradient` /
+  `mint` fill and glow) drawn 2 in all round with a control's corners (`radii.sm` / `--r-sm`), so the
+  selected pill is right on either row. Native renders one `View` row per row (`justifyContent: center`,
+  each segment its measured width); web keeps one flex track with `flex-wrap`, an inline width per segment
+  and a `.lk-seg-break` (flex-basis 100%) after each row. Web rows keep the one row's side padding and gap,
+  so the measure holds in both.
+- **CJK labels are one word:** `wordsOf` keeps a CJK run whole (a zh / ja option shrinks / wraps / goes on
+  rows like any other language, never "アスリー / ト"); native draws it with a word joiner between its
+  characters (`glueCJK`), web with `word-break: keep-all` on `fill` segments. Running text elsewhere still
+  breaks between CJK characters (`breakableWords`).
+- **`sm`** still hugs its labels; above text size 1.35 its pills wrap onto more rows (native
+  `flexWrap: 'wrap'`), never a column.
+- Native (module exports, not the package index) `segmentFit` / `stackedScales` are replaced by `segmentRows` (`SegmentLayout`: rows, widths,
+  scales, wraps); web `segFitPercent` is gone. The web fit no longer rewrites classes: the rows and sizes
+  are React state, so a re-render (invalid, a choice made) keeps them.
+

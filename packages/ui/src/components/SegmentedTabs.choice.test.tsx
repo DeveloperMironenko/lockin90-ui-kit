@@ -5,6 +5,7 @@ import { act, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { wordsOf } from './segRows';
 import { SegmentedTabs } from './SegmentedTabs';
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -60,28 +61,40 @@ describe('SegmentedTabs choice', () => {
     host.remove();
   });
 
-  it('keeps a fill track on rows when a render rewrites its class (invalid, a choice made)', () => {
-    // every label wider than its segment, at any size: the fit goes to rows
-    Object.defineProperty(HTMLElement.prototype, 'scrollWidth', { configurable: true, get: () => 100 });
-    Object.defineProperty(HTMLElement.prototype, 'clientWidth', { configurable: true, get: () => 50 });
+  it('fill: labels too wide for one row go on balanced rows of pills (3 + 2), kept through re-renders', () => {
+    // a 300px track; every text 9px a character (jsdom lays nothing out)
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', { configurable: true, get: () => 300 });
+    const rect = HTMLElement.prototype.getBoundingClientRect;
+    HTMLElement.prototype.getBoundingClientRect = function (this: HTMLElement) {
+      return { width: (this.textContent ?? '').length * 9 } as DOMRect;
+    };
     const host = document.createElement('div');
     document.body.appendChild(host);
     const root = createRoot(host);
+    const five = ['Sedentary', 'Lighter', 'Moderate', 'Activity', 'Athletes'];
     const draw = (invalid: boolean, active: number) =>
-      act(() => root.render(<SegmentedTabs kind="choice" fill tabs={['Sedentary', 'Moderate']} invalid={invalid} active={active} />));
+      act(() => root.render(<SegmentedTabs kind="choice" fill tabs={five} invalid={invalid} active={active} />));
     const track = () => host.querySelector('.lk-seg')!;
     draw(false, -1);
+    // one row: 60 each; "Sedentary" 81 shrinks to 0.72 (11.52px of jsdom's 16): still one row
+    expect(track().classList).not.toContain('lk-seg--rows');
+    act(() => root.render(<SegmentedTabs kind="choice" fill tabs={five.map((t) => `${t}xx`)} active={-1} />));
+    // 99 × 0.69 = 69 > 59: rows; a third (100) holds every label: 3 + 2, a break after the third
     expect(track().classList).toContain('lk-seg--rows');
-    draw(true, -1);
+    expect(Array.from(track().children).map((el) => (el.classList.contains('lk-seg-break') ? '|' : 'o')).join('')).toBe('ooo|oo');
+    expect((track().querySelector('.lk-seg-tab') as HTMLElement).style.width).toBe('100px');
+    act(() => root.render(<SegmentedTabs kind="choice" fill tabs={five.map((t) => `${t}xx`)} invalid active={1} />));
     expect(track().classList).toContain('lk-seg--invalid');
     expect(track().classList).toContain('lk-seg--rows');
-    draw(false, 1);
-    expect(track().classList).toContain('lk-seg--rows');
-    expect(host.querySelectorAll('.lk-seg-tab')[1].classList).toContain('lk-seg-wrap');
     act(() => root.unmount());
     host.remove();
-    // back to the DOM's own (inherited) sizes
-    delete (HTMLElement.prototype as { scrollWidth?: number }).scrollWidth;
+    HTMLElement.prototype.getBoundingClientRect = rect;
     delete (HTMLElement.prototype as { clientWidth?: number }).clientWidth;
+  });
+
+  it('fill: a zh / ja label is one word', () => {
+    expect(wordsOf('アスリート')).toEqual(['アスリート']);
+    expect(wordsOf('Very active')).toEqual(['Very', 'active']);
+    expect(wordsOf('Cardio-heavy')).toEqual(['Cardio-', 'heavy']);
   });
 });

@@ -8,11 +8,14 @@ const MIN_TEXT = 11;
 /**
  * How far (percent of its size) a text `base` px big may shrink so a word stays whole, as native
  * `fitFloor`: never below the default text size (only an enlarged root font size is taken back:
- * 16 / root; at the default size nothing shrinks) and never under 11px. 100 when it can't shrink.
+ * 16 / root; at the default size nothing shrinks) and never under 11px. `belowDefault` (SegmentedTabs
+ * `fill` choice rows only, owner 2026-11-11): at the default text size (or a smaller root) down to 11px; at
+ * an enlarged one the rule above stands. 100 when it can't shrink.
  */
-export function fitFloorPercent(base: number, root: number): number {
-  const floor = Math.max(DEFAULT_ROOT / Math.max(DEFAULT_ROOT, root), MIN_TEXT / base);
-  return Math.min(100, Math.ceil(100 * floor));
+export function fitFloorPercent(base: number, root: number, belowDefault = false): number {
+  const minText = MIN_TEXT / base;
+  const floor = belowDefault && root <= DEFAULT_ROOT ? minText : Math.max(DEFAULT_ROOT / Math.max(DEFAULT_ROOT, root), minText);
+  return Math.min(100, Math.ceil(100 * floor - 1e-9));
 }
 
 /**
