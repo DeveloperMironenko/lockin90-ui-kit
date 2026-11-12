@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, Modal, Dimensions } from 'react-nati
 import { colors, radii, fonts, nativeShadows } from '@lockin90/tokens';
 import { Icon } from './Icon';
 import { absoluteFill } from '../internal/absoluteFill';
+import { TopLayerHost } from './TopLayer';
 
 /** A single row in a {@link Menu}. A `divider` row renders a hairline
  *  separator instead of an action (its `label` is ignored). */
@@ -119,6 +120,8 @@ export function Menu({ trigger, items = DEFAULT_ITEMS, align = 'right' }: MenuPr
             )}
           </View>
         )}
+        {/* toasts (TopLayer) over the list, the page being under this window */}
+        <TopLayerHost active={open} />
       </Modal>
     </View>
   );

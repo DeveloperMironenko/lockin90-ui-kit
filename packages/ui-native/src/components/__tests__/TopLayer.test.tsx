@@ -6,9 +6,10 @@
 import { Text } from 'react-native';
 import { afterEach, describe, expect, test } from 'vitest';
 import { Modal } from '../Modal';
+import { Select } from '../Select';
 import { Sheet } from '../Sheet';
 import { TopLayer } from '../TopLayer';
-import { mount, propOf } from './dom';
+import { click, mount, propOf } from './dom';
 
 afterEach(() => {
   document.body.innerHTML = '';
@@ -90,6 +91,22 @@ describe('TopLayer', () => {
     const view = mount(<Page sheet />);
     view.rerender(<Page sheet show={false} />);
     expect(toast()).toBeNull();
+    view.unmount();
+  });
+
+  test("inside an open Select's list too (its own RN Modal)", () => {
+    const view = mount(
+      <>
+        <Select accessibilityLabel="Timezone" value="kyiv" options={[{ value: 'kyiv', label: 'Europe/Kyiv' }]} />
+        <TopLayer>
+          <Text testID="toast">Time zone updated</Text>
+        </TopLayer>
+      </>,
+    );
+    expect(view.host.contains(toast())).toBe(true);
+    click(view.host.querySelector('[aria-label="Timezone"]')!);
+    expect(view.host.contains(toast())).toBe(false);
+    expect(document.querySelectorAll('[data-testid="toast"]')).toHaveLength(1);
     view.unmount();
   });
 });

@@ -58,7 +58,9 @@ web export is needed for that.
 
 ## 6. Composition & usage
 
-- **Hosts:** `Sheet` and `Modal` render `TopLayerHost` as the last child of their RN `Modal`.
+- **Hosts:** `Sheet` and `Modal` render `TopLayerHost` as the last child of their RN `Modal`; so do
+  `Select`'s list, `Menu`, `Popover` and `Tooltip` (their own RN Modals; not `statusBarTranslucent`, so on
+  Android their window starts under the status bar and a toast in it sits that much lower).
 - **Used by:** the app's saved toast (mobile `SavedToast`).
 
 ```tsx

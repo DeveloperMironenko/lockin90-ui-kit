@@ -2,6 +2,7 @@ import { useRef, useState, type ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet, Modal, Dimensions, type ViewStyle } from 'react-native';
 import { colors, radii, fonts, nativeShadows } from '@lockin90/tokens';
 import { absoluteFill } from '../internal/absoluteFill';
+import { TopLayerHost } from './TopLayer';
 
 export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
 
@@ -149,6 +150,8 @@ export function Tooltip({ content = 'Tooltip', placement = 'top', children }: To
             )}
           </View>
         )}
+        {/* toasts (TopLayer) over it, the page being under this window */}
+        <TopLayerHost active={open} />
       </Modal>
     </View>
   );

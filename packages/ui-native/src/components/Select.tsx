@@ -17,6 +17,7 @@ import { hapticSelection } from "../internal/optionalHaptics";
 import { SearchInput } from './FormField';
 import { useContrastColors } from '../internal/useHighContrast';
 import { breakableWords, WordMeasurer } from '../internal/wordFit';
+import { TopLayerHost } from './TopLayer';
 
 /** A single option in a {@link Select}. */
 export interface SelectOption {
@@ -297,6 +298,8 @@ export function Select({
             </ScrollView>
           </KeyboardAvoidingView>
         </View>
+        {/* toasts (TopLayer) over the list, the page being under this window */}
+        <TopLayerHost active={open} />
       </Modal>
     </View>
   );

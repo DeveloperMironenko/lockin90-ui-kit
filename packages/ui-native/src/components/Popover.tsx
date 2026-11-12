@@ -4,6 +4,7 @@ import Svg, { Rect, Path } from 'react-native-svg';
 import { colors, radii, fonts, nativeShadows } from '@lockin90/tokens';
 import { Icon } from './Icon';
 import { absoluteFill } from '../internal/absoluteFill';
+import { TopLayerHost } from './TopLayer';
 
 /* expo-clipboard is an optional dependency — not a hard dep of this kit.
  * Resolve it lazily and guard usage; if it's absent we keep the visual
@@ -95,6 +96,8 @@ export function Popover({ trigger, children, align = 'center' }: PopoverProps) {
             )}
           </View>
         )}
+        {/* toasts (TopLayer) over it, the page being under this window */}
+        <TopLayerHost active={open} />
       </Modal>
     </View>
   );
