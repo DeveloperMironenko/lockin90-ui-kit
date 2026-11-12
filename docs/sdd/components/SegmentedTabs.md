@@ -245,7 +245,8 @@ widths measured on one unconstrained line (native: the hidden `WordMeasurer`; we
    at **every** text size (large text included: no forced list). Above text size 1.35 (native `fontScale`,
    web a root over 1.35 × 16) the labels don't shrink first: they wrap onto rows at their size, and only a
    label alone on its row that is still too wide shrinks, to the floor (`segmentRows`' `aloneScale`) — one
-   row of labels each shrunk to a different size read badly at AX sizes. A row's segments are as wide as the
+   row of labels each shrunk to a different size read badly at AX sizes. A label alone in a row shorter
+   than the fullest first takes the row's whole width; it shrinks only at that width. A row's segments are as wide as the
    fullest row's and a shorter row is centred; a row whose label needs more gets the row's width shared by
    fewer, so **only a label that needs the full width gets a row of its own**. On rows a label may wrap
    between words (2 lines first, then more); on the one row it never wraps (the track stays a field's 44).

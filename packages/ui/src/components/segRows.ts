@@ -115,18 +115,20 @@ export function segmentRows(
       let start = 0;
       let ok = true;
       for (const c of rows) {
-        const tryWidth = (segW: number) => {
+        const tryWidth = (segW: number, floor: number) => {
           const out: { scale: number; wraps: boolean }[] = [];
           for (let k = 0; k < c; k += 1) {
-            const f = fitLabel(measures[start + k]!, roomOf(start + k, segW), space, c === 1 ? aloneScale : minScale, lines);
+            const f = fitLabel(measures[start + k]!, roomOf(start + k, segW), space, floor, lines);
             if (!f) return null;
             out.push(f);
           }
           return out;
         };
+        // a label alone on its row shrinks (to `aloneScale`) only at the row's whole width: in a shorter
+        // row it first takes the whole width
         let segW = widthFor(fullest);
-        let fits = tryWidth(segW);
-        if (!fits && c < fullest) fits = tryWidth((segW = widthFor(c)));
+        let fits = tryWidth(segW, c === 1 && c === fullest ? aloneScale : minScale);
+        if (!fits && c < fullest) fits = tryWidth((segW = widthFor(c)), c === 1 ? aloneScale : minScale);
         if (!fits) {
           ok = false;
           break;

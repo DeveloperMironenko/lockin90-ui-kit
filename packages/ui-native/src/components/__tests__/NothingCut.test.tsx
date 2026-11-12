@@ -68,6 +68,12 @@ describe('segmentRows', () => {
     expect(segmentRows([w(80), w(80)], room, 150, 5, 0.88, 0, 0.88)).toMatchObject({ rows: [2], scales: [0.92, 0.92] });
     // a word wider than the full width, alone on its row, shrinks to fit
     expect(segmentRows([w(200), w(20)], room, 150, 5, 1, 0, 0.5)).toMatchObject({ rows: [1, 1], scales: [0.74, 1] });
+    // alone in a row shorter than the fullest, a label takes the whole width before it shrinks (1 + 3 + 1)
+    expect(segmentRows([w(120), w(40), w(40), w(40), w(120)], room, 150, 5, 1, 0, 0.5)).toMatchObject({
+      rows: [1, 3, 1],
+      widths: [150, 50, 150],
+      scales: [1, 1, 1, 1, 1],
+    });
   });
   test('an empty label fits anywhere', () => {
     expect(segmentRows([{ full: 0, words: [] }], room, 10, 5, 0.8).rows).toEqual([1]);
