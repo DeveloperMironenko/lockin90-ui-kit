@@ -240,3 +240,5 @@ The overlay differences are expected substrate, not capability gaps that block u
 ## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
 
 - The web dropdown panel is a container, `--r` (16, was 10), its options a control's 10 (was 6); the native list sheet's top corners are `radii.lg` (22, was 24).
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).

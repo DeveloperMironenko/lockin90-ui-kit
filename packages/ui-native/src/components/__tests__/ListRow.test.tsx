@@ -31,7 +31,7 @@ describe('ListRow boxed', () => {
   test('a bordered glass box whose summary wraps', () => {
     const root = parse(render(ListRow, { title: 'Profile', subtitle: '32 yrs · male · 86 kg', boxed: true }));
     const row = root.children[0]!;
-    expect(hasDeclaration(row, 'radius:16px')).toBe(true);
+    expect(hasDeclaration(row, 'radius:10px')).toBe(true);
     const subtitle = findAll(root, (el) => el.text === '32 yrs · male · 86 kg')[0]!;
     expect(hasDeclaration(subtitle, 'font-size:13px')).toBe(true);
     // numberOfLines={1} is nowrap + ellipsis on react-native-web; a boxed summary wraps

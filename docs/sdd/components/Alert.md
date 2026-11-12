@@ -175,3 +175,5 @@ No capability gap — the alert is visually equivalent on both.
 ## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
 
 - The box is a container: `--r` / `radii.md` (16), web and native (was 10); the close button stays a control (10).
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).

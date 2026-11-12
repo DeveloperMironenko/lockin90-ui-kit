@@ -208,3 +208,5 @@ shipping a native screen where the dots convey required state.
 ## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
 
 - The `sm` tile at phone width (web) and native `tileSm` is a control's 10 (was 16): it sits in a padded card, where 16 less the padding is no radius. The default tile stays 10.
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).

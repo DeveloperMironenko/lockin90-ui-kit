@@ -145,3 +145,5 @@ No capability gap blocks use — the dialog is fully usable and visually equival
 ## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
 
 - The web close button is a control, `--r-sm` (10, was 16); the dialog stays `--r-lg` / `radii.lg` (22).
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).

@@ -27,7 +27,7 @@ Inter (UI), JetBrains Mono (data).
 | Zones | `--zone-high/mid/low` | `colors.zoneHigh/zoneMid/zoneLow` | `#34F5C5` `#FFB020` `#FF4D6D` |
 | Status | `--ok --warn --bad --info` | `colors.ok/warn/bad/info` | `#34F5C5 #FFB020 #FF4D6D #6E7BFF` |
 | Gradients | `--grad-flux/cta/mint/violet/warm` | `gradients.flux/cta/mint/violet/warm` | flux=5-stop 100° · cta=violet→cyan 135° · etc. |
-| Radii | `--r-sm --r --r-lg --r-xl --r-pill` | `radii.sm/md/lg/xl/pill` | `10 / 16 / 22 / 28 / 999` |
+| Radii | `--r-sm --r --r-lg --r-xl --r-pill` | `radii.sm/md/lg/xl/pill` | `10 / 10 / 10 / 10 / 999` (every corner 10, "Corner radii") |
 | Glow / elev | `--glow-accent/cyan/mint` `--elev-1/2` | `nativeShadows.glowAccent/...` | see tokens.css |
 | Motion | `--ease` `--ease-soft` `--dur` | n/a (native uses Animated/Reanimated) | cubic-beziers; .55s |
 | Type | `--font-display/ui/mono` | `fonts.display/ui/mono` | Space Grotesk / Inter / JetBrains Mono |
@@ -145,6 +145,8 @@ blob colour screened over `--bg-0` at the intensity that reproduces it (cyan .34
 
 ## One shape, one line (owner rule, 2026-11-02 — "the border has to be the same")
 
+> Radii superseded by "Corner radii" below (2026-11-11: every corner 10); the line rule stands.
+
 Every bordered box in the kit has one of two corner radii and the same neutral line, on web and native.
 
 | Kind | Radius | Which primitives |
@@ -170,17 +172,15 @@ Every bordered box in the kit has one of two corner radii and the same neutral l
   before/after screenshots of every changed primitive → one release → `lockin90-design` updated to the
   same shapes (the mockups are what apps are compared with) → the apps bump the kit.
 
-## Corner radii (owner rule, 2026-11-11 — "every control in every app has the same corner radius")
+## Corner radii (owner rule, 2026-11-11, final — "every corner 10")
 
-Refines the table above: four radii, picked by what the box is, web and native alike.
+Supersedes the radii in "One shape, one line" above (its line rule stands). Web and native alike.
 
 | Kind | Radius | Which |
 | --- | --- | --- |
-| **Control** | `--r-sm` / `radii.sm` (**10**) | Button, IconButton, SsoButton, SplitButton, Input / PasswordInput / SearchInput / TagInput / NoteField / CodeField fields, Select trigger, DateField, CodeInput boxes, **SegmentedTabs track** (every size, one row or wrapped rows), Chip, ChoiceChip, menu items, the Toast's action |
-| **Inside a control** | the control's 10 **less the piece's inset from the control's outer edge** (border included), so the corners run parallel | SegmentedTabs' lit segment: 5 on one row (1 edge + 4 down; 1 + 2 + 2 across), 6 at `sm` (1 + 3), 5 on rows (1 + 2 + 2). Native computes it (`innerRadius(outer, inset)`, `internal/radius.ts`); web `calc(var(--r-sm) - var(--lk-seg-inset))`, adding the transparent border per axis where the fill is clipped to the padding box |
-| **Container** | `--r` / `radii.md` (**16**) | Card, Toast, Alert, MetricTile group card, Menu / Popover / Select / Combobox panels, ListRow groups. A tile nested in a card: 16 less the card's padding when that leaves a sensible radius, else `radii.sm` (MetricTile in a padded card: 10) |
-| **Big surface** | `--r-lg` / `radii.lg` (**22**) | Modal / dialog, the Sheet's top corners (drawers: their inner side) |
-| **Round only** | `999` / `50%` | Avatars, status dots, icon circles, the Sheet grab handle, the Toast's seconds ring, Toggle, Slider, progress tracks, chart marks |
+| **Everything** | **10** — `--r-sm` / `radii.sm`; `--r` / `radii.md`, `--r-lg` / `radii.lg` and `--r-xl` / `radii.xl` are 10 too (the names stay for the components that cite them) | Every control (Button, IconButton, SsoButton, fields, Select trigger, DateField, CodeInput boxes, the SegmentedTabs track at every size and on rows, Chip, ChoiceChip, Badge, menu items), every container (Card, Toast, Alert, MetricTile and other tiles, Menu / Popover / Tooltip / Select / Combobox panels, ListRow groups, EmptyState tile), every big surface (Modal / dialog, the Sheet's top corners), avatars (a rounded square at every size; `shape` is ignored), Stepper nodes |
+| **A piece inside a control** | 10 **less its inset from the control's outer edge** (border included), so the corners run parallel | SegmentedTabs' lit segment: 5 on one row (1 edge + 4 down; 1 + 2 + 2 across), 6 at `sm` (1 + 3), 5 on rows (1 + 2 + 2); NumberStepper buttons 6 (1 + 3). Native computes it (`innerRadius(outer, inset)`, `internal/radius.ts`); web `calc(var(--r-sm) - var(--lk-seg-inset))`, adding the transparent border per axis where the fill is clipped to the padding box. The Toast's action keeps 10 (as the toast) |
+| **True circles** | `999` / `50%` (`--r-pill` / `radii.pill`) | Status dots, icon circles (the Toast's icon, the round "?" and × buttons), toggle knobs, the Sheet grab handle, the Toast's seconds ring; thin bars (progress, meters: a 10 radius on them is a pill anyway) |
 
 - **Fields, selects and option switches look alike** (owner, 2026-11-11): the SegmentedTabs track has the
   field's fill (`--field` / `colors.field`) and edge (`--border-control` / `colors.borderControl`,
@@ -190,8 +190,10 @@ Refines the table above: four radii, picked by what the box is, web and native a
 - **A surface that floats over anything** (Toast) uses the card's colour composited on `--bg-0`, opaque
   (`--card-solid` / `colors.cardSolid`, `#13151D`): it reads as a card on the page and keeps its text at 4.5:1
   over a photo or a field (the translucent `--card` over white leaves `--text-dim` at 4.3:1).
-- A radius literal on a control or container is a bug; a piece inside a control derives its radius from the
-  control's and its real inset, never a guess.
+- A radius literal on a box is a bug; a piece inside a control derives its radius from the control's and its
+  real inset, never a guess. Not yet swept (no app uses them): literal radii in chart, admin, marketing and
+  studio primitives (NotificationRow, Toolbar, Timeline, MessageComposer, ProGate, VideoThumbnail, Checkbox,
+  web notification / toolbar / tooltip / navitem…); they move to 10 when an app first uses them.
 
 ## One primitive per role (owner rule, 2026-07-09 — "they have to be the same")
 The SAME interaction role always renders through the SAME kit primitive, everywhere —

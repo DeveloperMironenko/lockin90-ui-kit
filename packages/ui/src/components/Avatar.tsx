@@ -10,7 +10,8 @@ export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
   src?: string;
   /** Pixel size of the square avatar. @default 44 */
   size?: number;
-  /** Outline shape — a full circle or a softly-rounded square. @default 'circle' */
+  /** @deprecated 2026-11-11 (every corner is 10): ignored, every avatar is a rounded square (10).
+   *  Removed in the next major. */
   shape?: 'circle' | 'rounded';
   /**
    * Visual variant.
@@ -38,8 +39,8 @@ function initialsFor(name: string): string {
 
 /**
  * Avatar — a standalone identity tile showing either an image or a monogram
- * (initials painted on the flux gradient). Square by `size`, circular by
- * default or softly rounded via `shape="rounded"`. The monogram falls back to
+ * (initials painted on the flux gradient). Square by `size`, a rounded square (10) at every size.
+ * The monogram falls back to
  * initials derived from `name`, then to `'?'`. Mirrors the monogram treatment
  * used by ProfileHeader and Leaderboard.
  *
@@ -51,7 +52,7 @@ export function Avatar({
   initials,
   src,
   size = 44,
-  shape = 'circle',
+  shape: _shape,
   variant = 'default',
   gradient = 'linear-gradient(135deg, var(--accent), var(--cyan))',
   className,
@@ -67,7 +68,6 @@ export function Avatar({
         className={cn(
           'lk-avatar',
           'lk-avatar--aura',
-          shape === 'rounded' && 'lk-avatar-rounded',
           className,
         )}
         style={{ width: size, height: size, ...style }}
@@ -80,7 +80,7 @@ export function Avatar({
 
   return (
     <span
-      className={cn('lk-avatar', shape === 'rounded' && 'lk-avatar-rounded', className)}
+      className={cn('lk-avatar', className)}
       style={{ width: size, height: size, ...style }}
       {...rest}
     >

@@ -157,3 +157,7 @@ No capability gap blocks use — both render equivalent steppers.
 ## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
 
 - NumberStepper's track is a control, `--r-sm` / `radii.sm` (10, was the pill); its buttons 10 less their inset (1 edge + 3 padding) = 6 (were circles). The step nodes stay round.
+
+## Update — 2026-11-11 (owner: every corner 10)
+
+- **Every corner 10** (owner, 2026-11-11): the step nodes are rounded squares (`--r-sm` / `radii.sm`, were circles), as StepIndex.

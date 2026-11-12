@@ -37,7 +37,8 @@
   place-items: center;
   width: 30px;
   height: 30px;
-  border-radius: 50%;
+  /* every corner is 10 (owner, 2026-11-11), as StepIndex */
+  border-radius: var(--r-sm);
   border: 1px solid var(--border-2);
   background: var(--glass-2);
   color: var(--text-faint);

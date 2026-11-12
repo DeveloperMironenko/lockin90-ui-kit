@@ -288,3 +288,5 @@ widths measured on one unconstrained line (native: the hidden `WordMeasurer`; we
   (`kind="choice"`) draws the field's focus, the track's edge in `--accent` 2px (`--zone-low` when invalid);
   a tab bar's focused tab the kit ring inside the track. Unselected labels stay `--text-dim` (7.0:1 on the
   field). The lit segment keeps its fill (glass, tint, gradient, mint).
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).

@@ -129,3 +129,5 @@ This file also documents **`CopyButton`** (lives in the same source file): a cop
 ## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
 
 - The panel is a container, `--r` / `radii.md` (16, was 10); the round "?" trigger stays round (an icon circle).
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).

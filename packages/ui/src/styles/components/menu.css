@@ -48,8 +48,8 @@
   border-color: transparent;
   background: transparent;
 }
-/* a bare trigger is rounded all the way, so its focus ring follows a round avatar */
-.lk-menu--bare .lk-menu-trigger { border-radius: 999px; }
+/* a bare trigger's corners follow the avatar it wraps (10), so does its focus ring */
+.lk-menu--bare .lk-menu-trigger { border-radius: var(--r-sm); }
 
 /* the kit's focus ring, not the browser's (keyboard only) */
 .lk-menu-trigger:focus-visible {

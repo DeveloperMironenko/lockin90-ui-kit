@@ -71,12 +71,15 @@ export const gradients = {
   warm: { angle: 135, stops: ['#FFB020', '#FF4D6D'] },
 } as const;
 
-/** Corner radii (px). */
+/** Corner radii (px). Every corner is 10 (owner, 2026-11-11: controls, cards, dialogs, sheets, avatars
+ *  alike); `md` / `lg` / `xl` keep their names for the components that cite them. `pill` is for true
+ *  circles only (status dots, icon circles, toggle knobs, the grab handle, the countdown ring) and thin
+ *  bars. */
 export const radii = {
   sm: 10,
-  md: 16,
-  lg: 22,
-  xl: 28,
+  md: 10,
+  lg: 10,
+  xl: 10,
   pill: 999,
 } as const;
 

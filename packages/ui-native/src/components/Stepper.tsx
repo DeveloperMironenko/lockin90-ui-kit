@@ -81,7 +81,7 @@ export function Stepper({
   const nodeSize = vertical
     ? Math.ceil(Math.max(isGlow ? 40 : 30, (isGlow ? 14 : 12) * fontScale * 1.35))
     : undefined;
-  const nodeGrow = nodeSize != null ? { width: nodeSize, height: nodeSize, borderRadius: nodeSize / 2 } : undefined;
+  const nodeGrow = nodeSize != null ? { width: nodeSize, height: nodeSize, borderRadius: radii.sm } : undefined;
   const lineAt = nodeSize != null ? { marginLeft: nodeSize / 2 - 1 } : undefined;
 
   return (
@@ -308,7 +308,8 @@ const styles = StyleSheet.create({
   node: {
     width: 30,
     height: 30,
-    borderRadius: 15,
+    // every corner is 10 (owner, 2026-11-11), as StepIndex
+    borderRadius: radii.sm,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
@@ -348,7 +349,7 @@ const styles = StyleSheet.create({
   nodeGlow: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: radii.sm,
     borderWidth: 1.5,
   },
   nodeGlowDone: {

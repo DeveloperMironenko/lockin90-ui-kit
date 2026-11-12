@@ -132,3 +132,7 @@ No capability gap blocks use — the aura difference is platform-shaped motion, 
 
 - **Initials fit the circle:** one line, `adjustsFontSizeToFit` (down to 0.5) inside 80% of the circle, so a large text size shrinks them instead of cutting them; text scaling stays on (no `allowFontScaling={false}` / `maxFontSizeMultiplier`, CONVENTIONS).
 - **`accessible={false}`** hides the initials too (`importantForAccessibility="no-hide-descendants"`, `accessibilityElementsHidden`).
+
+## Update — 2026-11-11 (owner: every corner 10)
+
+- **Every corner 10** (owner, 2026-11-11): a rounded square at every size, web `--r-sm`, native `radii.sm`; `shape` is deprecated and ignored (was a circle / 30 %).

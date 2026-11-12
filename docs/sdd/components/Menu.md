@@ -150,3 +150,5 @@ No capability gap blocks use — the menu is fully usable and visually equivalen
 ## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
 
 - The panel is a container, `--r` / `radii.md` (16, was 10); items keep the control's 10 (16 less the 5 padding and 1 edge); the bare trigger stays round (it wraps an avatar).
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).

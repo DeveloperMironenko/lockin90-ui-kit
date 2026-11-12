@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { View, Text, Image, Animated, Easing, StyleSheet, type ViewProps } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, fonts, gradients, nativeShadows } from '@lockin90/tokens';
+import { colors, fonts, gradients, nativeShadows, radii } from '@lockin90/tokens';
 import { absoluteFill } from '../internal/absoluteFill';
 import { useReducedMotion } from '../internal/useReducedMotion';
 
@@ -14,7 +14,8 @@ export interface AvatarProps extends ViewProps {
   src?: string;
   /** Pixel size of the square avatar. @default 44 */
   size?: number;
-  /** Outline shape — a full circle or a softly-rounded square. @default 'circle' */
+  /** @deprecated 2026-11-11 (every corner is 10): ignored, every avatar is a rounded square (10).
+   *  Removed in the next major. */
   shape?: 'circle' | 'rounded';
   /**
    * Visual variant.
@@ -45,8 +46,8 @@ function initialsFor(name: string): string {
 
 /**
  * Avatar — a standalone identity tile showing either an image or a monogram
- * (initials painted on the flux gradient). Square by `size`, circular by
- * default or softly rounded via `shape="rounded"`. The monogram falls back to
+ * (initials painted on the flux gradient). Square by `size`, a rounded square (10) at every size.
+ * The monogram falls back to
  * initials derived from `name`, then to `'?'`.
  *
  * `variant="aura"` renders an energy-spectrum flux orb (no image/monogram) for
@@ -57,13 +58,14 @@ export function Avatar({
   initials,
   src,
   size = 44,
-  shape = 'circle',
+  shape: _shape,
   variant = 'default',
   gradient = gradients.cta.stops,
   style,
   ...rest
 }: AvatarProps) {
-  const radius = shape === 'rounded' ? size * 0.3 : size / 2;
+  // a rounded square at every size, both shapes: every corner is 10 (owner, 2026-11-11)
+  const radius = radii.sm;
   const box = { width: size, height: size, borderRadius: radius };
 
   if (variant === 'aura') {

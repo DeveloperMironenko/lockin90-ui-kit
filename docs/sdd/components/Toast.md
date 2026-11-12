@@ -235,3 +235,5 @@ Supersedes the sizes, the action and the countdown line of the update above.
   (nothing shows through), and no Reduce Transparency variant (native `useReduceTransparency` is gone, it had
   no other user). Edge and icon still follow the tone. Radius 16 (container), the action 10 (control), as
   before.
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
