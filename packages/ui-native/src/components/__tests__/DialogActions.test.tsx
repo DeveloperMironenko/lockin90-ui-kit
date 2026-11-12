@@ -4,14 +4,20 @@
    each half the width at phone width; Sheet can show a named ×, a pinned subheader and a tall fixed height;
    Modal's body scrolls. */
 import { StyleSheet, Text } from 'react-native';
-import { afterEach, describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import { Sheet } from '../Sheet';
 import { Modal } from '../Modal';
 import { Button } from '../Button';
 import { mount, propOf, propsWith } from './dom';
 
+const dims = vi.hoisted(() => ({ width: 402 }));
+vi.mock('react-native', async (orig) => {
+  const rn = await orig<typeof import('react-native')>();
+  return { ...rn, useWindowDimensions: () => ({ width: dims.width, height: 874, scale: 3, fontScale: 1 }) };
+});
 afterEach(() => {
   document.body.innerHTML = '';
+  dims.width = 402;
 });
 
 const flat = (style: unknown) => StyleSheet.flatten(style as never) as Record<string, unknown>;
@@ -83,5 +89,31 @@ describe('Modal', () => {
     expect(propsWith(body, 'keyboardShouldPersistTaps')).toBeDefined();
     expect(cellOf(document.querySelector('[aria-label="Delete"]')!)).toMatchObject({ flex: 1 });
     view.unmount();
+  });
+});
+
+describe('wider than a phone (a tablet)', () => {
+  test('the actions sit at the end at their own width, and wrap when they do not fit', () => {
+    dims.width = 820;
+    const footer = (
+      <>
+        <Button title="Cancel" />
+        <Button variant="primary" title="Save" />
+      </>
+    );
+    for (const el of [
+      <Sheet open title="Edit profile" footer={footer} />,
+      <Modal open title="Edit profile" footer={footer} />,
+    ]) {
+      const view = mount(el);
+      const save = document.querySelector('[aria-label="Save"]')!;
+      expect(cellOf(save)?.flexBasis).toBeUndefined();
+      // the footer row: the nearest box that wraps
+      let row: CSSStyleDeclaration | undefined;
+      for (let p: Element | null = save.parentElement; p && !row; p = p.parentElement)
+        if (getComputedStyle(p).flexWrap === 'wrap') row = getComputedStyle(p);
+      expect(row?.justifyContent).toBe('flex-end');
+      view.unmount();
+    }
   });
 });

@@ -10,9 +10,10 @@ import {
   PanResponder,
   Platform,
   ScrollView,
+  useWindowDimensions,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { colors, radii, fonts } from '@lockin90/tokens';
+import { breakpoints, colors, radii, fonts } from '@lockin90/tokens';
 import { absoluteFill } from '../internal/absoluteFill';
 import { useBottomInset } from '../internal/optionalSafeArea';
 import { useAndroidKeyboardHeight } from '../internal/keyboard';
@@ -75,6 +76,9 @@ export function Sheet({
   padded = true,
 }: SheetProps) {
   const isBottom = side === 'bottom';
+  // the footer's actions share the row at phone width, as the web's `.lk-dialog-actions`; wider (a tablet),
+  // they sit at the end at their own width
+  const phone = useWindowDimensions().width <= breakpoints.phone;
   const align = isBottom ? styles.scrimBottom : side === 'right' ? styles.scrimRight : styles.scrimLeft;
   const panel = isBottom ? styles.panelBottom : side === 'right' ? styles.panelRight : styles.panelLeft;
   // The body scrolls to the panel's bottom edge, the screen's (iOS: behind the home indicator, as
@@ -211,7 +215,7 @@ export function Sheet({
             </ScrollView>
             {footer != null ? (
               <View style={[styles.foot, { paddingBottom: PAD_BOTTOM + bottomInset }]}>
-                <FooterActions equal>{footer}</FooterActions>
+                <FooterActions equal={phone}>{footer}</FooterActions>
               </View>
             ) : null}
           </Animated.View>
@@ -324,6 +328,8 @@ const styles = StyleSheet.create({
   // the actions: one row, each half the width, gap 10, 12 above
   foot: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
     gap: 10,
     paddingTop: 12,
     paddingHorizontal: BODY_PAD,

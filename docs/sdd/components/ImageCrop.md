@@ -24,6 +24,7 @@ zoom but on web no"). `FocalPointPicker` only picks a point; it doesn't frame or
 | `onChange` | `(value) => void` | — (required) | every move and zoom, already kept inside the image (`clampCrop`) |
 | `label` | `string` | — (required) | the frame's spoken name (it's focusable) |
 | `zoomLabel` | `string` | — (required) | the zoom slider's spoken name |
+| `description` | `string` | — | read after the frame's name (`aria-describedby`, a visually hidden text): how the keys move it, in the app's language |
 | `maxZoom` | `number` | `4` | |
 | `size` | `number` | `320` | the frame's side, px. It never shrinks itself (what it shows is what `cropRect` cuts): the app fits it to the space it has |
 | `onLoad` | `({ width, height }) => void` | — | the image's own size once loaded (for `cropRect`) |
@@ -63,7 +64,8 @@ duplicate it. A native `ImageCrop` is added when a native screen needs a crop th
 const [crop, setCrop] = useState(IMAGE_CROP_START)
 const [natural, setNatural] = useState<{ width: number; height: number }>()
 <ImageCrop src={url} value={crop} onChange={setCrop} onLoad={setNatural}
-  label={t('account.photo.adjust')} zoomLabel={t('account.photo.zoom')} />
+  label={t('account.photo.adjust')} zoomLabel={t('account.photo.zoom')}
+  description={t('account.photo.cropKeys')} />
 // on Save: draw cropRect(crop, natural!) of the image onto a canvas
 ```
 
@@ -71,7 +73,8 @@ const [natural, setNatural] = useState<{ width: number; height: number }>()
 
 - **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 
-The frame is a focusable `role="group"` named by `label`, moved with the arrow keys and zoomed with
+The frame is a focusable `role="group"` named by `label` and described by `description` (how the keys
+move it: pass it, a screen reader doesn't say it otherwise), moved with the arrow keys and zoomed with
 `+` / `−`; the zoom `Slider`'s range input is named by `zoomLabel` (`Slider` now puts `aria-label` on its input). The image itself is
 decorative (`alt=""`): the app's text says what it is.
 

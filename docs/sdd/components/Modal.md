@@ -23,7 +23,7 @@ It is the only sanctioned centered-dialog primitive. For an edge-anchored drawer
 | `onClose` | `() => void` | — | ✓ | ✓ | fired on scrim click/tap, close-button, **ESC** (web) / **Android back** (native) |
 | `title` | `string` | — | ✓ | ✓ | header omitted when absent (unless `onClose` present → header renders with just the ×) |
 | `children` | `ReactNode` | — | ✓ | ✓ | body; native wraps a bare `string` child in a styled `Text` |
-| `footer` | `ReactNode` | — | ✓ | ✓ | right-aligned actions under a hairline; omitted when absent |
+| `footer` | `ReactNode` | — | ✓ | ✓ | the actions under a hairline (CONVENTIONS "Dialog actions"): equal halves at phone width, else end-aligned at their own width, wrapping; omitted when absent |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | ✓ | ✓ | max-width 380 / 460 / 620 |
 | `closeLabel` | `string` | `'Close'` | ✓ | ✓ | the close button's spoken name (web `aria-label`, native `accessibilityLabel`); pass a translated string |
 | `className` | `string` | — | ✓ | — | web only (merged onto `.lk-modal`) |
@@ -46,7 +46,7 @@ It is the only sanctioned centered-dialog primitive. For an edge-anchored drawer
 | Close × | 30×30, `--r`, `--text-faint`; hover `--text` + `--glass` | 30×30, `radii.sm`, stroke `colors.textFaint` |
 
 - **Scrim padding:** web `24px` (grid-centered); native `24` (flex-centered). **Card width:** `100%` up to the size cap. **Max-height:** web `calc(100vh − 48px)` with `overflow-y:auto` body; native body has no cap (host scroll).
-- **Header / footer chrome:** header `18px 20px` with `1px --border` bottom; footer `16px 20px`, `flex-end`, `gap 10/12`, `1px --border` top.
+- **Header / footer chrome:** header `18px 20px` with `1px --border` bottom; footer `16px 20px`, `flex-end` and wrapping (equal columns ≤ 540), `gap 10/12`, `1px --border` top.
 
 ## 4. States
 

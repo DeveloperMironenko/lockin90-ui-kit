@@ -174,6 +174,7 @@ const styles = StyleSheet.create({
   },
   foot: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'flex-end',
     gap: 10,
@@ -182,6 +183,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.border,
   },
-  // phone width: the actions share the row equally
+  // phone width: the actions share the row equally (wider: at the end at their own width, a second line
+  // when they don't fit)
   footPhone: { justifyContent: 'flex-start' },
 });

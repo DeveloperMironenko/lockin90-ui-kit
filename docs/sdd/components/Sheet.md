@@ -159,7 +159,8 @@ No gap blocks use — the sheet/drawer is fully usable and visually equivalent (
 ## Update — 2026-11-11 (owner: the audit batch, V10 / U20)
 
 - **New `footer`** (web + native): the actions pinned under the body, "Cancel | Primary", each half the width
-  (CONVENTIONS "Dialog actions"); the home-indicator inset moves from the body's end to the footer.
+  at phone width, end-aligned at their own width and wrapping on a wider screen (CONVENTIONS "Dialog
+  actions"); the home-indicator inset moves from the body's end to the footer.
 - **New `closeLabel`:** with `onClose`, a × (18 drawn, 28 box, 44 target) at the end of the title row.
 - **New `subheader`:** pinned under the title, outside the scroll (Select's search field).
 - **New `height`** (`auto` default, `tall` = a fixed 80%: a searchable list never resizes per keystroke);

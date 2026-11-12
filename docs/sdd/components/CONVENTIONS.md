@@ -169,8 +169,9 @@ tiles) and overlays (Sheet, Modal, Menu, Popover, Tooltip, Select's panel) one e
 ## Dialog actions (owner rule, 2026-11-11 — V10)
 
 - **One footer slot:** `Sheet` and `Modal` take `footer`; its actions are "Cancel | Primary" in that order,
-  each half the width at phone width (≤ 540; web `.lk-dialog-actions`, native equal cells), end-aligned on
-  a wider screen (Modal). A long label wraps inside its half.
+  each half the width at phone width (≤ 540 window width; web `.lk-dialog-actions`, native equal cells). A
+  long label wraps inside its half. On a wider screen (desktop, tablet) both Modal and Sheet put them at
+  the end at their own width, and onto a second line when they don't fit.
 - **Option choices are list rows** in the body (Choose photo / Take photo), never stacked buttons.
 - **A close ×** where the sheet has no Cancel: `Sheet` `closeLabel` (with `onClose`), as Modal's `closeLabel`.
 - Sheet and Modal titles are `cardTitle` (display 17). Native Modal's body scrolls and both rise above the

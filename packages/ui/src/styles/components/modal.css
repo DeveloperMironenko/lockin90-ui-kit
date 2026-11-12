@@ -90,6 +90,7 @@
 
 .lk-modal-foot {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
@@ -100,7 +101,9 @@
 .lk-modal:focus { outline: none; }
 
 /* Dialog actions (CONVENTIONS "Dialog actions"): at phone width every action is the same width, in the
-   order given ("Cancel | Primary"); a long label wraps inside its half. Modal and Sheet footers. */
+   order given ("Cancel | Primary"); a long label wraps inside its half. Wider, they sit at the end at their
+   own width and go onto a second line when they don't fit. Modal and Sheet footers. */
+.lk-dialog-actions > * { max-width: 100%; }
 @media (max-width: 540px) {
   /* a grid of equal columns (flex-basis 0 still adds each action's own border and padding) */
   .lk-modal-foot.lk-dialog-actions,
