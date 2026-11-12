@@ -115,6 +115,24 @@ describe('Toast action and countdown', () => {
     view.unmount();
   });
 
+  test('`paused` holds it from outside (the app\'s own Undo is in use)', () => {
+    const onTimeout = vi.fn();
+    const view = mount(
+      <Toast title="Photo removed" actionLabel="Undo" onAction={() => {}} duration={6000} onTimeout={onTimeout} paused />,
+    );
+    advance(20000);
+    expect(onTimeout).not.toHaveBeenCalled();
+    view.unmount();
+  });
+
+  test('the ring number scales with the text size (no allowFontScaling={false})', () => {
+    const view = undoToast(() => {});
+    const num = view.host.querySelector('[data-testid="toast-countdown"]')!;
+    const text = [...num.querySelectorAll('*')].find((el) => el.textContent === '6' && el.children.length === 0)!;
+    expect(propOf(text, 'allowFontScaling')).not.toBe(false);
+    view.unmount();
+  });
+
   test('focus on the action holds it', () => {
     const onTimeout = vi.fn();
     const view = undoToast(onTimeout);

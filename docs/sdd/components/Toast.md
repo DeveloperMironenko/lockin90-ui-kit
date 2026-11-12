@@ -237,3 +237,20 @@ Supersedes the sizes, the action and the countdown line of the update above.
   before.
 
 - **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
+
+## Update — 2026-11-11 (owner: the audit batch, U9 / U10 / U20)
+
+- **Announced (web, U10):** the toast's region (`role="status"`, `alert` for danger) renders at once with its
+  text hidden (`visibility: hidden`) and shows it `LIVE_REVEAL_MS` (100 ms) later, so a screen reader reads
+  it (a region that mounts with its text is often silent). An app that remounts the toast per event (keyed)
+  gets each one announced.
+- **The countdown holds while focus is anywhere in the toast (web, U9):** the action, ×, a link in the
+  message; moving between them keeps the hold (`relatedTarget` inside the toast).
+- **New `paused` (web + native):** holds the countdown from outside, for the app's own way to the same action
+  (an "Undo" beside the photo) while that has focus.
+- **New `actionKeys` (web):** a shortcut for the action in `aria-keyshortcuts` form ("Control+Z Meta+Z"); while
+  the toast shows, pressing it (outside a text field) calls `onAction`, and the action carries
+  `aria-keyshortcuts`. The app says the shortcut in its words (in `message` or the action's name) so it is
+  heard with the announcement. Native keeps holding the countdown while a screen reader is on.
+- **Native ring number (U20):** no `allowFontScaling={false}` (CONVENTIONS: text scaling is never disabled);
+  the ring (16pt) and the action (min 26) grow with the text size (up to 2×), so the number fits.

@@ -6,7 +6,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { Toast } from './Toast';
+import { Toast, matchesKeys } from './Toast';
 import { TopLayer } from './TopLayer';
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -98,6 +98,49 @@ describe('Toast action and countdown', () => {
     expect(onTimeout).not.toHaveBeenCalled();
     advance(200);
     expect(onTimeout).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Toast: an Undo reachable by keyboard (U9)', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+  const advance = (ms: number) => act(() => void vi.advanceTimersByTime(ms));
+
+  it('focus moving from the action to × keeps the hold', () => {
+    const onTimeout = vi.fn();
+    const { host } = mount(
+      <Toast title="Photo removed" actionLabel="Undo" onAction={() => {}} onDismiss={() => {}} duration={6000} onTimeout={onTimeout} />,
+    );
+    act(() => host.querySelector<HTMLButtonElement>('.lk-toast-action')!.focus());
+    act(() => host.querySelector<HTMLButtonElement>('.lk-toast-x')!.focus());
+    advance(20000);
+    expect(onTimeout).not.toHaveBeenCalled();
+  });
+
+  it('`paused` holds the countdown from outside (the app\'s own Undo has focus)', () => {
+    const onTimeout = vi.fn();
+    mount(<Toast title="Photo removed" actionLabel="Undo" onAction={() => {}} duration={6000} onTimeout={onTimeout} paused />);
+    advance(20000);
+    expect(onTimeout).not.toHaveBeenCalled();
+  });
+
+  it('`actionKeys` runs the action from anywhere but a field, and names the shortcut', () => {
+    const onAction = vi.fn();
+    const { host } = mount(<Toast title="Photo removed" actionLabel="Undo" onAction={onAction} actionKeys="Control+Z Meta+Z" />);
+    expect(host.querySelector('.lk-toast-action')!.getAttribute('aria-keyshortcuts')).toBe('Control+Z Meta+Z');
+    act(() => void window.dispatchEvent(new KeyboardEvent('keydown', { key: 'z', metaKey: true })));
+    expect(onAction).toHaveBeenCalledTimes(1);
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+    act(() => void input.dispatchEvent(new KeyboardEvent('keydown', { key: 'z', ctrlKey: true, bubbles: true })));
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('matchesKeys needs the exact modifiers', () => {
+    const e = (o: Partial<KeyboardEvent>) => ({ key: 'z', ctrlKey: false, metaKey: false, altKey: false, shiftKey: false, ...o });
+    expect(matchesKeys(e({ ctrlKey: true }), 'Control+Z')).toBe(true);
+    expect(matchesKeys(e({ ctrlKey: true, shiftKey: true }), 'Control+Z')).toBe(false);
+    expect(matchesKeys(e({}), 'Control+Z')).toBe(false);
   });
 });
 

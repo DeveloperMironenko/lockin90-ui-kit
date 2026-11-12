@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { View, Text, Pressable, StyleSheet, Animated, AccessibilityInfo, type ViewProps } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Animated, AccessibilityInfo, useWindowDimensions, type ViewProps } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, gradients, radii, fonts, nativeShadows } from '@lockin90/tokens';
@@ -34,6 +34,9 @@ export interface ToastProps extends Omit<ViewProps, 'children'> {
   duration?: number;
   /** the countdown reached 0 (or the screen reader's × was pressed): do what the action could undo */
   onTimeout?: () => void;
+  /** Hold the countdown from outside (as a touch does): the app's own way to the same action is in use.
+   *  As web. */
+  paused?: boolean;
   /** @deprecated 2026-11-11 (owner: the solid fill "ruins the style"): ignored, every toast is the card's
    *  surface. Removed in the next major. */
   filled?: boolean;
@@ -63,8 +66,9 @@ const ENTER_MS = 200;
 const ENTER_DY = -8;
 /** The action's dark label on the CTA gradient (4.5:1 at every point of it). */
 const ON_CTA = colors.inkOnBright;
-/** The seconds ring: r 8 in a 20 box, drawn 16. */
+/** The seconds ring: r 8 in a 20 box, drawn 16 (more at a larger text size). */
 const RING_C = 2 * Math.PI * 8;
+const RING = 16;
 
 /** Whether a screen reader is on (VoiceOver / TalkBack), live. */
 function useScreenReader() {
@@ -144,10 +148,14 @@ export function Toast({
   onAction,
   duration,
   onTimeout,
+  paused = false,
   filled: _filled,
   style,
   ...rest
 }: ToastProps) {
+  // the ring grows with the text size so its number (scaled, never fixed) always fits inside
+  const { fontScale } = useWindowDimensions();
+  const ring = Math.round(RING * Math.max(1, Math.min(fontScale || 1, 2)));
   const t = TONE[tone];
   const reducedMotion = useReducedMotion();
   const enter = useRef(new Animated.Value(0)).current;
@@ -164,7 +172,7 @@ export function Toast({
   const reader = useScreenReader();
   const [touched, setTouched] = useState(false);
   const [focused, setFocused] = useState(false);
-  const left = useCountdown(counting ? duration! : 0, touched || focused || reader, reducedMotion, onTimeout);
+  const left = useCountdown(counting ? duration! : 0, touched || focused || reader || paused, reducedMotion, onTimeout);
   const seconds = Math.ceil(left / 1000);
   // smooth, or whole seconds under Reduce Motion
   const fraction = counting ? (reducedMotion ? (seconds * 1000) / duration! : left / duration!) : 0;
@@ -201,12 +209,12 @@ export function Toast({
           >
             {counting && (
               <View
-                style={styles.ring}
+                style={[styles.ring, { width: ring, height: ring }]}
                 accessibilityElementsHidden
                 importantForAccessibility="no-hide-descendants"
                 testID="toast-countdown"
               >
-                <Svg width={16} height={16} viewBox="0 0 20 20" style={styles.ringSvg}>
+                <Svg width={ring} height={ring} viewBox="0 0 20 20" style={styles.ringSvg}>
                   <Circle cx={10} cy={10} r={8} fill="none" stroke={ON_CTA} strokeWidth={1.8} opacity={0.22} />
                   <Circle
                     cx={10}
@@ -220,10 +228,8 @@ export function Toast({
                     strokeDashoffset={RING_C * (1 - fraction)}
                   />
                 </Svg>
-                {/* part of the 16pt ring graphic (hidden from screen readers): it keeps its size */}
-                <Text style={styles.ringNumber} allowFontScaling={false}>
-                  {seconds}
-                </Text>
+                {/* hidden from screen readers; it scales with the text size (never fixed) and the ring with it */}
+                <Text style={styles.ringNumber}>{seconds}</Text>
               </View>
             )}
             <Text style={styles.actionText}>{actionLabel}</Text>
@@ -315,7 +321,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    height: 26,
+    // 26 tall, taller at a larger text size
+    minHeight: 26,
     paddingHorizontal: 10,
     borderRadius: radii.sm,
   },
@@ -328,7 +335,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: ON_CTA,
   },
-  ring: { width: 16, height: 16, alignItems: 'center', justifyContent: 'center' },
+  ring: { alignItems: 'center', justifyContent: 'center' },
   ringSvg: { position: 'absolute', transform: [{ rotate: '-90deg' }] },
   ringNumber: {
     fontFamily: fonts.ui,

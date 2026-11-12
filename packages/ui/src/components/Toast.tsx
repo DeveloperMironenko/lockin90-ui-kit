@@ -1,5 +1,6 @@
 import { forwardRef, useEffect, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
+import { useLiveReveal } from '../hooks/useLiveReveal';
 import { Chip } from './Chip';
 import { Icon, type IconName } from './Icon';
 
@@ -34,6 +35,14 @@ export interface ToastProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   duration?: number;
   /** the countdown reached 0: do what the action could undo */
   onTimeout?: () => void;
+  /** Hold the countdown from outside (as hover / focus do): the app's own way to the same action has
+   *  focus, e.g. an "Undo" beside the photo while the toast's is out of reach (U9). */
+  paused?: boolean;
+  /** A keyboard shortcut for the action while the toast shows, in `aria-keyshortcuts` form: one or more
+   *  space-separated combinations ("Control+Z Meta+Z"). Pressing it calls `onAction` (not while typing in
+   *  a field); the action gets `aria-keyshortcuts`. Say it in the app's words in `message` or the action's
+   *  name ("Undo (Ctrl+Z)") so a screen reader user hears it with the announcement. */
+  actionKeys?: string;
   /** @deprecated 2026-11-11 (owner: the solid fill "ruins the style"): ignored, every toast is the card's
    *  surface. Removed in the next major. */
   filled?: boolean;
@@ -55,6 +64,22 @@ const TONE_ICON: Record<ToastTone, IconName> = {
   warn: 'info',
   danger: 'info',
 };
+
+/** Does a keydown match one of the `aria-keyshortcuts` combinations ("Control+Z Meta+Z")? */
+export function matchesKeys(e: Pick<KeyboardEvent, 'key' | 'ctrlKey' | 'metaKey' | 'altKey' | 'shiftKey'>, keys: string): boolean {
+  return keys.split(/\s+/).filter(Boolean).some((combo) => {
+    const parts = combo.split('+');
+    const key = parts.pop()!.toLowerCase();
+    const mods = new Set(parts.map((m) => m.toLowerCase()));
+    return (
+      e.key.toLowerCase() === key &&
+      e.ctrlKey === mods.has('control') &&
+      e.metaKey === mods.has('meta') &&
+      e.altKey === mods.has('alt') &&
+      e.shiftKey === mods.has('shift')
+    );
+  });
+}
 
 /** The seconds ring: r 8 in a 20 box, drawn 16px. */
 const RING_C = 2 * Math.PI * 8;
@@ -122,6 +147,8 @@ export const Toast = forwardRef<HTMLDivElement, ToastProps>(function Toast(
     onAction,
     duration,
     onTimeout,
+    paused = false,
+    actionKeys,
     filled: _filled,
     className,
     ...rest
@@ -130,11 +157,30 @@ export const Toast = forwardRef<HTMLDivElement, ToastProps>(function Toast(
 ) {
   const action = Boolean(onAction && actionLabel);
   const counting = action && Boolean(duration);
-  // hovered, pressed or focused: the countdown holds
+  // hovered, pressed or focus anywhere inside (the action, ×, a link in the message): the countdown holds
   const [hovered, setHovered] = useState(false);
   const [pressed, setPressed] = useState(false);
   const [focused, setFocused] = useState(false);
-  const left = useCountdown(counting ? duration! : 0, hovered || pressed || focused, onTimeout);
+  const left = useCountdown(counting ? duration! : 0, hovered || pressed || focused || paused, onTimeout);
+  // the region is there first, its text a moment later: announced (CONVENTIONS "Accessibility")
+  const pending = useLiveReveal(true);
+  // the shortcut works wherever focus is, except while typing
+  const actionRef = useRef(onAction);
+  useEffect(() => {
+    actionRef.current = onAction;
+  });
+  useEffect(() => {
+    if (!action || !actionKeys) return;
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      if (!matchesKeys(e, actionKeys)) return;
+      e.preventDefault();
+      actionRef.current?.();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [action, actionKeys]);
   const seconds = Math.ceil(left / 1000);
   // smooth, or whole seconds under reduced motion
   const fraction = counting ? (prefersReducedMotion() ? (seconds * 1000) / duration! : left / duration!) : 0;
@@ -151,18 +197,25 @@ export const Toast = forwardRef<HTMLDivElement, ToastProps>(function Toast(
       onPointerUp={on(setPressed, false)}
       onPointerCancel={on(setPressed, false)}
       onFocus={on(setFocused, true)}
-      onBlur={on(setFocused, false)}
+      // focus moving between the toast's own controls keeps the hold
+      onBlur={
+        counting
+          ? (e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false);
+            }
+          : undefined
+      }
       {...rest}
     >
       <span className="lk-toast-icon" aria-hidden="true">
         {icon ?? <Icon name={TONE_ICON[tone]} size={13} />}
       </span>
-      <div className="lk-toast-body">
+      <div className="lk-toast-body" style={pending ? { visibility: 'hidden' } : undefined}>
         <div className="lk-toast-title">{title}</div>
         {message != null && <div className="lk-toast-msg">{message}</div>}
       </div>
       {action && (
-        <button type="button" className="lk-toast-action" onClick={onAction}>
+        <button type="button" className="lk-toast-action" onClick={onAction} aria-keyshortcuts={actionKeys || undefined}>
           {counting && (
             // the seconds left: a ring draining to 0 and the number (hidden from screen readers, which
             // hear only the action's name)
