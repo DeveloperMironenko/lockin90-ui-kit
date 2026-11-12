@@ -108,6 +108,7 @@ The only difference is substrate: web declares bucket sizes + gradient tints as 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** interactive tags are real `<button type="button">` (focusable, Enter/Space activate); static tags are `<span>` text. Pass an accessible label via the tag `label` text itself.
 - **Native:** interactive tags are `Pressable` (add `accessibilityRole`/label via the parent if needed); static tags are `View`+`Text`.
 - **Size ≠ meaning for AT:** the weight→size mapping is visual only; screen readers read every tag's `label` equally regardless of bucket — keep labels self-describing.

@@ -105,6 +105,7 @@ No capability gap blocks use; both render the same information design at the sam
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a presentational `<div>`. Pass a single descriptive `aria-label` (e.g. "Shareable energy card: 7-day average 76/100, High zone, best 88, streak 23 days") and consider `role="img"` — the inner mesh/brand/ring are `aria-hidden`/decorative, and the scattered numbers don't read as a sentence. The card is non-interactive (no focus/keyboard).
 - **Native:** pass `accessibilityRole="image"` + `accessibilityLabel` (same summary) via rest props; children are decorative.
 - **Contrast:** text is `--text`/`--text-dim`/`--text-faint` on the dim `--void`+wash — keep the wash subtle (the `.32` opacity / `color-mix` percentages are tuned for legibility); don't raise it.

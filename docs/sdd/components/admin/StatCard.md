@@ -94,6 +94,7 @@ import { StatCard } from '@lockin90/ui/admin';
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Renders a presentational cell (a `<div>`); the label + value + delta are real DOM text read in source order.
 - The delta direction is conveyed by the ▲/▼ glyph **and** the colour — never colour alone.
 - The spark bar is decorative (the fill fraction restates the value); it carries no separate label.

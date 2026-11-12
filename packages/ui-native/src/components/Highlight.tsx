@@ -9,10 +9,10 @@ export interface HighlightProps extends TextProps {
 }
 
 /** color + faint tinted background per tone — mirrors web .lk-hl* exactly.
- *  Accent text uses the design's softened violet (#cbbcff), not a raw token,
+ *  Accent text uses the design's softened violet (`colors.accentSoft`),
  *  so web and native render the identical color. */
 const TONE: Record<HighlightTone, { color: string; backgroundColor: string }> = {
-  accent: { color: '#cbbcff', backgroundColor: 'rgba(124,92,255,0.10)' },
+  accent: { color: colors.accentSoft, backgroundColor: 'rgba(124,92,255,0.10)' },
   mint: { color: colors.zoneHigh, backgroundColor: 'rgba(52,245,197,0.10)' },
   warm: { color: colors.zoneMid, backgroundColor: 'rgba(255,176,32,0.10)' },
   low: { color: colors.zoneLow, backgroundColor: 'rgba(255,77,109,0.10)' },

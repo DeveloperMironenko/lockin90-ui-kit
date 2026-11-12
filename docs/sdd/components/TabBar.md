@@ -122,6 +122,7 @@ No capability gap blocks use — both render an equivalent bottom nav + FAB.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **TabBar:** web `<nav aria-label="Primary">`; the active tab carries `aria-current="page"`. Native is `accessibilityRole="tablist"` with each tab `accessibilityRole="tab"` + `accessibilityState={{ selected }}`.
 - **FAB:** always has an accessible name — web `aria-label` defaults to `'Add'` (icon-only) or the `label`; native `accessibilityLabel` defaults the same and sets `accessibilityRole="button"`.
 - **Hit target:** tabs span equal flex columns with `8px` bar padding; the FAB is ≥52px — both ≥44px touch targets.
@@ -151,3 +152,11 @@ No capability gap blocks use — both render an equivalent bottom nav + FAB.
 ## Update — 2026-07-10
 - **Floating bar = frosted CAPSULE** (owner pick B): `floating` renders a full-radius (`--r-pill`) capsule at height 62 with an INNER absolutely-filled blur/translucent layer clipped to the capsule — so the center FAB tile still overhangs the top edge (an `overflow:hidden` on the container clips it flat). Real backdrop blur via `OptionalBlurView` (expo-blur optional peer); translucent fill fallback. The FAB tile is fully round. Hosts place it with EQUAL 12px side + bottom insets (do NOT inflate the bottom by the safe-area inset).
 - **Haptics:** every tab/FAB press fires `hapticSelection()` (see `optionalHaptics` — no-op without expo-haptics).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Label 11px** (was 10).
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **Native label line height 13** (was 10) for the 11 font.

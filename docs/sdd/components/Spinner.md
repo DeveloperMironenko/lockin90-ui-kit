@@ -81,6 +81,7 @@ Substrate differences: web rotates via CSS `@keyframes` and glows via `drop-shad
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** `<div role="status" aria-live="polite" aria-label={label}>` plus a visually-hidden `<span class="lk-sr-only">{label}` — AT announces the busy state; the SVG is `aria-hidden`.
 - **Native:** `accessibilityRole="progressbar"` + `accessibilityLabel={label}`, `accessible`.
 - **Always pass a meaningful `label`** when the context isn't obvious ("Saving", "Loading results") — the default is the generic "Loading".
@@ -105,3 +106,13 @@ Substrate differences: web rotates via CSS `@keyframes` and glows via `drop-shad
 - **New treatment?** If a surface needs a determinate ring or a different sweep, add a prop/variant to `Spinner` on **both** platforms (same name, same tokens) — never a local fork.
 - **Tokens only.** The track (`border-2`), arc gradient (→ `cyan`), and glow come from `@lockin90/tokens`; a hardcoded color is a bug even if it matches today.
 - **Parity gate.** Before shipping a loading surface, confirm web phone-width and native show the same ring size, color, and sweep (accept the reduced-motion nuance noted in §5).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native reduced motion:** the ring stops rotating while `useReducedMotion()` is true (web: the
+  `prefers-reduced-motion` rule). Inside `Button loading` it is named by the button's title.
+- **Review fix:** under Reduce Motion the native ring keeps turning, slowed to 8s, as web's rule, so it still reads busy (no fast spin).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Reduce Motion:** web 2.5s infinite (exempt from `base.css`'s global rule, which froze it after one turn), native 2.5s too.

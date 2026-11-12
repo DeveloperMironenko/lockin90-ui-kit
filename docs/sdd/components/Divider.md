@@ -88,6 +88,7 @@ There is **no capability gap**.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the plain/gradient `<hr>` is a semantic separator (implicit `role="separator"`); the labeled form is a `<div role="separator" aria-label={label}>` so the caption is announced as the separator's name (the flanking hairlines are `aria-hidden`). Decorative use needs no extra aria.
 - **Native:** plain `View`s with no interactive role — correct for a decorative rule; the labeled caption `Text` is readable in order.
 - **Contrast:** the line is intentionally low-contrast (`--border` ≈ `rgba(255,255,255,.09)`); it is decoration, exempt from text-contrast minimums. The labeled caption is faint by design (a low-emphasis section marker, not body content).
@@ -119,3 +120,11 @@ There is **no capability gap**.
   0.14em, line height 1.55 ("OR CONTINUE WITH"), so the "identical" parity above wasn't true. Native now uses
   the web's values (`textTransform: 'uppercase'`, so the text stays as translated and only its look changes).
   Measured against the web Log in at 402×874 (owner: "the divider has a different font case").
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **A long label wraps** (centred), each line keeping 16px; it never overflows at 320 (web `flex: 0 1 auto` + `overflow-wrap: anywhere`, native `flexShrink: 1`).
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more`): faint / dim text and the edge step up.

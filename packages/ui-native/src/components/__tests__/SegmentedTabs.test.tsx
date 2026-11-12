@@ -39,9 +39,12 @@ describe('SegmentedTabs color tones', () => {
     const root = parse(render(SegmentedTabs, { tabs, active: 1 }));
     const label = findByText(root, 'Working')!;
     expect(carriesColor(label, '34,211,238')).toBe(true); // cyan label
-    const tab = ancestors(label).find((a) => (a.attrs.style ?? '').includes('rgba(34,211,238,0.16'));
-    expect(tab).toBeDefined(); // 16% fill
-    expect((tab!.attrs.style ?? '').includes('rgba(34,211,238,0.5')).toBe(true); // 50% border
+    // the paint is the segment's inset pill (a sibling of the label), not the segment (the target)
+    const segment = ancestors(label).find((a) => a.attrs.role === 'tab')!;
+    const pill = findAll(segment, (el) => (el.attrs.style ?? '').includes('rgba(34,211,238,0.16'))[0];
+    expect(pill).toBeDefined(); // 16% fill
+    expect((pill!.attrs.style ?? '').includes('rgba(34,211,238,0.5')).toBe(true); // 50% border
+    expect((segment.attrs.style ?? '').includes('rgba(34,211,238,0.16')).toBe(false);
   });
 
   test('an INACTIVE color-tone segment has no fill/border paint', () => {
@@ -65,11 +68,34 @@ describe('SegmentedTabs fill and invalid', () => {
   });
 });
 
-describe('SegmentedTabs fill keeps labels on one line', () => {
-  test('a long label shrinks instead of wrapping', () => {
-    const root = parse(render(SegmentedTabs, { tabs: ['Sedentary', 'Light'], fill: true }))
-    const label = findByText(root, 'Sedentary')!
-    // numberOfLines={1} is nowrap on react-native-web
-    expect(hasDeclaration(label, 'white-space:nowrap')).toBe(true)
+describe('SegmentedTabs before its labels are measured', () => {
+  test('labels render unclamped: no one-line clamp before or after they are measured (the fit: NothingCut.test)', () => {
+    const root = parse(render(SegmentedTabs, { tabs: ['Чоловіча', 'Very active'], fill: true }))
+    expect(hasDeclaration(findByText(root, 'Чоловіча')!, 'white-space:nowrap')).toBe(false)
+    expect(findByText(root, 'Very active')!.attrs.style ?? '').not.toContain('-webkit-line-clamp')
   })
 })
+
+describe('SegmentedTabs corners and surface (CONVENTIONS "Corner radii")', () => {
+  /** The segment's lit pill (the raised glass on the active one). */
+  const litPill = (root: El, label: string) => {
+    const segment = ancestors(findByText(root, label)!).find((a) => a.attrs.role === 'radio' || a.attrs.role === 'tab')!;
+    return findAll(segment, (el) => hasDeclaration(el, 'position:absolute'))[0]!;
+  };
+
+  test("the track is a field: the control's corners, the field's fill and edge", () => {
+    const root = parse(render(SegmentedTabs, { tabs: ['Metric', 'Imperial'], active: 0 }));
+    const track = root.children[0]!;
+    expect(hasDeclaration(track, 'border-top-left-radius:10px')).toBe(true);
+    expect(hasDeclaration(track, 'background-color:rgba(37,39,46,1.00)')).toBe(true);
+    expect(hasDeclaration(track, 'border-top-color:rgba(255,255,255,0.36)')).toBe(true);
+  });
+
+  test('the lit pill is the control radius less its inset: 5 on one row, 6 at sm', () => {
+    const md = parse(render(SegmentedTabs, { tabs: ['Metric', 'Imperial'], active: 0 }));
+    expect(hasDeclaration(litPill(md, 'Metric'), 'border-top-left-radius:5px')).toBe(true);
+    const sm = parse(render(SegmentedTabs, { tabs: ['Metric', 'Imperial'], active: 0, size: 'sm' }));
+    expect(hasDeclaration(litPill(sm, 'Metric'), 'border-top-left-radius:6px')).toBe(true);
+    expect(hasDeclaration(sm.children[0]!, 'border-top-left-radius:10px')).toBe(true);
+  });
+});

@@ -13,11 +13,11 @@ export interface IconButtonProps
   label: string;
   /** The kit icon it shows, sized for the button and coloured `--text`. */
   icon: IconName;
-  /** 32 / 40 px square. @default 'md' */
+  /** 36 / 44 px square (CONVENTIONS "Control sizes"; `sm` reaches a 44 target). @default 'md' */
   size?: 'sm' | 'md';
 }
 
-/** A square button with one kit icon and no text (IconButton.md), on Button's glass surface and with a
+/** A square button with one kit icon and no text (IconButton.md), on Button's surface (the field fill) and with a
  *  control's corners: for an action whose icon says it in a tight spot, like the camera on a profile
  *  picture. The touch target reaches 44px around `sm`. */
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(

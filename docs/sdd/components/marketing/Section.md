@@ -95,6 +95,7 @@ Both are **static** — no hover / focus / pressed / disabled / loading states. 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - `Section` renders a real `<section>` landmark; pass a descriptive heading inside (the `SectionHeader`'s `<h2>`) so the landmark is named for screen readers.
 - `SectionHeader`'s `title` always renders an `<h2>` (`Heading as="h2"`) — keep the document outline sane (one `<h1>` per page in the hero, `<h2>` per section). Override `as` on the underlying `Heading` only if you compose it directly.
 - `scroll-margin-top` ensures keyboard/anchor navigation lands the section below the sticky header, not hidden under it.

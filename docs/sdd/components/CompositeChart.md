@@ -103,6 +103,7 @@ Standalone chart — composes nothing from the kit; typically a `Card` body. Rea
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<svg role="img">` with a computed per-variant `aria-label` (e.g. `"GOAL → HABITS: ENERGY 80 BY DAY 90, 3 habits"`). Override via `aria-label` in rest.
 - **Native:** root `View` with `accessibilityRole="image"` + the same computed label.
 - Non-interactive — no focus/keyboard surface; fully static (reduced-motion safe).

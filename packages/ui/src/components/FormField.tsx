@@ -1,4 +1,14 @@
-import type { HTMLAttributes, InputHTMLAttributes, ReactNode } from 'react';
+import {
+  Children,
+  cloneElement,
+  Fragment,
+  isValidElement,
+  useId,
+  type HTMLAttributes,
+  type InputHTMLAttributes,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 import { cn } from '../cn';
 import { Icon } from './Icon';
 
@@ -11,7 +21,8 @@ export interface FormFieldProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ch
   error?: ReactNode;
   /** appends a small accent `*` after the label */
   required?: boolean;
-  /** ties the label to the control via `htmlFor` */
+  /** ties the label to the control via `htmlFor`. Without it, a single control child gets a generated
+   *  `id` (unless it has one), so the label still names it. */
   htmlFor?: string;
   /** a link or action at the end of the label row (e.g. "Forgot password?") */
   labelAction?: ReactNode;
@@ -19,7 +30,17 @@ export interface FormFieldProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ch
   children?: ReactNode;
 }
 
-/** Labeled form-control wrapper — mono label, the control, then faint help or red error. */
+type ControlProps = {
+  id?: string;
+  'aria-describedby'?: string;
+  'aria-required'?: boolean;
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
+};
+
+/** Labeled form-control wrapper — mono label, the control, then faint help or red error. The one control
+ *  child is named by the label (`htmlFor` / its `id`), described by the error or help
+ *  (`aria-describedby`) and marked `aria-required` when `required` (FormField.md §7). */
 export function FormField({
   label,
   help,
@@ -31,12 +52,34 @@ export function FormField({
   className,
   ...rest
 }: FormFieldProps) {
+  const baseId = useId();
+  const labelId = label ? `${baseId}-label` : undefined;
+  const noteId = error ? `${baseId}-error` : help ? `${baseId}-help` : undefined;
+  const only = Children.count(children) === 1 ? Children.toArray(children)[0] : null;
+  const control =
+    isValidElement<ControlProps>(only) && only.type !== Fragment ? (only as ReactElement<ControlProps>) : null;
+  const controlId = htmlFor ?? control?.props.id ?? (control ? `${baseId}-control` : undefined);
+  const describedBy = [control?.props['aria-describedby'], noteId].filter(Boolean).join(' ') || undefined;
+  // mapped (never swapped for a bare element), so going between one and several children never remounts
+  // the control. aria-labelledby names it too where a label's `for` can't (a CodeInput group, a choice
+  // SegmentedTabs radiogroup), unless it is named already.
+  const body = Children.map(children, (child) =>
+    control && isValidElement<ControlProps>(child) && child.type !== Fragment
+      ? cloneElement(child, {
+          id: child.props.id ?? controlId,
+          'aria-describedby': describedBy,
+          'aria-required': required || child.props['aria-required'] || undefined,
+          'aria-labelledby':
+            child.props['aria-labelledby'] ?? (child.props['aria-label'] ? undefined : labelId),
+        })
+      : child,
+  );
   return (
     <div className={cn('lk-field', className)} {...rest}>
       {label || labelAction ? (
         <div className="lk-field-label-row">
           {label ? (
-            <label className="lk-field-label" htmlFor={htmlFor}>
+            <label id={labelId} className="lk-field-label" htmlFor={controlId}>
               {label}
               {required ? <span className="lk-field-req" aria-hidden="true">*</span> : null}
             </label>
@@ -44,14 +87,16 @@ export function FormField({
           {labelAction}
         </div>
       ) : null}
-      <div className="lk-field-control">{children}</div>
+      <div className="lk-field-control">{body}</div>
       {error ? (
-        <p className="lk-field-error" role="alert">
+        <p id={noteId} className="lk-field-error" role="alert">
           <Icon name="info" size={12} className="lk-field-error-icon" aria-hidden="true" />
           <span>{error}</span>
         </p>
       ) : help ? (
-        <p className="lk-field-help">{help}</p>
+        <p id={noteId} className="lk-field-help">
+          {help}
+        </p>
       ) : null}
     </div>
   );
@@ -66,10 +111,13 @@ export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElem
   placeholder?: string;
   /** invoked by the trailing × clear button (in addition to `onChange('')`) */
   onClear?: () => void;
+  /** the clear button's name, in the app's language (CONVENTIONS "Accessibility": names via props).
+   *  @default 'Clear search' (an English fallback for older apps) */
+  clearLabel?: string;
   /** optional trailing keyboard-shortcut hint (e.g. `⌘K`) rendered as a faint mono chip */
   kbdHint?: string;
-  /** shell shape — `'pill'` (default, standalone search) or `'sm'` (the standard
-   *  Input radius, for menus/sheets where the search sits among other fields). */
+  /** @deprecated 2026-11-11 (one radius for every control): ignored, every search field has the control
+   *  radius (10). Removed in the next major. */
   shape?: 'pill' | 'sm';
 }
 
@@ -79,8 +127,9 @@ export function SearchInput({
   onChange,
   placeholder = 'Search…',
   onClear,
+  clearLabel = 'Clear search',
   kbdHint,
-  shape = 'pill',
+  shape: _shape,
   className,
   ...rest
 }: SearchInputProps) {
@@ -92,7 +141,7 @@ export function SearchInput({
   }
 
   return (
-    <div className={cn('lk-search', shape === 'sm' && 'lk-search--sm', className)}>
+    <div className={cn('lk-search', className)}>
       <span className="lk-search-lead" aria-hidden="true">
         <svg
           width={16}
@@ -117,7 +166,7 @@ export function SearchInput({
         {...rest}
       />
       {hasValue ? (
-        <button type="button" className="lk-search-clear" aria-label="Clear search" onClick={clear}>
+        <button type="button" className="lk-search-clear" aria-label={clearLabel} onClick={clear}>
           <svg
             width={14}
             height={14}

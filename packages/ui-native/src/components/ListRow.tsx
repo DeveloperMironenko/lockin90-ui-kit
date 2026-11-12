@@ -1,7 +1,10 @@
-import { type ReactNode } from 'react';
-import { View, Text, Pressable, StyleSheet, type ViewProps } from 'react-native';
+import { useState, type ReactNode } from 'react';
+import { View, Text, Pressable, StyleSheet, useWindowDimensions, type ViewProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { sizedIcon } from '../internal/iconSlot';
 import { hapticSelection } from "../internal/optionalHaptics";
+import { useContrastColors } from '../internal/useHighContrast';
+import { FitText } from './FitText';
 
 export interface ListRowProps extends ViewProps {
   /** Leading slot — an icon, avatar, badge, or letter chip. */
@@ -46,9 +49,14 @@ export interface ListRowProps extends ViewProps {
 /** Title/subtitle helpers: render strings as <Text>, pass nodes through. */
 function asText(node: ReactNode, textStyle: object, oneLine = true): ReactNode {
   return typeof node === 'string' || typeof node === 'number' ? (
-    <Text style={textStyle} numberOfLines={oneLine ? 1 : undefined}>
-      {node}
-    </Text>
+    oneLine ? (
+      <Text style={textStyle} numberOfLines={1}>
+        {node}
+      </Text>
+    ) : (
+      // wraps between words; a word wider than the row shrinks to fit, never splits
+      <FitText style={textStyle}>{node}</FitText>
+    )
   ) : (
     node
   );
@@ -73,6 +81,8 @@ export function ListRow({
   style,
   ...rest
 }: ListRowProps) {
+  // Increase Contrast steps the subtitle up
+  const c = useContrastColors();
   const titleStyle = [
     styles.title,
     boxed && styles.titleBoxed,
@@ -83,20 +93,36 @@ export function ListRow({
   // a boxed or settings row's line wraps, as on web (a settings row's title too: a long setting's
   // name in another language)
   const wraps = boxed || variant != null;
+  // a narrow settings row (a phone at 360 / 320: under 300 wide) puts its control under the text, the
+  // full row wide and start-aligned, as web's container query; the text never spills out
+  const [width, setWidth] = useState(0);
+  // …and at a large text size (> 1.35×), where even a wide row leaves the text a letter per line
+  const { fontScale } = useWindowDimensions();
+  const stacked = variant != null && trailing != null && ((width > 0 && width < NARROW) || fontScale > LARGE_TEXT);
+  const onLayout: ViewProps['onLayout'] =
+    variant != null
+      ? (e) => {
+          setWidth(e.nativeEvent.layout.width);
+          rest.onLayout?.(e);
+        }
+      : rest.onLayout;
 
   const body = (
     <>
-      {leading != null && <View style={styles.leading}>{leading}</View>}
+      {/* a row's icon: 18 (CONVENTIONS "Type"), unless the app sets its own */}
+      {leading != null && <View style={styles.leading}>{sizedIcon(leading, 18)}</View>}
       <View style={styles.main}>
-        {asText(title, titleStyle, variant == null)}
+        {/* the title always wraps: never cut at a large text size ("Data sour…") */}
+        {asText(title, titleStyle, false)}
         {subtitle != null &&
           asText(
             subtitle,
-            [styles.subtitle, boxed && styles.subtitleBoxed, variant && styles.subtitleSetting],
-            !wraps,
+            [styles.subtitle, { color: c.textDim }, boxed && styles.subtitleBoxed, variant && styles.subtitleSetting],
+            // one line on a plain row, as drawn; at a large text size it wraps (one line cut it: "Physiolo…")
+            !wraps && fontScale <= LARGE_TEXT,
           )}
       </View>
-      {trailing != null && <View style={styles.trailing}>{trailing}</View>}
+      {trailing != null && <View style={[styles.trailing, stacked && styles.trailingStacked]}>{trailing}</View>}
     </>
   );
 
@@ -106,6 +132,7 @@ export function ListRow({
     !boxed && variant === 'pref' && styles.pref,
     !boxed && variant === 'action' && styles.action,
     boxed ? styles.boxed : divider && styles.divider,
+    stacked && styles.stacked,
     active && (activeTint != null ? { backgroundColor: activeTint } : styles.active),
     disabled && styles.disabled,
     style,
@@ -118,6 +145,7 @@ export function ListRow({
         onPress={onPress ? () => { hapticSelection(); onPress(); } : undefined}
         style={({ pressed }) => [...rowStyle, pressed && (boxed ? styles.pressedBoxed : styles.pressed)]}
         {...rest}
+        onLayout={onLayout}
         accessibilityState={{ ...rest.accessibilityState, disabled }}
       >
         {body}
@@ -129,6 +157,7 @@ export function ListRow({
     <View
       style={rowStyle}
       {...rest}
+      onLayout={onLayout}
       // disabled: one accessibility element announced unavailable (a plain View isn't one)
       {...(disabled
         ? {
@@ -225,4 +254,12 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     marginLeft: 'auto',
   },
+  // narrow: the control on its own line under the text, start-aligned
+  stacked: { flexWrap: 'wrap', rowGap: 8 },
+  trailingStacked: { flexBasis: '100%', marginLeft: 0, alignItems: 'flex-start' },
 });
+
+/** A settings row narrower than this (pt) stacks its control under the text (web: the container query). */
+const NARROW = 300;
+/** Above this OS text scale a settings row stacks its control under the text whatever its width. */
+const LARGE_TEXT = 1.35;

@@ -116,6 +116,7 @@ import { Statistic } from '@lockin90/ui/admin';
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Inherits root `Stat`'s accessibility: a semantic `<div>` with `label` then `value` (then `sub`)
   as ordinary text children, read in source order by screen readers.
 - `value` should already be a human-readable pre-formatted string (`"$48.2k"`, `"94%"`) — no

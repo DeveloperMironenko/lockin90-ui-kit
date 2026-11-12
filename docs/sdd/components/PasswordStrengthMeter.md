@@ -103,6 +103,7 @@ There is no capability gap — fully equivalent on both platforms.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** `role="meter"` with `aria-valuemin=0`, `aria-valuemax=4`, `aria-valuenow={score}`, and an
   `aria-label` of `Password strength: <label>` — AT reads both the value and the human label.
 - **Native:** `accessibilityRole="progressbar"`, `accessibilityValue={{ min: 0, max: 4, now: score }}`, and
@@ -200,3 +201,9 @@ up two by hand.
   last rule beside an empty cell keeps its column's width), the tick on the first line (`alignItems:
   'flex-start'`, `marginTop: (12 × 1.55 − 16) / 2`), each label wrapping in its column. Apps bump both kits
   together, so web and mobile never differ.
+
+## Update — 2026-11-11 (no word split, 1.35)
+
+- **Native:** above text size 1.35 the rules are one column (half the width left "numb/er", "symb/ol" at
+  AX sizes); each rule's text and the hint are `FitText` (a word wider than its line shrinks, never splits).
+  Two columns at every other size, as web.

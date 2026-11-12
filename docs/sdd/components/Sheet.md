@@ -104,6 +104,7 @@ No gap blocks use — the sheet/drawer is fully usable and visually equivalent (
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** panel is `role="dialog"` + `aria-modal="true"`; scrim is `role="presentation"`. ESC + scrim click dismiss. The drag handle is `aria-hidden` (decorative). Manage initial focus for long forms.
 - **Native:** `accessibilityViewIsModal` traps assistive focus; the handle is `pointerEvents="none"` decoration. The title is a header. The scrim `Pressable` is `accessible={false}` and the card a plain view that claims the touch (`onStartShouldSetResponder`): as accessible elements they would group the title, fields and buttons into one item VoiceOver can't enter. Android back dismisses via `onRequestClose`; on iOS, VoiceOver's escape gesture (`onAccessibilityEscape`).
 - **Touch:** the bottom sheet's handle/title strip is a real drag surface — drag down past 25% (or fling) to
@@ -132,3 +133,38 @@ No gap blocks use — the sheet/drawer is fully usable and visually equivalent (
 - **New need → both platforms.** A new `side`, a snap-point, or a sticky footer must land in `SheetProps` on web **and** native with the same name/tokens.
 - **Tokens only.** Scrim, `bg-1`, `border`, `r-lg`, handle `border-2`, and display/ui type are all tokens.
 - **Parity gate.** Before shipping, confirm the web phone-width sheet and the native sheet match (same side, title, handle, body) — accepting only the documented scrim-blur difference.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Web focus:** as `Modal` — focus into the panel on open, Tab trapped, focus back on close, named by its title
+  (`aria-labelledby`). It has no close button (scrim, Esc, drag).
+- **Native home indicator:** the bottom sheet's bottom padding is 18 + the safe-area bottom inset, read from
+  `react-native-safe-area-context`'s `SafeAreaInsetsContext` — a new OPTIONAL peer (Expo Router apps have it;
+  the app's `SafeAreaProvider` must be above). Without the package or the provider the inset is 0, as before.
+- **Review fixes:** as `Modal` — the opener is kept from before an `autoFocus` child takes focus; only the topmost open dialog traps Tab.
+
+## Update — 2026-11-11 (owner: the bottom cut, the toast under the sheet)
+
+- **The body scrolls to the edge (native):** the body is the kit's `ScrollView` (`keyboardShouldPersistTaps="handled"`,
+  `keyboardDismissMode="on-drag"`), sized by its content up to the panel's cap (`flexGrow: 0`, `flexShrink: 1`).
+  The panel has **no bottom padding** (bottom sheet and drawers: `paddingTop` only); the scroll's content ends
+  `2 + 18 + the safe-area bottom inset` above it. So the content scrolls behind the home indicator to the
+  screen's edge and the last line scrolls clear of it. Before, the panel's `18 + inset` padding was an opaque
+  band the scroll was cut at (iPhone 15 Pro Max: 52pt above the bottom, "Estimates are fi…").
+  **Apps don't wrap the body in a ScrollView of their own** (a nested one would never scroll).
+- **Toasts above it:** the sheet renders `TopLayerHost` (see `TopLayer.md`) as the last child of its window while
+  `open`, so an app's `TopLayer` toast draws over the scrim and the panel instead of under the window.
+- **Web (follow-up):** checked separately at 402×874 (`dvh`, the body's bottom).
+
+## Update — 2026-11-11 (owner: the audit batch, V10 / U20)
+
+- **New `footer`** (web + native): the actions pinned under the body, "Cancel | Primary", each half the width
+  at phone width, end-aligned at their own width and wrapping on a wider screen (CONVENTIONS "Dialog
+  actions"); the home-indicator inset moves from the body's end to the footer.
+- **New `closeLabel`:** with `onClose`, a × (18 drawn, 28 box, 44 target) at the end of the title row.
+- **New `subheader`:** pinned under the title, outside the scroll (Select's search field).
+- **New `height`** (`auto` default, `tall` = a fixed 80%: a searchable list never resizes per keystroke);
+  native **`padded`** (`false`: a list runs edge to edge in the body).
+- **Title** display 17 (was 16), as Modal (`cardTitle`).
+- **Android keyboard (U20):** the panel rises by the keyboard's height (`internal/keyboard.ts`
+  `useAndroidKeyboardHeight`); iOS keeps `KeyboardAvoidingView` `padding`.

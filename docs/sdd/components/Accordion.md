@@ -90,6 +90,7 @@ No capability gap blocks use — both are fully usable, visually equivalent at r
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** header is a real `<button type="button">` with `aria-expanded={isOpen}`; body is a `<div role="region">`. Keyboard: Tab to header, Enter/Space toggles.
 - **Native:** header `Pressable` with `accessibilityRole="button"` + `accessibilityState={{ expanded: isOpen }}`.
 - **Hit target:** `16px` vertical padding + 18px chevron yields a comfortable touch row.

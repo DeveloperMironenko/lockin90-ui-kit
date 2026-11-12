@@ -13,7 +13,7 @@ export interface BadgeProps extends ViewProps {
 }
 
 const TONE: Record<BadgeTone, { color: string; bg: string; border: string; glow: string }> = {
-  accent: { color: '#0A0A12', bg: colors.accent, border: 'transparent', glow: colors.accent },
+  accent: { color: colors.inkOnBright, bg: colors.accent, border: 'transparent', glow: colors.accent },
   high: { color: colors.zoneHigh, bg: 'rgba(52,245,197,0.10)', border: 'rgba(52,245,197,0.35)', glow: colors.zoneHigh },
   mid: { color: colors.zoneMid, bg: 'rgba(255,176,32,0.10)', border: 'rgba(255,176,32,0.35)', glow: colors.zoneMid },
   low: { color: colors.zoneLow, bg: 'rgba(255,77,109,0.10)', border: 'rgba(255,77,109,0.35)', glow: colors.zoneLow },
@@ -66,10 +66,13 @@ export function Badge({ children = '3', tone = 'accent', dot, style, ...rest }: 
 
 const styles = StyleSheet.create({
   badge: {
+    // grows with the text (no fixed height: the label never clips at the largest text size)
     minWidth: 16,
-    height: 16,
+    minHeight: 16,
     paddingHorizontal: 6,
-    borderRadius: radii.pill,
+    paddingVertical: 1.5,
+    // a control's corners, as the web Badge (Chip sm) (CONVENTIONS "Corner radii")
+    borderRadius: radii.sm,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'flex-start',
@@ -77,9 +80,9 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: fonts.mono,
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '600',
-    lineHeight: 12,
+    lineHeight: 13,
   },
   dot: {
     width: 8,

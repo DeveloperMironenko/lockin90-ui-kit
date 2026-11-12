@@ -105,6 +105,7 @@ It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parit
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a plain `<div>` — semantically neutral. When the card is the click target, pass `role="button"`, `tabIndex={0}`, and a key handler, or wrap a real `<button>`/`<a>` around the content rather than making the div clickable silently.
 - **Native:** a `<View>` — wrap in `Pressable` with `accessibilityRole="button"`/`accessibilityLabel` for tap targets.
 - **Contrast:** `tone` surfaces keep their tinted text/border within AA against the void background; don't lower the tint opacity.
@@ -129,3 +130,14 @@ It is the *only* sanctioned glass surface; hand-rolling a glass panel is a parit
 - **New need → add to BOTH platforms.** A new surface treatment (e.g. native `tone`) is a new `Card` prop on web *and* native — same name, same tokens — never a one-off component.
 - **Tokens only.** Any color/space/radius/shadow not sourced from `@lockin90/tokens` is a bug even if it looks identical today.
 - **Parity gate.** Before shipping a screen, confirm the web phone-width card and the native card read identically (same pad, lit, flat); flag any reliance on a web-only modifier that native lacks.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Fill:** `--card` / `colors.card` (`rgba(22,24,32,.79)`) instead of `--glass`: the same `#13151D` on the plain page, but the aurora behind no longer lifts dim or faint text below 4.5:1 (CONVENTIONS ratios). The tones mix into it (warn 7%, danger 4%); native `blur` keeps the frost behind the same fill.
+- **Narrow phone:** `padLg` / `pad="lg"` (30) drops to 16 at ≤ `--bp-narrow` (360) on web and when the window is ≤ `breakpoints.narrow` on native (`useWindowDimensions`), so an 8-box CodeInput (8 × 24 + 7 × 8 = 248) fits a 320 screen inside an AuthCard.
+
+## Update — 2026-11-11 (large text, 1.35)
+
+- **Native:** above text size 1.35 every padding but `none` is 16 (as `padLg` at a narrow phone): the room
+  goes to the text, whose long words would otherwise have to shrink further. Web: browser text sizes don't
+  change the padding (no change).

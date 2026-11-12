@@ -104,6 +104,7 @@ import { StatusChip } from '@lockin90/ui/admin';
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Renders a `<span>` — purely presentational, same as `Chip`. The label text carries the meaning;
   color is reinforcement, not the sole signal.
 - Not focusable / not interactive.

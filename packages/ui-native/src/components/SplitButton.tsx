@@ -26,8 +26,8 @@ export interface SplitButtonProps {
  *  the chevron reuses {@link Menu} for the dropdown panel + outside-close. */
 export function SplitButton({ label, onPress, items, variant = 'primary', icon }: SplitButtonProps) {
   const isPrimary = variant === 'primary';
-  const fg = isPrimary ? '#0A0A12' : colors.text;
-  const chevColor = isPrimary ? '#0A0A12' : colors.textDim;
+  const fg = isPrimary ? colors.inkOnBright : colors.text;
+  const chevColor = isPrimary ? colors.inkOnBright : colors.textDim;
 
   return (
     <View style={[styles.group, isPrimary ? styles.groupPrimary : styles.groupDefault]}>

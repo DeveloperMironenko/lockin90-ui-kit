@@ -81,6 +81,7 @@ import { RedactedField } from '@lockin90/ui/admin';
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - The visible `label` text is real, readable content (read by screen readers verbatim); the same
   string is mirrored to the `title` attribute as a hover tooltip.
 - The lock icon is `aria-hidden` (decorative reinforcement).

@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, fonts } from '@lockin90/tokens';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 /**
  * Catalog variants (design catalog `progress-charts.html`, PL-01…PL-16).
@@ -156,7 +157,14 @@ function VariantBar({
   );
 
   return (
-    <View style={[styles.root, style]} {...rest}>
+    <View
+      // a progressbar named by its label; an app passes accessibilityLabel when there is none (web aria-label)
+      accessibilityRole="progressbar"
+      accessibilityLabel={label}
+      accessibilityValue={{ min: 0, max: 100, now: Math.round(Math.min(1, raw) * 100) }}
+      style={[styles.root, style]}
+      {...rest}
+    >
       {(label || showPct) && (
         <View style={styles.vhead}>
           {label ? <Text style={styles.vtitle}>{label}</Text> : <View />}
@@ -314,8 +322,15 @@ export function ProgressBar(props: ProgressBarProps) {
   const onLayout = (e: LayoutChangeEvent) => setTrackW(e.nativeEvent.layout.width);
 
   const sweep = useRef(new Animated.Value(0)).current;
+  const reduced = useReducedMotion();
   useEffect(() => {
     if (!indeterminate || trackW <= 0) return;
+    // Reduce Motion: a calm band, still, in the middle of the track (web: no sweep, a centred band)
+    if (reduced) {
+      const band = trackW * BAND_FRACTION;
+      sweep.setValue((band + (trackW - band) / 2) / (trackW + band));
+      return;
+    }
     sweep.setValue(0);
     const loop = Animated.loop(
       Animated.timing(sweep, {
@@ -327,7 +342,7 @@ export function ProgressBar(props: ProgressBarProps) {
     );
     loop.start();
     return () => loop.stop();
-  }, [indeterminate, trackW, sweep]);
+  }, [indeterminate, trackW, sweep, reduced]);
 
   const bandW = Math.max(0, trackW * BAND_FRACTION);
   const translateX = sweep.interpolate({
@@ -336,7 +351,15 @@ export function ProgressBar(props: ProgressBarProps) {
   });
 
   return (
-    <View style={[styles.root, style]} {...rest}>
+    <View
+      // a progressbar named by its label; an app passes accessibilityLabel when there is none (web aria-label)
+      accessibilityRole="progressbar"
+      accessibilityLabel={label}
+      accessibilityValue={indeterminate ? undefined : { min: 0, max: 100, now: pct }}
+      accessibilityState={indeterminate ? { busy: true } : undefined}
+      style={[styles.root, style]}
+      {...rest}
+    >
       {(label || (showValue && !indeterminate)) && (
         <View style={styles.meta}>
           {label ? <Text style={styles.label}>{label}</Text> : <View />}

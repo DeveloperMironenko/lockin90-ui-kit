@@ -40,8 +40,14 @@ Native: the same 38 tile, `radii.sm`, `colors.border2`, `colors.bg1`; the icon 1
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
+
 `aria-hidden`: the row's title names it.
 
 ## 8. Do / Don't
 
 - **Do** use it for a row's leading icon on a tile. **Don't** draw a bordered square around an `Icon` in an app.
+
+## Update — 2026-11-11 (owner: the audit batch, control sizes and fills)
+
+- **Fill (V19):** the tile is on `--field` (was `--bg-1`).

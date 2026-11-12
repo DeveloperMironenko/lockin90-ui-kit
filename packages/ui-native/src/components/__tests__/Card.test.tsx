@@ -8,6 +8,7 @@ describe('Card tone danger', () => {
     const root = parse(render(Card, { tone: 'danger', children: null }));
     const card = root.children[0]!;
     expect(hasDeclaration(card, 'border-top-color:rgba(255,77,109,0.30)') || hasDeclaration(card, 'border-top-color:rgba(255,77,109,0.3)')).toBe(true);
-    expect(findAll(root, (el) => hasDeclaration(el, 'background-color:rgba(255,77,109,0.04)')).length).toBe(1);
+    // the --bad 4% tint over the card fill (opaque enough for the aurora), flattened
+    expect(findAll(root, (el) => hasDeclaration(el, 'background-color:rgba(34,27,36,')).length).toBe(1);
   });
 });

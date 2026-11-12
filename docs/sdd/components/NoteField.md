@@ -88,6 +88,7 @@ No capability gap blocks use; the field is equivalent on both platforms.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the textarea is inside a `<label>`, so the caption focuses the field on click. Pass `aria-label` only
   when there's no visible label. `maxLength` (via rest) is announced by AT.
 - **Native:** `TextInput multiline` with the label as a sibling `Text`; pass `accessibilityLabel` for an
@@ -115,3 +116,9 @@ No capability gap blocks use; the field is equivalent on both platforms.
   **and** native with the same prop name and tokens — never a one-off.
 - **Tokens only.** Glass fill, border, radius, and focus color come from `@lockin90/tokens`; hardcoded values are bugs.
 - **Parity gate.** Confirm the web phone-width note field and the native one match (same label, default rows, padding, focus treatment) before shipping.
+
+## Update — 2026-11-11 (one focus indicator, web)
+
+- A focused field shows only its own edge: `--accent`, 2px (1px border + 1px inset shadow), on mouse and
+  keyboard focus; no outer `--accent-2` ring, no glow (owner: "2 outlines"). Invalid: the same in `--zone-low`.
+  Supersedes the ring / glow above; see CONVENTIONS "Focus (web)". Native was already edge-only.

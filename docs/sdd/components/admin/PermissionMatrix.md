@@ -145,6 +145,7 @@ const [cells, setCells] = useState<Record<string, Record<string, MatrixState>>>(
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Toggleable cells are `role="switch"` with `aria-checked` reflecting `on`/`off`, a descriptive
   `aria-label` (`"<role>: <capability>"`), and full keyboard support (**Space/Enter** flip, focus
   ring via `:focus-visible`).

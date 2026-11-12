@@ -87,6 +87,7 @@ import { MethodChip } from '@lockin90/ui/admin';
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Renders the verb as **visible text** inside the `<span>`, so it is read verbatim by screen readers
   — no `aria-label` needed.
 - Colour is reinforced by the always-present text label, so the verb is never communicated by colour

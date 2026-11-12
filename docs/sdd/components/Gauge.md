@@ -116,6 +116,7 @@ No capability gap — fully usable on both.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `role="img"` + `aria-label="Gauge: {round(v)} of {max}."`; `<svg>` is `aria-hidden`. Enrich via `...rest` when zones/gradients carry meaning.
 - **Native:** wrap in a `View` with `accessibilityRole="image"` + `accessibilityLabel` when the value must be announced.
 - `zone` readout colors are the `--zone-*` tokens — all pass contrast on the void surface.

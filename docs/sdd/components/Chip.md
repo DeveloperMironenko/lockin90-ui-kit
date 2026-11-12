@@ -155,6 +155,7 @@ No genuine (inherent) capability gap — `size="sm"` is buildable and now built 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a `<span>` — purely presentational. When the chip conveys state not otherwise in the text, ensure the surrounding context names it (color is not the only signal — the mono label carries the meaning).
 - **Native:** a `<View>` + `<Text>` — the label is read by SRs. The dot is decorative.
 - **Contrast:** zone tones use the bright signal colors on a low-opacity tinted bg — high contrast against the void. Don't lower the tint or swap the text color off-tone.
@@ -186,3 +187,20 @@ No genuine (inherent) capability gap — `size="sm"` is buildable and now built 
 ## Update — 2026-11-02 (one shape, one line)
 - Radius 10 (`--r-sm` / `radii.sm`) and the shared `1px --border-2` line, per CONVENTIONS "One shape, one
   line", on web and native.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **sm 11px** (was 10), native `Badge` too: no meaningful text under 11px.
+- **A long label wraps** (`md`; web `white-space: normal` + `overflow-wrap: anywhere`, `max-width: 100%`; native label `flexShrink: 1`, chip `maxWidth: '100%'`) instead of overflowing ("Paso 2 de 2 · creación de la cuenta" at 320). A label that fits stays one line, as before. `sm` (the count badge) stays one line.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Native `Badge`:** no fixed height (`minHeight` 16, padding 1.5, line 13), so its text never clips at the largest text size.
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **Native `sm` label line height 13** (was 11) so the 11 font never clips.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- Native Badge has the control's 10 (`radii.sm`, was the pill), as the web Badge (Chip `sm`).

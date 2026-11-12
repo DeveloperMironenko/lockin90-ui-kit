@@ -111,6 +111,7 @@ No genuine capability gap — the rail is fully equivalent on both platforms.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the wrapper is `role="img"` with an `aria-label` summarizing the span + block count (e.g. *"Activity timeline from 6am to 10pm, 2 blocks"*). Gridlines, now-marker and per-block `title` are decorative; blocks expose their label via `title` tooltip.
 - **Native:** the rail is a decorative `View`; block `Text` labels are the readable content. (No `accessibilityLabel` on the root — consider mirroring the web summary.)
 - **Contrast:** in-block labels use a near-black `rgba(8,10,18,.92)` against bright block colors for legibility on the spectrum palette.

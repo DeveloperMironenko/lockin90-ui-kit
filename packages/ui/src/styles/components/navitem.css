@@ -48,7 +48,7 @@
   background: color-mix(in srgb, var(--accent-2) 12%, transparent);
   color: var(--accent-2);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 /* sm: a page's own section list (design web/settings.html .subnav) */

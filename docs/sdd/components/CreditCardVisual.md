@@ -91,6 +91,7 @@ No capability gap blocks use — the card reads identically at a glance on both 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the panel carries `aria-label` = *"Card ending {last4}"* (+ *", expires {expiry}"* when present), so screen readers announce the card without reading the masking dots. The sheen + chip are `aria-hidden`.
 - **Native:** no explicit `accessibilityLabel` on the gradient root — the visible mono `Text` rows are the readable content; add a label if the card needs a single spoken summary like web.
 - **Contrast:** masked number/brand use `--text` over bright gradient art; labels use the fainter `--text-faint`. This is decorative card-art, not a data table — keep critical info (e.g. "default card") in adjacent real text.

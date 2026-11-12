@@ -50,7 +50,7 @@ button.lk-tagcloud-tag {
   border-color: rgba(34, 211, 238, 0.3);
 }
 .lk-tagcloud-grad .lk-tagcloud-xl {
-  color: #cbbcff;
+  color: var(--accent-soft);
   border-color: rgba(124, 92, 255, 0.4);
   background: rgba(124, 92, 255, 0.08);
 }

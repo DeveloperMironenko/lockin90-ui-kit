@@ -84,6 +84,7 @@ No capability gap blocks use: the panel reads the same at web phone width and on
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - The whole gate is non-interactive (web `pointer-events: none` on both layers; native `pointerEvents="none"`) — it doesn't intercept clicks/touches; the host screen owns the upgrade affordance (which carries its own role/label).
 - **Web:** the gated content layer and the overlay are `aria-hidden="true"` — the blurred teaser + decorative padlock are hidden from AT; the host CTA conveys the locked state.
 - **Native:** title/subtitle are plain `Text` read in order; the padlock SVG is decorative (no a11y text).

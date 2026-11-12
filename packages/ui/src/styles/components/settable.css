@@ -149,7 +149,7 @@
   fill: none;
 }
 .lk-settable-check[aria-pressed="true"] {
-  color: #07080d;
+  color: var(--ink-on-bright);
   background: var(--grad-mint);
   border-color: transparent;
   box-shadow: var(--glow-mint);

@@ -9,6 +9,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 export interface TypingIndicatorProps {
   /** Optional leading text, e.g. "Sofia is typing" (default: none — just the dots). */
@@ -34,7 +35,13 @@ export function TypingIndicator({ label, style }: TypingIndicatorProps) {
   }
   const vals = valsRef.current;
 
+  const reduced = useReducedMotion();
   useEffect(() => {
+    // Reduce Motion: a defined still frame, not wherever the loop stopped
+    if (reduced) {
+      vals.forEach((v) => v.setValue(1));
+      return;
+    }
     const loops = vals.map((v, i) =>
       Animated.loop(
         Animated.sequence([
@@ -47,7 +54,7 @@ export function TypingIndicator({ label, style }: TypingIndicatorProps) {
     );
     loops.forEach((l) => l.start());
     return () => loops.forEach((l) => l.stop());
-  }, [vals]);
+  }, [vals, reduced]);
 
   return (
     <View

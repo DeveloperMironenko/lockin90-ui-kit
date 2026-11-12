@@ -20,6 +20,10 @@ type CommonProps = {
    * @default 'default'
    */
   variant?: 'default' | 'pill' | 'bar';
+  /** The control size of the `pill` / `bar` surface (CONVENTIONS "Control sizes"): `md` 44 tall (a screen's
+   *  back control), `sm` 36 with a 44 target (a compact header). The `default` text link is 44 to touch at
+   *  phone width either way. @default 'md' */
+  size?: 'md' | 'sm';
 };
 
 export type BackLinkProps = CommonProps &
@@ -35,17 +39,19 @@ export function BackLink({
   onClick,
   className,
   variant = 'default',
+  size = 'md',
   ...rest
 }: BackLinkProps) {
   const rootClass = cn(
     'lk-backlink',
     variant === 'pill' && 'lk-backlink--pill',
     variant === 'bar' && 'lk-backlink--pill lk-backlink--bar',
+    variant !== 'default' && size === 'sm' && 'lk-backlink--sm',
     className,
   );
   const content = (
     <>
-      <Icon name="back" size={18} className="lk-backlink-icon" />
+      <Icon name="back" size={variant === 'default' ? 18 : size === 'sm' ? 14 : 16} className="lk-backlink-icon" />
       <span>{label}</span>
     </>
   );

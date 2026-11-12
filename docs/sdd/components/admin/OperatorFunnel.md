@@ -123,6 +123,7 @@ const steps: FunnelStep[] = [
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Root is `role="img"`; give it an `aria-label` (via `...rest`) summarising the funnel for
   screen readers — the in-bar numbers are visual only.
 - The fill bar is `aria-hidden` (decorative); count/conversion/drop text is real DOM and read in order.

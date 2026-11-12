@@ -127,6 +127,7 @@ Standalone widget — composes nothing from the kit; typically placed inside a `
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<svg role="img">` with a computed per-variant `aria-label` (e.g. `"WATER · TODAY: 1.6 L, 5 of 8 glasses"`). Override via `aria-label` in rest when the computed text isn't enough.
 - **Native:** root `View` with `accessibilityRole="image"` + the same computed label.
 - Non-interactive — no focus/keyboard surface. The pacer's SMIL loop ignores `prefers-reduced-motion` (§4) — gate at the surface level for motion-sensitive users.

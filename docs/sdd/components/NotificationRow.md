@@ -90,6 +90,7 @@ No capability gap.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a tappable row is a real `<button>` (keyboard-focusable, Enter/Space activate) with a `:focus-visible` bg; a static row is a plain `<div>`. The unread dot is `aria-hidden` (decorative) — encode "unread" in the accessible name upstream if it must be announced.
 - **Native:** a tappable row is a `Pressable` with `accessibilityRole="button"`; pass an `accessibilityLabel` combining title + time when needed.
 - **Color:** unread is signalled by the dot **and** the bolder title + tint — not color alone.

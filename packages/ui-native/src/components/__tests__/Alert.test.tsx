@@ -1,7 +1,7 @@
 import { createElement } from 'react';
 import { Text } from 'react-native';
 import { describe, expect, test } from 'vitest';
-import { Alert } from '../Alert';
+import { Alert, AlertStrong } from '../Alert';
 import { ancestors, findAll, findByText, hasDeclaration, inlineStyle, parse, render } from './markup';
 
 /* The quiet note tones (docs/sdd/components/Alert.md §3): `neutral` / `cyan` drop the 3px accent bar
@@ -23,7 +23,8 @@ describe('Alert note tones', () => {
   test('a note gets the info glyph unless the app passes its own', () => {
     const tree = parse(render(Alert, { tone: 'neutral', children: 'Note' }));
     const [svg] = findAll(tree, (e) => e.tag === 'svg');
-    expect(svg.attrs.width).toBe('17');
+    // every tone's icon is 16 (owner, 2026-11-11)
+    expect(svg.attrs.width).toBe('16');
     expect(findAll(tree, (e) => e.tag === 'circle')).not.toHaveLength(0);
   });
 
@@ -33,11 +34,26 @@ describe('Alert note tones', () => {
     expect(hasDeclaration(root({ title: 'Heads up' }), 'align-items:center')).toBe(false);
   });
 
-  test('the body text is the note size', () => {
-    const cyan = findByText(parse(render(Alert, { tone: 'cyan', children: 'Note' })), 'Note')!;
-    expect(inlineStyle(cyan)['font-size']).toBe('12.5px');
-    const neutral = findByText(parse(render(Alert, { tone: 'neutral', children: 'Note' })), 'Note')!;
-    expect(inlineStyle(neutral)['font-size']).toBe('12.5px');
+  test('every tone has the same text size (13) and box (12 / 16)', () => {
+    for (const tone of ['cyan', 'neutral', 'info', 'violet'] as const) {
+      const tree = parse(render(Alert, { tone, children: 'Note' }));
+      const note = findByText(tree, 'Note')!;
+      expect([note, ...ancestors(note)].some((el) => hasDeclaration(el, 'font-size:13px'))).toBe(true);
+      const box = tree.children[0]!;
+      expect(hasDeclaration(box, 'padding-top:12px')).toBe(true);
+      expect(hasDeclaration(box, 'padding-left:16px')).toBe(true);
+    }
+  });
+
+  test('the bar is optional: on for a note with bar, off for a signal tone without', () => {
+    expect(bars(render(Alert, { tone: 'neutral', bar: true, children: 'Note' }))).toHaveLength(1);
+    expect(bars(render(Alert, { tone: 'warn', bar: false, children: 'Note' }))).toHaveLength(0);
+  });
+
+  test('info uses the status --info colour (as Toast), not the brand accent', () => {
+    const html = render(Alert, { tone: 'info', children: 'Note' });
+    expect(html.toLowerCase()).toContain('rgba(110,123,255');
+    expect(html.toLowerCase()).not.toContain('rgba(124,92,255');
   });
 });
 
@@ -53,12 +69,27 @@ describe('Alert text', () => {
 });
 
 describe('Alert violet note', () => {
-  test('an accent-tinted box on the 4px scale, the container radius', () => {
-    const box = inlineStyle(parse(render(Alert, { tone: 'violet', children: 'Why we ask' })).children[0]!);
+  test('an accent-tinted box on the 4px scale, every corner 10', () => {
+    const root = parse(render(Alert, { tone: 'violet', children: 'Why we ask' })).children[0]!;
+    const box = inlineStyle(root);
     // the accent tint and its line (cyan's would be 34,211,238 at 0.22)
     expect(box['border-top-color']).toBe('rgba(124,92,255,0.20)');
-    expect(box.gap).toBe('12px');
-    expect(box['padding-left']).toBe('16px');
-    expect(box['border-top-left-radius']).toBe('16px');
+    expect(hasDeclaration(root, 'padding-left:16px')).toBe(true);
+    expect(hasDeclaration(root, 'border-top-left-radius:10px')).toBe(true);
+  });
+});
+
+/* V5: emphasis is 600 in the full text colour; only a violet note's is the soft accent. */
+describe('AlertStrong', () => {
+  const strongIn = (tone: 'info' | 'violet') => {
+    const sentence = createElement(Text, null, 'Why: ', createElement(AlertStrong, null, 'it matters'));
+    const el = findByText(parse(render(Alert, { tone, children: sentence })), 'it matters')!;
+    return ancestors(el).concat(el);
+  };
+  test('reads in the text colour in a signal tone', () => {
+    expect(strongIn('info').some((el) => hasDeclaration(el, 'color:rgba(238,241,248,1.00)'))).toBe(true);
+  });
+  test('reads in accentSoft in the violet note', () => {
+    expect(strongIn('violet').some((el) => hasDeclaration(el, 'color:rgba(203,188,255,1.00)'))).toBe(true);
   });
 });

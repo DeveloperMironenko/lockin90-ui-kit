@@ -17,19 +17,28 @@ export interface BackLinkProps extends Omit<PressableProps, 'children' | 'style'
    * @default 'default'
    */
   variant?: 'default' | 'pill';
+  /** The control size of the `pill` surface (CONVENTIONS "Control sizes"): `md` 44 tall (a screen's back
+   *  control), `sm` 36 with a 44 target (a compact header). As web. @default 'md' */
+  size?: 'md' | 'sm';
 }
 
+// the default row is 26pt tall and the sm pill 36: the slop reaches the 44pt touch target, same look
+const SLOP = { default: { top: 9, bottom: 9, left: 4, right: 4 }, sm: { top: 4, bottom: 4 } } as const;
+
 /** "‹ Back" navigation affordance — chevron-left glyph + label, in accent. */
-export function BackLink({ label = 'Back', onClick, style, variant = 'default', ...rest }: BackLinkProps) {
+export function BackLink({ label = 'Back', onClick, style, variant = 'default', size = 'md', ...rest }: BackLinkProps) {
   const isPill = variant === 'pill';
+  const sm = isPill && size === 'sm';
   const iconColor = isPill ? colors.textDim : colors.accent;
-  const iconSize = isPill ? 14 : 18;
+  const iconSize = isPill ? (sm ? 14 : 16) : 18;
   return (
     <Pressable
       accessibilityRole="button"
       onPress={onClick}
+      hitSlop={isPill ? (sm ? SLOP.sm : undefined) : SLOP.default}
       style={({ pressed }) => [
         isPill ? pillStyles.row : styles.row,
+        sm && pillStyles.rowSm,
         pressed && styles.pressed,
         style,
       ]}
@@ -52,13 +61,16 @@ const pillStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 7,
-    paddingVertical: 7,
-    paddingHorizontal: 13,
+    // md 44 tall, as web (CONVENTIONS "Control sizes")
+    minHeight: 44,
+    paddingHorizontal: 14,
     borderWidth: 1,
     borderColor: colors.border2,
-    backgroundColor: colors.glass,
+    // a control's fill (V19)
+    backgroundColor: colors.field,
     borderRadius: radii.sm,
     alignSelf: 'flex-start',
   },
+  rowSm: { minHeight: 36, paddingHorizontal: 12 },
   label: { color: colors.textDim, fontFamily: fonts.mono, fontSize: 11.5, fontWeight: '400' },
 });

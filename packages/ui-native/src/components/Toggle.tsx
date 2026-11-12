@@ -26,7 +26,7 @@ export interface ToggleProps {
 
 /** The design's dark ink for content sitting on a bright CTA gradient
  *  (design `.switch[aria-checked="true"]::after` — #07080d). */
-const INK_ON_GRADIENT = '#07080D';
+const INK_ON_GRADIENT = colors.inkOnBright;
 
 /** On/off switch — the design `.switch`: OFF is a glass pill track (subtle
  *  white fill + border-2) holding a solid text-dim knob; ON fills the TRACK

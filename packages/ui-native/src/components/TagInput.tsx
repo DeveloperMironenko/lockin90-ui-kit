@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   type NativeSyntheticEvent,
   type TextInputKeyPressEventData,
   type ViewProps,
+  Platform,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
@@ -117,6 +118,12 @@ export function TagInput({
    `@lockin90/ui` CodeInput.
    ========================================================================== */
 
+/** A CodeInput's ref: `focus()` puts the caret in the first empty box (the last when all are filled),
+ *  so Return in the field before it can move into the code. */
+export interface CodeInputHandle {
+  focus(): void;
+}
+
 export interface CodeInputProps extends ViewProps {
   /** number of code boxes */
   length?: number;
@@ -143,7 +150,7 @@ export function codeToBoxes(value: string, length: number): string[] {
 }
 
 /** Spread a multi-char entry (paste / iOS SMS autofill delivered into one box) across the boxes from
- *  `index` on: digits only, the ones past the last box dropped, earlier boxes kept. Focus lands after
+ *  `index` on (a whole code from the first box): digits only, the ones past the last box dropped, earlier boxes kept. Focus lands after
  *  the last digit written (clamped). (Pure, so the paste math is unit-testable; mirrors the web.) */
 export function spreadDigits(
   boxes: readonly string[],
@@ -152,6 +159,8 @@ export function spreadDigits(
 ): { boxes: string[]; focusIndex: number } {
   const digits = text.replace(/\D/g, '');
   const next = boxes.slice();
+  // a whole code (as many digits as boxes) fills from the first box, wherever it was pasted
+  if (digits.length >= next.length) index = 0;
   for (let i = 0; i < digits.length && index + i < next.length; i++) next[index + i] = digits[i];
   return { boxes: next, focusIndex: Math.min(index + digits.length, next.length - 1) };
 }
@@ -177,17 +186,36 @@ export function resizeBoxes(boxes: readonly string[], length: number): string[] 
   return Array.from({ length }, (_, i) => boxes[i] ?? '');
 }
 
+/** The boxes' size in a row `width` wide (CONVENTIONS "Accessibility"): 8 apart and as wide as the row
+ *  allows (at most 60, the web's cap); when 44-wide boxes don't fit 8 apart, the gap shrinks (down to 4) so
+ *  they stay 44 wide (6 digits in 300: 44, gap 7.2). Past that (8 digits on a phone) the boxes go narrower
+ *  but stay 44 tall: each is still a ≥ 24 target and the boxes keep their spacing (WCAG 2.5.8's spacing
+ *  exception), the row being one control. Height: 1.18 × width, at least 44. */
+export function codeBoxLayout(width: number, length: number): { gap: number; width: number; height: number } {
+  const n = Math.max(1, length);
+  const gaps = n - 1;
+  let gap = 8;
+  if (gaps > 0 && n * 44 + gaps * gap > width) gap = Math.max(4, Math.min(8, (width - n * 44) / gaps));
+  const w = Math.min(60, (width - gap * gaps) / n);
+  return { gap, width: w, height: Math.max(44, w * 1.18) };
+}
+
 /** Segmented N-digit verification code — auto-advance + backspace + paste / autofill into box 0. */
-export function CodeInput({
-  length = 6,
-  value = '',
-  onChange,
-  error = false,
-  invalid = false,
-  digitLabel = defaultDigitLabel,
-  style,
-  ...rest
-}: CodeInputProps) {
+export const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(function CodeInput(
+  {
+    length = 6,
+    value = '',
+    onChange,
+    error = false,
+    invalid = false,
+    digitLabel = defaultDigitLabel,
+    accessibilityLabel,
+    accessibilityHint,
+    style,
+    ...rest
+  },
+  ref,
+) {
   const isInvalid = invalid || error;
   // One entry per box, so clearing a middle box leaves a gap instead of shifting later digits.
   const [boxes, setBoxes] = useState<string[]>(() => codeToBoxes(value, length));
@@ -212,6 +240,20 @@ export function CodeInput({
   const focusBox = (index: number) => {
     refs.current[Math.max(0, Math.min(length - 1, index))]?.focus();
   };
+  // measured boxes (explicit width / height): the flex + aspect-ratio fallback let iOS draw them under 44
+  const [rowWidth, setRowWidth] = useState(0);
+  const fit = rowWidth > 0 ? codeBoxLayout(rowWidth, length) : null;
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus: () => {
+        const empty = boxes.findIndex((b) => !b);
+        focusBox(empty === -1 ? length - 1 : empty);
+      },
+    }),
+    [boxes, length],
+  );
 
   const onBoxChange = (index: number, raw: string) => {
     const typed = typeIntoBox(boxes, index, raw);
@@ -236,7 +278,14 @@ export function CodeInput({
   };
 
   return (
-    <View style={[styles.code, style]} {...rest}>
+    <View
+      style={[styles.code, fit && { gap: fit.gap }, style]}
+      {...rest}
+      onLayout={(e) => {
+        setRowWidth(e.nativeEvent.layout.width);
+        rest.onLayout?.(e);
+      }}
+    >
       {boxes.map((ch, i) => {
         const filled = !!ch;
         const isFocused = focused === i;
@@ -246,23 +295,25 @@ export function CodeInput({
             ? colors.zoneLow
             : filled
               ? 'rgba(34,211,238,0.45)'
-              : colors.border2;
+              : colors.borderControl;
         const backgroundColor = isFocused
           ? 'rgba(124,92,255,0.06)'
           : isInvalid
             ? 'rgba(255,77,109,0.06)'
             : filled
               ? 'rgba(34,211,238,0.05)'
-              : colors.glass2;
+              : colors.field;
         return (
           <TextInput
             key={i}
             ref={(el) => {
               refs.current[i] = el;
             }}
-            style={[styles.codeBox, { borderColor, backgroundColor }]}
+            style={[styles.codeBox, fit && { flex: 0, width: fit.width, height: fit.height, aspectRatio: undefined }, { borderColor, backgroundColor }]}
             keyboardType="number-pad"
             textContentType={i === 0 ? 'oneTimeCode' : 'none'}
+            // Android's autofill offers the SMS code on box 0 too (iOS reads textContentType)
+            autoComplete={i === 0 ? (Platform.OS === 'android' ? 'sms-otp' : 'one-time-code') : 'off'}
             // box 0 accepts the full code so paste / iOS SMS autofill lands and
             // spreads across boxes; the rest stay single-char for clean typing.
             maxLength={i === 0 ? length : 1}
@@ -270,7 +321,11 @@ export function CodeInput({
             // The digit stays selected, so typing replaces it (also after a tap on a focused box).
             selectTextOnFocus
             selection={{ start: 0, end: ch.length }}
-            accessibilityLabel={digitLabel(i + 1, length)}
+            // each box carries the field's name (a FormField passes its label) and its error / help
+            accessibilityLabel={
+              accessibilityLabel ? `${accessibilityLabel}, ${digitLabel(i + 1, length)}` : digitLabel(i + 1, length)
+            }
+            accessibilityHint={accessibilityHint}
             selectionColor={colors.accent}
             onChangeText={(t) => onBoxChange(i, t)}
             onKeyPress={(e) => onKeyPress(i, e)}
@@ -281,7 +336,7 @@ export function CodeInput({
       })}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   /* ---- TagInput ---- */
@@ -293,8 +348,9 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: radii.sm,
     borderWidth: 1,
-    borderColor: colors.border2,
-    backgroundColor: colors.glass2,
+    // a field's edge at 3:1 on the card (CONVENTIONS "Accessibility")
+    borderColor: colors.borderControl,
+    backgroundColor: colors.field,
   },
   // invalid: red border + soft red glow standing in for the web's 3px ring
   // (`.lk-taginput--invalid`: border var(--bad) + 0 0 0 3px rgba(255,77,109,.16))
@@ -314,7 +370,8 @@ const styles = StyleSheet.create({
     paddingBottom: 3,
     paddingLeft: 9,
     paddingRight: 6,
-    borderRadius: radii.pill,
+    // a chip's corners (CONVENTIONS "Corner radii")
+    borderRadius: radii.sm,
     borderWidth: 1,
     borderColor: 'rgba(34,211,238,0.3)',
     backgroundColor: 'rgba(34,211,238,0.1)',
@@ -322,7 +379,7 @@ const styles = StyleSheet.create({
   tagText: {
     color: colors.accent2,
     fontFamily: fonts.mono,
-    fontSize: 10.5,
+    fontSize: 11,
     lineHeight: 15,
   },
   tagX: {
@@ -347,11 +404,13 @@ const styles = StyleSheet.create({
   code: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 6,
+    // 8 apart and at least 44 tall (CONVENTIONS "Accessibility"), as the web at phone width
+    gap: 8,
   },
   codeBox: {
     flex: 1,
-    minWidth: 28,
+    minWidth: 24,
+    minHeight: 44,
     maxWidth: 60,
     aspectRatio: 1 / 1.18,
     textAlign: 'center',

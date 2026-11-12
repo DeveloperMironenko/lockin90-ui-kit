@@ -1,11 +1,13 @@
 import {
   useEffect,
+  useId,
   useRef,
   type HTMLAttributes,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react';
 import { cn } from '../cn';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 
 export interface SheetProps extends HTMLAttributes<HTMLDivElement> {
   /** Show the sheet. When false, nothing renders. */
@@ -19,6 +21,15 @@ export interface SheetProps extends HTMLAttributes<HTMLDivElement> {
   title?: string;
   /** Body content. */
   children?: ReactNode;
+  /** The sheet's actions, pinned under the body (CONVENTIONS "Dialog actions"): "Cancel | Primary", each
+   *  half the width at phone width. Option choices are list rows in the body. As native. */
+  footer?: ReactNode;
+  /** With `onClose`: a × at the end of the title row, named by this (in the app's language). As native. */
+  closeLabel?: string;
+  /** Pinned under the title, outside the scroll (a search field over a long list). As native. */
+  subheader?: ReactNode;
+  /** `tall`: a fixed 80% of the viewport (a searchable list); `auto` (default): sized by its content. */
+  height?: 'auto' | 'tall';
 }
 
 /** Fraction of the sheet height the user must drag past to dismiss. */
@@ -48,11 +59,17 @@ export function Sheet({
   side = 'bottom',
   title,
   children,
+  footer,
+  closeLabel,
+  subheader,
+  height = 'auto',
   className,
   ...rest
 }: SheetProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ startY: number; lastY: number; lastT: number; vel: number } | null>(null);
+  const titleId = useId();
+  useDialogFocus(open, panelRef);
 
   useEffect(() => {
     if (!open || !onClose) return;
@@ -138,6 +155,34 @@ export function Sheet({
 
   if (!open) return null;
 
+  const close =
+    onClose && closeLabel ? (
+      <button
+        type="button"
+        className="lk-sheet-close"
+        aria-label={closeLabel}
+        onClick={() => onClose()}
+        onPointerDown={(e) => e.stopPropagation()}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 6 12 12M18 6 6 18" />
+        </svg>
+      </button>
+    ) : null;
+  const titleRow =
+    title || close ? (
+      <div className="lk-sheet-titlerow">
+        {title ? (
+          <h2 id={titleId} className="lk-sheet-title">
+            {title}
+          </h2>
+        ) : (
+          <span />
+        )}
+        {close}
+      </div>
+    ) : null;
+
   return (
     <div
       className="lk-sheet-scrim is-open"
@@ -151,11 +196,14 @@ export function Sheet({
           side === 'bottom' && 'lk-sheet-bottom',
           side === 'right' && 'lk-sheet-right',
           side === 'left' && 'lk-sheet-left',
+          side === 'bottom' && height === 'tall' && 'lk-sheet--tall',
           'is-open',
           className,
         )}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
+        tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
         {...rest}
       >
@@ -168,12 +216,14 @@ export function Sheet({
             onPointerCancel={onGrabPointerEnd}
           >
             <span className="lk-sheet-handle" aria-hidden="true" />
-            {title && <h2 className="lk-sheet-title">{title}</h2>}
+            {titleRow}
           </div>
         ) : (
-          title && <h2 className="lk-sheet-title">{title}</h2>
+          titleRow
         )}
+        {subheader != null ? <div className="lk-sheet-subheader">{subheader}</div> : null}
         <div className="lk-sheet-body">{children}</div>
+        {footer != null ? <div className="lk-sheet-foot lk-dialog-actions">{footer}</div> : null}
       </div>
     </div>
   );

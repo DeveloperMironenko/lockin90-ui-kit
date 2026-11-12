@@ -1,5 +1,6 @@
 import { type CSSProperties, type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
+import { useWordFit } from '../hooks/useWordFit';
 
 /* ── MetricTile ──────────────────────────────────────────────────────────── */
 
@@ -32,8 +33,8 @@ export interface MetricTileProps extends HTMLAttributes<HTMLDivElement> {
   /** a small line: in empty mode under the dash (e.g. "No data yet — connect a wearable"); on an
    *  `sm` tile also under a value (e.g. "BMI 25.8"). */
   hint?: string;
-  /** the value is a word, not a number (as native): at phone width an `sm` tile draws it at 15 on
-   *  one line, cut with an ellipsis rather than broken mid-word (design mobile `.fv.txt`). */
+  /** the value is a word, not a number (as native): at phone width an `sm` tile draws it at 15
+   *  (design mobile `.fv.txt`); it wraps when it doesn't fit, never cut with an ellipsis. */
   textValue?: boolean;
 }
 
@@ -66,11 +67,15 @@ export function MetricTile({
   ...rest
 }: MetricTileProps) {
   const sized = size === 'sm' && 'lk-metric-sm';
+  // a word of the label or the value never splits: it shrinks to fit the tile (as native FitText)
+  const labelRef = useWordFit<HTMLSpanElement>(label);
+  // a word value shrinks to fit its tile, to 11px at the default text size (owner 2026-11-11)
+  const valueRef = useWordFit<HTMLSpanElement>(empty ? null : value, !!textValue);
   if (empty) {
     return (
       <div className={cn('lk-metric lk-metric-empty', sized, className)} {...rest}>
         <div className="lk-metric-top">
-          <span className="lk-metric-label">{label}</span>
+          <span ref={labelRef} className="lk-metric-label">{label}</span>
           {icon != null && <span className="lk-metric-icon">{icon}</span>}
         </div>
         <div className="lk-metric-body">
@@ -83,11 +88,11 @@ export function MetricTile({
   return (
     <div className={cn('lk-metric', sized, className)} {...rest}>
       <div className="lk-metric-top">
-        <span className="lk-metric-label">{label}</span>
+        <span ref={labelRef} className="lk-metric-label">{label}</span>
         {icon != null && <span className="lk-metric-icon">{icon}</span>}
       </div>
       <div className="lk-metric-body">
-        <span className={cn('lk-metric-value lk-tnum', textValue && 'lk-metric-word')}>{value}</span>
+        <span ref={valueRef} className={cn('lk-metric-value lk-tnum', textValue && 'lk-metric-word')}>{value}</span>
         {unit != null && <span className="lk-metric-unit">{unit}</span>}
       </div>
       {delta != null && (

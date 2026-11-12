@@ -108,6 +108,7 @@ Ambient-decoration deltas only; the two shells read as one design.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Always hidden from AT and untouchable (web `aria-hidden` + `pointer-events: none`; native accessibility-hidden + `pointerEvents="none"`) — it never steals focus or pointer events.
 - Web honors `prefers-reduced-motion` automatically; **native needs `still`** wired to the app's reduced-motion setting.
 - Purely decorative: it must never be the only carrier of meaning, and content contrast must be verified against the busiest blob position.
@@ -144,3 +145,9 @@ Ambient-decoration deltas only; the two shells read as one design.
   so the native aurora read several times louder than the web, where `blur(70px)` spreads each blob and lowers its
   peak. The gradient stops are now `0.18` / `0.06` × intensity, measured against the running web app's Log in at
   402×874 (background sampled at the same spots: top-left web `24,21,50` / native `25,26,58`).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native reduced motion:** the blobs hold still (as `still`) while the OS Reduce Motion setting is on, read
+  with the kit's `useReducedMotion()` (exported from `@lockin90/ui-native` for apps' own motion).
+- **`useReducedMotion` store:** one native read and one listener for the whole app (`useSyncExternalStore`); later mounts start from the known value. Every kit loop sets a defined still frame when it stops.

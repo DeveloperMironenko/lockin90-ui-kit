@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, type StyleProp, type ViewStyle } fro
 import Svg, { Path } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { Modal } from './Modal';
+import { FormField } from './FormField';
 import { Input } from './Input';
 import { Button } from './Button';
 import { Alert } from './Alert';
@@ -41,6 +42,11 @@ export interface ReauthDialogProps {
   googleLabel?: string;
   appleLabel?: string;
   orLabel?: string;
+  /** the close button's spoken name (pass a localized string). @default 'Close' */
+  closeLabel?: string;
+  /** the field's error when Confirm is pressed with no password (Confirm stays enabled and says what's
+   *  missing, CONVENTIONS "Accessibility"). Mirrors web. @default 'Enter your password' */
+  passwordRequiredLabel?: string;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -106,27 +112,39 @@ export function ReauthDialog({
   googleLabel = 'Continue with Google',
   appleLabel = 'Continue with Apple',
   orLabel = 'or',
+  closeLabel = 'Close',
+  passwordRequiredLabel = 'Enter your password',
   style,
 }: ReauthDialogProps) {
   const [password, setPassword] = useState('');
+  // Confirm pressed with no password: the field says so (Confirm is never disabled for it)
+  const [missing, setMissing] = useState(false);
 
   // Drop the field whenever the dialog closes so it never leaks across opens.
   useEffect(() => {
-    if (!open) setPassword('');
+    if (!open) {
+      setPassword('');
+      setMissing(false);
+    }
   }, [open]);
 
   const close = () => {
     setPassword('');
+    setMissing(false);
     onClose();
   };
 
   const submit = () => {
-    if (loading || !password) return;
+    if (loading) return;
+    if (!password) {
+      setMissing(true);
+      return;
+    }
     onSubmitPassword?.(password);
   };
 
   return (
-    <Modal open={open} onClose={close} title={title} size="sm">
+    <Modal open={open} onClose={close} title={title} size="sm" closeLabel={closeLabel}>
       <View style={[styles.body, style]}>
         {description ? <Text style={styles.desc}>{description}</Text> : null}
 
@@ -138,23 +156,29 @@ export function ReauthDialog({
 
         {hasPassword ? (
           <View style={styles.pw}>
-            <Input
-              label={passwordLabel}
-              secureTextEntry
-              autoComplete="current-password"
-              textContentType="password"
-              placeholder={passwordPlaceholder}
-              value={password}
-              editable={!loading}
-              invalid={Boolean(error)}
-              onChangeText={setPassword}
-              onSubmitEditing={submit}
-            />
+            {/* the dialog opens on the field, as web */}
+            <FormField label={passwordLabel} error={missing && !password ? passwordRequiredLabel : undefined}>
+              <Input
+                secureTextEntry
+                autoComplete="current-password"
+                textContentType="password"
+                autoFocus
+                placeholder={passwordPlaceholder}
+                value={password}
+                // read-only while busy (never disabled: focus stays, U14), announced busy
+                editable={!loading}
+                accessibilityState={{ busy: loading || undefined }}
+                invalid={Boolean(error) || (missing && !password)}
+                onChangeText={setPassword}
+                onSubmitEditing={submit}
+              />
+            </FormField>
             <Button
               variant="primary"
-              title={loading ? confirmingLabel : confirmLabel}
+              title={confirmLabel}
+              accessibilityLabel={loading ? confirmingLabel : undefined}
               style={styles.submit}
-              disabled={loading || !password}
+              loading={loading}
               onPress={submit}
             />
           </View>
@@ -171,9 +195,10 @@ export function ReauthDialog({
         {hasGoogle ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Continue with Google"
-            disabled={loading}
-            onPress={() => onGoogle?.()}
+            accessibilityLabel={googleLabel}
+            // presses ignored while busy, announced unavailable, still focusable (U14)
+            accessibilityState={{ disabled: loading }}
+            onPress={() => !loading && onGoogle?.()}
           >
             {({ pressed }) => (
               <View style={[styles.google, pressed && styles.pressed, loading && styles.disabled]}>
@@ -187,9 +212,9 @@ export function ReauthDialog({
         {hasApple ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Continue with Apple"
-            disabled={loading}
-            onPress={() => onApple?.()}
+            accessibilityLabel={appleLabel}
+            accessibilityState={{ disabled: loading }}
+            onPress={() => !loading && onApple?.()}
           >
             {({ pressed }) => (
               <View style={[styles.apple, pressed && styles.pressed, loading && styles.disabled]}>
@@ -204,7 +229,7 @@ export function ReauthDialog({
           variant="ghost"
           title={cancelLabel}
           style={styles.submit}
-          disabled={loading}
+          // never disabled: a way out while a request hangs (offline, U1)
           onPress={close}
         />
       </View>
@@ -247,7 +272,8 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: radii.pill,
+    // a control's corners, as SsoButton (CONVENTIONS "Corner radii")
+    borderRadius: radii.sm,
     backgroundColor: colors.glass2,
     borderWidth: 1,
     borderColor: colors.border2,
@@ -266,7 +292,8 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: radii.pill,
+    // a control's corners, as SsoButton (CONVENTIONS "Corner radii")
+    borderRadius: radii.sm,
     backgroundColor: colors.glass2,
     borderWidth: 1,
     borderColor: colors.border2,

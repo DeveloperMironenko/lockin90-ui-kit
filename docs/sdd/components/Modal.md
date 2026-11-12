@@ -23,7 +23,7 @@ It is the only sanctioned centered-dialog primitive. For an edge-anchored drawer
 | `onClose` | `() => void` | — | ✓ | ✓ | fired on scrim click/tap, close-button, **ESC** (web) / **Android back** (native) |
 | `title` | `string` | — | ✓ | ✓ | header omitted when absent (unless `onClose` present → header renders with just the ×) |
 | `children` | `ReactNode` | — | ✓ | ✓ | body; native wraps a bare `string` child in a styled `Text` |
-| `footer` | `ReactNode` | — | ✓ | ✓ | right-aligned actions under a hairline; omitted when absent |
+| `footer` | `ReactNode` | — | ✓ | ✓ | the actions under a hairline (CONVENTIONS "Dialog actions"): equal halves at phone width, else end-aligned at their own width, wrapping; omitted when absent |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | ✓ | ✓ | max-width 380 / 460 / 620 |
 | `closeLabel` | `string` | `'Close'` | ✓ | ✓ | the close button's spoken name (web `aria-label`, native `accessibilityLabel`); pass a translated string |
 | `className` | `string` | — | ✓ | — | web only (merged onto `.lk-modal`) |
@@ -46,7 +46,7 @@ It is the only sanctioned centered-dialog primitive. For an edge-anchored drawer
 | Close × | 30×30, `--r`, `--text-faint`; hover `--text` + `--glass` | 30×30, `radii.sm`, stroke `colors.textFaint` |
 
 - **Scrim padding:** web `24px` (grid-centered); native `24` (flex-centered). **Card width:** `100%` up to the size cap. **Max-height:** web `calc(100vh − 48px)` with `overflow-y:auto` body; native body has no cap (host scroll).
-- **Header / footer chrome:** header `18px 20px` with `1px --border` bottom; footer `16px 20px`, `flex-end`, `gap 10/12`, `1px --border` top.
+- **Header / footer chrome:** header `18px 20px` with `1px --border` bottom; footer `16px 20px`, `flex-end` and wrapping (equal columns ≤ 540), `gap 10/12`, `1px --border` top.
 
 ## 4. States
 
@@ -96,6 +96,7 @@ No capability gap blocks use — the dialog is fully usable and visually equival
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** `role="dialog"` + `aria-modal="true"` on the card; scrim is `role="presentation"`. Close button has `aria-label="Close"`. ESC closes. (Focus-trapping/return-focus is not built in — the consumer should manage initial focus for long-lived dialogs.)
 - **Native:** `accessibilityViewIsModal` on the card traps assistive focus; the title is a header; close button has `accessibilityRole="button"` + `accessibilityLabel={closeLabel}` and `hitSlop={6}` for a comfortable target. The scrim `Pressable` is `accessible={false}` and the card a plain view that claims the touch, so the title, body and buttons stay separate items for VoiceOver; VoiceOver's escape gesture (`onAccessibilityEscape`) closes it.
 - **Hit target:** the × is 30×30 (native adds `hitSlop`). Footer actions inherit `Button` sizing (≥44px at `md`).
@@ -121,3 +122,35 @@ No capability gap blocks use — the dialog is fully usable and visually equival
 - **New need → both platforms.** A new size or a header-action slot must be added to `ModalProps` on web **and** native with the same name/tokens — never a one-off.
 - **Tokens only.** Scrim, `bg-1`, `border`, `r-lg`, `elev-2`, and the display/ui type all come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping, confirm the web phone-width modal and the native modal match (same title, body, footer actions, size) — accepting only the documented scrim-blur difference.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Web focus:** on open, focus moves to the dialog panel (`tabIndex={-1}`, no visible ring) unless something
+  inside took it (an `autoFocus` field); Tab / Shift+Tab stay inside; on close focus returns to what had it.
+  The dialog is named by its title (`aria-labelledby` → the `h2`'s id). `closeLabel` (web + native) names the ×.
+- **Native close target:** `hitSlop` 7 (30 + 14 = 44pt).
+- **`100dvh`:** the card's `max-height` is `calc(100dvh - 48px)` with a `100vh` fallback.
+- **Review fixes:** the opener is read in the render that opens the dialog (an `autoFocus` field takes focus before effects run), so focus always returns to it; with dialogs stacked, only the topmost traps Tab.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Close:** 44 × 44 at phone width (web) and on native (no slop needed); the glyph and header line are unchanged.
+
+## Update — 2026-11-11 (toasts above it)
+
+- **Native:** the modal renders `TopLayerHost` (see `TopLayer.md`) as the last child of its window while `open`,
+  so an app's `TopLayer` toast draws over the scrim and the card (an RN `Modal` is a native window the page
+  can't draw over).
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The web close button is a control, `--r-sm` (10, was 16); the dialog stays `--r-lg` / `radii.lg` (22).
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
+
+## Update — 2026-11-11 (owner: the audit batch, V10 / U20)
+
+- **Footer actions** (CONVENTIONS "Dialog actions"): each half the width at phone width (≤ 540; web
+  `.lk-dialog-actions`, native equal cells), end-aligned wider.
+- **Native (U20):** the body is a `ScrollView` (sized by its content, scrolling once the card fills the room),
+  and the card rises above the keyboard (iOS `KeyboardAvoidingView`, Android the keyboard's height).

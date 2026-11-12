@@ -74,6 +74,7 @@ No capability gap blocks use; the only behavioral delta is native not honoring r
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<div role="status">` with `aria-label={label ? '`{label}`…' : 'Typing…'}` so assistive tech announces the typing state; the dots are `aria-hidden`.
 - **Native:** root `View` with `accessibilityRole="progressbar"` + the same `aria-label` text via `accessibilityLabel`.
 - **Reduced motion:** web stops the animation under `prefers-reduced-motion` — keep the bubble visible (state still conveyed by the role/label).
@@ -97,3 +98,7 @@ No capability gap blocks use; the only behavioral delta is native not honoring r
 - **New need → both platforms.** A timing/size change must land in **both** the CSS keyframes and the native `Animated` loop with matching values — never tweak one side.
 - **Tokens only.** Bubble glass, pill radius, dot color all source from tokens; the motion constants (1.2s / 0.16s / −4px / 0.7→1 / 0.5→1) are the shared spec and must stay identical across the two engines.
 - **Parity gate.** Before shipping the chat screen, confirm web phone-width and native show the same bubble + dot motion, and that the bubble fits at 390px without overflow.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native reduced motion:** the dots stay still while `useReducedMotion()` is true.

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { cn } from '../cn';
+import { FormField } from './FormField';
 import { Modal } from './Modal';
 import { Input } from './Input';
 import { Button } from './Button';
@@ -16,6 +17,8 @@ export interface ReauthDialogProps {
   onSubmitPassword?: (password: string) => void;
   /** Google re-auth path — invoked by the "Continue with Google" button. */
   onGoogle?: () => void;
+  /** Apple re-auth path — invoked by the "Continue with Apple" button (as native). */
+  onApple?: () => void;
   /** Header title. */
   title?: string;
   /** Short reassurance line under the title. */
@@ -24,7 +27,10 @@ export interface ReauthDialogProps {
   hasPassword?: boolean;
   /** Show the "Continue with Google" button (default false). */
   hasGoogle?: boolean;
-  /** Disable inputs + show loading on submit. */
+  /** Show the "Continue with Apple" button (default false); with `hasGoogle` both show, Google first. */
+  hasApple?: boolean;
+  /** Busy: Confirm shows its spinner, the field is read-only and `aria-busy`, Google / Apple ignore presses
+   *  (announced unavailable, still focusable). Cancel and the × always work (U1 / U14). */
   loading?: boolean;
   /** Error message rendered in a danger Alert above the fields. */
   error?: string;
@@ -35,10 +41,21 @@ export interface ReauthDialogProps {
   confirmingLabel?: string;
   cancelLabel?: string;
   googleLabel?: string;
+  appleLabel?: string;
   orLabel?: string;
   /** the close button's spoken name */
   closeLabel?: string;
+  /** the field's error when Confirm is pressed with no password (Confirm stays enabled and says what's
+   *  missing, CONVENTIONS "Accessibility"). @default 'Enter your password' */
+  passwordRequiredLabel?: string;
 }
+
+/** Apple's mark, in the label colour (the brand's own monochrome glyph, as SsoButton's). */
+const APPLE = (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width={18} height={18}>
+    <path d="M16.37 12.78c.02 2.5 2.19 3.33 2.21 3.34-.02.06-.35 1.2-1.15 2.37-.69 1.02-1.41 2.03-2.55 2.05-1.11.02-1.47-.66-2.74-.66-1.27 0-1.67.64-2.72.68-1.1.04-1.93-1.1-2.63-2.11-1.43-2.07-2.53-5.86-1.06-8.42a4.1 4.1 0 0 1 3.46-2.1c1.08-.02 2.1.73 2.76.73.66 0 1.9-.9 3.2-.77.54.02 2.07.22 3.05 1.65-.08.05-1.82 1.07-1.8 3.21M14.3 4.6c.58-.71.98-1.69.87-2.68-.84.04-1.86.56-2.47 1.26-.54.62-1.02 1.62-.89 2.58.94.07 1.9-.48 2.49-1.16" />
+  </svg>
+);
 
 /** Google "G" mark — matches the auth design's SSO glyph. */
 const GOOGLE = (
@@ -72,10 +89,12 @@ export function ReauthDialog({
   onClose,
   onSubmitPassword,
   onGoogle,
+  onApple,
   title = "Confirm it's you",
   description = 'For your security, re-enter your password to continue.',
   hasPassword = true,
   hasGoogle = false,
+  hasApple = false,
   loading = false,
   error,
   passwordLabel = 'Password',
@@ -84,23 +103,35 @@ export function ReauthDialog({
   confirmingLabel = 'Confirming…',
   cancelLabel = 'Cancel',
   googleLabel = 'Continue with Google',
+  appleLabel = 'Continue with Apple',
   orLabel = 'or',
   closeLabel = 'Close',
+  passwordRequiredLabel = 'Enter your password',
 }: ReauthDialogProps) {
   const [password, setPassword] = useState('');
+  // Confirm pressed with no password: the field says so (Confirm is never disabled for it)
+  const [missing, setMissing] = useState(false);
 
   // Drop the field whenever the dialog closes so it never leaks across opens.
   useEffect(() => {
-    if (!open) setPassword('');
+    if (!open) {
+      setPassword('');
+      setMissing(false);
+    }
   }, [open]);
 
   const close = () => {
     setPassword('');
+    setMissing(false);
     onClose();
   };
 
   const submit = () => {
-    if (loading || !password) return;
+    if (loading) return;
+    if (!password) {
+      setMissing(true);
+      return;
+    }
     onSubmitPassword?.(password);
   };
 
@@ -123,28 +154,34 @@ export function ReauthDialog({
               submit();
             }}
           >
-            <Input
-              label={passwordLabel}
-              type="password"
-              autoComplete="current-password"
-              placeholder={passwordPlaceholder}
-              value={password}
-              disabled={loading}
-              invalid={Boolean(error)}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            {/* the dialog opens on the field (the Modal keeps Tab inside and gives focus back on close) */}
+            <FormField label={passwordLabel} error={missing && !password ? passwordRequiredLabel : undefined}>
+              <Input
+                type="password"
+                autoComplete="current-password"
+                autoFocus
+                placeholder={passwordPlaceholder}
+                value={password}
+                // read-only, never disabled, while busy: focus stays on the field (U14)
+                readOnly={loading}
+                aria-busy={loading || undefined}
+                invalid={Boolean(error) || (missing && !password)}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </FormField>
             <Button
               type="submit"
               variant="primary"
               className="lk-reauth-submit"
-              disabled={loading || !password}
+              loading={loading}
+              aria-label={loading ? confirmingLabel : undefined}
             >
-              {loading ? confirmingLabel : confirmLabel}
+              {confirmLabel}
             </Button>
           </form>
         ) : null}
 
-        {hasPassword && hasGoogle ? (
+        {hasPassword && (hasGoogle || hasApple) ? (
           <div className="lk-reauth-or" aria-hidden="true">
             <span className="lk-reauth-ln" />
             <span>{orLabel}</span>
@@ -156,11 +193,23 @@ export function ReauthDialog({
           <Button
             variant="default"
             className={cn('lk-reauth-google')}
-            disabled={loading}
-            onClick={() => onGoogle?.()}
+            aria-disabled={loading || undefined}
+            onClick={() => !loading && onGoogle?.()}
           >
             <span className="lk-reauth-google-icon">{GOOGLE}</span>
             {googleLabel}
+          </Button>
+        ) : null}
+
+        {hasApple ? (
+          <Button
+            variant="default"
+            className="lk-reauth-apple"
+            aria-disabled={loading || undefined}
+            onClick={() => !loading && onApple?.()}
+          >
+            <span className="lk-reauth-apple-icon">{APPLE}</span>
+            {appleLabel}
           </Button>
         ) : null}
 
@@ -168,8 +217,8 @@ export function ReauthDialog({
           type="button"
           variant="ghost"
           className="lk-reauth-cancel"
+          // never disabled: a way out while a request hangs (offline, U1)
           onClick={close}
-          disabled={loading}
         >
           {cancelLabel}
         </Button>

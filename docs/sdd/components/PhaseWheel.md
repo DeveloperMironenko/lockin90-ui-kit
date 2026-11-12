@@ -129,6 +129,7 @@ No capability gap — fully usable on both.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** circadian root keeps its `role="img"` + auto label. Cycle wheels put `role="img"` + a generated label on the **dial** (`"28-day cycle wheel, day 21 (Luteal): Menstrual D1–5, … Focus Luteal, 7 days left."` + coach tip when present) so the legend/pill remain real text; strip root is `role="img"` with the same summary. All SVGs `aria-hidden`.
 - **Native:** cycle roots set `accessibilityRole="image"` + the same generated `accessibilityLabel`; the circadian variant still has none — wrap it yourself.
 - Center/labels use `--text`/`--text-faint`; phase colors must come from spectrum/zone tokens.

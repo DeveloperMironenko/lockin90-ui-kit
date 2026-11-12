@@ -112,6 +112,7 @@ Standalone chart — typically the today-screen energy hero (`battery-day`), a h
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<div role="img" aria-label={ariaLabel}>`; the `<svg>` is `aria-hidden`. Pass a data-bearing `ariaLabel` ("Body battery 62%, draining 4% per hour, empty by 21:20").
 - **Native:** root `View` with `accessibilityRole="image"` + `accessibilityLabel={ariaLabel}`.
 - Non-interactive; the SMIL pulse honors `prefers-reduced-motion`.

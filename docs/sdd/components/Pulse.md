@@ -88,6 +88,7 @@ No capability gap beyond the missing animation; both platforms render an equival
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the dot is decorative (`<span>`, no role). When it conveys required status (live/degraded/down), **add
   a text label or `aria-label`** on the surrounding element — color/motion alone is not accessible (colorblind +
   reduced-motion users).

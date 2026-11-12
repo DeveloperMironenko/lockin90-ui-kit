@@ -107,6 +107,7 @@ import { SecretField } from '@lockin90/ui/admin';
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - The leading key glyph is `aria-hidden` (decorative).
 - **Toggle:** real `<button type="button">` with `aria-pressed={revealed}` and an
   `aria-label` that flips between `"Reveal secret"` / `"Hide secret"` (+ matching `title`).

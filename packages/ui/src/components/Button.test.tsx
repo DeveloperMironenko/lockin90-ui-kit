@@ -46,3 +46,24 @@ describe('Button lg', () => {
     expect(renderToStaticMarkup(<Button variant="text" size="lg">Enter</Button>)).not.toContain('lk-btn-lg');
   });
 });
+
+describe('Button loading', () => {
+  it('keeps the label (and so the width), shows the kit Spinner, and says it is busy', () => {
+    const html = renderToStaticMarkup(
+      <Button variant="primary" loading>
+        Save
+      </Button>,
+    );
+    expect(html).toContain('lk-btn-loading');
+    expect(html).toContain('aria-busy="true"');
+    expect(html).toContain('Save');
+    expect(html).toMatch(/<span class="lk-btn-spin" aria-hidden="true"><div class="lk-spinner"/);
+    expect(html).not.toContain('disabled');
+  });
+
+  it('is not busy by default', () => {
+    const html = renderToStaticMarkup(<Button>Save</Button>);
+    expect(html).not.toContain('aria-busy');
+    expect(html).not.toContain('lk-btn-spin');
+  });
+});

@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, fonts } from '@lockin90/tokens';
+import { useContrastColors } from '../internal/useHighContrast';
 
 export interface DividerProps {
   /** fade-to-transparent gradient rule (mirrors the web `gradient` variant) */
@@ -17,11 +18,13 @@ export interface DividerProps {
  *  the native analogue of web `linear-gradient(90deg, transparent, var(--border-2), transparent)`.
  *  With `label`, renders a flat hairline on each side of a centered label. */
 export function Divider({ gradient, label, style }: DividerProps) {
+  // Increase Contrast steps the faint label up
+  const c = useContrastColors();
   if (label != null) {
     return (
       <View style={[styles.labelRow, style]}>
         <View style={styles.labelLine} />
-        <Text style={styles.label}>{label}</Text>
+        <Text style={[styles.label, { color: c.textFaint }]}>{label}</Text>
         <View style={styles.labelLine} />
       </View>
     );
@@ -47,14 +50,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
+  // a line keeps 16 each side; the label wraps (centred) when it is wider than the row
   labelLine: {
     flex: 1,
+    minWidth: 16,
     height: 1,
     backgroundColor: colors.border,
   },
   // the web `.lk-hr-label`: mono 11px / 500, uppercase, 0.14em, line height 1.55
   label: {
-    flexShrink: 0,
+    flexShrink: 1,
+    textAlign: 'center',
     fontFamily: fonts.mono,
     fontSize: 11,
     fontWeight: '500',

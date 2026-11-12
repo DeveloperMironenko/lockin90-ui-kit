@@ -83,6 +83,7 @@ Substrate differences: web uses CSS `@keyframes` + custom properties; native use
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the `<span>` is `role="status"` + `aria-label="Loading"` so AT announces a loading state without the dots needing text.
 - **Native:** the container is `accessibilityRole="progressbar"` + `accessibilityLabel="Loading"`.
 - **Motion sensitivity:** web respects `prefers-reduced-motion` (static dots); native does not gate the loop — keep amplitude low (it already is: -4px / 1.2s-ish) and avoid stacking many DotsLoaders on one screen.
@@ -107,3 +108,18 @@ Substrate differences: web uses CSS `@keyframes` + custom properties; native use
 - **New motion?** If a surface needs a different wave/shape, add a prop to `DotsLoader` on **both** platforms (same name, same tokens) — never a local fork.
 - **Tokens only.** The default dot color + glow come from the accent token; a hardcoded violet is a bug even if it matches today.
 - **Parity gate.** Before shipping a typing/loading surface, confirm web phone-width and native show the same dot count, size, and color (accept the reduced-motion nuance noted in §5).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **`label`** (web + native) is what screen readers read (default `'Loading'`, an English fallback).
+- **Native reduced motion:** the dots stay still while `useReducedMotion()` is true (web: the global
+  `prefers-reduced-motion` rule).
+- **Review fix:** native Reduce Motion stops the dots at full strength (a defined still frame).
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Reduce Motion slows it instead of stopping it** (a loading indicator still says busy, as Spinner): native ×3 (1080 / 1440 ms per bounce), web 3.6s (wins over `base.css`'s freeze). Replaces the still frame.
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **Web reduced motion triples the stagger too** (each dot's delay is `--lk-dot-i` × 0.16s, × 0.48s under reduced motion), so the slowed wave keeps its shape.

@@ -19,6 +19,7 @@ const preset = {
         'glass-2': colors.glass2,
         border: colors.border,
         'border-2': colors.border2,
+        'border-control': colors.borderControl,
         text: colors.text,
         dim: colors.textDim,
         faint: colors.textFaint,
@@ -32,6 +33,8 @@ const preset = {
         accent: colors.accent,
         'accent-2': colors.accent2,
         'accent-3': colors.accent3,
+        'accent-soft': colors.accentSoft,
+        'ink-on-bright': colors.inkOnBright,
         'zone-high': colors.zoneHigh,
         'zone-mid': colors.zoneMid,
         'zone-low': colors.zoneLow,
@@ -49,6 +52,7 @@ const preset = {
       screens: {
         tablet: { max: `${breakpoints.tablet}px` },
         phone: { max: `${breakpoints.phone}px` },
+        narrow: { max: `${breakpoints.narrow}px` },
       },
       // rem (16px root), like Tailwind's defaults, so spacing still scales with the font size
       spacing: Object.fromEntries(Object.entries(spacing).map(([k, v]) => [k, `${v / 16}rem`])),

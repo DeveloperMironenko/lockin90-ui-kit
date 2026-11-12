@@ -85,6 +85,7 @@ No capability gap blocks use.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the `<svg>` is `aria-hidden="true"` — Sparkline is **decorative**; always pair it with the real number/label nearby (it conveys no value on its own to AT).
 - **Native:** the `<Svg>` carries no a11y label by default — same rule: the trend is supplementary, the figure must be readable text.
 - **Color:** never encode the only signal in the line color; the adjacent value/delta carries the meaning.

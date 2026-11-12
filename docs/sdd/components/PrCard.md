@@ -69,6 +69,7 @@ The hot treatment uses **PR red `#FF4757`** (see `PrBadge.md`) — the canonical
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** tappable card is a `<button>`; the name/kind/value/detail are real text read in order; the state tag is text (`NEW`, `AT PEAK`, `OFF PEAK`).
 - **Native:** `accessibilityRole="button"` when pressable.
 - State is conveyed by the **tag text**, never color alone.

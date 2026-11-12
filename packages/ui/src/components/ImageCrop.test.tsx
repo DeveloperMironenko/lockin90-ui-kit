@@ -51,6 +51,26 @@ describe('ImageCrop', () => {
     expect(html).toContain('tabindex="0"');
   });
 
+  it('describes the frame by its description, read after its name; none without one', () => {
+    const html = renderToStaticMarkup(
+      <ImageCrop
+        src="x.png"
+        value={IMAGE_CROP_START}
+        onChange={() => {}}
+        label="Photo"
+        zoomLabel="Zoom"
+        description="Arrow keys move the photo."
+      />,
+    );
+    const id = html.match(/aria-describedby="([^"]+)"/)?.[1];
+    expect(id).toBeTruthy();
+    expect(html).toContain(`id="${id}" class="lk-sr-only">Arrow keys move the photo.</span>`);
+    const plain = renderToStaticMarkup(
+      <ImageCrop src="x.png" value={IMAGE_CROP_START} onChange={() => {}} label="Photo" zoomLabel="Zoom" />,
+    );
+    expect(plain).not.toContain('aria-describedby');
+  });
+
   it('is exactly the size it is given', () => {
     const html = renderToStaticMarkup(
       <ImageCrop src="x.png" value={IMAGE_CROP_START} onChange={() => {}} label="Photo" zoomLabel="Zoom" size={280} />,

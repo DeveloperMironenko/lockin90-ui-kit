@@ -4,6 +4,7 @@ import Svg, { Rect, Path } from 'react-native-svg';
 import { colors, radii, fonts, nativeShadows } from '@lockin90/tokens';
 import { Icon } from './Icon';
 import { absoluteFill } from '../internal/absoluteFill';
+import { TopLayerHost } from './TopLayer';
 
 /* expo-clipboard is an optional dependency — not a hard dep of this kit.
  * Resolve it lazily and guard usage; if it's absent we keep the visual
@@ -95,6 +96,8 @@ export function Popover({ trigger, children, align = 'center' }: PopoverProps) {
             )}
           </View>
         )}
+        {/* toasts (TopLayer) over it, the page being under this window */}
+        <TopLayerHost active={open} />
       </Modal>
     </View>
   );
@@ -106,7 +109,8 @@ const styles = StyleSheet.create({
     minWidth: 28,
     height: 28,
     paddingHorizontal: 6,
-    borderRadius: radii.pill,
+    // a control's corners (CONVENTIONS "Corner radii")
+    borderRadius: radii.sm,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.glass2,
@@ -120,7 +124,8 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radii.sm,
+    // a container's corners (CONVENTIONS "Corner radii")
+    borderRadius: radii.md,
     backgroundColor: colors.bg1,
     ...nativeShadows.elev2,
   },

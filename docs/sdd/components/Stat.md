@@ -155,11 +155,12 @@ No blocking gap remains.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** semantic `<div>` with text children — the label + value read in order to a screen reader. If the
   number needs a unit/context for SR users, include it in `label` or `value` text (no `aria` is auto-added).
 - **Native:** `<Text>` nodes are read in order. Pass `accessibilityLabel` via `style`-adjacent props only if you
   compose a wrapper; `Stat` itself adds none.
-- **Contrast:** faint label (`--text-faint` `#828B9F`) is a deliberate de-emphasis — keep the **value** as the
+- **Contrast:** faint label (`--text-faint` `#868FA3`) is a deliberate de-emphasis — keep the **value** as the
   high-contrast focal element; don't down-tone it.
 
 ## 8. Usage rules — Do / Don't
@@ -192,3 +193,11 @@ No blocking gap remains.
   any hardcoded equivalent is a bug even if it looks identical today.
 - **Parity gate.** Before shipping a screen with `Stat`, confirm the web phone-width and native renders match —
   same label casing, same value size, same delta tone.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Labels and sub 11px** (were 10 / 10.5).
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **`tone="gradient"` scales with the text size** (GradientText follows `fontScale`).

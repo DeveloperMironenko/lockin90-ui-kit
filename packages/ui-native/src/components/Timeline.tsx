@@ -40,7 +40,7 @@ function Dot({ status }: { status: TimelineStatus }) {
         end={{ x: 1, y: 1 }}
         style={[styles.dot, styles.dotDone]}
       >
-        <Svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="#0A0A12" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+        <Svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke={colors.inkOnBright} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
           <Path d="M20 6 9 17l-5-5" />
         </Svg>
       </LinearGradient>

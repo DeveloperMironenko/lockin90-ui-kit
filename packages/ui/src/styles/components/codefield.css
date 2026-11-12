@@ -16,8 +16,11 @@
 }
 
 .lk-codefield:focus-within {
+  /* one focus indicator (owner, 2026-11-11: no ring around the border): the field's own edge in the
+     accent, 2px (1px border + 1px inset, no layout shift; 3.4:1 on the field, 4.2:1 on the card) */
+  outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
+  box-shadow: inset 0 0 0 1px var(--accent);
 }
 
 .lk-codefield-invalid {
@@ -25,7 +28,7 @@
 }
 .lk-codefield-invalid:focus-within {
   border-color: var(--zone-low);
-  box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.16);
+  box-shadow: inset 0 0 0 1px var(--zone-low), var(--lk-focus-invalid-halo);
 }
 
 /* ---- header --------------------------------------------------------- */

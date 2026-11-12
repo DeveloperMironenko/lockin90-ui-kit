@@ -126,6 +126,7 @@ No capability gap blocks use.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** semantic `<table>`/`<th scope="col">`/`<td>`. Sortable headers expose `aria-sort`
   (`ascending`/`descending`/`none`); the header is a focusable `<button>`. Clickable rows get `tabIndex=0` +
   Enter/Space; selected rows set `aria-selected`; expanded rows set `aria-expanded`; the expand button is

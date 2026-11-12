@@ -1,7 +1,9 @@
-import { type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { View, Text, StyleSheet, type ViewProps, type DimensionValue } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients } from '@lockin90/tokens';
+import { FitText } from './FitText';
+import { useReportMinWidth } from '../internal/wordFit';
 
 /* ── MetricTile ──────────────────────────────────────────────────────────── */
 
@@ -36,9 +38,19 @@ export interface MetricTileProps extends ViewProps {
    *  unit mono 12 faint. @default 'md' */
   size?: 'sm' | 'md';
   /** `sm` only: the value is a word, not a number, drawn at 15 (design `.fv.txt`) so it fits a third of
-   *  the screen; one line, cut with an ellipsis when it doesn't fit, never broken mid-word. */
+   *  the screen; it wraps when it doesn't fit (never cut: the meaning stays whole). */
   textValue?: boolean;
+  /** Called with the narrowest width (pt) at which the tile shows every word of its label and value
+   *  whole (each word at the smallest size it may shrink to: never below the default text size), its
+   *  padding and edge included: a grid chooses its columns by it (three across, else two, else one),
+   *  so a long word ("ФИЗИОЛОГИЧЕСКИЙ") gets a wider tile instead of breaking. */
+  onMinWidth?: (width: number) => void;
 }
+
+/** The tile's side padding (sm: 11) and the gap between the label and the icon. */
+const PAD = 14;
+const PAD_X_SM = 11;
+const TOP_GAP = 8;
 
 const DELTA: Record<MetricDeltaTone, { color: string; bg: string }> = {
   up: { color: colors.zoneHigh, bg: 'rgba(52,245,197,0.12)' },
@@ -71,19 +83,34 @@ export function MetricTile({
   hint,
   size = 'md',
   textValue,
+  onMinWidth,
   style,
   ...rest
 }: MetricTileProps) {
   const sm = size === 'sm';
   const labelStyle = [styles.label, sm && styles.labelSm];
-  // an sm label stays on one line, cut with an ellipsis when it doesn't fit (owner, 2026-11-10)
-  const labelLines = sm ? 1 : undefined;
+  // label and value wrap between words; a word wider than the tile shrinks to fit (FitText, never below
+  // the default text size), and the tile says how wide it must be for its words to stay whole
+  const [mins, setMins] = useState<{ label?: number; value?: number; icon?: number }>({});
+  const put = (part: 'label' | 'value' | 'icon') => (w: number) =>
+    setMins((prev) => (prev[part] === w ? prev : { ...prev, [part]: w }));
+  const iconRoom = icon != null ? (mins.icon ?? 0) + TOP_GAP : 0;
+  const tileMin =
+    mins.label != null && (empty || mins.value != null) && (icon == null || mins.icon != null)
+      ? Math.max(mins.label + iconRoom, empty ? 0 : mins.value!) + 2 * (sm ? PAD_X_SM : PAD) + 2
+      : undefined;
+  useReportMinWidth(onMinWidth ? tileMin : undefined, onMinWidth);
+  const iconBox = icon != null && (
+    <View style={styles.icon} onLayout={onMinWidth ? (e) => put('icon')(e.nativeEvent.layout.width) : undefined}>
+      {icon}
+    </View>
+  );
   if (empty) {
     return (
       <View style={[styles.tile, sm && styles.tileSm, style]} {...rest}>
         <View style={styles.top}>
-          <Text style={labelStyle} numberOfLines={labelLines}>{label}</Text>
-          {icon != null && <View style={styles.icon}>{icon}</View>}
+          <FitText style={labelStyle} onMinWidth={onMinWidth && put('label')}>{label}</FitText>
+          {iconBox}
         </View>
         <View style={styles.body}>
           <Text style={[styles.value, sm && styles.valueSm, styles.valueEmpty]}>—</Text>
@@ -96,17 +123,19 @@ export function MetricTile({
   return (
     <View style={[styles.tile, sm && styles.tileSm, style]} {...rest}>
       <View style={styles.top}>
-        <Text style={labelStyle} numberOfLines={labelLines}>{label}</Text>
-        {icon != null && <View style={styles.icon}>{icon}</View>}
+        <FitText style={labelStyle} onMinWidth={onMinWidth && put('label')}>{label}</FitText>
+        {iconBox}
       </View>
       <View style={styles.body}>
-        <Text
+        <FitText
           style={[styles.value, sm && styles.valueSm, sm && textValue && styles.valueWord]}
-          // a word stays on one line, cut with an ellipsis when it doesn't fit (owner, 2026-11-10)
-          {...(sm && textValue ? { numberOfLines: 1 } : {})}
+          onMinWidth={onMinWidth && put('value')}
+          // a word value ("Нейтральный") shrinks to fit its tile, to 11pt at the default text size (owner
+          // 2026-11-11: three across in every language)
+          belowDefault={textValue}
         >
           {value}
-        </Text>
+        </FitText>
         {unit != null && <Text style={[styles.unit, sm && styles.unitSm]}>{unit}</Text>}
       </View>
       {delta != null && (
@@ -184,7 +213,7 @@ const styles = StyleSheet.create({
   tile: {
     flexDirection: 'column',
     gap: 6,
-    padding: 14,
+    padding: PAD,
     borderRadius: radii.sm,
     borderWidth: 1,
     borderColor: colors.border,
@@ -194,23 +223,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 8,
+    gap: TOP_GAP,
   },
+  // shrinkable in its row (the icon beside it), so its room is the tile's, not its content's (FitText)
   label: {
+    flexShrink: 1,
+    minWidth: 0,
     fontFamily: fonts.mono,
-    fontSize: 10.5,
+    fontSize: 11,
     fontWeight: '500',
     textTransform: 'uppercase',
-    letterSpacing: 1.68,
+    // the one label style (CONVENTIONS "Type"): .14em
+    letterSpacing: 1.54,
     color: colors.textFaint,
   },
   icon: { opacity: 0.8 },
   body: {
     flexDirection: 'row',
+    // the unit wraps under the value when the row doesn't fit ("205,9 фунт" in a 3-across tile), as web
+    flexWrap: 'wrap',
     alignItems: 'baseline',
-    gap: 4,
+    columnGap: 4,
   },
   value: {
+    flexShrink: 1,
+    minWidth: 0,
     fontFamily: fonts.display,
     fontWeight: '700',
     fontSize: 24,
@@ -239,7 +276,7 @@ const styles = StyleSheet.create({
   valueEmpty: { color: colors.textFaint },
   hint: {
     fontFamily: fonts.mono,
-    fontSize: 10.5,
+    fontSize: 11,
     letterSpacing: 0.21,
     color: colors.textFaint,
   },
@@ -253,11 +290,11 @@ const styles = StyleSheet.create({
   },
   sparkFill: { height: '100%', borderRadius: 999 },
   /* size sm: the phone's settings readout (design mobile/account.html .fcell × 402/294) */
-  tileSm: { gap: 3, paddingVertical: 12, paddingHorizontal: 11, borderRadius: radii.md },
-  // flexShrink: in its row the text is held to the tile's width, so the ellipsis shows
-  labelSm: { fontSize: 10, fontWeight: '400', letterSpacing: 1, flexShrink: 1 },
+  // a tile in a card: 16 less the card's padding is no radius, so a control's (CONVENTIONS "Corner radii")
+  tileSm: { gap: 3, paddingVertical: 12, paddingHorizontal: PAD_X_SM },
+  labelSm: { fontSize: 11, fontWeight: '500', letterSpacing: 1.54 },
   valueSm: { fontWeight: '600', fontSize: 20, letterSpacing: -0.2 },
-  valueWord: { fontSize: 15, letterSpacing: 0, flexShrink: 1 },
+  valueWord: { fontSize: 15, letterSpacing: 0 },
   unitSm: { fontFamily: fonts.mono, fontSize: 12, color: colors.textFaint },
   hintSm: { fontFamily: fonts.ui, fontSize: 11, letterSpacing: 0, color: colors.textDim },
   /* ProgressDots */

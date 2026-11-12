@@ -23,7 +23,7 @@
 .lk-check-mark svg { width: 12px; height: 12px; }
 
 .lk-check-mark--done {
-  color: #0a0a12;
+  color: var(--ink-on-bright);
   background: var(--mint);
   border: 1px solid transparent;
   box-shadow: 0 0 10px rgba(52, 245, 197, 0.35);

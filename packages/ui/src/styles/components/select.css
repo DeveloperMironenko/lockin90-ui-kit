@@ -7,16 +7,18 @@
   display: inline-flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 0;
+  /* never narrower than the value's widest word plus the chrome (min-width beats a parent's max-width) */
+  min-width: min-content;
 }
 
+/* the one label style (CONVENTIONS "Type"): mono 11 / 500, .14em, uppercase; a field's label dim */
 .lk-select-label {
-  font-family: var(--font-ui);
-  font-size: 10px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--text-faint);
+  letter-spacing: var(--ls-label);
+  color: var(--text-dim);
 }
 
 /* ---- trigger field ---- */
@@ -25,28 +27,34 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  position: relative;
   width: 100%;
-  min-width: 0;
+  min-width: min-content;
+  /* md: 44 tall (CONVENTIONS "Control sizes"), the value 16 (a control's value, "Type") */
+  min-height: 44px;
   padding: 9px 11px 9px 12px;
   border-radius: var(--r-sm);
-  border: 1px solid var(--border-2);
-  background: var(--glass-2);
+  /* a field's edge at 3:1 on the card (CONVENTIONS "Accessibility") */
+  border: 1px solid var(--border-control);
+  background: var(--field);
   color: var(--text);
   font-family: var(--font-ui);
-  font-size: 14px;
-  line-height: 1.4;
+  font-size: var(--fs-control);
+  line-height: 1.25;
   text-align: left;
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 .lk-select-trigger:focus-visible {
+  /* one focus indicator (owner, 2026-11-11: no ring around the border): the field's own edge in the
+     accent, 2px (1px border + 1px inset, no layout shift; 3.4:1 on the field, 4.2:1 on the card) */
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
+  box-shadow: inset 0 0 0 1px var(--accent);
 }
 .lk-select-trigger[aria-expanded='true'] {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
+  box-shadow: inset 0 0 0 1px var(--accent);
 }
 
 .lk-select-trigger.lk-select-invalid {
@@ -55,7 +63,7 @@
 .lk-select-trigger.lk-select-invalid:focus-visible,
 .lk-select-trigger.lk-select-invalid[aria-expanded='true'] {
   border-color: var(--zone-low);
-  box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.16);
+  box-shadow: inset 0 0 0 1px var(--zone-low), var(--lk-focus-invalid-halo);
 }
 
 .lk-select-trigger.lk-select-disabled {
@@ -63,19 +71,25 @@
   cursor: not-allowed;
 }
 
-/* `size="sm"` — the design settings `.pref-select`: a compact mono glass pill
-   (`--glass-2` fill, `--border` hairline, padding 8×14) that hugs its content. */
+/* `size="sm"` — 36 tall with a 44 target (CONVENTIONS "Control sizes"), the field fill and control edge,
+   value 14 (a small control's value), hugging its content: a header's language picker. */
 .lk-select-trigger.lk-select-sm {
   width: auto;
-  gap: 5px;
-  padding: 8px 12px 8px 14px;
-  border-color: var(--border);
-  font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 1.2;
+  min-height: 36px;
+  gap: 6px;
+  padding: 6px 10px 6px 12px;
+  font-family: var(--font-ui);
+  font-size: var(--fs-control-sm);
+  line-height: 1.3;
 }
-.lk-select-trigger.lk-select-sm:hover {
-  border-color: var(--border-2);
+.lk-select-trigger.lk-select-sm::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 44px;
+  transform: translateY(-50%);
 }
 .lk-select-trigger.lk-select-sm .lk-select-chevron {
   width: 13px;
@@ -91,17 +105,23 @@
   align-items: center;
   justify-content: center;
 }
-.lk-select-lead > svg {
-  width: 14px;
-  height: 14px;
+/* a field's icon: 16, faint (CONVENTIONS "Type": icons sized per slot) */
+.lk-select-lead {
+  color: var(--text-faint);
+}
+.lk-select-lead > svg,
+.lk-select-lead > .lk-icon,
+.lk-select-lead > .lk-icon > svg {
+  width: 16px;
+  height: 16px;
 }
 
 .lk-select-value {
   flex: 1 1 auto;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* wraps between words to more lines (the trigger grows taller); never inside a word: the value is at
+     least its widest word wide, and the trigger and wrapper with it (CONVENTIONS "Accessibility") */
+  min-width: min-content;
+  overflow-wrap: break-word;
 }
 .lk-select-placeholder {
   color: var(--text-faint);
@@ -132,7 +152,8 @@
   list-style: none;
   max-height: 280px;
   overflow-y: auto;
-  border-radius: var(--r-sm);
+  /* a container's corners; its options a control's (16 less the 5 padding and 1 edge) */
+  border-radius: var(--r);
   border: 1px solid var(--border);
   background: var(--bg-1);
   box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.7);
@@ -182,9 +203,9 @@
   justify-content: space-between;
   gap: 10px;
   padding: 9px 11px;
-  border-radius: calc(var(--r-sm) - 4px);
+  border-radius: var(--r-sm);
   font-family: var(--font-ui);
-  font-size: 14px;
+  font-size: var(--fs-row-title);
   color: var(--text-dim);
   cursor: pointer;
   user-select: none;
@@ -201,9 +222,9 @@
   cursor: not-allowed;
 }
 .lk-select-option-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* an option wraps at words (a word longer than the line breaks) instead of being cut */
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 .lk-select-check {
   flex: 0 0 auto;
@@ -220,4 +241,16 @@
   .lk-select-panel.is-open {
     animation: none;
   }
+}
+
+/* nothing matches the search (U5): the live region's text */
+.lk-select-empty {
+  flex: none;
+  padding: 0 11px;
+  font-family: var(--font-ui);
+  font-size: var(--fs-secondary);
+  color: var(--text-dim);
+}
+.lk-select-empty:not(:empty) {
+  padding: 10px 11px;
 }

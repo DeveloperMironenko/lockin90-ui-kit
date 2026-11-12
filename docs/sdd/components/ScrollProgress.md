@@ -108,6 +108,7 @@ const [p, setP] = useState(0);
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the bar is `role="progressbar"` with `aria-label="Scroll progress"`. It is **decorative** (a reading-position cue), `pointer-events:none`, and not keyboard-interactive — it should never be the only way to perceive position. It intentionally omits `aria-valuenow` (continuous decorative progress); don't rely on it for assistive announcements.
 - **Reduced motion:** honored — the fill keeps tracking but drops the smoothing transition, so there's no animation for motion-sensitive users.
 

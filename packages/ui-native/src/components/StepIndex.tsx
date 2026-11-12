@@ -57,5 +57,5 @@ const styles = StyleSheet.create({
   },
   glow: { borderRadius: radii.sm, ...nativeShadows.glowAccent },
   done: { backgroundColor: 'rgba(52,245,197,0.12)', borderColor: 'rgba(52,245,197,0.35)' },
-  number: { fontFamily: fonts.display, fontWeight: '700', fontSize: 16, color: '#0A0A12' },
+  number: { fontFamily: fonts.display, fontWeight: '700', fontSize: 16, color: colors.inkOnBright },
 });

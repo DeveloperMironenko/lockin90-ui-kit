@@ -24,7 +24,7 @@ The **iOS-style segmented control** — a glass pill *track* of equal-width segm
 | --- | --- | --- | --- | --- | --- |
 | `tabs` | `SegmentedTabItem[]` | `['Stats','History','Guide','Ranks']` | ✓ | ✓ | `string \| { label, count?, tone?, icon? }` mixed — **both platforms** (strings normalized by `toTab()`); `icon` renders a leading 13px kit `Icon` before the label (changelog service filter) |
 | `appearance` | `'raised' \| 'tint'` | `'raised'` | ✓ | ✓ | `'tint'` = the design changelog `.svc-toggle` treatment: glass track, hairline-bordered 11px segments, ACTIVE = accent tint `rgba(124,92,255,.14)` + accent border `.32` (no raised shadow); count badges shrink to mono 8.5 (pad 1×5, `--border` hairline) and tint cyan (`--accent-2` on `rgba(34,211,238,.1)`) when active |
-| `fill` | `boolean` | `false` | ✓ | ✓ | equal segments that may shrink; ≤ 540px labels 12.5px, padding `--space-2` `--space-1` (design onboarding `.seg` at phone width), so five choices fit a phone row; a label still wider than its segment (a long word in uk / ru / es) shrinks to fit, to 80 % (an inline `font-size` from one measure, then whole-percent steps; again when the webfonts arrive and when the row's width changes; once only without `ResizeObserver`). Labels that fit keep the stylesheet's size for every `size` / `appearance`. Native: `flex: 1` segments, 12.5 labels on one line that shrink to fit (to 80 %), padding 8 / 4 |
+| `fill` | `boolean` | `false` | ✓ | ✓ | equal segments that may shrink; ≤ 540px labels 12.5px, padding `--space-2` `--space-1` (design onboarding `.seg` at phone width), so five choices fit a phone row; a label still wider than its segment (a long word in uk / ru / es) shrinks to fit, never below the default text size or 11px (`fitFloorPercent`: at the default text size it doesn't shrink; an inline `font-size` from one measure, then whole-percent steps; again when the webfonts arrive and when the row's width changes; once only without `ResizeObserver`), else wraps at a space, else the segments go on rows. Labels that fit keep the stylesheet's size for every `size` / `appearance`. Native: `flex: 1` segments, 12.5 labels on one line that shrink to fit at a larger text size (never below the default text size or 11pt, `fitFloor`), else the segments stack; padding 8 / 4 |
 | `invalid` | `boolean` | `false` | ✓ | ✓ | the track's line in `--zone-low` + `aria-invalid`, as an invalid `Input` (a required choice not made). Native: `borderColor: colors.zoneLow` |
 | `active` | `number` | `0` | ✓ | ✓ | index of the active segment |
 | `onChange` | `(index: number) => void` | — | ✓ | ✓ | fires with the pressed index; never fires for `locked` |
@@ -113,6 +113,7 @@ No capability gap blocks use.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** track `role="tablist"`; segments `role="tab"` with `aria-selected={i === active}`; locked segments are `disabled` + `aria-disabled`. The lock and tone dot are `aria-hidden`.
 - **Native:** track `accessibilityRole="tablist"`; segments `accessibilityRole="tab"` with `accessibilityState={{ selected, disabled }}`.
 - **Hit target:** `7px` vertical padding + label; for dense controls on touch ensure the track has enough height — prefer fewer, wider segments on phone.
@@ -139,3 +140,153 @@ No capability gap blocks use.
 
 ## Update — 2026-07-10
 - **Haptics:** the primary interaction (segment change / row press / panel open) fires `hapticSelection()` (native `optionalHaptics`; no-op without expo-haptics).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **`kind`** (web + native, `'tabs' | 'choice'`, default `'tabs'`): `'choice'` for a form value. Web: the track is
+  a `radiogroup`, each segment a `radio` with `aria-checked` (no `aria-selected`), one Tab stop (the chosen
+  segment, else the first unlocked), and ArrowRight / ArrowDown, ArrowLeft / ArrowUp (wrapping), Home and End
+  move focus and choose (`onChange`), skipping locked segments. Name it with `aria-label` /
+  `aria-labelledby`. Native: `accessibilityRole="radiogroup"`, segments `radio` with `accessibilityState.checked`.
+- **Native `accessibilityLabel` / `accessibilityHint`** on the group (a `FormField` passes its label and error).
+- **Native targets, same look:** each segment `hitSlop` 7 above / below (`md`, 30 tall) or 11 (`sm`, 23): 44pt.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **44 tall** segments at phone width (web) and on native (`minHeight`; the hitSlop is gone). **`fill` labels never leave their segment:** web shrinks to 80% then wraps (`.lk-seg-wrap`), native shrinks then wraps to two lines (`numberOfLines={2}`). Counts are 11px.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Never broken inside a word.** Web `fill`: shrinks (the floor is in the 2026-11-11 word-fit update), then wraps only at a space (`word-break: keep-all`, no `overflow-wrap: anywhere`); a single word that still doesn't fit puts the segments on more than one row (`.lk-seg--rows`, each segment its content's width). Native: the measured fit below.
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **Web fit:** when one word needs the segments on rows, every tab is fitted again in the rows layout, so none stays shrunk for the one-row widths.
+- **Native count text** line height 13 (was 12) for the 11 font.
+- **No ellipsis at all (native):** labels render without `numberOfLines`; large text (`fontScale` > 1.35, as
+  ListRow) always stacks the segments. (A rule that read each label's `onTextLayout` missed iOS breaks at the
+  default size — "Sedentar/y", "Друго/й", "Нейтральны/й" — and was replaced the same day by the measured fit.)
+
+## Update — 2026-11-11 (measured fit, 1.35)
+
+Native decides from widths it measures, so it can't miss:
+
+- **Measurer (`md`):** an invisible, unreadable absolute `View` (`testID="lk-seg-measure"`, 10000 wide, 0 tall)
+  lays out on one line each label, each of its words, `"a a"` / `"aa"` (a space) and each count, in the label's
+  own font and the OS text size. Its widths, with the track's width (1 border + 4 padding, 4 gaps, equal
+  segments less their padding, dot, icon, count and lock), go to `segmentFit` (exported, pure):
+  - a label that fits keeps its size; a `fill` label a little too wide gets a smaller `fontSize` (whole
+    percent, down to `fitFloor`: never below the default text size or 11pt, so not at all at the default
+    size) and stays on one line;
+  - otherwise it wraps between words at that floor; a word still wider than its room, or more than 2 lines,
+    stacks the segments. 1pt is kept beside every measured width so rounding never wraps the last letter.
+- **No flicker:** until every width and the track's width are in, the track is laid out at `opacity: 0`; the
+  first frame shown is the final layout (the track's opacity is always set, 0 or 1: iOS Fabric kept a dropped
+  `opacity: 0`). Late fonts or a new width decide again (the measurer stays mounted).
+- **Measured twice over:** besides `onLayout`, a layout effect measures the track and every probe from their
+  refs (`measure`). A tree mounted while hidden (the app's onboarding while its language loads) gets no
+  `onLayout` at all on iOS Fabric, which had left the row invisible; React runs layout effects again when a
+  hidden tree is shown.
+- **Large text** (`fontScale` > 1.35) always stacks; it is measured too, and a stacked label whose widest word
+  is wider than the segment (a half-width form column at AX sizes: "Друго/й") shrinks to fit (`stackedScales`,
+  exported; down to `fitFloor`, the default text size). **`sm`** hugs its labels (they never wrap), isn't measured, and stacks only at a
+  large text size.
+- **Stacked shape:** a stacked track is a tall box, so it takes a container's corners (`radii.md`) and its
+  segments (and the gradient fill) a control's (`radii.sm`), never the pill that drew a stadium at AX sizes.
+  Web: `.lk-seg--rows` likewise takes `--r`, its segments `--r-sm`.
+
+## Update — 2026-11-11 (inline with a field, shared measurer, 1.35)
+
+- **The same height as a field (owner, 2026-11-11: "the select of gender have to have the same height like
+  input, they have to be inline"):** an `md` track is 44 tall with its edge, as Input (it was 54: 4 padding
+  around 44 segments). Its segments sit edge to edge (track padding 0 × 2) and take the track's whole height
+  (42, plus a 1pt `hitSlop` above and below: the 44pt target is kept); the pill (active fill, tint, tone
+  border, gradient and glow) is a separate view drawn inset — 4 from the top and bottom, 2 from each side
+  (so 4 at the ends and between pills). Stacked: track padding 2, segments 44, pills inset 2. `sm` is
+  unchanged (pill = segment). Label padding inside the pill is kept (segment padding 8, `fill` 6).
+- **Web at phone width** (`fill`, not rows, not `tint`): the track is `min-height: 44px` with `padding: 0 2px`,
+  segments 42 tall with a transparent `4px 2px` border and `background-clip: padding-box`, so the pill is
+  drawn inset as on native.
+- The measurer is the shared `WordMeasurer`, and `stackedScales` uses the shared `wordFitScale`
+  (`internal/wordFit.tsx`, as FitText).
+
+## Update — 2026-11-11 (word-fit review fixes, 1.35)
+
+- **Floor:** a label never shrinks below the default text size or 11pt (`fitFloor` / web `fitFloorPercent`;
+  was 80 % for `fill`, 50 % stacked, web 60 %). At the default text size a `fill` label too wide stacks the
+  segments (native) or goes to rows (web) instead of shrinking.
+- **Words:** `wordsOf` is the shared `breakableWords`, so a zh / ja label wraps between its characters (it
+  was one word, and stacked the segments).
+- **Room:** a tint or color-tone segment's hairline is on its absolute pill, so it no longer takes 2pt from
+  the label's room.
+- **Stacked track:** `alignSelf: 'stretch'` (a parent that doesn't stretch it left it as wide as its labels),
+  and while a stacked label is shrunk a narrower track width is not taken (as wide as its content, it would
+  shrink the labels again and again); the measure key includes the window width, so a rotation decides
+  afresh.
+- **Web, a field's height:** a one-line `fill` segment (not rows, not wrapped, not `tint`) has a fixed
+  15.6px line, so the track is the Input's 39.6 at desktop width in every script (a CJK fallback font's
+  `normal` line made it 43 in zh, 45 in ja).
+- **Web, fit kept:** the fit runs again when `invalid`, `className` or `active` change: React rewrites the
+  whole class on those renders and dropped the fit's `lk-seg--rows` / `lk-seg-wrap`.
+
+## Update — 2026-11-11 (choice rows: shrink, then balanced rows; owner decision)
+
+Supersedes the stacking and the floor in the updates above. **Web and native follow the same rules**, from
+widths measured on one unconstrained line (native: the hidden `WordMeasurer`; web: a hidden probe segment,
+`.lk-seg-probe`, in the stylesheet's label font) and the track's width, decided by the pure
+`segmentRows` (exported from ui-native `SegmentedTabs`; web `components/segRows.ts`, the same function):
+
+1. **One row** when every label fits it on one line. A `fill` label too wide first **shrinks**, never below
+   **11pt / 11px drawn** at the default text size — the only shrink below the design size, and only for
+   `fill` (`fitFloor(size, fontScale, true)` / `fitFloorPercent(base, root, true)`); at a larger text size
+   the rule stays "never below the default text size": floor = `max(1 / fontScale, 11 / (size × fontScale))`.
+   A non-`fill` `md` label never shrinks at the default text size.
+2. Else **as few rows of pills as fit**, balanced and in order — 5 → 3 + 2, 4 → 2 + 2, then 2 + 2 + 1… —
+   at **every** text size (large text included: no forced list). Above text size 1.35 (native `fontScale`,
+   web a root over 1.35 × 16) the labels don't shrink first: they wrap onto rows at their size, and only a
+   label alone on its row that is still too wide shrinks, to the floor (`segmentRows`' `aloneScale`) — one
+   row of labels each shrunk to a different size read badly at AX sizes. A label alone in a row shorter
+   than the fullest first takes the row's whole width; it shrinks only at that width. A row's segments are as wide as the
+   fullest row's and a shorter row is centred; a row whose label needs more gets the row's width shared by
+   fewer, so **only a label that needs the full width gets a row of its own**. On rows a label may wrap
+   between words (2 lines first, then more); on the one row it never wraps (the track stays a field's 44).
+   Score: fewer rows, then balanced, then fewer labels wrapped, then the fuller rows first.
+3. **Never a column list as a layout mode** (owner, 2026-11-11: "i dont like the list in the column"); one
+   label per row happens only when each needs the full width. Last resort: a word wider than the full width
+   at the floor breaks (each label its own row, shrunk to the floor).
+
+- **Rows look:** the track keeps a control's corners (superseded 2026-11-11, see below), padding 2,
+  the segments edge to edge, each 44 tall (a 44pt / 44px target), the pill (glass, tint, the `gradient` /
+  `mint` fill and glow) drawn 2 in all round, so the
+  selected pill is right on either row. Native renders one `View` row per row (`justifyContent: center`,
+  each segment its measured width); web keeps one flex track with `flex-wrap`, an inline width per segment
+  and a `.lk-seg-break` (flex-basis 100%) after each row. Web rows keep the one row's side padding and gap,
+  so the measure holds in both.
+- **CJK labels are one word:** `wordsOf` keeps a CJK run whole (a zh / ja option shrinks / wraps / goes on
+  rows like any other language, never "アスリー / ト"); native draws it with a word joiner between its
+  characters (`glueCJK`), web with `word-break: keep-all` on `fill` segments. Running text elsewhere still
+  breaks between CJK characters (`breakableWords`).
+- **`sm`** still hugs its labels; above text size 1.35 its pills wrap onto more rows (native
+  `flexWrap: 'wrap'`), never a column.
+- Native (module exports, not the package index) `segmentFit` / `stackedScales` are replaced by `segmentRows` (`SegmentLayout`: rows, widths,
+  scales, wraps); web `segFitPercent` is gone. The web fit no longer rewrites classes: the rows and sizes
+  are React state, so a re-render (invalid, a choice made) keeps them.
+
+
+## Update — 2026-11-11 (owner: one radius for every control; a field's look)
+
+- **Corners** (CONVENTIONS "Corner radii"): the track is a control, `--r-sm` / `radii.sm` (10), at every size,
+  on one row and on rows (was the pill `999`; on rows `--r` / `radii.md` 16). The lit segment's corners are
+  10 less its inset from the track's outer edge, so they run parallel: **5** on one row (1 edge + 4 down,
+  1 + 2 + 2 across), **6** at `sm` (1 + 3), **5** on rows (1 + 2 + 2); web desktop 5 (1 + 4 padding). Native
+  derives them from the same constants that place the pill (`innerRadius`); web from `--lk-seg-inset`
+  (`calc(var(--r-sm) - var(--lk-seg-inset))`), at phone width adding the transparent border per axis
+  (`7px / 9px` on one row, `7px` on rows) because the fill is clipped to the padding box.
+- **Surface:** the field's fill (`--field` / `colors.field`) and edge (`--border-control` /
+  `colors.borderControl`; `borderControlStrong` under Increase Contrast), every size and appearance (`sm` and
+  `tint` drop their glass track); invalid is the field's `--zone-low` edge. Web: a keyboard-focused choice
+  (`kind="choice"`) draws the field's focus, the track's edge in `--accent` 2px (`--zone-low` when invalid);
+  a tab bar's focused tab the kit ring inside the track. Unselected labels stay `--text-dim` (7.0:1 on the
+  field). The lit segment keeps its fill (glass, tint, gradient, mint).
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).

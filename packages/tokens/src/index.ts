@@ -16,12 +16,25 @@ export const colors = {
   bg2: '#11151F',
   glass: 'rgba(255,255,255,0.045)',
   glass2: 'rgba(255,255,255,0.075)',
+  // a card's fill: the old glass look over the page (#13151D on bg0) but 79% opaque, so the aurora behind
+  // never lifts its text below 4.5:1 (CONVENTIONS "Accessibility")
+  card: 'rgba(22,24,32,0.79)',
+  // the card on bg0, opaque: a surface that floats over anything (Toast) looks like a card on the page and
+  // keeps its text at 4.5:1 over a photo or a bright field (textDim 8.6:1)
+  cardSolid: '#13151D',
+  // a field's fill (Input, Select, CodeInput, TagInput, SearchInput): opaque, glass-2 over the card, so
+  // placeholders keep 4.6:1 whatever is behind
+  field: '#25272E',
   border: 'rgba(255,255,255,0.09)',
   border2: 'rgba(255,255,255,0.16)',
+  // a field's edge (Input, Select, CodeInput, TagInput): 3.3:1 on the card (CONVENTIONS "Accessibility")
+  borderControl: 'rgba(255,255,255,0.36)',
+  // the control edge under Increase Contrast (a step above borderControl)
+  borderControlStrong: 'rgba(255,255,255,0.5)',
   // text
   text: '#EEF1F8',
   textDim: '#AAB2C6',
-  textFaint: '#828B9F',
+  textFaint: '#868FA3', // 4.6:1 on a field's fill (CONVENTIONS "Accessibility")
   // energy spectrum
   lime: '#A8FF35',
   mint: '#34F5C5',
@@ -34,6 +47,12 @@ export const colors = {
   accent: '#7C5CFF',
   accent2: '#22D3EE',
   accent3: '#34F5C5',
+  // the accent softened for text on dark (owner, 2026-11-11): the emphasis inside a violet note, accent
+  // chips and tags, Highlight, FollowButton; 9.9:1 on the card
+  accentSoft: '#CBBCFF',
+  // the dark label on a bright surface (the CTA gradient, a solid danger fill, a selected toggle, the
+  // monogram's gradient): one ink, 4.5:1 at every point of the CTA gradient
+  inkOnBright: '#0A0A12',
   // energy zones (signal)
   zoneHigh: '#34F5C5',
   zoneMid: '#FFB020',
@@ -58,12 +77,15 @@ export const gradients = {
   warm: { angle: 135, stops: ['#FFB020', '#FF4D6D'] },
 } as const;
 
-/** Corner radii (px). */
+/** Corner radii (px). Every corner is 10 (owner, 2026-11-11: controls, cards, dialogs, sheets, avatars
+ *  alike); `md` / `lg` / `xl` keep their names for the components that cite them. `pill` is for true
+ *  circles only (status dots, icon circles, toggle knobs, the grab handle, the countdown ring) and thin
+ *  bars. */
 export const radii = {
   sm: 10,
-  md: 16,
-  lg: 22,
-  xl: 28,
+  md: 10,
+  lg: 10,
+  xl: 10,
   pill: 999,
 } as const;
 
@@ -85,9 +107,21 @@ export const spacing = {
   24: 96,
 } as const;
 
-/** Layout breakpoints (px, max-width): at or below `phone` one tight column; at or below
- *  `tablet` side panels stack. From the web designs (auth, app shells). */
+/** Increase Contrast (CONVENTIONS "Accessibility"): each colour that steps up, and what it becomes — faint
+ *  text → dim, dim → full, a container's line → a control's edge, a control's edge → the strong edge. Web
+ *  applies it under `@media (prefers-contrast: more)` (tokens.css), native through `useContrastColors`. */
+export const highContrastColors = {
+  textFaint: colors.textDim,
+  textDim: colors.text,
+  border2: colors.borderControl,
+  borderControl: colors.borderControlStrong,
+} as const;
+
+/** Layout breakpoints (px, max-width): at or below `narrow` (a 320–360 phone) cards tighten their
+ *  padding; at or below `phone` one tight column; at or below `tablet` side panels stack. From the web
+ *  designs (auth, app shells). */
 export const breakpoints = {
+  narrow: 360,
   phone: 540,
   tablet: 980,
 } as const;
@@ -97,6 +131,37 @@ export const fonts = {
   display: 'Space Grotesk',
   ui: 'Inter',
   mono: 'JetBrains Mono',
+} as const;
+
+/** The type table (owner, 2026-11-11, CONVENTIONS "Type"): one size per text role, web and native alike.
+ *  `size` in px / pt, `lineHeight` a multiple of it, `tracking` in em (native: `tracking × size` pt). Web:
+ *  the `--fs-*` / `--ls-label` custom properties in tokens.css; native: `textStyle(role)` in ui-native. */
+export const textStyles = {
+  /** an auth screen's title ("Welcome back") */
+  authTitle: { font: 'display', size: 28, weight: '700', lineHeight: 1.2, tracking: -0.02 },
+  /** a signed-in screen's title */
+  screenTitle: { font: 'display', size: 23, weight: '700', lineHeight: 1.25, tracking: -0.01 },
+  /** an onboarding step's title */
+  stepTitle: { font: 'display', size: 20, weight: '700', lineHeight: 1.3, tracking: -0.01 },
+  /** a card's, sheet's or dialog's title */
+  cardTitle: { font: 'display', size: 17, weight: '700', lineHeight: 1.35, tracking: -0.01 },
+  /** a list row's title */
+  rowTitle: { font: 'ui', size: 15, weight: '600', lineHeight: 1.4, tracking: 0 },
+  /** running text */
+  body: { font: 'ui', size: 14, weight: '400', lineHeight: 1.55, tracking: 0 },
+  /** secondary text (text-dim): an alert's or a row's second line */
+  secondary: { font: 'ui', size: 13, weight: '400', lineHeight: 1.5, tracking: 0 },
+  /** a field's hint (text-faint) */
+  hint: { font: 'ui', size: 11.5, weight: '400', lineHeight: 1.5, tracking: 0 },
+  /** the one uppercase mono label: field labels (text-dim), section labels and eyebrows (text-faint) */
+  label: { font: 'mono', size: 11, weight: '500', lineHeight: 1.55, tracking: 0.14 },
+  /** a control's value: Input, Select md */
+  control: { font: 'ui', size: 16, weight: '400', lineHeight: 1.25, tracking: 0 },
+  /** a small control's value: Select sm */
+  controlSm: { font: 'ui', size: 14, weight: '400', lineHeight: 1.3, tracking: 0 },
+  /** a link inside a row of labels ("Resend code"; accent-2). In a sentence a link is the sentence's
+   *  size, Inter 600, accent-2 */
+  labelLink: { font: 'mono', size: 11.5, weight: '400', lineHeight: 1.5, tracking: 0 },
 } as const;
 
 /** Glow / elevation shadows (web box-shadow strings). */
@@ -144,7 +209,7 @@ export const brand = {
 } as const;
 
 /** Everything, bundled. */
-export const tokens = { colors, gradients, radii, spacing, breakpoints, fonts, shadows, nativeShadows, motion, brand } as const;
+export const tokens = { colors, gradients, radii, spacing, breakpoints, fonts, textStyles, shadows, nativeShadows, motion, brand } as const;
 
 export type Colors = typeof colors;
 export type ColorToken = keyof Colors;
@@ -155,14 +220,16 @@ export type Spacing = typeof spacing;
 export type SpacingStep = keyof Spacing;
 export type Breakpoints = typeof breakpoints;
 export type Tokens = typeof tokens;
+export type TextStyles = typeof textStyles;
+export type TextRole = keyof TextStyles;
 
 /** Map a color token to its CSS custom property, e.g. `cssVar('zoneHigh')` → `var(--zone-high)`. */
 const cssVarName: Record<ColorToken, string> = {
   void: '--void', bg0: '--bg-0', bg1: '--bg-1', bg2: '--bg-2',
-  glass: '--glass', glass2: '--glass-2', border: '--border', border2: '--border-2',
+  glass: '--glass', glass2: '--glass-2', card: '--card', cardSolid: '--card-solid', field: '--field', border: '--border', border2: '--border-2', borderControl: '--border-control', borderControlStrong: '--border-control-strong',
   text: '--text', textDim: '--text-dim', textFaint: '--text-faint',
   lime: '--lime', mint: '--mint', cyan: '--cyan', indigo: '--indigo', violet: '--violet', magenta: '--magenta', orange: '--orange',
-  accent: '--accent', accent2: '--accent-2', accent3: '--accent-3',
+  accent: '--accent', accent2: '--accent-2', accent3: '--accent-3', accentSoft: '--accent-soft', inkOnBright: '--ink-on-bright',
   zoneHigh: '--zone-high', zoneMid: '--zone-mid', zoneLow: '--zone-low',
   ok: '--ok', warn: '--warn', bad: '--bad', info: '--info',
 };

@@ -67,7 +67,10 @@
 .lk-listrow-tappable:hover,
 .lk-listrow-tappable:focus-visible {
   background: var(--glass);
-  outline: none;
+}
+/* the focus ring is the kit's shared one (primitives.css), inset so a row inside a card isn't clipped */
+.lk-listrow-tappable:focus-visible {
+  outline-offset: -2px;
 }
 /* keep the hairline reading right when the prior row is a hovered button */
 .lk-listrow-tappable:hover + .lk-listrow,
@@ -139,6 +142,18 @@
 /* settings rows (design web/settings.html .pref-row / .acct-row): inside a padded card */
 .lk-listrow-pref,
 .lk-listrow-action { gap: 16px; }
+/* A narrow settings row (a phone at 360 / 320: the row under 300px) puts its control under the text, the
+   full row wide and start-aligned, so the text never shrinks to a word per line or spills out. The row is
+   its own size container; the text always wraps inside its column. */
+.lk-listrow-pref,
+.lk-listrow-action { container-type: inline-size; flex-wrap: wrap; row-gap: var(--space-2); }
+.lk-listrow-pref .lk-listrow-main,
+.lk-listrow-action .lk-listrow-main { flex-basis: 0; overflow-wrap: anywhere; }
+/* in em, so a larger browser text size stacks it sooner (300px at a 16px text) */
+@container (max-width: 18.75em) {
+  .lk-listrow-pref .lk-listrow-trailing,
+  .lk-listrow-action .lk-listrow-trailing { flex-basis: 100%; margin-left: 0; justify-content: flex-start; }
+}
 .lk-listrow-pref { padding: 15px 4px; }
 .lk-listrow-action { padding: 16px 0; }
 .lk-listrow-pref .lk-listrow-title,

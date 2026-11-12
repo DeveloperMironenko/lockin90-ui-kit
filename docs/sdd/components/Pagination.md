@@ -116,6 +116,7 @@ These are admin/CMS surfaces (web-primary); the native twins exist for parity bu
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Pagination:** web `<nav aria-label="Pagination">`; each page button has `aria-label="Page N"`, the active one `aria-current="page"`; prev/next have `aria-label="Previous/Next page"` and the native `disabled` attribute at the ends. The `…` gap is `aria-hidden`.
 - **Breadcrumb:** web `<nav aria-label="Breadcrumb">`; the current leaf is `aria-current="page"`; separators are `aria-hidden`.
 - **Native:** consumers should add `accessibilityRole="button"` + labels to the `Pressable`s; disabled edges set `disabled` (no press).

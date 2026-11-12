@@ -110,6 +110,7 @@ No blocking gap — the gradient look and 9s flow match; native requires string 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** real text — selectable, copyable, and read verbatim by screen readers; honors the chosen `as`
   heading level for document outline. Contrast: the spectrum is bright on the void background; keep it for
   display/accent text, not body copy.
@@ -143,3 +144,11 @@ No blocking gap — the gradient look and 9s flow match; native requires string 
   `gradients.*` (native); don't introduce off-palette hex.
 - **Parity gate.** Before shipping, compare the web phone-width and native renders — same stops, same direction,
   same text — and accept that the animated flow is web-only.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native reduced motion:** the gradient stops scrolling while `useReducedMotion()` is true (as `still`).
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Follows the OS text size:** the SVG glyphs are drawn at `fontSize × fontScale` (the measuring `Text` already scaled, the SVG didn't), and it re-measures when the scale changes. So `Stat tone="gradient"` grows with the text.

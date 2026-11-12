@@ -72,6 +72,7 @@ There is **no capability gap**.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the rule `<span>` is `aria-hidden` (decorative); the label is read as normal text.
 - **Native:** the `LinearGradient` rule carries no accessibility role (decorative); the `Eyebrow` label reads as text.
 - **Contrast:** the label uses `Eyebrow`'s `--text-faint`; the fading rule is decoration (exempt from text-contrast minimums).
@@ -93,3 +94,7 @@ There is **no capability gap**.
 - **New need → add to BOTH platforms.** If a variant is needed (e.g. a left/center label or a two-sided fade), add a prop to `SectionDivider` on web AND native with the same name + tokens — never a one-off.
 - **Tokens only.** Label via `Eyebrow`, rule via `--border-2` / `colors.border2`; never a literal.
 - **Parity gate.** The eyebrow + right-fading rule render identically at phone width and on native — confirm before shipping a shared screen.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **A long label wraps** instead of overflowing at 320 (web and native).

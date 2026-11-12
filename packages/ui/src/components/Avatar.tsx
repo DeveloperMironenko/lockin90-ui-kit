@@ -1,4 +1,4 @@
-import { type HTMLAttributes } from 'react';
+import { useState, type HTMLAttributes } from 'react';
 import { cn } from '../cn';
 
 export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
@@ -6,11 +6,13 @@ export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
   name?: string;
   /** Explicit monogram initials; overrides the value derived from `name`. */
   initials?: string;
-  /** Image URL. When present, an `<img>` is rendered instead of the monogram. */
+  /** Image URL. When present, an `<img>` is rendered instead of the monogram; when it fails to load, the
+   *  monogram shows instead (V16, never the browser's broken-image icon). */
   src?: string;
   /** Pixel size of the square avatar. @default 44 */
   size?: number;
-  /** Outline shape — a full circle or a softly-rounded square. @default 'circle' */
+  /** @deprecated 2026-11-11 (every corner is 10): ignored, every avatar is a rounded square (10).
+   *  Removed in the next major. */
   shape?: 'circle' | 'rounded';
   /**
    * Visual variant.
@@ -38,8 +40,8 @@ function initialsFor(name: string): string {
 
 /**
  * Avatar — a standalone identity tile showing either an image or a monogram
- * (initials painted on the flux gradient). Square by `size`, circular by
- * default or softly rounded via `shape="rounded"`. The monogram falls back to
+ * (initials painted on the flux gradient). Square by `size`, a rounded square (10) at every size.
+ * The monogram falls back to
  * initials derived from `name`, then to `'?'`. Mirrors the monogram treatment
  * used by ProfileHeader and Leaderboard.
  *
@@ -51,13 +53,16 @@ export function Avatar({
   initials,
   src,
   size = 44,
-  shape = 'circle',
+  shape: _shape,
   variant = 'default',
   gradient = 'linear-gradient(135deg, var(--accent), var(--cyan))',
   className,
   style,
   ...rest
 }: AvatarProps) {
+  // a photo that fails to load falls back to the monogram; a new src tries again
+  const [failed, setFailed] = useState<string | null>(null);
+  const photo = src && failed !== src ? src : undefined;
   if (variant === 'aura') {
     // Aura — the AI coach. A flowing `--grad-flux` orb with `--glow-accent`;
     // the gradient flow animation lives in `.lk-avatar--aura` (avatar.css) and
@@ -67,7 +72,6 @@ export function Avatar({
         className={cn(
           'lk-avatar',
           'lk-avatar--aura',
-          shape === 'rounded' && 'lk-avatar-rounded',
           className,
         )}
         style={{ width: size, height: size, ...style }}
@@ -80,12 +84,12 @@ export function Avatar({
 
   return (
     <span
-      className={cn('lk-avatar', shape === 'rounded' && 'lk-avatar-rounded', className)}
+      className={cn('lk-avatar', photo && 'lk-avatar--photo', className)}
       style={{ width: size, height: size, ...style }}
       {...rest}
     >
-      {src ? (
-        <img className="lk-avatar-img" src={src} alt={name ?? ''} />
+      {photo ? (
+        <img className="lk-avatar-img" src={photo} alt={name ?? ''} onError={() => setFailed(photo)} />
       ) : (
         <span
           className="lk-avatar-mono"

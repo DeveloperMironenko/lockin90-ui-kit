@@ -82,6 +82,7 @@ No capability gap blocks use — the tooltip is fully usable and visually equiva
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** bubble is `role="tooltip"` with an `id`; the trigger sets `aria-describedby` while open. Opens on `focus` (not just hover) and the default badge is keyboard-focusable (`tabIndex={0}`). Decorative badge text is `aria-hidden`.
 - **Native:** the trigger is a `Pressable` (`accessibilityRole="button"`); reveal is a deliberate tap (works without a pointer). Android back / backdrop dismiss.
 - **Contrast:** bubble uses `--text` on `--bg-1` — full-strength text (not dimmed) for legibility at 12px.
@@ -105,3 +106,7 @@ No capability gap blocks use — the tooltip is fully usable and visually equiva
 - **New need → both platforms.** A delay prop, a rich arrow, or a controlled `open` must be added to `TooltipProps` on web **and** native with the same names/tokens.
 - **Tokens only.** Badge, bubble, and arrow colors/radii all come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping, confirm the web phone-width tooltip and native tooltip match (same content, placement, arrow) — accepting only the hover-vs-press reveal difference.
+
+## Update — 2026-11-11 (owner: the audit batch, control sizes and fills)
+
+- **Edge (V19):** the bubble and its pointer use the overlays' `--border` (was `--border-2`).

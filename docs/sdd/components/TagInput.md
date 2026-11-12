@@ -121,6 +121,7 @@ limitation.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** each tag's × is a `<button>` with `aria-label="Remove <tag>"`; the input uses the placeholder as its
   `aria-label`. `CodeInput`'s row is `role="group"`, so the `aria-label` / `aria-labelledby` an app passes (rest props) names it
   ("Reset code"); each box carries `aria-label={digitLabel(N, length)}`, `inputMode="numeric"`, and
@@ -185,3 +186,34 @@ limitation.
 
 ## Update — 2026-11-02 (minor, native)
 - **Native `CodeInput` boxes are fluid** (as `mobile/auth-onboarding.html` draws them; sizes in §3), so an 8-digit code fits a phone. The font stays the kit's mono (the design draws display).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Edge:** the TagInput box and every CodeInput box use `--border-control` / `colors.borderControl` (3.3:1 on
+  the card); filled, focus and invalid still recolour them. The TagInput's 12px text input is unchanged (an
+  admin CMS field; not yet 16px).
+- **CodeInput `ref`** (web + native, type `CodeInputHandle`): `focus()` puts the caret in the first empty box, or the last box when the code is complete, so Return in the field before can move into the code. Web keeps the digit selected, as on any box focus.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **CodeInput:** boxes on `--field`, the focus ring (web), at least 44 tall and 8 apart at phone width and on native (min width 24 so 8 boxes fit 320). A whole code (as many digits as boxes) pasted or autofilled into any box fills from the first. Web: `aria-required` goes on every box (not allowed on the group); the group takes `aria-labelledby` / `aria-describedby` from a `FormField`. Native: each box reads `accessibilityLabel, digitLabel` and the `accessibilityHint` (a `FormField` passes both). TagInput box: `--field`, focus ring.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **CodeInput boxes measured (native):** the row's width (`onLayout`) sets each box's width and height (`codeBoxLayout`, exported): 8 apart, as wide as fits (≤ 60); when 44-wide boxes don't fit 8 apart the gap shrinks (≥ 4) so they stay 44 (6 digits in 300: 44, gap 7.2). 8 digits on a phone go narrower (≈ 34 in 300) but stay 44 tall, 4 apart: each is still a ≥ 24 target with spacing (WCAG 2.5.8's spacing exception), and the row is one control. Height is 1.18 × width, at least 44 (the flex + aspect-ratio fallback, used until measured, let iOS draw them 42). Web keeps its CSS (44 tall, 8 apart at phone width).
+
+## Update — 2026-11-11 (one focus indicator, web)
+
+- A focused field shows only its own edge: `--accent`, 2px (1px border + 1px inset shadow), on mouse and
+  keyboard focus; no outer `--accent-2` ring, no glow (owner: "2 outlines"). Invalid: the same in `--zone-low`.
+  Supersedes the ring / glow above; see CONVENTIONS "Focus (web)". Native was already edge-only.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- A tag is a chip: `--r-sm` / `radii.sm` (10, was the pill). CodeInput boxes stay 10.
+
+## Update — 2026-11-11 (owner: the audit batch, U20)
+
+- **CodeInput autofill on Android:** box 0 sets `autoComplete` `sms-otp` on Android (`one-time-code` elsewhere;
+  iOS also reads `textContentType="oneTimeCode"`), the other boxes `off`, so Android's autofill offers the
+  code from an SMS.

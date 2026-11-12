@@ -98,6 +98,7 @@ No capability gap blocks use.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** real `<input type="password">`. The eye is a `<button type="button">` with `aria-label`
   (`showLabel` while masked, `hideLabel` while revealed) and `aria-pressed={visible}` so AT announces
   masked/revealed state. Provide a field label via `FormField`/`aria-label`.
@@ -137,3 +138,26 @@ No capability gap blocks use.
 
 ## Update — 2026-11-02 (native sizes match web)
 - **Native height = web height:** `minHeight` 39.6 (sm 31.5) like `Input`; the input's explicit `lineHeight: 20` is gone (it made this field 3pt taller than `Input`). The `label` caption matches FormField's.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Edge and text:** as `Input` (`--border-control`, 16px / 16pt, box height kept; native tap on the padding
+  focuses the field).
+- **Eye toggle target:** native `hitSlop` 13 (18 + 26 = 44pt); web an invisible centred `::before`, 24px (44 at
+  phone width). Its focus ring is the kit's shared one (`2px --accent-2`).
+- **`ref`** (web + native): forwarded to the field itself (web `<input>`, native `TextInput`), as `Input`, for focusing the next field on Return.
+- **Native ref type:** `TextInputRef` (`ComponentRef<typeof TextInput>`), as `Input`, so `ref.current.focus()` types on RN 0.81 and 0.88.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- As `Input`: `--field` fill, the focus ring, 44 at phone width / native.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more`): faint / dim text and the edge step up.
+
+## Update — 2026-11-11 (one focus indicator, web)
+
+- A focused field shows only its own edge: `--accent`, 2px (1px border + 1px inset shadow), on mouse and
+  keyboard focus; no outer `--accent-2` ring, no glow (owner: "2 outlines"). Invalid: the same in `--zone-low`.
+  Supersedes the ring / glow above; see CONVENTIONS "Focus (web)". Native was already edge-only.

@@ -100,6 +100,7 @@ None of these block use — the search-and-pick flow is equivalent; the panel ju
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the `SearchInput` carries `role="combobox"`, `aria-haspopup="listbox"`, and `aria-expanded={showPanel}`; the panel is `role="listbox"` and each result `role="option"`. Escape closes; outside-click closes. (Active-descendant keyboard navigation through rows is not yet wired — see §9.)
 - **Native:** `SearchInput` + `ListRow`s; selection is via tapping a row (each `ListRow` is pressable). Provide a clear `placeholder` so the field's purpose is announced.
 - **Hit target:** `ListRow` provides a full-width tap target; the loading/empty rows are non-interactive.

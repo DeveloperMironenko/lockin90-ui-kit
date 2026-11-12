@@ -27,16 +27,29 @@ describe('MetricTile hint', () => {
   });
 });
 
+/* A long label or word (Пульс спокою, パワーリフティング at 402) wraps inside the tile: never cut. */
 describe('MetricTile word', () => {
-  test('sm: a word stays on one line', () => {
-    const root = parse(render(MetricTile, { size: 'sm', label: 'Sport', value: 'Powerlifting', textValue: true }));
-    expect(hasDeclaration(findByText(root, 'Powerlifting')!, 'white-space:nowrap')).toBe(true);
+  test('sm: a word wraps instead of being cut with an ellipsis', () => {
+    const root = parse(render(MetricTile, { size: 'sm', label: 'Sport', value: 'パワーリフティング', textValue: true }));
+    const word = findByText(root, 'パワーリフティング')!;
+    expect(hasDeclaration(word, 'white-space:nowrap')).toBe(false);
+    expect(hasDeclaration(word, 'text-overflow:ellipsis')).toBe(false);
   });
 });
 
 describe('MetricTile sm label', () => {
-  test('stays on one line', () => {
-    const root = parse(render(MetricTile, { size: 'sm', label: 'Biological sex', value: 'Male', textValue: true }));
-    expect(hasDeclaration(findByText(root, 'Biological sex')!, 'white-space:nowrap')).toBe(true);
+  test('wraps, at 11 at least', () => {
+    const root = parse(render(MetricTile, { size: 'sm', label: 'Пульс спокою', value: '52' }));
+    const label = findByText(root, 'Пульс спокою')!;
+    expect(hasDeclaration(label, 'white-space:nowrap')).toBe(false);
+    expect(hasDeclaration(label, 'font-size:11px')).toBe(true);
+  });
+});
+
+describe('MetricTile value row', () => {
+  test('the unit wraps under the value when they don\u2019t fit one line', () => {
+    const root = parse(render(MetricTile, { size: 'sm', label: 'Вага', value: '205,9', unit: 'фунт' }));
+    const row = findByText(root, '205,9')!.parent!;
+    expect(hasDeclaration(row, 'flex-wrap:wrap')).toBe(true);
   });
 });

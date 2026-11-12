@@ -1,6 +1,6 @@
-import { View, StyleSheet, type ViewProps } from 'react-native';
+import { View, StyleSheet, useWindowDimensions, type ViewProps } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, radii, nativeShadows, gradients } from '@lockin90/tokens';
+import { breakpoints, colors, radii, nativeShadows, gradients } from '@lockin90/tokens';
 import { OptionalBlurView } from '../internal/optionalBlur';
 
 export interface CardProps extends ViewProps {
@@ -25,13 +25,21 @@ export interface CardProps extends ViewProps {
  *  translucent fill + hairline border. Set `blur` for a real frosted surface
  *  (via the optional `expo-blur` peer) that matches the web glass more closely. */
 export function Card({ lit, padLg, pad, flat, blur, tone, variant, style, children, ...rest }: CardProps) {
+  // a narrow phone (≤ breakpoints.narrow, 360): the large padding drops to 16, as web, so an 8-box
+  // CodeInput fits a 320 screen
+  // …and at an accessibility text size (> 1.35×) every padding but `none` is 16: the room goes to the
+  // text, whose long words would otherwise have to shrink further
+  const { width, fontScale } = useWindowDimensions();
+  const narrow = width > 0 && width <= breakpoints.narrow; // 0: not measured (a static render)
+  const large = fontScale > LARGE_TEXT;
+  const lg = padLg || pad === 'lg';
   const composed = [
     styles.card,
-    padLg && styles.padLg,
+    lg && (narrow ? styles.padSm : styles.padLg),
     pad === 'none' && styles.padNone,
     pad === 'sm' && styles.padSm,
     pad === 'md' && styles.padMd,
-    pad === 'lg' && styles.padLg,
+    large && pad !== 'none' && styles.padSm,
     flat && styles.flat,
     tone === 'warn' && styles.toneWarn,
     tone === 'danger' && styles.toneDanger,
@@ -95,7 +103,8 @@ function LitHairline({ danger }: { danger?: boolean }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.glass,
+    // opaque enough that the aurora never drops its text below 4.5:1 (CONVENTIONS "Accessibility")
+    backgroundColor: colors.card,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radii.md,
@@ -112,11 +121,10 @@ const styles = StyleSheet.create({
   flat: { shadowOpacity: 0, elevation: 0 },
   // tone — tinted border + subtle bg. The literals are the flattened web
   // `color-mix(in srgb, var(--warn|--bad) 42%, transparent)` border and
-  // `color-mix(in srgb, var(--warn|--bad) 7|8%, var(--glass))` fill
-  // (#FFB020 / #FF4D6D mixed into rgba(255,255,255,0.045)).
-  toneWarn: { borderColor: 'rgba(255,176,32,0.42)', backgroundColor: 'rgba(255,206,115,0.11)' },
+  // `color-mix(in srgb, var(--warn) 7%, var(--card))` / `var(--bad) 4%, var(--card)` fill, flattened.
+  toneWarn: { borderColor: 'rgba(255,176,32,0.42)', backgroundColor: 'rgba(42,37,32,0.805)' },
   // danger: the design's danger zone (web/settings.html .danger, as web): --bad at 30% / 4%
-  toneDanger: { borderColor: 'rgba(255,77,109,0.30)', backgroundColor: 'rgba(255,77,109,0.04)' },
+  toneDanger: { borderColor: 'rgba(255,77,109,0.30)', backgroundColor: 'rgba(34,27,36,0.798)' },
   // dashed — add/connect action card (hover accent is web-only; text color
   // doesn't cascade natively, so children set their own `colors.textDim`)
   dashed: {
@@ -134,7 +142,8 @@ const styles = StyleSheet.create({
   ghost: { backgroundColor: 'transparent', borderColor: 'transparent', shadowOpacity: 0, elevation: 0 },
   // when blurred, drop most of the opaque fill so the frost shows through, and
   // clip the blur to the card radius (iOS needs overflow:hidden for this)
-  cardBlur: { backgroundColor: 'rgba(255,255,255,0.02)', overflow: 'hidden' },
+  // the frost shows through the card fill's 21% (its text stays at 4.5:1 over the aurora)
+  cardBlur: { backgroundColor: colors.card, overflow: 'hidden' },
   // web parity: `inset: 0 var(--r) auto var(--r); height: 1px` — the straight
   // hairline stays inside the top edge, clear of the rounded corners.
   lit: {
@@ -145,3 +154,6 @@ const styles = StyleSheet.create({
     height: 1,
   },
 });
+
+/** Above this OS text scale a card's padding is 16 (as ListRow's and SegmentedTabs' large-text rule). */
+const LARGE_TEXT = 1.35;

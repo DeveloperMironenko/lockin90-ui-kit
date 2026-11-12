@@ -92,6 +92,7 @@ Without `hover`, the card is fully static.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Renders a non-interactive surface — choose `as` for the correct semantics: `article` for a self-contained unit, `li` inside a list (wrap in `<ul>`/`<ol>`), `div` otherwise.
 - The card itself takes no focus and exposes no role; any clickable affordance must be a real `<button>`/`<a>` **inside** the card (don't make the whole card a click target without a real control — there's no `onClick`/role here by design).
 - Glass contrast: content text uses `Typography` tokens chosen to meet contrast over the `--glass` surface on the void background.

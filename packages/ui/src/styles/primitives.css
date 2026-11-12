@@ -5,7 +5,8 @@
 /* ---- glass card ---- */
 .lk-card {
   position: relative;
-  background: var(--glass);
+  /* opaque enough that the aurora never drops its text below 4.5:1 (CONVENTIONS "Accessibility") */
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--r);
   backdrop-filter: blur(16px) saturate(120%);
@@ -22,6 +23,8 @@
   background: linear-gradient(90deg, transparent, rgba(124, 92, 255, 0.7), rgba(34, 211, 238, 0.7), transparent);
 }
 .lk-card.lk-pad-lg { padding: 30px; }
+/* a narrow phone (--bp-narrow): 16 so an 8-box CodeInput (248) fits a 320 screen inside an AuthCard */
+@media (max-width: 360px) { .lk-card.lk-pad-lg { padding: 16px; } }
 .lk-card.lk-pad-none { padding: 0; }
 .lk-card.lk-pad-sm { padding: 16px; }
 .lk-card.lk-pad-md { padding: 22px; }
@@ -30,13 +33,13 @@
 /* tone — tinted border + subtle bg in a status color */
 .lk-card.lk-tone-warn {
   border-color: color-mix(in srgb, var(--warn) 42%, transparent);
-  background: color-mix(in srgb, var(--warn) 7%, var(--glass));
+  background: color-mix(in srgb, var(--warn) 7%, var(--card));
 }
 .lk-card.lk-tone-warn.lk-hover:hover { border-color: color-mix(in srgb, var(--warn) 60%, transparent); }
 /* danger: the design's danger zone (web/settings.html .danger), lit red to amber */
 .lk-card.lk-tone-danger {
   border-color: color-mix(in srgb, var(--bad) 30%, transparent);
-  background: color-mix(in srgb, var(--bad) 4%, transparent);
+  background: color-mix(in srgb, var(--bad) 4%, var(--card));
 }
 .lk-card.lk-tone-danger.lk-lit::before {
   background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--bad) 70%, transparent), color-mix(in srgb, var(--warn) 50%, transparent), transparent);
@@ -68,55 +71,64 @@
   box-shadow: none;
 }
 
-/* ---- buttons ---- */
+/* ---- buttons ----
+   Two control sizes (owner, 2026-11-11, CONVENTIONS "Control sizes"): md 44 tall (forms, the default) and
+   sm 36 tall with a 44 target (compact rows: a header, a toolbar); lg is a flow's closing CTA. */
 .lk-btn {
+  position: relative;
   display: inline-flex; align-items: center; justify-content: center; gap: 9px; white-space: nowrap;
   font-family: var(--font-ui); font-weight: 600; font-size: 14px;
-  padding: 12px 20px; border-radius: var(--r-sm); border: 1px solid var(--border-2);
+  min-height: 44px; padding: 10px 20px; border-radius: var(--r-sm); border: 1px solid var(--border-2);
   /* a button's own line height, as the design's: an app's reset (Tailwind's) makes it inherit the page's */
   line-height: normal;
-  background: var(--glass-2); color: var(--text); cursor: pointer;
+  /* a control's fill (V19): the opaque field colour, not glass */
+  background: var(--field); color: var(--text); cursor: pointer;
   transition: transform .25s var(--ease), box-shadow .3s var(--ease), background .3s var(--ease), border-color .3s var(--ease);
   will-change: transform;
 }
 .lk-btn:hover { transform: translateY(-2px); border-color: var(--border-2); }
 .lk-btn:active { transform: translateY(0) scale(.98); }
 .lk-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+/* unavailable but focusable (aria-disabled, e.g. while a dialog is busy): the disabled look, no lift */
+.lk-btn[aria-disabled='true'] { opacity: .5; cursor: not-allowed; transform: none; }
 .lk-btn svg { width: 16px; height: 16px; flex: 0 0 auto; }
 .lk-btn-primary {
-  border: none; color: #0A0A12; background: var(--grad-cta); background-size: 160% 160%;
+  border: none; color: var(--ink-on-bright); background: var(--grad-cta); background-size: 160% 160%;
   box-shadow: var(--glow-accent); animation: lk-btn-flow 6s var(--ease-soft) infinite;
 }
 .lk-btn-primary:hover { box-shadow: 0 0 56px rgba(124, 92, 255, 0.55); }
-.lk-btn-primary svg { width: 17px; height: 17px; }
 @keyframes lk-btn-flow { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
 .lk-btn-ghost { background: transparent; border-color: var(--border-2); color: var(--text-dim); }
 .lk-btn-ghost:hover { color: var(--text); }
-.lk-btn-sm { padding: 8px 14px; font-size: 13px; }
+.lk-btn.lk-btn-sm { min-height: 36px; padding: 6px 14px; font-size: 13px; }
 .lk-btn-sm svg { width: 14px; height: 14px; }
+/* sm: the 36px box reaches a 44px target, same look */
+.lk-btn.lk-btn-sm::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: max(100%, 44px); transform: translateY(-50%); }
 /* lg — a flow's closing CTA (design onboarding .enter-cta: 17px, padding 17 / 28 on the 4px scale) */
 .lk-btn-lg { padding: var(--space-4) var(--space-7); font-size: 17px; }
 .lk-btn-lg svg { width: 19px; height: 19px; }
 /* icon-only: a square button with one icon (IconButton.md), Button's surface and a control's corners */
 .lk-icon-btn {
   position: relative; display: inline-grid; place-items: center; flex: 0 0 auto;
-  width: 40px; height: 40px; padding: 0; border-radius: var(--r-sm);
-  border: 1px solid var(--border-2); background: var(--glass-2); color: var(--text);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); cursor: pointer;
+  width: 44px; height: 44px; padding: 0; border-radius: var(--r-sm);
+  border: 1px solid var(--border-2); background: var(--field); color: var(--text); cursor: pointer;
   transition: transform .25s var(--ease), border-color .3s var(--ease), background .3s var(--ease);
 }
 @media (hover: hover) { .lk-icon-btn:hover { transform: translateY(-1px); } }
 .lk-icon-btn:active { transform: scale(.96); }
 .lk-icon-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-/* the kit's focus ring, keyboard only */
-.lk-icon-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent); }
-.lk-icon-btn-sm { width: 32px; height: 32px; }
-/* the touch target reaches 44px around the 32px box */
-.lk-icon-btn-sm::before { content: ''; position: absolute; inset: -6px; }
+/* the kit's focus ring (keyboard only) is the shared one below */
+.lk-icon-btn-sm { width: 36px; height: 36px; }
+/* the touch target reaches 44px around the 36px box */
+.lk-icon-btn-sm::before { content: ''; position: absolute; inset: -4px; }
 /* text: a bare action inside a line of mono meta text ("Resend code" beside the code's hint):
    no surface, no padding, `--accent-2`; underlined on hover, `--text-faint` when disabled.
    Two classes, so it wins over the surface rules wherever they sit (Button skips size/tone). */
 .lk-btn.lk-btn-text {
+  position: relative;
+  /* its text wraps when the line is too narrow (a long translation), never overflows */
+  white-space: normal;
+  text-align: inherit;
   padding: 0; border: 0; border-radius: 0; background: none;
   font-family: var(--font-mono); font-weight: 400; font-size: 11.5px; line-height: 17px;
   color: var(--accent-2); will-change: auto; transition: color .2s var(--ease);
@@ -128,6 +140,52 @@
 /* muted text — a quiet way out (design onboarding .step-skip): faint, brighter on hover, no underline */
 .lk-btn.lk-btn-text.lk-btn--tone-muted { padding: var(--space-2); font-size: 12.5px; color: var(--text-faint); }
 @media (hover: hover) { .lk-btn.lk-btn-text.lk-btn--tone-muted:hover { color: var(--text-dim); text-decoration: none; } }
+/* ---- focus and hit areas (CONVENTIONS "Accessibility") ----
+   The kit's focus ring, keyboard only: 2px solid --accent-2 (10:1 on the card), 2px off the edge, on every
+   pressable primitive. It follows the control's radius (outline does). */
+.lk-btn:focus-visible,
+.lk-icon-btn:focus-visible,
+.lk-sso:focus-visible,
+.lk-backlink:focus-visible,
+.lk-choicechip:focus-visible,
+.lk-pop-trigger:focus-visible,
+.lk-menu-trigger:focus-visible,
+.lk-listrow-tappable:focus-visible,
+.lk-input-trail:focus-visible,
+.lk-search-clear:focus-visible,
+.lk-alert-close:focus-visible,
+.lk-toast-x:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+/* A focused invalid field (U11): its 2px red edge plus a soft red halo outside it, so focus on an invalid
+   field is a visible change, not 1px → 2px of the same red. The one indicator stays the field's own. */
+:root { --lk-focus-invalid-halo: 0 0 0 3px color-mix(in srgb, var(--zone-low) 38%, transparent); }
+/* A control drawn smaller than the target keeps its look; an invisible ::before, centred on it, is the
+   target: 24px, 44px at phone width (--bp-phone). The control is its positioning box. */
+.lk-btn-text, .lk-backlink, .lk-input-trail, .lk-search-clear, .lk-alert-close, .lk-toast-x { --lk-hit: 24px; }
+@media (max-width: 540px) {
+  .lk-btn-text, .lk-backlink, .lk-input-trail, .lk-search-clear, .lk-alert-close, .lk-toast-x { --lk-hit: 44px; }
+}
+.lk-btn.lk-btn-text::before,
+.lk-backlink::before,
+.lk-input-trail::before,
+.lk-search-clear::before,
+.lk-alert-close::before,
+.lk-toast-x::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, var(--lk-hit));
+  height: max(100%, var(--lk-hit));
+  transform: translate(-50%, -50%);
+}
+/* Phone width (--bp-phone): every control is at least 44px tall, as native (CONVENTIONS "Accessibility") */
+@media (max-width: 540px) {
+  .lk-sso, .lk-input-field, .lk-select-trigger:not(.lk-select-sm), .lk-search, .lk-seg-tab, .lk-menu-item, .lk-select-option { min-height: 44px; }
+  .lk-modal-close { min-width: 44px; min-height: 44px; }
+}
 /* SSO / social sign-in: full-width, roomy rounded-square (not the pill) with a
    brand logo left of the label. Sits in a 2-up SSO grid. */
 .lk-btn-sso {
@@ -139,7 +197,7 @@
    `variant`: solid `--bad` fill on the default button, red-tinted transparent
    on `.lk-btn-ghost`. */
 .lk-btn--tone-danger {
-  border: none; color: #0A0A12; background: var(--bad);
+  border: none; color: var(--ink-on-bright); background: var(--bad);
   box-shadow: 0 0 24px -6px color-mix(in srgb, var(--bad) 55%, transparent);
 }
 .lk-btn--tone-danger:hover { box-shadow: 0 0 34px -4px color-mix(in srgb, var(--bad) 70%, transparent); }
@@ -153,13 +211,28 @@
   border-color: color-mix(in srgb, var(--bad) 60%, transparent);
   color: var(--bad);
 }
+/* --lk-btn-ink: each variant's label colour, which the loading spinner draws in (loading hides the label) */
+.lk-btn { --lk-btn-ink: var(--text); }
+.lk-btn-primary, .lk-btn--tone-danger { --lk-btn-ink: var(--ink-on-bright); }
+.lk-btn-ghost { --lk-btn-ink: var(--text-dim); }
+.lk-btn-ghost.lk-btn--tone-danger { --lk-btn-ink: var(--bad); }
+.lk-btn.lk-btn-text { --lk-btn-ink: var(--accent-2); }
+.lk-btn.lk-btn-text.lk-btn--tone-muted { --lk-btn-ink: var(--text-faint); }
+/* loading — the kit Spinner over the label, which stays (hidden) so the width never changes and the
+   button keeps its name; no lift while busy. Two classes and last, so it wins over every variant. */
+.lk-btn.lk-btn-loading { position: relative; color: transparent; cursor: progress; }
+.lk-btn.lk-btn-loading:hover, .lk-btn.lk-btn-loading:active { transform: none; text-decoration: none; }
+.lk-btn.lk-btn-loading > :not(.lk-btn-spin) { opacity: 0; }
+.lk-btn-spin { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.lk-btn .lk-btn-spin svg { width: 100%; height: 100%; }
 
 /* ---- chips / badges / pills ---- */
 /* Canonical tone pill. `.lk-chip-sm` is the compact count/status badge size (the
    retired `Badge`); the marketing `Pill` and admin `StatusChip` are thin wrappers
    that emit these same classes. */
 .lk-chip {
-  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  /* its text wraps when the line is too narrow ("Paso 2 de 2 · creación de la cuenta" at 320), never overflows */
+  display: inline-flex; align-items: center; gap: 7px; white-space: normal; overflow-wrap: anywhere; max-width: 100%;
   font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
   padding: 5px 11px; border-radius: var(--r-sm);
   border: 1px solid var(--border-2); background: var(--glass); color: var(--text-dim);
@@ -167,7 +240,7 @@
 .lk-chip.lk-high { color: var(--zone-high); border-color: rgba(52, 245, 197, 0.35); background: rgba(52, 245, 197, 0.08); }
 .lk-chip.lk-mid { color: var(--zone-mid); border-color: rgba(255, 176, 32, 0.35); background: rgba(255, 176, 32, 0.08); }
 .lk-chip.lk-low { color: var(--zone-low); border-color: rgba(255, 77, 109, 0.35); background: rgba(255, 77, 109, 0.08); }
-.lk-chip.lk-accent { color: #cbbcff; border-color: rgba(124, 92, 255, 0.4); background: rgba(124, 92, 255, 0.10); }
+.lk-chip.lk-accent { color: var(--accent-soft); border-color: rgba(124, 92, 255, 0.4); background: rgba(124, 92, 255, 0.10); }
 .lk-chip.lk-pr { color: #FF6B78; border-color: rgba(255, 71, 87, 0.4); background: rgba(255, 71, 87, 0.08); }
 .lk-chip.lk-neutral { color: var(--text-faint); border-color: var(--border-2); background: var(--glass-2); }
 .lk-chip.lk-dot::before { content: ""; flex: none; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
@@ -177,17 +250,17 @@
    accent tone is a FILLED gradient count pill and the neutral tone reads dim on
    glass-2 (this preserves the retired Badge's look exactly). */
 .lk-chip.lk-chip-sm {
-  gap: 4px; justify-content: center;
+  gap: 4px; justify-content: center; white-space: nowrap;
   min-width: 16px; min-height: 16px;
   padding: 2px 6px;
-  font-size: 10px; font-weight: 600; letter-spacing: 0; line-height: 1;
+  font-size: 11px; font-weight: 600; letter-spacing: 0; line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 .lk-chip.lk-chip-sm.lk-high { background: rgba(52, 245, 197, 0.10); }
 .lk-chip.lk-chip-sm.lk-mid { background: rgba(255, 176, 32, 0.10); }
 .lk-chip.lk-chip-sm.lk-low { background: rgba(255, 77, 109, 0.10); }
 .lk-chip.lk-chip-sm.lk-neutral { color: var(--text-dim); background: var(--glass-2); }
-.lk-chip.lk-chip-sm.lk-accent { color: #0A0A12; background: var(--grad-cta); border-color: transparent; }
+.lk-chip.lk-chip-sm.lk-accent { color: var(--ink-on-bright); background: var(--grad-cta); border-color: transparent; }
 /* sm bare dot — the whole chip collapses to an 8px glowing circle, no text
    (Badge's `dot` mode). These rules come last so the dot background wins over
    the tone background. */
@@ -209,7 +282,7 @@
 
 /* ---- stat block ---- */
 .lk-stat { display: flex; flex-direction: column; gap: 6px; }
-.lk-stat .lk-label { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-faint); }
+.lk-stat .lk-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-faint); }
 .lk-stat .lk-value { font-family: var(--font-display); font-weight: 700; font-size: 30px; letter-spacing: -0.02em; }
 .lk-delta { font-family: var(--font-mono); font-size: 12px; }
 .lk-delta.lk-up { color: var(--zone-high); }
@@ -218,7 +291,7 @@
 .lk-stat-empty .lk-stat-empty-value { color: var(--text-faint); }
 .lk-stat .lk-stat-hint { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.02em; color: var(--text-faint); }
 /* optional caption below the value (admin Statistic's `sub`) */
-.lk-stat .lk-stat-sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); }
+.lk-stat .lk-stat-sub { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
 
 /* value tone — gradient or mint, mirroring admin Statistic / marketing Stat.
    The non-hero gradient is the static flux (violet→cyan→violet); the hero size
@@ -233,7 +306,7 @@
 /* size scale — md (default 30px) · sm/lg mirror admin Statistic (20/28px) ·
    hero is the marketing Stat (huge flux number with the label BELOW). */
 .lk-stat-sm, .lk-stat-lg { gap: 3px; min-width: 0; }
-.lk-stat-sm .lk-label, .lk-stat-lg .lk-label { font-size: 10px; letter-spacing: 0.12em; }
+.lk-stat-sm .lk-label, .lk-stat-lg .lk-label { font-size: 11px; letter-spacing: 0.12em; }
 .lk-stat-sm .lk-value { font-size: 20px; line-height: 1.1; }
 .lk-stat-lg .lk-value { font-size: 28px; line-height: 1.1; }
 .lk-stat-hero { gap: 8px; flex-direction: column-reverse; }

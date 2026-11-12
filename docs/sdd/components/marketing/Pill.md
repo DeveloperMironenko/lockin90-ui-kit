@@ -116,6 +116,7 @@ anymore, but to keep each surface importing from its own package boundary and pr
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Renders a non-interactive `<span>` — no role, no focus. The dot is a CSS `::before` (decorative), invisible to assistive tech, which is correct.
 - Pill text is read inline as normal content; if a pill conveys status that isn't obvious from its text (e.g. a color-only meaning), convey that meaning in the `children` text, not the tone alone.
 - Contrast: `default` uses `--text-dim` on `--glass`; `accent` uses `#cbbcff` (`Chip`'s shared accent tone) on the low-alpha violet fill — both chosen to read on the void/gradient background.

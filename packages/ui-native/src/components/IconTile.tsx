@@ -31,7 +31,8 @@ const styles = StyleSheet.create({
     borderRadius: radii.sm,
     borderWidth: 1,
     borderColor: colors.border2,
-    backgroundColor: colors.bg1,
+    // a control's fill (V19)
+    backgroundColor: colors.field,
     alignItems: 'center',
     justifyContent: 'center',
   },

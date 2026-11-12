@@ -68,3 +68,14 @@ export const Danger: Story = {
     </View>
   ),
 };
+
+/** `loading` — the kit Spinner over the kept label: same width, busy, presses ignored. */
+export const Loading: Story = {
+  render: () => (
+    <View style={{ gap: 12, alignItems: 'flex-start' }}>
+      <Button variant="primary" title="Create account" loading />
+      <Button title="Save" loading />
+      <Button variant="ghost" size="sm" title="Resend" loading />
+    </View>
+  ),
+};

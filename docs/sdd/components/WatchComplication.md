@@ -106,6 +106,7 @@ Standalone widget — composes nothing from the kit. Home for `lockin90-watch` c
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<svg role="img">` with a computed per-variant `aria-label` (e.g. `"ENERGY 82 — ring at 82%"`, `"activity rings — move 80%, train 60%, sleep 45%"`). Override via `aria-label` in rest.
 - **Native:** root `View` with `accessibilityRole="image"` + the same computed label.
 - Non-interactive — no focus/keyboard surface. At 1× slot scale (54px) the in-face text is decorative — the accessible label carries the value; don't rely on reading the 8.5-unit captions.

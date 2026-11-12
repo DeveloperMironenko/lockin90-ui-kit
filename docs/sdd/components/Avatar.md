@@ -94,6 +94,7 @@ No capability gap blocks use — the aura difference is platform-shaped motion, 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** image avatars set `alt={name ?? ''}` — pass a `name` for a meaningful alt; monogram avatars are decorative text.
 - **Native:** add `accessibilityLabel={name}` via `...rest` when the avatar conveys identity standalone.
 - **Contrast:** dark `#07080d` monogram on the bright violet→cyan gradient is chosen for legibility across the ramp.
@@ -122,3 +123,27 @@ No capability gap blocks use — the aura difference is platform-shaped motion, 
 - **New need → both platforms.** A new shape or a status ring goes on `Avatar` web **and** native (same prop name, same tokens), never a local variant. `variant="aura"` shipped on both platforms together (same API, same `--grad-flux`/`gradients.flux` + glow).
 - **Tokens only.** The default gradient resolves to `--accent`/`--cyan` (`gradients.cta`); the aura orb to `--grad-flux`/`gradients.flux` + `--glow-accent`/`nativeShadows.glowAccent`; the `#07080d` text and radii are fixed in the component — don't fork them per app.
 - **Parity gate.** Before shipping a profile/roster surface, diff web phone-width vs native: same size, shape, monogram/image, and gradient.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native reduced motion:** the aura orb stops spinning while `useReducedMotion()` is true.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Initials fit the circle:** one line, `adjustsFontSizeToFit` (down to 0.5) inside 80% of the circle, so a large text size shrinks them instead of cutting them; text scaling stays on (no `allowFontScaling={false}` / `maxFontSizeMultiplier`, CONVENTIONS).
+- **`accessible={false}`** hides the initials too (`importantForAccessibility="no-hide-descendants"`, `accessibilityElementsHidden`).
+
+## Update — 2026-11-11 (owner: every corner 10)
+
+- **Every corner 10** (owner, 2026-11-11): a rounded square at every size, web `--r-sm`, native `radii.sm`; `shape` is deprecated and ignored (was a circle / 30 %).
+
+## Update — 2026-11-11 (owner: the audit batch, V1 / V16)
+
+- **Initials fallback (V16, web + native):** a `src` that fails to load (`onError`) shows the monogram, never the
+  browser's broken-image icon or an empty tile; a new `src` is tried again.
+- **A thin control edge on a photo (owner):** `--border-control` / `colors.borderControl`, 1px, inside the tile
+  (web `.lk-avatar--photo::after`, native an overlay View), so a dark or light photo keeps its shape.
+- **Native initials always in the display font (V1):** no `adjustsFontSizeToFit` (on iOS's new architecture a
+  shrunk-to-fit Text lost its family and drew in a serif fallback — at ~137pt on the profile picture). The size
+  is 38% of the box, growing with the OS text size up to half the box, so two initials always fit; scaling
+  stays on.

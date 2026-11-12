@@ -82,6 +82,7 @@ No capability gap — EmptyState renders identically on both platforms.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** semantic text (`div`/`p`); the decorative tile is `aria-hidden`. The `action` `Button` carries its own focus/label. No live-region needed (static placeholder).
 - **Native:** the tile glyph is decorative (no `accessibilityLabel`); title/description are plain `Text` read in order; the `action` `Button` is the focusable target.
 - **Contrast:** title is full `--text`; description `--text-dim` at 13.5px stays legible. The glyph is decorative, so its faint `--accent` is fine.
@@ -106,3 +107,7 @@ No capability gap — EmptyState renders identically on both platforms.
 - **New need → both platforms.** A new layout (e.g. an inline/left-aligned variant) or a secondary action must be added to `EmptyStateProps` on web **and** native with the same names/tokens.
 - **Tokens only.** Tile glass/border, accent glyph, display title, and dim description all come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping, confirm the web phone-width empty state and native match (same icon, title, description, action, compact-ness).
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The icon tile has IconTile's corners, `--r-sm` / `radii.sm` (10), both sizes (were 20 / 15).

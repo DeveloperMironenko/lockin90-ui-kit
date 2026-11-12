@@ -103,19 +103,19 @@ const styles = StyleSheet.create({
   },
   ver: {
     fontFamily: fonts.mono,
-    fontSize: 10.5,
+    fontSize: 11,
     lineHeight: 14,
     color: colors.textDim,
   },
   faint: {
     fontFamily: fonts.mono,
-    fontSize: 10.5,
+    fontSize: 11,
     lineHeight: 14,
     color: colors.textFaint,
   },
   env: {
     fontFamily: fonts.mono,
-    fontSize: 10.5,
+    fontSize: 11,
     lineHeight: 14,
     fontWeight: '600',
     letterSpacing: 0.6,

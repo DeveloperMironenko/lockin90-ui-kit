@@ -35,7 +35,7 @@
   max-width: 240px;
   padding: 6px 9px;
   border-radius: var(--r-sm);
-  border: 1px solid var(--border-2);
+  border: 1px solid var(--border); /* an overlay's edge, as Menu / Popover / Sheet (V19) */
   background: var(--bg-1);
   color: var(--text);
   font-family: var(--font-ui);
@@ -58,7 +58,7 @@
   width: 7px;
   height: 7px;
   background: var(--bg-1);
-  border: 1px solid var(--border-2);
+  border: 1px solid var(--border); /* an overlay's edge, as Menu / Popover / Sheet (V19) */
   transform: rotate(45deg);
 }
 .lk-tip-top::after {

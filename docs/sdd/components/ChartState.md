@@ -113,6 +113,7 @@ The **state layer of every chart card**: render it in place of the chart (same `
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<svg role="img">` with a computed per-variant `aria-label` (e.g. `"NOT ENOUGH DATA: 3 of 7 days collected"`); loading variants add `aria-busy="true"`. The pill (with a handler) is a real tab stop: `role="button"` + `aria-label` = the pill text, Enter/Space activate.
 - **Native:** root `View accessibilityRole="image"` + the same label; the pill group is `accessible` with `accessibilityRole="button"`.
 - The reasons are drawn in 8.5 viewBox px — at very small rendered widths surface the same message as real text nearby.

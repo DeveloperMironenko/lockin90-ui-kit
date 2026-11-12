@@ -8,7 +8,10 @@
   gap: 12px;
 }
 .lk-section-divider-label {
-  white-space: nowrap;
+  /* wraps when wider than the row (a long translation at 320px), never overflows */
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .lk-section-divider-line {
   flex: 1;

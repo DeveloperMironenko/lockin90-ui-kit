@@ -1,15 +1,31 @@
 /* ============================================================================
-   Segmented tabs — an iOS-style segmented control: a pill track of equal-width
+   Segmented tabs — an iOS-style segmented control: a track of equal-width
    segments; the active one is a raised lighter pill (glass-2 + soft shadow).
    Key: .lk-seg (track) > .lk-seg-tab.is-active
+   A field's look (owner 2026-11-11: fields, selects and option switches alike): the field's fill and
+   edge (--border-control, a step up under Increase Contrast), a control's corners (--r-sm); the lit
+   segment's corners are the track's less its inset from the outer edge, so they run parallel
+   (CONVENTIONS "Corner radii"): --lk-seg-inset is the edge (1) plus the gap to the lit fill.
    ========================================================================== */
 .lk-seg {
+  --lk-seg-inset: 5px; /* 1 edge + 4 padding */
   display: flex;
   gap: 4px;
   padding: 4px;
-  border-radius: var(--r-pill);
-  background: var(--bg-1);
-  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--field);
+  border: 1px solid var(--border-control);
+}
+/* a keyboard-focused choice: the field's one focus indicator, its own 2px accent edge (no layout shift) */
+.lk-seg[role='radiogroup']:has(.lk-seg-tab:focus-visible) {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.lk-seg[role='radiogroup'] .lk-seg-tab:focus-visible { outline: none; }
+/* a tab bar's tab can take focus unselected: the kit's ring on that tab, inside the track */
+.lk-seg[role='tablist'] .lk-seg-tab:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: -2px;
 }
 
 .lk-seg-tab {
@@ -30,7 +46,7 @@
   color: var(--text-dim);
   padding: 7px 16px;
   border: 0;
-  border-radius: var(--r-pill);
+  border-radius: calc(var(--r-sm) - var(--lk-seg-inset));
   background: transparent;
   cursor: pointer;
   white-space: nowrap;
@@ -71,14 +87,14 @@
   gap: 6px;
 }
 
-/* Trailing count badge — a small mono pill after the label. */
+/* Trailing count badge — a small mono badge after the label. */
 .lk-seg-count {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
   padding: 2px 6px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-sm);
   background: var(--glass-2);
   color: var(--text-dim);
   transition: color .25s var(--ease), background .25s var(--ease);
@@ -149,7 +165,7 @@
    control (design `.seg.on.mint`). Idle segments are unaffected.
    -------------------------------------------------------------------------- */
 .lk-seg[data-tone='mint'] .lk-seg-tab.is-active {
-  color: #0a0a12; /* dark-on-bright label — the kit's gradient-CTA label color */
+  color: var(--ink-on-bright); /* dark-on-bright label — the kit's gradient-CTA label color */
   background: var(--grad-mint);
   box-shadow: var(--glow-mint);
 }
@@ -158,7 +174,7 @@
    is a CTA-gradient pill (violet→cyan) + accent glow + dark-ink label
    (design `.seg button[aria-pressed="true"]`). Idle segments are unaffected. */
 .lk-seg[data-tone='gradient'] .lk-seg-tab.is-active {
-  color: #07080d;
+  color: var(--ink-on-bright);
   background: var(--grad-cta);
   box-shadow: 0 0 16px rgba(124, 92, 255, 0.4);
 }
@@ -169,7 +185,6 @@
    pill with an accent border (no raised shadow); count badges shrink to mono
    8.5 (padding 1×5, `--border` hairline) and tint cyan when active.
    -------------------------------------------------------------------------- */
-.lk-seg[data-appearance='tint'] { background: var(--glass); }
 .lk-seg[data-appearance='tint'] .lk-seg-tab {
   gap: 5px;
   font-size: 11px;
@@ -183,7 +198,7 @@
   box-shadow: none;
 }
 .lk-seg[data-appearance='tint'] .lk-seg-count {
-  font-size: 8.5px;
+  font-size: 11px;
   padding: 1px 5px;
   background: var(--glass-2);
   border: 1px solid var(--border);
@@ -196,16 +211,15 @@
 }
 
 /* ----------------------------------------------------------------------------
-   `size="sm"` — the design settings compact `.seg`: a content-hugging pill
-   track (padding 3, gap 2, `--border` hairline, glass fill) of mono 12px/500
-   segments (padding 6px 14px) that size to their label instead of stretching.
+   `size="sm"` — the design settings compact `.seg`: a content-hugging track
+   (padding 3, gap 2) of mono 12px/500 segments (padding 6px 14px) that size to
+   their label instead of stretching.
    -------------------------------------------------------------------------- */
 .lk-seg.lk-seg-sm {
+  --lk-seg-inset: 4px; /* 1 edge + 3 padding */
   display: inline-flex;
   gap: 2px;
   padding: 3px;
-  border-color: var(--border);
-  background: var(--glass);
 }
 .lk-seg-sm .lk-seg-tab {
   flex: 0 0 auto;
@@ -222,14 +236,99 @@
   flex: 1 1 0;
   min-width: 0;
 }
+/* a one-line fill choice is a field's height (Input's 39.6) in every script: a fixed line, so a CJK
+   fallback font's taller "normal" line doesn't grow the track (zh 43, ja 45 beside a 39.6 field) */
+.lk-seg.lk-seg--fill:not(.lk-seg--rows):not([data-appearance='tint']) .lk-seg-tab:not(.lk-seg-wrap) {
+  line-height: 15.6px;
+}
+/* a CJK label is one word (owner 2026-11-11: never "アスリー / ト"): it never breaks between its characters */
+.lk-seg.lk-seg--fill .lk-seg-tab {
+  word-break: keep-all;
+}
+/* set by the fit on rows: the label wraps between words inside its segment, never inside a word */
+.lk-seg.lk-seg--fill .lk-seg-tab.lk-seg-wrap {
+  white-space: normal;
+  overflow-wrap: normal;
+  line-height: 1.2;
+}
+/* labels that don't fit one row (owner 2026-11-11): balanced rows of pills (3 + 2, 2 + 2…), each its
+   measured width (inline), a shorter row centred, a break after each row; never a column list as such.
+   The control's corners as on one row (as native) */
+.lk-seg.lk-seg--fill.lk-seg--rows {
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 4px;
+}
+.lk-seg.lk-seg--fill.lk-seg--rows .lk-seg-tab {
+  box-sizing: border-box;
+}
+.lk-seg-break {
+  flex-basis: 100%;
+  height: 0;
+}
+/* the fit's measure: a hidden segment holding one text on one line, in the stylesheet's label font */
+.lk-seg .lk-seg-tab.lk-seg-probe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: pre;
+  width: auto;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+.lk-seg.lk-seg--fill {
+  position: relative;
+}
 @media (max-width: 540px) {
   .lk-seg.lk-seg--fill .lk-seg-tab {
     padding: var(--space-2) var(--space-1);
     font-size: 12.5px;
+  }
+  /* a form choice sits inline with a field (owner, 2026-11-11), as native: the track is the field's 44px,
+     its segments edge to edge and the track's whole height (each a 44px target with the track's edge);
+     the pill is drawn 4px in from the top and bottom and 2px from each side by a transparent border with
+     the fill clipped to the padding box */
+  .lk-seg.lk-seg--fill:not(.lk-seg--rows):not([data-appearance='tint']) {
+    min-height: 44px;
+    padding: 0 2px;
+    gap: 0;
+  }
+  .lk-seg.lk-seg--fill:not(.lk-seg--rows):not([data-appearance='tint']) .lk-seg-tab {
+    min-height: 42px;
+    padding: var(--space-1);
+    border: solid transparent;
+    border-width: 4px 2px;
+    background-clip: padding-box;
+    /* the lit fill is 5 in from the outer edge both ways (1 + 4 down, 1 + 2 + 2 across): its corners
+       --r-sm − 5, drawn on the padding box, so the element's own corners add the border per axis */
+    --lk-seg-inset: 5px;
+    border-radius: calc(var(--r-sm) - var(--lk-seg-inset) + 2px) / calc(var(--r-sm) - var(--lk-seg-inset) + 4px);
+  }
+  /* on rows: the same side padding and edge as the one row (so the measure holds in both), segments 44
+     tall, the pill drawn 2px in all round */
+  .lk-seg.lk-seg--fill.lk-seg--rows:not([data-appearance='tint']) {
+    padding: 2px;
+    gap: 0;
+  }
+  .lk-seg.lk-seg--fill.lk-seg--rows:not([data-appearance='tint']) .lk-seg-tab {
+    min-height: 44px;
+    padding: var(--space-1);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    /* the lit fill 5 in (1 edge + 2 padding + 2 border), drawn on the padding box */
+    --lk-seg-inset: 5px;
+    border-radius: calc(var(--r-sm) - var(--lk-seg-inset) + 2px);
   }
 }
 
 /* invalid — a required choice not made: the line in --zone-low, as an invalid Input */
 .lk-seg.lk-seg--invalid {
   border-color: var(--zone-low);
+}
+.lk-seg.lk-seg--invalid:has(.lk-seg-tab:focus-visible) {
+  border-color: var(--zone-low);
+  box-shadow: inset 0 0 0 1px var(--zone-low), var(--lk-focus-invalid-halo);
 }

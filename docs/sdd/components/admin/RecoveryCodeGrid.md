@@ -100,6 +100,7 @@ import { RecoveryCodeGrid } from '@lockin90/ui/admin';
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - The grid is `role="list"` with `aria-label="Recovery codes"`; each cell is `role="listitem"`
   with an `aria-label` of `"Code <NN>"` (+ `", used"` when consumed) — so the masked dots aren't
   read as noise and used-state is conveyed beyond the strike-through.

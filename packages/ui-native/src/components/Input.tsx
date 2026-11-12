@@ -1,6 +1,21 @@
-import { useState, type ReactNode } from 'react';
-import { View, Text, TextInput, StyleSheet, type TextInputProps } from 'react-native';
+import {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type ForwardRefExoticComponent,
+  type RefAttributes,
+  type ComponentRef,
+  type ReactNode,
+} from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet, type TextInputProps } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
+import { sizedIcon } from '../internal/iconSlot';
+import { useContrastColors } from '../internal/useHighContrast';
+
+/** The field's ref: the TextInput instance (`ComponentRef`, so the type has `focus()` on RN 0.81 and 0.88).
+ *  Exported so the emitted types keep the `ComponentRef` form instead of the kit's RN version's class. */
+export type TextInputRef = ComponentRef<typeof TextInput>;
 
 export interface InputProps extends TextInputProps {
   /** small mono uppercase label rendered above the field */
@@ -24,32 +39,51 @@ export interface InputProps extends TextInputProps {
 }
 
 /** Dark glassy text input — mono label, faint unit suffix, accent focus border. */
-export function Input({
-  label,
-  unit,
-  invalid = false,
-  inputSize = 'md',
-  leading,
-  variant = 'default',
-  style,
-  onFocus,
-  onBlur,
-  ...rest
-}: InputProps) {
+// annotated, so the emitted .d.ts keeps `TextInputRef` (TS would print the kit's RN 0.81 `TextInput` class)
+export const Input: ForwardRefExoticComponent<InputProps & RefAttributes<TextInputRef>> = forwardRef<
+  TextInputRef,
+  InputProps
+>(function Input(
+  {
+    label,
+    unit,
+    invalid = false,
+    inputSize = 'md',
+    leading,
+    variant = 'default',
+    style,
+    onFocus,
+    onBlur,
+    ...rest
+  },
+  ref,
+) {
   const [focused, setFocused] = useState(false);
+  const inputRef = useRef<TextInputRef>(null);
+  // the app's ref is the TextInput itself (focus the next field on Return)
+  useImperativeHandle(ref, () => inputRef.current as TextInputRef, []);
   const sm = inputSize === 'sm';
   const numeral = variant === 'numeral';
 
-  const borderColor = invalid ? colors.zoneLow : focused ? colors.accent : colors.border2;
+  // Increase Contrast steps the edge, placeholder and label up (CONVENTIONS "Accessibility")
+  const c = useContrastColors();
+  const borderColor = invalid ? colors.zoneLow : focused ? colors.accent : c.borderControl;
 
   return (
     <View style={styles.wrap}>
-      {label ? <Text style={styles.label}>{label.toUpperCase()}</Text> : null}
-      <View style={[styles.field, sm && styles.fieldSm, numeral && styles.fieldNumeral, { borderColor }]}>
-        {leading ? <View style={styles.lead}>{leading}</View> : null}
+      {label ? <Text style={[styles.label, { color: c.textDim }]}>{label.toUpperCase()}</Text> : null}
+      {/* a tap on the padding, the icon or the unit focuses the field (the whole box is its target) */}
+      <Pressable
+        accessible={false}
+        onPress={() => inputRef.current?.focus()}
+        style={[styles.field, sm && styles.fieldSm, numeral && styles.fieldNumeral, { borderColor }]}
+      >
+        {/* a field's icon: 16, faint (CONVENTIONS "Type"), unless the app sets its own */}
+        {leading ? <View style={styles.lead}>{sizedIcon(leading, 16, colors.textFaint)}</View> : null}
         <TextInput
+          ref={inputRef}
           style={[styles.input, sm && styles.inputSm, numeral && styles.inputNumeral, style]}
-          placeholderTextColor={colors.textFaint}
+          placeholderTextColor={c.textFaint}
           onFocus={(e) => {
             setFocused(true);
             onFocus?.(e);
@@ -63,10 +97,10 @@ export function Input({
         {unit ? (
           <Text style={[styles.unit, sm && styles.unitSm, numeral && styles.unitNumeral]}>{unit}</Text>
         ) : null}
-      </View>
+      </Pressable>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   wrap: { gap: 6, minWidth: 0 },
@@ -76,7 +110,8 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 17,
     fontWeight: '500',
-    letterSpacing: 1.32,
+    // the one label style (CONVENTIONS "Type"): .14em
+    letterSpacing: 1.54,
     color: colors.textDim,
   },
   field: {
@@ -84,18 +119,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     minWidth: 0,
-    minHeight: 39.6,
+    minHeight: 44, // a 44pt target, as the web field at phone width (CONVENTIONS "Accessibility")
     paddingVertical: 9,
     paddingHorizontal: 12,
     borderRadius: radii.sm,
     borderWidth: 1,
-    backgroundColor: colors.glass2,
+    backgroundColor: colors.field,
   },
-  // the web box: 9 + 14 × 1.4 + 9 + 2 borders = 39.6 (sm: 6 + 12.5 × 1.4 + 6 + 2 = 31.5)
-  fieldSm: { minHeight: 31.5, paddingVertical: 6, paddingHorizontal: 10 },
+  // at least 44 tall (all sizes), as the web field at phone width (CONVENTIONS "Accessibility")
+  fieldSm: { minHeight: 44, paddingVertical: 5, paddingHorizontal: 10 },
   // design `.strow .sv` — glass-2 fill (already the field default), border-2
-  // (already default), 9px radius, roomier centered padding.
-  fieldNumeral: { minHeight: 0, justifyContent: 'center', paddingVertical: 10, paddingHorizontal: 10, borderRadius: 9 },
+  // (already default), the control radius, roomier centered padding.
+  fieldNumeral: { minHeight: 44, justifyContent: 'center', paddingVertical: 10, paddingHorizontal: 10 },
   lead: { flexShrink: 0 },
   input: {
     flex: 1,
@@ -103,13 +138,14 @@ const styles = StyleSheet.create({
     padding: 0,
     color: colors.text,
     fontFamily: fonts.ui,
-    fontSize: 14,
+    // 16, as the web field (no iOS zoom there)
+    fontSize: 16,
     // Center the value/placeholder: drop the explicit lineHeight (it top/bottom-biases
     // the glyph in a single-line TextInput) + Android font-padding/vertical-align props.
     textAlignVertical: 'center',
     includeFontPadding: false,
   },
-  inputSm: { fontSize: 12.5 },
+  inputSm: { fontSize: 16 },
   // design `.strow .sv` — 20px bold display-font numeral, centered, tabular.
   // Content-hugging (not flex:1) so it groups tightly with the unit suffix
   // instead of stretching to the field's full width.
@@ -123,7 +159,7 @@ const styles = StyleSheet.create({
     fontVariant: ['tabular-nums'],
   },
   unit: { flexShrink: 0, fontFamily: fonts.mono, fontSize: 11, color: colors.textFaint },
-  unitSm: { fontSize: 10 },
+  unitSm: { fontSize: 11 },
   // design `.strow .sv small` — dim, sits right after the numeral
   unitNumeral: { fontFamily: fonts.ui, fontSize: 11, fontWeight: '400', color: colors.textDim, marginLeft: 1 },
 });

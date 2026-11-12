@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { cn } from '../cn';
 import { Icon } from './Icon';
 import type { InputProps } from './Input';
@@ -21,17 +21,20 @@ export interface PasswordInputProps extends Omit<InputProps, 'type' | 'unit'> {
  * Mirrors `Input` (same `label` / `leading` / `invalid` / `inputSize` + glass
  * shell); `type` is owned internally and flipped by the trailing eye button.
  */
-export function PasswordInput({
-  label,
-  invalid = false,
-  inputSize = 'md',
-  leading,
-  defaultVisible = false,
-  showLabel = 'Show password',
-  hideLabel = 'Hide password',
-  className,
-  ...rest
-}: PasswordInputProps) {
+export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(function PasswordInput(
+  {
+    label,
+    invalid = false,
+    inputSize = 'md',
+    leading,
+    defaultVisible = false,
+    showLabel = 'Show password',
+    hideLabel = 'Hide password',
+    className,
+    ...rest
+  },
+  ref,
+) {
   const [visible, setVisible] = useState(defaultVisible);
 
   return (
@@ -40,6 +43,7 @@ export function PasswordInput({
       <span className={cn('lk-input-field', inputSize === 'sm' && 'lk-input-sm', invalid && 'lk-input-invalid')}>
         {leading ? <span className="lk-input-lead">{leading}</span> : null}
         <input
+          ref={ref}
           className={cn('lk-input', className)}
           type={visible ? 'text' : 'password'}
           aria-invalid={invalid || undefined}
@@ -57,4 +61,4 @@ export function PasswordInput({
       </span>
     </label>
   );
-}
+});

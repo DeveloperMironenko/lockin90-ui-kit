@@ -122,6 +122,7 @@ These are substrate/OS-picker differences, not blockers — a date field works o
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **DateField web:** a real `<input>` inside a `<label>` — focusable, keyboard-editable, OS-picker accessible. The custom glyph is `aria-hidden`.
 - **DateField native:** the picker `Pressable` has `accessibilityRole="button"` + `accessibilityLabel={label ?? placeholder}`; the fallback `TextInput` is natively accessible. The "Done" button is a labeled `Pressable`.
 - **TreeItem:** web chevron `<button aria-expanded>` with `aria-label` "Expand/Collapse"; native chevron `Pressable` with `accessibilityRole="button"` + `accessibilityState={{ expanded }}` (+ `hitSlop 6` for the small target).
@@ -147,3 +148,9 @@ These are substrate/OS-picker differences, not blockers — a date field works o
 - **New need → add to BOTH platforms.** Native time/datetime support, or a `disabled` `DateField`, is a prop added on web *and* native (same name, same tokens) — never a one-off.
 - **Tokens only.** Field surface, focus ring, active tint, and the dashed children rail come from `@lockin90/tokens`; never inline.
 - **Parity gate.** Before shipping, confirm the web phone-width and native date field read identically (label, glyph, focus ring) and that the native screen doesn't depend on a web-only `type`; verify `TreeItem` indent/active/expand match.
+
+## Update — 2026-11-11 (one focus indicator, web)
+
+- A focused field shows only its own edge: `--accent`, 2px (1px border + 1px inset shadow), on mouse and
+  keyboard focus; no outer `--accent-2` ring, no glow (owner: "2 outlines"). Invalid: the same in `--zone-low`.
+  Supersedes the ring / glow above; see CONVENTIONS "Focus (web)". Native was already edge-only.

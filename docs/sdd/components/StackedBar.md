@@ -97,6 +97,7 @@ No capability gap; the two render the same composition strip.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the track is `role="img"` with an `aria-label` listing each segment's label + rounded %; each segment also has a `title` (hover tooltip).
 - **Native:** the track is `accessibilityRole="image"` with the same composed `accessibilityLabel`.
 - **Color independence:** use `showLegend` (or nearby labels) so the composition is legible without distinguishing the segment colors.

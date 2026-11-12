@@ -2,6 +2,7 @@ import { useRef, useState, type ReactNode } from 'react';
 import { View, Text, Pressable, StyleSheet, Modal, Dimensions, type ViewStyle } from 'react-native';
 import { colors, radii, fonts, nativeShadows } from '@lockin90/tokens';
 import { absoluteFill } from '../internal/absoluteFill';
+import { TopLayerHost } from './TopLayer';
 
 export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
 
@@ -149,6 +150,8 @@ export function Tooltip({ content = 'Tooltip', placement = 'top', children }: To
             )}
           </View>
         )}
+        {/* toasts (TopLayer) over it, the page being under this window */}
+        <TopLayerHost active={open} />
       </Modal>
     </View>
   );
@@ -175,7 +178,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 9,
     borderRadius: radii.sm,
     borderWidth: 1,
-    borderColor: colors.border2,
+    borderColor: colors.border,
     backgroundColor: colors.bg1,
     ...nativeShadows.elev1,
   },
@@ -188,7 +191,7 @@ const styles = StyleSheet.create({
     width: ARROW,
     height: ARROW,
     backgroundColor: colors.bg1,
-    borderColor: colors.border2,
+    borderColor: colors.border,
     transform: [{ rotate: '45deg' }],
   },
 });

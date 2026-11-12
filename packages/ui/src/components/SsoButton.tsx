@@ -1,11 +1,16 @@
-import { type ButtonHTMLAttributes } from 'react';
+import { type ButtonHTMLAttributes, type MouseEvent } from 'react';
 import { cn } from '../cn';
+import { Spinner } from './Spinner';
 
 export type SsoProvider = 'google' | 'apple';
 
 export interface SsoButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   /** Which identity provider this button signs in with. */
   provider: SsoProvider;
+  /** Busy (U6: the provider's popup is open, or its token is being exchanged): the kit Spinner over the
+   *  kept (hidden) content, so the width never changes; `aria-busy`, presses ignored, still focusable and
+   *  named. As Button's `loading` and the native twin. */
+  loading?: boolean;
 }
 
 /**
@@ -18,20 +23,34 @@ export interface SsoButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElem
  * those are brand marks, not themeable surfaces; every themeable surface (bg,
  * border, label) is token-driven.
  */
-export function SsoButton({ provider, className, disabled, ...rest }: SsoButtonProps) {
+export function SsoButton({ provider, className, disabled, loading = false, onClick, ...rest }: SsoButtonProps) {
   const label = provider === 'google' ? 'Google' : 'Apple';
+  const click = (e: MouseEvent<HTMLButtonElement>) => {
+    if (loading) {
+      e.preventDefault();
+      return;
+    }
+    onClick?.(e);
+  };
   return (
     <button
       type="button"
-      className={cn('lk-sso', className)}
+      className={cn('lk-sso', loading && 'lk-sso-loading', className)}
       disabled={disabled}
       aria-label={`Continue with ${label}`}
+      aria-busy={loading || undefined}
+      onClick={click}
       {...rest}
     >
       <span className="lk-sso-icon" aria-hidden="true">
         {provider === 'google' ? <GoogleBrandIcon /> : <AppleBrandIcon />}
       </span>
       <span className="lk-sso-label">{label}</span>
+      {loading ? (
+        <span className="lk-sso-spin" aria-hidden="true">
+          <Spinner size={16} thickness={2} color="var(--text)" />
+        </span>
+      ) : null}
     </button>
   );
 }

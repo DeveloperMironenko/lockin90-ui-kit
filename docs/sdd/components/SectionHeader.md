@@ -96,6 +96,7 @@ Gradient-title motion (web CSS flow vs native SVG animation, `still`) is `Gradie
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the title is a real `<h2>` — it lands in the document outline and heading navigation. Keep one
   `SectionHeader` per section and don't skip heading levels around it. The eyebrow is a plain `<span>`
   (announced as text before the heading).

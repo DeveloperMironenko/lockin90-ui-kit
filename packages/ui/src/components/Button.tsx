@@ -1,5 +1,6 @@
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { forwardRef, type ButtonHTMLAttributes, type MouseEvent, type ReactNode } from 'react';
 import { cn } from '../cn';
+import { Spinner } from './Spinner';
 
 export type ButtonVariant = 'default' | 'primary' | 'ghost' | 'text' | 'sso';
 export type ButtonTone = 'danger' | 'muted';
@@ -20,7 +21,13 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   leading?: ReactNode;
   /** optional icon/node rendered after the label (e.g. a trailing arrow) */
   trailing?: ReactNode;
+  /** busy: the kit Spinner over the kept (hidden) label, so the width never changes; `aria-busy`, and
+   *  presses (and a form submit) are ignored until it ends. The button stays focusable and named. */
+  loading?: boolean;
 }
+
+// the spinner's size per button size (its colour is the variant's label colour, `--lk-btn-ink` in CSS)
+const SPIN_SIZE = { sm: 14, md: 16, lg: 18 } as const;
 
 /** Pill button. `primary` = animated energy-gradient CTA. `text` = a bare mono accent
  *  action inside a line of text ("Resend code"), with no surface. `tone="danger"` composes
@@ -28,11 +35,30 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  *  `ghost`). `leading`/`trailing` render an icon before/after the label (auto-spaced
  *  + sized by the `.lk-btn` flex gap). */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'default', tone, size = 'md', leading, trailing, className, type = 'button', children, ...rest },
+  {
+    variant = 'default',
+    tone,
+    size = 'md',
+    leading,
+    trailing,
+    loading = false,
+    className,
+    type = 'button',
+    children,
+    onClick,
+    ...rest
+  },
   ref,
 ) {
   // `text` has no surface: size and the danger tone don't apply; `muted` is its own (Button.md)
   const surface = variant !== 'text';
+  const click = (e: MouseEvent<HTMLButtonElement>) => {
+    if (loading) {
+      e.preventDefault();
+      return;
+    }
+    onClick?.(e);
+  };
   return (
     <button
       ref={ref}
@@ -47,13 +73,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         !surface && tone === 'muted' && 'lk-btn--tone-muted',
         surface && size === 'sm' && 'lk-btn-sm',
         surface && size === 'lg' && 'lk-btn-lg',
+        loading && 'lk-btn-loading',
         className,
       )}
+      aria-busy={loading || undefined}
+      onClick={click}
       {...rest}
     >
       {leading}
       {children}
       {trailing}
+      {loading ? (
+        <span className="lk-btn-spin" aria-hidden="true">
+          <Spinner size={variant === 'text' ? 12 : SPIN_SIZE[size]} thickness={2} color="var(--lk-btn-ink)" />
+        </span>
+      ) : null}
     </button>
   );
 });

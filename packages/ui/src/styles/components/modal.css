@@ -18,7 +18,8 @@
 .lk-modal {
   width: 100%;
   max-width: 460px;
-  max-height: calc(100vh - 48px);
+  max-height: calc(100vh - 48px); /* fallback for browsers without dvh */
+  max-height: calc(100dvh - 48px);
   display: flex;
   flex-direction: column;
   background: var(--bg-1, var(--glass-2));
@@ -57,7 +58,7 @@
   height: 30px;
   margin: -4px -4px -4px 0;
   border: 0;
-  border-radius: var(--r);
+  border-radius: var(--r-sm);
   background: transparent;
   color: var(--text-faint);
   cursor: pointer;
@@ -89,9 +90,23 @@
 
 .lk-modal-foot {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
   padding: 16px 20px;
   border-top: 1px solid var(--border);
+}
+/* the panel takes focus only so its name is read (useDialogFocus); its controls show the ring */
+.lk-modal:focus { outline: none; }
+
+/* Dialog actions (CONVENTIONS "Dialog actions"): at phone width every action is the same width, in the
+   order given ("Cancel | Primary"); a long label wraps inside its half. Wider, they sit at the end at their
+   own width and go onto a second line when they don't fit. Modal and Sheet footers. */
+.lk-dialog-actions > * { max-width: 100%; }
+@media (max-width: 540px) {
+  /* a grid of equal columns (flex-basis 0 still adds each action's own border and padding) */
+  .lk-modal-foot.lk-dialog-actions,
+  .lk-sheet-foot.lk-dialog-actions { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+  .lk-dialog-actions > * { min-width: 0; white-space: normal; }
 }

@@ -1,5 +1,7 @@
-import { Text, StyleSheet, type TextProps } from 'react-native';
+import { StyleSheet, type TextProps } from 'react-native';
 import { colors, fonts } from '@lockin90/tokens';
+import { useContrastColors } from '../internal/useHighContrast';
+import { FitText } from './FitText';
 
 export type EyebrowProps = TextProps;
 
@@ -7,16 +9,20 @@ export type EyebrowProps = TextProps;
  *  The native twin of the web `Eyebrow` (always renders a `<Text>`; the web-only
  *  `as` prop has no native equivalent). */
 export function Eyebrow({ style, ...rest }: EyebrowProps) {
-  return <Text style={[styles.eyebrow, style]} {...rest} />;
+  // Increase Contrast steps the faint label up
+  const c = useContrastColors();
+  // a word wider than its room shrinks to fit, never splits
+  return <FitText style={[styles.eyebrow, { color: c.textFaint }, style]} {...rest} />;
 }
 
 const styles = StyleSheet.create({
   eyebrow: {
     fontFamily: fonts.mono,
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '500',
     textTransform: 'uppercase',
-    letterSpacing: 2,
+    // the one label style (CONVENTIONS "Type"): .14em
+    letterSpacing: 1.54,
     color: colors.textFaint,
   },
 });

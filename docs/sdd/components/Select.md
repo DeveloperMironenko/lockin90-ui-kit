@@ -124,6 +124,7 @@ The overlay differences are expected substrate, not capability gaps that block u
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the combobox always has a name: `aria-label` goes on the trigger (and the search input), never
   only on the wrapper; a visible `label` names it via `aria-labelledby`.
 - **Web:** trigger is `role="combobox"` with `aria-haspopup="listbox"`, `aria-expanded`, `aria-controls`,
@@ -180,3 +181,87 @@ The overlay differences are expected substrate, not capability gaps that block u
 - **Native `md` field:** the value takes the row (`flex: 1`) and sits left after the leading icon, as on web;
   the three parts were spread with `space-between`, which put the value in the middle. The field has the web's
   height (`minHeight` 39.6, as `Input`). `sm` (the language chip) keeps hugging its content and its height.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Edge:** the trigger (`md` and `sm`) uses `--border-control` / `colors.borderControl` (3.3:1 on the card);
+  `sm` no longer has its own fainter `--border` hairline or hover line.
+- **Native targets:** `sm` (27 tall) `hitSlop` 9 above / below and 4 at the sides, `md` (39.6) 3 above / below:
+  44pt, same look.
+- **Native `accessibilityHint`** prop: read after the name (a `FormField` passes its error or help).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Fill** `--field`; **focus ring** (web) 2px `--accent-2`; **44 tall** at phone width (web, both sizes) and on native (the sm hitSlop is gone, the box is 44). **`aria-required`** from a `FormField` now lands on the `combobox` button, not the wrapper (axe aria-allowed-attr). Label 11px.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more`): faint / dim text and the edge step up.
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **The value wraps** (web and native): no one-line clamp or ellipsis on the trigger's value or the options (web `overflow-wrap: break-word`: at words, and a single word longer than the line breaks inside it rather than being cut); the trigger grows taller ("UTC…", "Engl…" were cut at the largest text size).
+
+## Update — 2026-11-11 (a word never splits, 1.35)
+
+- **Native:** the value's words are measured on one unconstrained line (an invisible, unreadable absolute
+  `View`, `testID="lk-select-measure"`), and the select is at least its widest word + 1pt + the chrome wide
+  (`md` 12 + 11 padding, 2 edge, 8 gap, 16 chevron; `sm` 9 + 8, 2, 5, 13; plus a `leading` icon and its gap),
+  never wider than the screen less 2 × 16. (2026-11-11 review: a time zone breaks after its "/", so the
+  widest piece of "America/Argentina/Buenos_Aires · GMT-3" is "Buenos_Aires" and the select fits the
+  design's 178pt picker; a parent `maxWidth` narrower than one piece is still overflowed, so an app sets its
+  `maxWidth` for the default text size only.) The value still wraps between words, so the field grows taller ("Europ/e/Kyiv",
+  "Engli/sh" at AX sizes are gone). The words are measured on `onLayout` and again from refs in a layout
+  effect (a tree mounted while hidden gets no `onLayout` on iOS Fabric, as SegmentedTabs).
+- **Web:** the wrapper, trigger and value have `min-width: min-content` (was 0), so the trigger is never
+  narrower than the value's widest word; `overflow-wrap: break-word` stays only as the last resort.
+
+## Update — 2026-11-11 (shared measurer, 1.35)
+
+- The word measurer is the kit's shared `WordMeasurer` (`internal/wordFit.tsx`, as SegmentedTabs and
+  FitText), and the words come from `breakableWords` (CJK characters are separate words; a line breaks after
+  a slash, as iOS and Android do: "Europe/" "Kyiv").
+- **Leading icon:** its width is measured on `onLayout` and from its ref in the layout effect (a tree
+  mounted hidden gets no `onLayout` on iOS Fabric).
+
+## Update — 2026-11-11 (sm in a wider box)
+
+- Native `sm` value grows (`flexGrow: 1`) after its icon: in a box wider than its content (Settings' three
+  controls one width, owner 2026-11-11) the value sits left and the chevron at the end, as web (it sat in
+  the middle: `space-between` with a hugging value).
+
+
+## Update — 2026-11-11 (one focus indicator, web)
+
+- A focused field shows only its own edge: `--accent`, 2px (1px border + 1px inset shadow), on mouse and
+  keyboard focus; no outer `--accent-2` ring, no glow (owner: "2 outlines"). Invalid: the same in `--zone-low`.
+  Supersedes the ring / glow above; see CONVENTIONS "Focus (web)". Native was already edge-only.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The web dropdown panel is a container, `--r` (16, was 10), its options a control's 10 (was 6); the native list sheet's top corners are `radii.lg` (22, was 24).
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
+
+## Update — 2026-11-11 (owner: the audit batch, V4 / V9 / V11 / V17 / V20 / U4 / U5 / U12)
+
+Supersedes §3's sizes where they differ.
+
+- **Two control sizes (CONVENTIONS "Control sizes"):** `md` 44 tall at every width, the value 16 (`control`;
+  was 14); `sm` 36 tall with a 44 target (web `::before`, native `hitSlop` 4), the value Inter 14
+  (`controlSm`; was mono 11 native / mono 13 web), chevron 14, padding 6 / 12 / 6 / 10. Both on the field fill
+  with the control edge. The header's language Select and the "Scan" ChoiceChip are both `sm`: the same height.
+- **Leading icon (V17):** a field's icon, 16 and `--text-faint` (web CSS; native gives an element without its
+  own `size` / `color` those).
+- **Label (V20):** the one label style — mono 11 / 500, .14em, uppercase, `--text-dim` (web was Inter, faint).
+- **Native opens the kit `Sheet` (V9):** its panel, handle, display-17 title and × (`closeLabel`, with a
+  `title`); a searchable list is `height="tall"` with the `SearchInput` as the Sheet's `subheader`; the
+  Sheet's own scroll, keyboard and safe-area handling (Android keyboard padding, U20). The old own sheet
+  (top corners 24, a mono title, a header rule, a 28pt ×) is gone. Option rows are 44 tall at least, the
+  selected one `--accent-2` (as web; was the accent).
+- **Web options (U12):** 44 tall at phone width; option text 15 (`rowTitle`) on both platforms.
+- **New `clearLabel` (U4)** for the search field's ×, and **`noMatchesLabel` (U5)**: shown when a search finds
+  nothing and announced (web: a `role="status"` region present from the open, its text set then; native: a
+  live region on Android, `announceForAccessibility` on iOS). English defaults 'Clear search' / 'No matches'.
+- **Search (U5):** an option matches on its label or its value, case-insensitive, underscores as spaces and
+  each "/" part on its own (`selectMatch.ts`, the same on both): "New York" finds `America/New_York`.

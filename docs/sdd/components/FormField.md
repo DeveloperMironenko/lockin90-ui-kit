@@ -112,6 +112,7 @@ None block use; app code reads 1:1 (same `label`/`help`/`error`/`required`, same
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** real `<label>`; set `htmlFor` to the control `id` so clicking the label focuses it. The error row is
   `role="alert"` (announced on appearance). `SearchInput` uses `type="search"`; the clear button has `aria-label="Clear search"`.
 - **Native:** label is a plain `Text` (associate by layout proximity). The search clear `Pressable` carries
@@ -149,3 +150,59 @@ None block use; app code reads 1:1 (same `label`/`help`/`error`/`required`, same
 
 ## Update — 2026-11-02 (native sizes match web)
 - **Native label = the label the web shows:** 11px / 500, `text-dim`, 0.12em, line height 17 (was 10px `text-faint`). On web this look comes from a rule that leaks out of the marketing `Field`; FormField's own web CSS adopts it in a following web PR.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **The label names the control (web):** a single control child gets an `id` (its own, `htmlFor`, or a
+  generated `useId` one) and the label's `for` points at it; the error (`role="alert"`, kept) or help gets an
+  id and is added to the child's `aria-describedby` (after any of its own); `required` sets `aria-required`.
+  Several children or a fragment are left as they are (pass `htmlFor` / ids yourself).
+- **Native:** the one control child gets `accessibilityLabel` = the label (plus `", " + requiredLabel` when
+  `required` and the new `requiredLabel` prop is given — the word in the app's language), unless it sets its
+  own; `accessibilityHint` = the error (or the help) when they are text. The error `Text` is
+  `accessibilityRole="alert"` with `accessibilityLiveRegion="polite"`, and a new error is announced with
+  `AccessibilityInfo.announceForAccessibility` (iOS has no live regions). Native `Select` and `SegmentedTabs`
+  take `accessibilityHint` for this.
+- **SearchInput:** `clearLabel` names the × (default `'Clear search'`, an English fallback; apps pass it). Its
+  edge is `--border-control` / `colors.borderControl`; the field text is 16px (no iOS zoom), line 19.6 so the box
+  keeps its height. The × reaches 24px web (44 at phone width, `::before`) and 44pt native (`hitSlop` 12).
+- **Review fixes:** web — the label has an id and the control gets `aria-labelledby` to it (unless it has its own `aria-label` / `aria-labelledby`), so a control a label's `for` can't name (CodeInput's group, a `kind="choice"` SegmentedTabs) is named. Both platforms map the children instead of swapping one cloned element for the list, so going between one and several children never remounts the control. Native — a new error is announced once: iOS by `announceForAccessibility`, Android by the error's live region; an error already shown when the field mounts is not announced.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- SearchInput: `--field` fill, focus ring, 44 at phone width. Label 11px on web (as native).
+- **The label row wraps** (web `flex-wrap: wrap`, native `flexWrap: 'wrap'`): a long `labelAction` ("¿Olvidaste tu contraseña?" at 320–360) goes to its own line, end-aligned (web `margin-left: auto` + `text-align: end`; native a wrapper with `marginLeft: 'auto'`), instead of overflowing.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Native error icon:** the error has the alert icon before its text, as web (colour is never the only cue); the icon is hidden from screen readers.
+- **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more` in tokens.css) steps the label, help, placeholder and edge up.
+
+## Update — 2026-11-11 (no word split, 1.35)
+
+- **A word never splits (native):** the label is `FitText`: a word wider than the field (a half-width column
+  at AX sizes: "НАРОДЖЕННЯ") shrinks the label until it fits, never below the default text size or 11pt. Apps still go to one column at
+  large text first.
+
+## Update — 2026-11-11 (one focus indicator, web)
+
+- A focused field shows only its own edge: `--accent`, 2px (1px border + 1px inset shadow), on mouse and
+  keyboard focus; no outer `--accent-2` ring, no glow (owner: "2 outlines"). Invalid: the same in `--zone-low`.
+  Supersedes the ring / glow above; see CONVENTIONS "Focus (web)". Native was already edge-only.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- SearchInput is a control, `--r-sm` / `radii.sm` (10) (was the pill); `shape` is deprecated and ignored (both shapes are 10). The round clear button stays round.
+
+## Update — 2026-11-11 (owner: the audit batch)
+
+- **Native: said once (U20).** With one control child, the control carries the label (its
+  `accessibilityLabel`) and a string error / help (its `accessibilityHint`); the visible label, error and
+  help are then hidden from screen readers (they were read again as separate elements, up to 7 times), and a
+  new error is announced once with `announceForAccessibility` (both platforms; no live region on top). With
+  several children the texts stay readable and the error is a live region, as before.
+- **Native help node (V6):** a `help` that is not a string or a `Text` (a FitText box, a View) is laid out on
+  its own, never inside the help `Text` (that drew ~33pt of extra height before the next label).
+- **Label (V20):** the one label style, mono 11 / 500, .14em (1.54pt), `--text-dim` on web too (was faint
+  .12em).
+- **Web focused and invalid (U11):** the red edge plus a soft red halo (CONVENTIONS "Focus").

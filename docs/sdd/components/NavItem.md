@@ -58,6 +58,8 @@ the accent glow, `--lk-nav-bar-offset` (16 px: the sidebar's padding) left of th
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
+
 A real `<a href>`; the current page `aria-current="page"`. Put the rows in a `<nav>` named by the app.
 
 ## 8. Usage rules — Do / Don't
@@ -68,3 +70,7 @@ A real `<a href>`; the current page `aria-current="page"`. Put the rows in a `<n
 ## 9. Anti-patterns & lookalike ban
 
 A hand-styled sidebar link in an app is a lookalike: use this.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Badge 11px** (was 10).

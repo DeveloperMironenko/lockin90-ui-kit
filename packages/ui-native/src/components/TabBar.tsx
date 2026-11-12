@@ -176,7 +176,7 @@ export function FAB({
         end={{ x: 1, y: 1 }}
         style={[styles.fab, extended && styles.fabExtended]}
       >
-        {icon ?? <Icon name="plus" size={22} color="#0A0A12" />}
+        {icon ?? <Icon name="plus" size={22} color={colors.inkOnBright} />}
         {extended && <Text style={styles.fabLabel}>{label}</Text>}
       </LinearGradient>
     </Pressable>
@@ -260,10 +260,11 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: fonts.mono,
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '500',
     letterSpacing: 0.6,
-    lineHeight: 10,
+    // ≥ the 11 font, so the glyphs never clip
+    lineHeight: 13,
   },
   // ---- FAB ----
   fabShadow: {
@@ -291,7 +292,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     letterSpacing: -0.07,
-    color: '#0A0A12',
+    color: colors.inkOnBright,
   },
   fabPressed: { transform: [{ scale: 0.96 }] },
   fabDisabled: { opacity: 0.5 },

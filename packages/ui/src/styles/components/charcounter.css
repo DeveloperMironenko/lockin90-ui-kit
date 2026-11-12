@@ -37,7 +37,7 @@
 .lk-charcount-ct {
   flex: none;
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 11px;
   color: var(--text-faint);
   transition: color 0.3s var(--ease);
 }

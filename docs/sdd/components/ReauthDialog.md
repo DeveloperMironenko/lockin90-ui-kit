@@ -108,6 +108,7 @@ No capability gap — the dialog is fully usable and visually equivalent on both
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** inherits the `Modal` focus trap + ESC + scrim-close; the password field is a labeled `Input` with `autoComplete="current-password"`; Confirm is a real `<button type="submit">` inside a `<form>` (Enter submits). The error renders in a danger `Alert` (announced).
 - **Native:** `Modal` handles Android back + scrim tap; password is `secureTextEntry` + `textContentType="password"` (OS autofill); the Google `Pressable` has `accessibilityRole="button"` + `accessibilityLabel="Continue with Google"`; `onSubmitEditing` submits from the keyboard.
 - **Hit target:** all actions are full-width `Button`s/`Pressable` (≥44px `md`). Confirm stays disabled until a password is entered, signaling required input.
@@ -132,3 +133,28 @@ No capability gap — the dialog is fully usable and visually equivalent on both
 - **Align the Google host.** The native Google `Pressable`-lookalike should track the default `Button` chrome exactly; if Button changes, update it (or migrate to `Button` + `leading`) — don't let it diverge.
 - **New re-auth path → both platforms.** A new method (passkey, TOTP) is added as a prop + tokens on web **and** native, never a one-off.
 - **Tokens only.** Modal, divider, and button chrome come from `@lockin90/tokens`; only the four Google brand colors are hardcoded (identical in both twins).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Focus:** the dialog opens on the password field (`autoFocus`); the Modal keeps Tab inside and gives focus back on close. **Confirm stays enabled:** pressed empty, the field shows `passwordRequiredLabel` (new, both platforms; default `'Enter your password'`) as its `FormField` error. Busy is Button `loading` (named `confirmingLabel`). The field is 16px (Input). Native: new `closeLabel`; the Google / Apple buttons are named by `googleLabel` / `appleLabel` (were English literals).
+- **Apple on web too:** `hasApple`, `onApple`, `appleLabel` (default `'Continue with Apple'`), the native twin's names. Drawn as the Google button is (full-width default Button, the brand glyph in the label colour, the translated label); with `hasGoogle` both show, Google first, after the "or" line when there is a password. Both are disabled while `loading`.
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **Apple has its own classes** (`.lk-reauth-apple`, `.lk-reauth-apple-icon`), styled as Google's.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- Native Google / Apple buttons are controls, `radii.sm` (10, were the pill), as SsoButton.
+
+## Update — 2026-11-11 (owner: the audit batch, U1 / U4 / U14)
+
+- **Always a way out (U1):** Cancel and the Modal's × are never disabled while `loading` (a request that hangs
+  offline left the dialog with no exit).
+- **Busy, not disabled (U14):** the password field is read-only and `aria-busy` (native `editable={false}` +
+  `accessibilityState.busy`), so focus stays on it; Google / Apple are announced unavailable
+  (`aria-disabled` / `accessibilityState.disabled`) and ignore presses, but stay focusable; Confirm keeps its
+  spinner (Button `loading`).
+- **Names (U4):** every label is a prop — apps pass `passwordRequiredLabel`, `closeLabel`, `cancelLabel`,
+  `confirmLabel`, `confirmingLabel`, `passwordLabel`, `passwordPlaceholder`, `googleLabel`, `appleLabel`,
+  `orLabel`, `title`, `description` translated (the English defaults are fallbacks).

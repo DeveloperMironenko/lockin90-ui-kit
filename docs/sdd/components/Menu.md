@@ -113,6 +113,7 @@ No capability gap blocks use — the menu is fully usable and visually equivalen
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** trigger `<button aria-haspopup="menu" aria-expanded>` (with `aria-label` from `label`); panel `role="menu"`, action rows `role="menuitem"`, dividers `role="separator"`. ESC + outside-click dismiss; a row click closes and fires `onClick`.
 - **Native:** trigger + backdrop are `Pressable` (`accessibilityRole="button"`); rows are `accessibilityRole="menuitem"`. Android back dismisses.
 - **Hit target:** trigger ≥30px; rows `8px 10px` padding (comfortable touch). Labels `numberOfLines={1}` on native (truncate, no wrap).
@@ -137,3 +138,24 @@ No capability gap blocks use — the menu is fully usable and visually equivalen
 - **New need → both platforms.** A new item kind (e.g. a checkbox row), submenu, or `align` value must be added to `MenuItemData`/`MenuProps` on web **and** native with the same names/tokens.
 - **Tokens only.** Trigger, panel, row highlight, danger tone, divider all come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping, confirm the web phone-width menu and native menu match (same items, order, danger styling, alignment).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Keyboard (web):** Enter, Space or ArrowDown on the trigger opens on the first item, ArrowUp on the last; ArrowUp / ArrowDown (wrapping), Home and End move; Escape and choosing an item give focus back to the trigger; Tab closes.
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **Tab inside the open menu** closes it and puts focus back on the trigger (the panel is portaled to `<body>`, so Tab would have landed after it). **Enter / Space on the trigger of an open menu** close it; the arrows go into it. A mouse open never moves focus (the keyboard request is reset when the menu closes).
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The panel is a container, `--r` / `radii.md` (16, was 10); items keep the control's 10 (16 less the 5 padding and 1 edge); the bare trigger stays round (it wraps an avatar).
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
+
+## Update — 2026-11-11 (owner: the audit batch)
+
+- **Focus (U11, web):** the trigger takes the shared `--accent-2` ring (the old 45% accent ring was 1.79:1); a
+  keyboard-focused item draws the ring inside the panel (`outline-offset: -2px`) besides its tint (the tint
+  alone was ~1.2:1). **Targets (U12):** items are 44 tall at phone width; a `bare` trigger (an avatar) reaches 44
+  there with a `::before`.

@@ -37,7 +37,8 @@
   place-items: center;
   width: 30px;
   height: 30px;
-  border-radius: 50%;
+  /* every corner is 10 (owner, 2026-11-11), as StepIndex */
+  border-radius: var(--r-sm);
   border: 1px solid var(--border-2);
   background: var(--glass-2);
   color: var(--text-faint);
@@ -187,7 +188,7 @@ button.lk-step-item.is-clickable {
 .lk-step--glow .lk-step-item.is-current .lk-step-node {
   border-color: transparent;
   background: var(--grad-cta, var(--accent));
-  color: #07080d;
+  color: var(--ink-on-bright);
   box-shadow: var(--glow-accent), 0 0 0 5px rgba(124, 92, 255, 0.10);
   animation: lk-step-pulse 2.4s var(--ease) infinite;
 }
@@ -220,7 +221,8 @@ button.lk-step-item.is-clickable {
   gap: 2px;
   padding: 3px;
   border: 1px solid var(--border-2);
-  border-radius: var(--r-pill);
+  /* a control's corners; its buttons 10 less their inset (1 edge + 3 padding) */
+  border-radius: var(--r-sm);
   background: var(--glass-2);
 }
 
@@ -231,7 +233,7 @@ button.lk-step-item.is-clickable {
   width: 30px;
   height: 30px;
   border: 0;
-  border-radius: 50%;
+  border-radius: calc(var(--r-sm) - 4px);
   background: transparent;
   color: var(--text-dim);
   font-family: var(--font-display);

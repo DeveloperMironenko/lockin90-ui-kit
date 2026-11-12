@@ -13,6 +13,7 @@ import {
 import Svg, { Path, Line, Rect, Defs, LinearGradient, Stop, ClipPath } from 'react-native-svg';
 import { colors, fonts, radii } from '@lockin90/tokens';
 import { absoluteFill } from '../internal/absoluteFill';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 /** A single dose taken at `at` hours from t0, of `mg` of substance. */
 export interface PkDose {
@@ -203,7 +204,13 @@ export function PkChart({
   const beatMs = beatPeriodMs(bpm);
   const beating = live && !still && beatMs > 0;
 
+  const reduced = useReducedMotion();
   useEffect(() => {
+    // Reduce Motion: a defined still frame, not wherever the loop stopped
+    if (reduced) {
+      beat.setValue(1);
+      return;
+    }
     if (!beating) return;
     beat.setValue(0);
     const loop = Animated.loop(
@@ -211,7 +218,7 @@ export function PkChart({
     );
     loop.start();
     return () => loop.stop();
-  }, [beating, beatMs, beat]);
+  }, [beating, beatMs, beat, reduced]);
 
   const beatAnim = beating
     ? {

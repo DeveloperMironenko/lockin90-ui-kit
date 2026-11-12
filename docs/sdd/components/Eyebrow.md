@@ -77,6 +77,7 @@ No capability gap blocks use — the overline is visually equivalent on both pla
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** defaults to a presentational `<span>`. When the overline *is* the section heading, pass `as="h2"`/`"h3"` so it participates in the document outline; otherwise leave it a span so it isn't announced as a heading.
 - **Native:** a `<Text>` — read inline by SRs. Pass `accessibilityRole="header"` via rest props if it functions as a section heading.
 - **Contrast:** `--text-faint` is intentionally low-emphasis; reserve `Eyebrow` for supporting captions, not primary content that must meet body-text contrast.
@@ -100,3 +101,19 @@ No capability gap blocks use — the overline is visually equivalent on both pla
 - **New need → add to BOTH platforms.** A new size or a tinted variant is a prop added on web *and* native (same name, same tokens) — never a one-off styled span/text.
 - **Tokens only.** Font, size, weight, and color come from `@lockin90/tokens`; never inline even if it matches today.
 - **Parity gate.** Before shipping, confirm the web phone-width and native overline read identically (same size, tracking, color); the only allowed divergence is the web `as` element choice.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **11px** (was 10): no meaningful text under 11px (CONVENTIONS).
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more`): faint / dim text and the edge step up.
+
+## Update — 2026-11-11 (no word split, 1.35)
+
+- **Native:** renders a `FitText`: a word wider than its room shrinks until it fits, never below the default text size or 11pt.
+
+## Update — 2026-11-11 (owner: the audit batch)
+
+- **The one label style (V20):** .14em (was .2em web / 2pt native), `--text-faint`.

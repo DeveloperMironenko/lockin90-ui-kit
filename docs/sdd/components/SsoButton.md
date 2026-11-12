@@ -83,6 +83,7 @@ No capability gap.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a real `<button>` (keyboard-focusable, Enter/Space activate); `aria-label="Continue with Google/Apple"` names it beyond the visible short label; the icon is `aria-hidden`. `:focus-visible` shows the glass focus state.
 - **Native:** `accessibilityRole="button"` + `accessibilityLabel="Continue with {label}"`.
 - **Contrast:** label is full `--text` on the glass surface; the brand glyphs are decorative (the label carries the name).
@@ -117,3 +118,21 @@ No capability gap.
 
 ## Update — 2026-11-02 (native sizes match web)
 - **Native height = web height:** label line height 1.55, so the button is 41.4 as on web (was 37).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Focus ring (web):** the kit's shared `2px solid --accent-2` ring (it had `outline: none`).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **44 tall** at phone width (web) and on native (`minHeight`).
+
+## Update — 2026-11-11 (owner: the audit batch, control sizes and fills)
+
+- **Fill (V19):** on the opaque `--field` (was `rgba(255,255,255,.04)` glass); hover / press brighten it.
+
+## Update — 2026-11-11 (owner: the audit batch, U6)
+
+- **New `loading`** (web + native): the kit Spinner (16) over the kept, hidden content (the width never
+  changes), `aria-busy` / `accessibilityState.busy`, presses ignored, still focusable and named. Apps pass it
+  while the provider's popup / sheet is open and while its token is exchanged.

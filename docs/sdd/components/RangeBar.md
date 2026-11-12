@@ -89,6 +89,7 @@ No capability gap; fully usable and visually equivalent on both.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root is `role="img"` with an `aria-label` composed from `label`, `value`, `unit`, and the optimal `low–high` range — screen readers get the full context without seeing color.
 - **Native:** pass an `accessibilityLabel` via `...rest` for the same context (the auto a11y label is web-only).
 - **Color independence:** status is conveyed by marker position **and** value-text color — but always include `showValue`/`unit` so the reading isn't color-only.

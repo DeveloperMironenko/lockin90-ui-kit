@@ -153,6 +153,7 @@ Standalone chart — composes nothing from the kit; typically placed inside a `C
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the `<svg>` carries `role="img"` + `aria-label={ariaLabel}` (or `aria-hidden` when unset); overlays are `pointer-events: none` — pass a data-bearing `ariaLabel` ("Tempo run, 52 minutes, average 148 bpm, mostly zone 3").
 - **Native:** root `View` with `accessibilityRole="image"` + `accessibilityLabel={ariaLabel}`.
 - Non-interactive — no focus/keyboard surface. Overlay text renders at true px (8.5/8/12px) regardless of chart width.
@@ -182,3 +183,7 @@ Standalone chart — composes nothing from the kit; typically placed inside a `C
 - **Tokens only** — zone/spectrum/text tokens throughout; the catalog's raw whites are `--text` + opacity inside the component, never re-derived in app code.
 - **Substrate diffs stay documented, not widened** — don't bolt blur filters onto native shine or swap the Animated pulse for SMIL; §5 is the accepted contract.
 - **Parity gate:** any change ships only after the web story and the native story are compared side-by-side against `session-charts.html`.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native reduced motion:** the pulse ring stops while `useReducedMotion()` is true.

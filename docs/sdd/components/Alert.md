@@ -36,8 +36,8 @@ It's the kit's single sanctioned inline-message surface (form errors, success co
 
 | Aspect | Web (`alert.css`) | Native (`StyleSheet`) |
 | --- | --- | --- |
-| Box | `padding: 14px 15px 14px 17px`, `--r-sm`, `border 1px`, `bg --glass-2` + tone tint, `overflow: hidden` | `paddingTop 14 / right 15 / bottom 14 / left 17`, `radii.sm`, `border 1px`, tone bg |
-| Left accent bar | `::before` `width: 3px`, `--lk-alert-c` (tone color) | absolute `<View>` `width: 3`, tone `c` |
+| Box | `padding: 12px 16px` (every tone), `--r`, `border 1px`, `bg --glass-2` + tone tint, `overflow: hidden` | `padding 12 / 16` (every tone), `radii.md`, `border 1px`, tone bg |
+| Left accent bar (optional, `bar`) | `.lk-alert--bar::before` `width: 3px`, `--lk-alert-c` (tone color) | absolute `<View>` `width: 3`, tone `c` |
 | Layout | flex row, `align-items: flex-start`, `gap: 12px` | row, `flex-start`, `gap: 12` |
 | Icon | `--lk-alert-c`, `margin-top: 1px` | tone `c`, `marginTop: 1` |
 | Title | `--font-display`, `14px`, 700, `--text` | `fonts.display`, `14`, `'700'`, `colors.text` |
@@ -105,6 +105,7 @@ No capability gap — the alert is visually equivalent on both.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `role="status"` (polite live region). Close button is a real `<button>` with `aria-label="Dismiss"`; leading icon is `aria-hidden`.
 - **Native:** close `Pressable` has `accessibilityRole="button"` + `accessibilityLabel="Dismiss"` + `hitSlop={6}` for a comfortable tap target.
 - **Tone is not the only signal** — the `title`/body text must carry the meaning (don't rely on color alone for colorblind users).
@@ -138,3 +139,62 @@ No capability gap — the alert is visually equivalent on both.
   `Trans`) rendered raw, which React Native refuses. Now a string **or a `<Text>` element** gets the alert's
   text style (the app puts its sentence in a plain `<Text>`, which inherits it), as any text inside the web alert
   does. Views, fragments and components still render as given. Needed by the mobile Create account timezone note.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **`dismissLabel`** (web + native) names the × (default `'Dismiss'`, an English fallback; apps pass it).
+- **Roles:** web `role="alert"` for `danger`, `role="status"` for every other tone (was `status` for all).
+  Native `danger` is `accessibilityRole="alert"` with `accessibilityLiveRegion="assertive"`, every other tone
+  `polite`.
+- **`titleAs`** (web + native, `'p' | 'h2'…'h6'`, default `'p'`): the title is no longer an `h5`; pass a level
+  when the alert starts a section. Native: a heading level makes the title `accessibilityRole="header"`.
+  Type `AlertTitleLevel` is exported.
+- **Close target:** native `hitSlop` 9 (26 + 18 = 44pt); web an invisible `::before` 24px (44 at phone width);
+  its focus ring is the kit's shared one.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **`live`** (default `true`; `false`: no live region) and **`footer`** (web + native): content under the text that is not announced when it changes — a ticking countdown. With a footer the role / live region sits on the title + text only.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **iOS says it:** iOS has no live regions, so a `danger` or `warn` Alert calls `AccessibilityInfo.announceForAccessibility` (title. text) when it appears or its text changes; `live={false}` opts out; Android keeps its live region. Apps no longer announce alerts themselves.
+- **Increase Contrast** steps the body text up.
+
+## Update — 2026-11-11 (review fixes, 1.35)
+
+- **iOS announcement rule (`announceOnMount`, native):** a `danger` / `warn` Alert speaks when its text changes; on mount only when `announceOnMount` — default `true` for `danger` (an error mounts in answer to an action, e.g. a failed submit) and `false` for `warn` (a note already there when the screen opens isn't read out on top of the screen). `live={false}` opts out of both. Web's role and Android's live region do their own.
+
+## Update — 2026-11-11 (no word split, 1.35)
+
+- **A word never splits (native):** the title and a text body are `FitText`: a word wider than the body
+  ("обновлённым", "перераховує" at AX sizes) shrinks the text until it fits, never below the default text size or 11pt. A rich body
+  (a `Text` with styled parts, i18n `Trans`) renders as given. Web: its words already overflow-wrap only when
+  a single word is wider than the box (no change).
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The box is a container: `--r` / `radii.md` (16), web and native (was 10); the close button stays a control (10).
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
+
+## Update — 2026-11-11 (owner: the audit batch, V5 / V8 / V17 / V25 / U10)
+
+Supersedes the sizes in §3 where they differ.
+
+- **One box for every tone** (signal tones and the three notes alike): padding 12 / 16, gap 12, a
+  container's corners (`--r` / `radii.md`), text 13 (`secondary`, line height 1.5 / 19.5), the icon 16
+  (an app's own icon is sized 16 by `alert.css` too; native default glyphs are 16). The violet note no longer
+  has its own text size (13.5 / 12.5 → 13) and the notes their own padding or 17 / 18 icons.
+- **`bar`** (new, web + native): the 3px tone bar at the start edge. Default on for info / success / warn /
+  danger, off for neutral / cyan / violet; `bar` overrides either way.
+- **`info` is the status `--info`** (`#6E7BFF`, tint 8% / line 30%), as the Toast's info, never the brand
+  accent.
+- **Strong** (`AlertStrong`, web `<b>` / `<strong>`): 600 in `--text` in every tone; only the violet note's
+  emphasis is `--accent-soft` (native reads the tone from the Alert around it). Native's lavender in every
+  tone was the bug.
+- **Announced on mount (web, new `announceOnMount`, as native's):** default `danger` only. The live region
+  (`role="alert"` / `"status"`) renders at once with its text hidden (`visibility: hidden`, so nothing
+  moves) and shows it `LIVE_REVEAL_MS` (100 ms) later, so screen readers read a region they already know
+  (a region that mounts with its text is often silent). Apps pass `announceOnMount` for a result that
+  appears after an action ("Code sent", the offline "will send" note, a reset done).

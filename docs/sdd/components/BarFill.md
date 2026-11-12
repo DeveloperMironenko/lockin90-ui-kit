@@ -80,6 +80,7 @@ const visible = useReveal();
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - Presentational by default (no ARIA role). When the bar conveys standalone meaning, add `role="progressbar"` + `aria-valuenow/min/max` via `...rest` on web, or pair it with a visible text value.
 - Keep the fill on the dark track for contrast; the CTA gradient is bright enough to read at `8px`.
 - Hit target: not interactive — no minimum size requirement.

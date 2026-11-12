@@ -104,11 +104,48 @@
 .lk-sheet-title {
   margin: 0;
   padding: 2px 2px 0;
+  flex: 1;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 16px;
+  /* a card's, sheet's or dialog's title (CONVENTIONS "Type"), as Modal */
+  font-size: var(--fs-card-title);
   letter-spacing: -0.01em;
   color: var(--text);
+}
+.lk-sheet-titlerow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.lk-sheet-titlerow > span:first-child { flex: 1; }
+.lk-sheet-close {
+  position: relative;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-right: -4px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-faint);
+  cursor: pointer;
+}
+.lk-sheet-close:hover { color: var(--text); background: var(--glass); }
+.lk-sheet-close::before { content: ''; position: absolute; inset: -8px; }
+.lk-sheet-close:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+.lk-sheet-close svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; }
+.lk-sheet-subheader { flex: none; padding: 12px 2px 0; }
+.lk-sheet-bottom.lk-sheet--tall { height: 80vh; height: 80dvh; }
+.lk-sheet-foot {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px 2px 0;
 }
 
 .lk-sheet-body {
@@ -121,3 +158,6 @@
   line-height: 1.55;
   color: var(--text-dim);
 }
+
+/* the panel takes focus only so its name is read (useDialogFocus); its controls show the ring */
+.lk-sheet:focus { outline: none; }

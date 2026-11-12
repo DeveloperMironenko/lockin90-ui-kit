@@ -5,10 +5,11 @@
 .lk-eyebrow {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  /* the one label style (CONVENTIONS "Type"): .14em; a section label faint */
+  letter-spacing: var(--ls-label);
   line-height: 1;
   color: var(--text-faint);
 }

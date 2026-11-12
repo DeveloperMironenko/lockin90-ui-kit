@@ -94,6 +94,7 @@ No capability gap blocks use; both render the same insight.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** title renders as `<h4>` — ensure the surrounding heading order is sensible. Body is a `<p>`. The icon is decorative (set via `Icon`); the insight meaning lives in the title/body text.
 - **Native:** title/body are `Text`; stats are `Chip`s. No interactive role (it's presentation).
 - **Color independence:** tone is reinforced by the icon choice + prose, not color alone — `positive` (`--ok`) vs `negative` (`--bad`) shouldn't be the only signal; choose an `icon` that matches.

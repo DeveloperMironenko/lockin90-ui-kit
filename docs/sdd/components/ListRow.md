@@ -106,6 +106,7 @@ There is **no capability gap** — both render the same row.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** tappable rows are real `<button type="button">` — focusable, Enter/Space activate; `aria-pressed={active}` exposes selection in pickers. Static rows are `<div>` (non-interactive, correct). Provide a meaningful `title`; if `trailing` is the only label, add `aria-label` via rest.
 - **Native:** the `Pressable` should carry `accessibilityRole="button"` and an `accessibilityLabel` via rest props; `active` selection should be mirrored with `accessibilityState={{ selected }}` by the consumer.
 - **Hit target:** `14px` vertical padding + content yields a ≥44px touch target — safe for mobile.
@@ -135,3 +136,32 @@ There is **no capability gap** — both render the same row.
 
 ## Update — 2026-07-10
 - **Haptics:** the primary interaction (segment change / row press / panel open) fires `hapticSelection()` (native `optionalHaptics`; no-op without expo-haptics).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Focus ring (web):** a tappable row shows the kit's shared `2px solid --accent-2` ring, inset 2px (it had
+  `outline: none` with only a glass tint).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Narrow settings rows stack (`variant="pref"` / `"action"`, web + native):** a row under 300 wide (a phone at 360 / 320) puts its trailing control on its own line under the text, the full row wide and start-aligned (row gap 8), so "Timezone", "Часовий пояс", "Пройти налаштування знову" no longer shrink to a word per line and spill out. Web: the row is a size container (`container-type: inline-size`, `flex-wrap: wrap`) with `@container (max-width: 300px)`; native: the row's width from `onLayout` (an app's `onLayout` still fires). The text always wraps inside its column (`overflow-wrap: anywhere`). Wider rows keep the control on the right, as before. At 402 (a ~326 row in a Settings card) nothing changes.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Large text stacks too (native):** a `pref` / `action` row also puts its control under the text when the OS text scale is over 1.35 (`useWindowDimensions().fontScale`), whatever its width (a 350 row at the largest size left the text 20 wide). Web: the container query is in em (`18.75em`, 300px at 16px text), so a larger browser text size stacks it sooner.
+- **A plain row's title wraps** (native had `numberOfLines={1}`: "Data sour…" at the largest size). The subtitle of a plain row stays one line.
+- **Increase Contrast** steps the subtitle up (`useContrastColors`).
+
+## Update — 2026-11-11 (no word split, 1.35)
+
+- **A word never splits (web + native):** a wrapping title or subtitle ("Run onboarding again" at AX sizes:
+  "onboardin/g") shrinks until its widest word fits the row, never below the default text size or 11pt (native `FitText`; web
+  `useWordFit` on `.lk-listrow-title` / `.lk-listrow-subtitle`). One-line rows are unchanged.
+- **Native, large text:** a plain row's subtitle (one line, as drawn) wraps above text size 1.35 instead of
+  being cut with an ellipsis ("Physiology,…" on Account at AX3).
+
+## Update — 2026-11-11 (owner: the audit batch, V17)
+
+- **Icons sized by the slot (native, as web's CSS):** a kit `Icon` passed without its own `size` gets the slot's
+  — a field's `leading` 16 in `textFaint`, a row's `leading` 18 (`internal/iconSlot.ts`); any other node (an
+  avatar, a brand mark) renders as given.

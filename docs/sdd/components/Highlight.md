@@ -81,6 +81,7 @@ No capability gap; the emphasis renders the same color + tinted background on bo
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a `<span>` — semantically inline text; the **color is decorative emphasis**, not the only signal (the word itself carries the meaning). Add `aria-*` via `...rest` only if the emphasis needs an explicit role.
 - **Native:** a `<Text>` node read inline by the screen reader as part of the sentence.
 - **Contrast:** the softened `#cbbcff` accent and the zone tones are chosen for legibility on the dark surface; don't darken them — keep the tone literals.

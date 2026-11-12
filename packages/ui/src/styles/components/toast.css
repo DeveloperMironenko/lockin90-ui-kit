@@ -1,46 +1,53 @@
 /* ============================================================================
-   Toast — a compact floating notification card. Tone-driven: it tints its icon
-   + a subtle left accent rail.
+   Toast — a compact floating notification card: the card's surface, opaque
+   (--card-solid: it floats over photos and fields, its text stays at 4.5:1),
+   its edge, icon circle and countdown line tinted by the tone.
 
    (`Badge` used to live here too; it is now a thin wrapper over `Chip` at its
    `sm` size — see `.lk-chip-sm*` in primitives.css.)
    ========================================================================== */
 
-/* ---- Toast: compact floating glass card ---- */
+/* ---- Toast: the card's surface (owner, 2026-11-11, variant C: slim, the tone's edge and icon) ---- */
 .lk-toast {
   position: relative;
   display: flex;
-  align-items: flex-start;
-  gap: 11px;
+  align-items: center;
+  gap: 10px;
   width: min(360px, 92vw);
-  padding: 11px 13px;
-  border-radius: var(--r-sm);
+  padding: 6px 6px 6px 10px;
+  border-radius: var(--r);
+  /* the tone's edge (3:1 on the card where it marks the state); neutral by default */
   border: 1px solid var(--border-2);
-  background: var(--bg-1);
-  background-image: linear-gradient(var(--glass-2), var(--glass-2));
+  background: var(--card-solid);
   box-shadow: var(--elev-2);
-  overflow: hidden;
+  animation: lk-toast-in .2s var(--ease) both;
+}
+@keyframes lk-toast-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes lk-toast-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-toast.lk-toast { animation: lk-toast-fade .2s ease both !important; }
 }
 
-/* subtle left accent rail — neutral by default, tinted per tone */
-.lk-toast::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 3px;
-  background: var(--border-2);
-}
-
+/* the icon in a 22px circle, in the tone's colour */
 .lk-toast-icon {
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  margin-top: 1px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--glass-2);
   color: var(--text-dim);
 }
-.lk-toast-icon svg { width: 17px; height: 17px; }
+.lk-toast-icon svg { width: 13px; height: 13px; }
 
-.lk-toast-body { min-width: 0; flex: 1 1 auto; }
+.lk-toast-body { min-width: 0; flex: 1 1 auto; padding: 4px 0; }
 
 .lk-toast-title {
   font-family: var(--font-ui);
@@ -58,9 +65,59 @@
   color: var(--text-dim);
 }
 
-.lk-toast-x {
+/* the action ("Undo"): filled with the CTA gradient, its dark label (4.5:1 at every point of it), 26 tall
+   with a 44px hit area, corners 10 (the toast's 16 less its 6 padding); the seconds ring inside, left */
+.lk-toast-action {
+  position: relative;
   flex: 0 0 auto;
-  margin: -2px -2px 0 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: var(--grad-cta);
+  color: var(--ink-on-bright);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform .25s var(--ease), box-shadow .3s var(--ease);
+}
+.lk-toast-action::before { content: ""; position: absolute; inset: -9px -4px; }
+/* the ring sits 5 from its left edge */
+.lk-toast-action:has(.lk-toast-ring) { padding-left: 5px; }
+.lk-toast-action:hover { box-shadow: var(--glow-accent); }
+.lk-toast-action:active { transform: scale(.98); }
+.lk-toast-action:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+/* a toast with an action takes the pointer (hover and press hold its countdown) */
+.lk-toast-has-action { pointer-events: auto; }
+
+/* the seconds ring: 16px, a 1.8 stroke in the label's colour over a .22 track, the number centred */
+.lk-toast-ring { position: relative; flex: none; width: 16px; height: 16px; }
+.lk-toast-ring svg { display: block; width: 16px; height: 16px; transform: rotate(-90deg); }
+.lk-toast-ring circle { fill: none; stroke: currentColor; stroke-width: 1.8; }
+.lk-toast-ring-track { opacity: .22; }
+.lk-toast-ring-left { stroke-linecap: round; }
+.lk-toast-ring i {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-ui);
+  font-size: 8.5px;
+  font-style: normal;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.lk-toast-x {
+  position: relative;
+  flex: 0 0 auto;
+  margin: 0 2px;
   width: 20px;
   height: 20px;
   display: grid;
@@ -73,26 +130,20 @@
   font-size: 17px;
   line-height: 1;
   cursor: pointer;
+  pointer-events: auto;
   transition: color .2s ease, background .2s ease;
 }
 .lk-toast-x:hover { color: var(--text); background: var(--glass-2); }
 
-/* tone tints: icon color + left rail */
-.lk-toast-success .lk-toast-icon { color: var(--zone-high); }
-.lk-toast-success::before { background: var(--zone-high); }
+/* tone tints: the edge (each alpha keeps 3:1 on the card) and the icon's circle (.14) */
+.lk-toast-success { border-color: rgba(52, 245, 197, .45); }
+.lk-toast-success .lk-toast-icon { color: var(--ok); background: rgba(52, 245, 197, .14); }
 
-.lk-toast-warn .lk-toast-icon { color: var(--zone-mid); }
-.lk-toast-warn::before { background: var(--zone-mid); }
+.lk-toast-info { border-color: rgba(110, 123, 255, .7); }
+.lk-toast-info .lk-toast-icon { color: var(--info); background: rgba(110, 123, 255, .14); }
 
-.lk-toast-danger .lk-toast-icon { color: var(--zone-low); }
-.lk-toast-danger::before { background: var(--zone-low); }
+.lk-toast-warn { border-color: rgba(255, 176, 32, .5); }
+.lk-toast-warn .lk-toast-icon { color: var(--warn); background: rgba(255, 176, 32, .14); }
 
-/* filled: the tone's color is the card, no rail; the ink dark on it (default: the opaque --bg-2) */
-.lk-toast-filled { border-color: transparent; }
-.lk-toast-filled::before { display: none; }
-.lk-toast-filled.lk-toast-success { background: var(--zone-high); }
-.lk-toast-filled.lk-toast-warn { background: var(--zone-mid); }
-.lk-toast-filled.lk-toast-danger { background: var(--zone-low); }
-.lk-toast-filled:is(.lk-toast-success, .lk-toast-warn, .lk-toast-danger) :is(.lk-toast-icon, .lk-toast-title, .lk-toast-x) { color: var(--bg-0); }
-.lk-toast-filled:is(.lk-toast-success, .lk-toast-warn, .lk-toast-danger) .lk-toast-msg { color: var(--bg-0); opacity: .75; }
-.lk-toast-filled:not(.lk-toast-success, .lk-toast-warn, .lk-toast-danger) { background: var(--bg-2); }
+.lk-toast-danger { border-color: rgba(255, 77, 109, .7); }
+.lk-toast-danger .lk-toast-icon { color: var(--bad); background: rgba(255, 77, 109, .14); }

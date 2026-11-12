@@ -1,19 +1,22 @@
-import { useEffect, useRef } from 'react';
-import { View, Text, Image, Animated, Easing, StyleSheet, type ViewProps } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { View, Text, Image, Animated, Easing, StyleSheet, useWindowDimensions, type ViewProps } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, fonts, gradients, nativeShadows } from '@lockin90/tokens';
+import { colors, fonts, gradients, nativeShadows, radii } from '@lockin90/tokens';
 import { absoluteFill } from '../internal/absoluteFill';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 export interface AvatarProps extends ViewProps {
   /** Display name — used to derive monogram initials when `initials` is omitted. */
   name?: string;
   /** Explicit monogram initials; overrides the value derived from `name`. */
   initials?: string;
-  /** Image URL. When present, an `<Image>` is rendered instead of the monogram. */
+  /** Image URL. When present, an `<Image>` is rendered instead of the monogram; when it fails to load,
+   *  the monogram shows instead (V16). */
   src?: string;
   /** Pixel size of the square avatar. @default 44 */
   size?: number;
-  /** Outline shape — a full circle or a softly-rounded square. @default 'circle' */
+  /** @deprecated 2026-11-11 (every corner is 10): ignored, every avatar is a rounded square (10).
+   *  Removed in the next major. */
   shape?: 'circle' | 'rounded';
   /**
    * Visual variant.
@@ -44,8 +47,8 @@ function initialsFor(name: string): string {
 
 /**
  * Avatar — a standalone identity tile showing either an image or a monogram
- * (initials painted on the flux gradient). Square by `size`, circular by
- * default or softly rounded via `shape="rounded"`. The monogram falls back to
+ * (initials painted on the flux gradient). Square by `size`, a rounded square (10) at every size.
+ * The monogram falls back to
  * initials derived from `name`, then to `'?'`.
  *
  * `variant="aura"` renders an energy-spectrum flux orb (no image/monogram) for
@@ -56,23 +59,43 @@ export function Avatar({
   initials,
   src,
   size = 44,
-  shape = 'circle',
+  shape: _shape,
   variant = 'default',
   gradient = gradients.cta.stops,
   style,
   ...rest
 }: AvatarProps) {
-  const radius = shape === 'rounded' ? size * 0.3 : size / 2;
+  // a rounded square at every size, both shapes: every corner is 10 (owner, 2026-11-11)
+  const radius = radii.sm;
   const box = { width: size, height: size, borderRadius: radius };
+  // a photo that fails to load falls back to the monogram (V16); a new src tries again
+  const [failed, setFailed] = useState<string | null>(null);
+  const photo = src && failed !== src ? src : undefined;
+  // The initials' size follows the box: 38% of it, growing with the OS text size up to half the box (they
+  // always fit, scaling stays on). Never adjustsFontSizeToFit: on iOS's new architecture a shrunk-to-fit
+  // Text lost its font family and drew in the serif fallback (V1).
+  const { fontScale } = useWindowDimensions();
+  const scale = fontScale > 0 ? fontScale : 1;
+  const initialsSize = Math.min(size * 0.38 * scale, size * 0.5) / scale;
 
   if (variant === 'aura') {
     return <AuraOrb size={size} radius={radius} name={name} style={style} {...rest} />;
   }
 
+  // accessible={false}: a decoration, so its initials are hidden too (not read as a separate element)
+  const hidden =
+    rest.accessible === false
+      ? { importantForAccessibility: 'no-hide-descendants' as const, accessibilityElementsHidden: true }
+      : {};
+
   return (
-    <View style={[styles.avatar, box, style]} {...rest}>
-      {src ? (
-        <Image source={{ uri: src }} style={styles.img} resizeMode="cover" />
+    <View style={[styles.avatar, box, style]} {...hidden} {...rest}>
+      {photo ? (
+        <>
+          <Image source={{ uri: photo }} style={styles.img} resizeMode="cover" onError={() => setFailed(photo)} />
+          {/* a thin control edge over the photo, so a dark or light photo still has a shape (owner) */}
+          <View style={[styles.photoEdge, { borderRadius: radius }]} pointerEvents="none" />
+        </>
       ) : (
         <LinearGradient
           colors={gradient as unknown as [string, string]}
@@ -80,7 +103,8 @@ export function Avatar({
           end={{ x: 1, y: 1 }}
           style={styles.mono}
         >
-          <Text style={[styles.monoText, { fontSize: Math.round(size * 0.38) }]}>
+          {/* sized from the box and the text size (see initialsSize); the display font always */}
+          <Text style={[styles.monoText, { fontSize: initialsSize, lineHeight: Math.ceil(initialsSize * 1.15) }]} numberOfLines={1}>
             {initials ?? initialsFor(name ?? '')}
           </Text>
         </LinearGradient>
@@ -105,7 +129,13 @@ function AuraOrb({
 }: { size: number; radius: number; name?: string } & ViewProps) {
   const spin = useRef(new Animated.Value(0)).current;
 
+  const reduced = useReducedMotion();
   useEffect(() => {
+    // Reduce Motion: a defined still frame, not wherever the loop stopped
+    if (reduced) {
+      spin.setValue(0);
+      return;
+    }
     const loop = Animated.loop(
       Animated.timing(spin, {
         toValue: 1,
@@ -116,7 +146,7 @@ function AuraOrb({
     );
     loop.start();
     return () => loop.stop();
-  }, [spin]);
+  }, [spin, reduced]);
 
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
@@ -157,8 +187,9 @@ function AuraOrb({
 const styles = StyleSheet.create({
   avatar: { overflow: 'hidden' },
   img: { width: '100%', height: '100%' },
+  photoEdge: { ...absoluteFill, borderWidth: 1, borderColor: colors.borderControl },
   mono: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  monoText: { fontFamily: fonts.display, fontWeight: '700', color: '#07080d', letterSpacing: -0.3 },
+  monoText: { fontFamily: fonts.display, fontWeight: '700', color: colors.inkOnBright, letterSpacing: -0.3 },
   // backgroundColor anchors the glow's shape on iOS; it's fully hidden by the orb
   auraGlow: { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.void, ...nativeShadows.glowAccent },
   auraOrb: { ...absoluteFill, overflow: 'hidden' },

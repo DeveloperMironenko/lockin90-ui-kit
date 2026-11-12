@@ -8,7 +8,9 @@
 interface HapticsModule {
   selectionAsync: () => Promise<void>;
   impactAsync: (style?: unknown) => Promise<void>;
+  notificationAsync: (type?: unknown) => Promise<void>;
   ImpactFeedbackStyle: { Light: unknown; Medium: unknown; Heavy: unknown };
+  NotificationFeedbackType: { Success: unknown; Warning: unknown; Error: unknown };
 }
 
 let haptics: HapticsModule | null = null;
@@ -25,6 +27,12 @@ try {
 /** Selection tick — the light click for toggles/segments/pickers. No-op without expo-haptics. */
 export function hapticSelection(): void {
   void haptics?.selectionAsync().catch(() => {});
+}
+
+/** Success — a save went through (owner rule: a selection tick on a pick, success on a save). No-op
+ *  without expo-haptics. */
+export function hapticSuccess(): void {
+  void haptics?.notificationAsync(haptics.NotificationFeedbackType.Success).catch(() => {});
 }
 
 /** Medium impact — a drag lifting off. No-op without expo-haptics. */

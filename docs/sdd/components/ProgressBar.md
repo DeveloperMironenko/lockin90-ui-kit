@@ -115,6 +115,7 @@ Variant mode (both platforms, catalog-exact):
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** `role="progressbar"` with `aria-valuemin/max/now` (now clamped ≤100) and `aria-label` = `label` in both modes; decorative layers are `aria-hidden`.
 - **Native:** no ARIA role wired; pass `accessibilityLabel`/`accessibilityRole` via `...rest` when the progress matters.
 - The overflow `%`/pill and the step counter give text equivalents; zone color is a supporting encoding — state the meaning in `label`/`sub`.
@@ -139,3 +140,12 @@ Variant mode (both platforms, catalog-exact):
 - **New variant → BOTH platforms** with the same prop names + tokens, in the same unit of work.
 - **Tokens only.** Allowed literals are the catalog's structural alphas (track 7%, ghost 16%, tick 30%, pill bg) — everything colored comes from tokens.
 - **Parity gate.** Web phone-width ≡ native for the same variant/props; the known native deltas are the un-clamped pill anchor and duplicate-based shine.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native reduced motion:** the indeterminate sweep stops while `useReducedMotion()` is true.
+- **Review fix:** under Reduce Motion the native indeterminate band stays still in the middle of the track (web: a centred band), never off-track.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Name:** web takes `aria-label` / `aria-labelledby` (axe aria-progressbar-name); native is now `accessibilityRole="progressbar"` with `accessibilityValue`, named by `label` or the app's `accessibilityLabel`; indeterminate is `busy`.

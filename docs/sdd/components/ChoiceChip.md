@@ -104,6 +104,7 @@ Both render the same pill with the same selected look — no capability gap.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** a real `<button aria-pressed>` — focusable, Enter/Space toggle, `type="button"` by default (won't submit a form). Pass `aria-label` when the chip is icon-only.
 - **Native:** `Pressable` with `accessibilityRole="button"` + `accessibilityState={{ selected, disabled }}`; the label `<Text>` is read.
 - **Hit target:** `md` padding (7/13) yields a comfortable touch target; prefer `md` on touch surfaces, `sm` for dense desktop/admin filter bars.
@@ -129,3 +130,23 @@ Both render the same pill with the same selected look — no capability gap.
 - **New need → add to BOTH platforms.** A new size or a trailing-remove `×` is a prop added on web *and* native (same name, same tokens) — never a one-off.
 - **Tokens only.** The selected tint, border, and focus ring come from `@lockin90/tokens` / the shared rgba constants; keep web CSS and native styles in sync.
 - **Parity gate.** Before shipping a filter bar, confirm the web phone-width and native chips look and toggle identically (idle vs selected, size, dot/icon).
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native targets, same look:** `hitSlop` 6 (`md`, 32 tall) / 8 (`sm`, 28): 44pt. `stacked` cells are tall
+  already.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Stacked label 11px** (was 10).
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- A control: `--r-sm` / `radii.sm` (10), the `stacked` cell too (was the pill / 16).
+
+## Update — 2026-11-11 (owner: the audit batch, control sizes and fills)
+
+- **Two sizes:** `md` 44 tall (was 32), `sm` 36 tall with a 44 target (was 28; the header's "Scan" beside a
+  `sm` Select, the same height); label 14 at both, icon 16 (native sizes an `icon` without its own size);
+  unselected on the `--field` fill with `--border-2` (was `--glass` / `--border`). Web focus: the kit's shared
+  `--accent-2` ring (was a 14% accent glow). `stacked` keeps its own layout.

@@ -114,6 +114,7 @@ const [message, setMessage] = useState('');
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - The `<label htmlFor={id}>` is correctly associated with the control's `id`, so clicking the label focuses the control and screen readers announce the name — **always pass a meaningful `label`** (it doubles as the accessible name).
 - `required` sets the native HTML `required` attribute → built-in constraint validation and `aria-required` semantics; the visible `*` is a sighted cue layered on top.
 - **Limitation:** because no `...rest` is forwarded, you **cannot** add `aria-describedby`, `aria-invalid`, `inputMode`, `autoCapitalize`, etc. through these components. If a marketing form needs richer a11y/validation wiring, that's a reason to extend the kit (see §9), not to bypass it.

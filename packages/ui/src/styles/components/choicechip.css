@@ -7,15 +7,21 @@
 .lk-choicechip {
   display: inline-flex;
   align-items: center;
+  position: relative;
+  justify-content: center;
   gap: 7px;
-  padding: 7px 13px;
-  border-radius: var(--r-pill);
-  border: 1px solid var(--border);
-  background: var(--glass);
+  /* md 44 tall, sm 36 with a 44 target (owner, 2026-11-11, CONVENTIONS "Control sizes") */
+  min-height: 44px;
+  padding: 0 14px;
+  /* a control's corners (CONVENTIONS "Corner radii") */
+  border-radius: var(--r-sm);
+  /* a button's edge and a control's fill (V19) */
+  border: 1px solid var(--border-2);
+  background: var(--field);
   color: var(--text-dim);
   font-family: var(--font-ui);
-  font-size: 13px;
-  line-height: 1;
+  font-size: 14px;
+  line-height: 1.25;
   cursor: pointer;
   user-select: none;
   transition: border-color 0.18s var(--ease), background 0.18s var(--ease), color 0.18s var(--ease);
@@ -24,11 +30,7 @@
   border-color: var(--border-2);
   color: var(--text);
 }
-.lk-choicechip:focus-visible {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14);
-}
+/* the focus ring is the kit's shared one (primitives.css, 3:1) */
 
 .lk-choicechip-on {
   border-color: rgba(124, 92, 255, 0.5);
@@ -45,21 +47,37 @@
 }
 
 .lk-choicechip-sm {
-  padding: 5px 10px;
-  font-size: 12px;
+  min-height: 36px;
+  /* a sm Select's padding and line (select.css), so the two stay one height when the text grows */
+  padding: 6px 12px;
+  line-height: 1.3;
+}
+/* sm: the 36px box reaches a 44px target, same look */
+.lk-choicechip-sm::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 44px;
+  transform: translateY(-50%);
+}
+.lk-choicechip-icon svg {
+  width: 16px;
+  height: 16px;
 }
 
-/* stacked — icon-over-label grid cell (quick-action grids): rounded rect, centred,
+/* stacked — icon-over-label grid cell (quick-action grids): the same control corners, centred,
    fills its grid/flex cell. Mirrors the native ChoiceChip `stacked` variant. */
 .lk-choicechip-stacked {
   flex-direction: column;
   gap: 6px;
+  min-height: 0;
   padding: 11px 4px;
-  border-radius: var(--r-md);
   justify-content: center;
   text-align: center;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.3;
   letter-spacing: 0.03em;
 }

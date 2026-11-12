@@ -113,6 +113,7 @@ This blocks "drop-in identical value" use across platforms — design the data l
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the surface is `role="textbox"` `aria-multiline="true"`, labelled by `aria-label`, with
   `aria-invalid` when `invalid`; the toolbar is the shared `role="toolbar"` of icon `<button>`s with
   `aria-pressed` reflecting `active`. Pasted links get `rel="noopener noreferrer"`.

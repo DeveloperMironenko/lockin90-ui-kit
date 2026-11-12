@@ -135,6 +135,7 @@ No capability gap blocks use.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** Toast `role="status"` (polite live region by default in AT). `×` has `aria-label="Dismiss"`. Badge is decorative text — pair counts with a visible/`aria-label` context on the host control.
 - **Native:** Toast `accessibilityRole="alert"` + `accessibilityLiveRegion="polite"` so it's announced; `×` is `accessibilityRole="button"` + `accessibilityLabel="Dismiss"` with `hitSlop`.
 - **Contrast:** Toast title is full `--text`; accent Badge uses dark `#0A0A12` text on the bright gradient (legible on every stop).
@@ -160,3 +161,96 @@ No capability gap blocks use.
 - **New need → both platforms.** A new tone or an action slot must be added to `ToastProps`/`BadgeProps` on web **and** native (keeping native Badge in `Badge.tsx`) with the same names/tokens. On web, a new `BadgeTone` first needs the matching tone on `Chip` (`ChipTone` + the `.lk-chip-sm` treatment in `Chip.md` §3) — `Badge` itself has no tone CSS to edit anymore, since it's a thin wrapper.
 - **Tokens only.** Rail, tones, the accent gradient, and the dot glow all come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping, confirm the web phone-width toast/badge and native match (same tone, title/message, dismiss, count) — accepting only the gradient-substrate difference.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **`dismissLabel`** (web + native) names the × (default `'Dismiss'`, an English fallback; apps pass it).
+- **Roles:** web `role="alert"` for `danger`, `status` otherwise. Native stays `accessibilityRole="alert"`; its
+  live region is `assertive` for `danger`, `polite` otherwise.
+- **Close target:** native `hitSlop` 12 (20 + 24 = 44pt); web an invisible `::before` 24px (44 at phone width).
+
+## Update — 2026-11-11 (above an open Sheet / Modal)
+
+- **Native:** an app's toast goes in a **`TopLayer`** (see `TopLayer.md`): drawn inside the top-most open kit
+  `Sheet` / `Modal` (native windows the page can't draw over), in place when none is open. Placement, timing
+  and announcing stay the app's.
+
+## Update — 2026-11-11 (owner: the new look, Undo with a countdown; web + native)
+
+Supersedes the `filled` look and §3's rail: the owner said the solid green "ruins the style".
+
+- **Look (both):** the dark glass card, as other cards: `--card` / `colors.card` with the card blur (web
+  `backdrop-filter: blur(16px) saturate(120%)`; native `expo-blur` intensity 24 where installed), solid
+  `--bg-1` / `colors.bg1` under Reduce Transparency (`prefers-reduced-transparency` / iOS setting, new internal
+  `useReduceTransparency`). Radius `--r` / `radii.md` (16), padding 9 / 12 / 9 / 10, min height 48, soft shadow
+  `--elev-2` / `nativeShadows.elev2`. **Edge** 1px in the tone at an alpha that keeps it 3:1 on the card and on
+  the solid fill (it marks the state): success `rgba(52,245,197,.45)` (3.5:1), warn `rgba(255,176,32,.5)`
+  (3.3:1), danger `rgba(255,77,109,.7)` (3.3:1); default `--border-2`. **Icon** 16 in a 28 circle of the tone at
+  16 %, the glyph in the tone (8.9:1 success). **Title** 14 / 600 `--text` (16:1). No rail.
+- **Enter:** a fade and an 8px slide down over 200ms; a fade only under reduced motion.
+- **`filled`:** deprecated, ignored (every toast is the glass card); removed in the next major. Nothing uses it.
+- **Action (both):** `actionLabel` + `onAction`: a text button in `--accent-2` (10:1), 14 / 600, named by its
+  label; web 28px tall with a 44px hit area at phone width, `pointer-events: auto` inside a click-through layer;
+  native 28pt with `hitSlop` to 44pt. A toast with an action takes the pointer (web `.lk-toast-has-action`).
+- **Countdown (only with an action):** `duration` (ms) + `onTimeout`. A 2px (2pt) line along the bottom edge,
+  inside the rounded corners (the card clips it), in the edge's colour (3:1), shrinking from full to nothing
+  toward the start; `onTimeout` fires only when it runs out. It **holds** while the toast is hovered, pressed or
+  has focus (web: CSS `animation-play-state: paused` on `:hover`, `:focus-within`, `.is-held` from
+  pointerdown; native: touch start / end on the card, focus on the action), WCAG 2.2.1. Under reduced motion it
+  steps down once a second (web `steps(n)` with its real duration, exempt from the global animation freeze;
+  native one `setValue` a second). The line is hidden from screen readers (no per-second announcement).
+  **Native screen readers:** VoiceOver's focus can't be seen from JS, so while a screen reader is on the
+  countdown holds and a × (`dismissLabel`) ends it at once (`onTimeout`).
+- **Apps:** a confirmation for about 4 s; a toast with Undo about 6 s (its `duration`). The app announces it
+  (the title and that it can be undone), never the countdown.
+
+## Update — 2026-11-11 (owner's pick: variant C — slim, filled Undo with a seconds ring)
+
+Supersedes the sizes, the action and the countdown line of the update above.
+
+- **Tones:** `success` (a save, a completed change, "Photo removed"), `danger` (a failure), `warn`, new
+  **`info`**; each sets the edge and the icon: ok `#34F5C5` edge .45 (3.5:1), bad `#FF4D6D` edge .7 (3.3:1),
+  warn `#FFB020` edge .5 (3.3:1), info `#6E7BFF` (`--info` / `colors.info`) edge .7 (3.2:1); the icon's circle
+  is the tone at .14. Text white; the glass surface as above.
+- **Slim:** padding 6 / 6 / 6 / 10, gap 10, icon circle 22 (glyph 13), message 13.5 / 600, radius 16
+  (`--r` / `radii.md`). No min height.
+- **Action** (`actionLabel` + `onAction`): **filled** with the CTA gradient, label `#080A12` 12.5 / 600
+  (4.5:1 at every point of the gradient), 26 tall with a 44px / 44pt hit area (web `::before`, native
+  `hitSlop` 9 / 4), corners 10 (`--r-sm` / `radii.sm`: the toast's 16 less its 6 padding), padding 0 10 0 5,
+  gap 5 (padding 0 10 without the ring); pressed scales to .98, web focus the `--accent-2` ring. Without `duration` (a "Try again") it has no
+  ring.
+- **Seconds ring** (with `duration`): inside the action, left; 16, stroke 1.8 in the label's colour over a
+  .22 track, the whole seconds left in the middle (8.5 / 700, tabular, rounded up: 6, 5… 1); the arc drains
+  as time passes (the preview's geometry: `stroke-dashoffset = C × (1 − left)`, rotated −90°). Redrawn each
+  frame; under reduced motion it steps (whole seconds). It holds while the toast is hovered (web), pressed /
+  touched, or the action focused, and (native) while a screen reader is on, whose × ends it. Hidden from
+  screen readers: they hear the app's announcement and an action named by its label only. `onTimeout` only
+  at 0. **No bottom line.**
+
+## Update — 2026-11-11 (owner: the toast's surface is a card's)
+
+- **Surface (both):** the card's colour on `--bg-0`, opaque: `--card-solid` / `colors.cardSolid` (`#13151D`,
+  new token). A toast floats over photos and fields, where the translucent `--card` left `--text-dim` at 4.3:1
+  over white; opaque it reads as a card on the page and keeps the title 16:1, the message 8.6:1. No blur
+  (nothing shows through), and no Reduce Transparency variant (native `useReduceTransparency` is gone, it had
+  no other user). Edge and icon still follow the tone. Radius 16 (container), the action 10 (control), as
+  before.
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
+
+## Update — 2026-11-11 (owner: the audit batch, U9 / U10 / U20)
+
+- **Announced (web, U10):** the toast's region (`role="status"`, `alert` for danger) renders at once with its
+  text hidden (`visibility: hidden`) and shows it `LIVE_REVEAL_MS` (100 ms) later, so a screen reader reads
+  it (a region that mounts with its text is often silent). An app that remounts the toast per event (keyed)
+  gets each one announced.
+- **The countdown holds while focus is anywhere in the toast (web, U9):** the action, ×, a link in the
+  message; moving between them keeps the hold (`relatedTarget` inside the toast).
+- **New `paused` (web + native):** holds the countdown from outside, for the app's own way to the same action
+  (an "Undo" beside the photo) while that has focus.
+- **New `actionKeys` (web):** a shortcut for the action in `aria-keyshortcuts` form ("Control+Z Meta+Z"); while
+  the toast shows, pressing it (outside a text field) calls `onAction`, and the action carries
+  `aria-keyshortcuts`. The app says the shortcut in its words (in `message` or the action's name) so it is
+  heard with the announcement. Native keeps holding the countdown while a screen reader is on.
+- **Native ring number (U20):** no `allowFontScaling={false}` (CONVENTIONS: text scaling is never disabled);
+  the ring (16pt) and the action (min 26) grow with the text size (up to 2×), so the number fits.

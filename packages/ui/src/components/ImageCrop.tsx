@@ -5,6 +5,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
   useEffect,
+  useId,
   useLayoutEffect,
   useRef,
   useState,
@@ -39,6 +40,9 @@ export interface ImageCropProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   label: string;
   /** The zoom slider's spoken name. */
   zoomLabel: string;
+  /** Read after the frame's name (`aria-describedby`): how to move it from the keyboard, in the app's
+   *  language ("Arrow keys move the photo."). */
+  description?: string;
   /** The frame's width and height, in px: fit it to the space it has (it never shrinks itself, so what
    *  it shows is always what `cropRect` cuts). @default 320 */
   size?: number;
@@ -96,6 +100,7 @@ export function ImageCrop({
   maxZoom = 4,
   label,
   zoomLabel,
+  description,
   size = 320,
   onLoad,
   className,
@@ -106,6 +111,7 @@ export function ImageCrop({
   const [loaded, setLoaded] = useState<{ src: string } & Natural>();
   const natural = loaded?.src === src ? loaded : undefined;
   const frame = useRef<HTMLDivElement>(null);
+  const descriptionId = useId();
   const image = useRef<HTMLImageElement>(null);
   // the pointers on the frame now, and the gesture's start: the value and where they were then
   const pointers = useRef(new Map<number, { x: number; y: number }>());
@@ -220,6 +226,7 @@ export function ImageCrop({
         style={{ width: size, height: size }}
         role="group"
         aria-label={label}
+        aria-describedby={description ? descriptionId : undefined}
         tabIndex={0}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -244,6 +251,11 @@ export function ImageCrop({
               : { opacity: 0 }
           }
         />
+        {description ? (
+          <span id={descriptionId} className="lk-sr-only">
+            {description}
+          </span>
+        ) : null}
         <span className="lk-crop-grid" aria-hidden="true">
           <span className="lk-crop-v" style={{ left: '33.333%' }} />
           <span className="lk-crop-v" style={{ left: '66.666%' }} />

@@ -95,6 +95,7 @@ There is no capability gap — the component is fully equivalent on both platfor
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the root carries `role="status"` + `aria-live="polite"` so the readout is announced as it changes; the bar is `aria-hidden`. Keep it adjacent to its input so the relationship is clear.
 - **Native:** no live region by default; the meaningful signal is the count text (already a `<Text>`). For SR users relying on the input, surface the limit in the field's `accessibilityHint`.
 - **Color is not the only signal** — the numeric `"value / max"` readout conveys the same state as the fill color (don't disable both `showBar` and `showCount`).
@@ -119,3 +120,7 @@ There is no capability gap — the component is fully equivalent on both platfor
 - **New need → add to BOTH platforms.** A new status tier or a different threshold model must land on web *and* native with the same prop, same tokens — never a one-off.
 - **Tokens only.** The fill/count colors are `@lockin90/tokens` values; never inline hex even if it matches today.
 - **Parity gate.** Confirm the web phone-width and native counters show the same color at the same `value`/`max` before shipping a length-limited field.
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Count 11px** (was 9.5).

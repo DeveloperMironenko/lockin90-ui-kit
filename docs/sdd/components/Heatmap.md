@@ -128,6 +128,7 @@ No capability gap — the data render is equivalent.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the root (grid or frame) has `role="img"`; per-cell `label` doubles as a `title` tooltip; axis rows are `aria-hidden` (decorative duplication) — supply an overall `aria-label` via `...rest` summarizing period/metric.
 - **Native:** add an `accessibilityLabel` on a wrapping `View`.
 - Dark-on-hot value text (`--void` on ≥55% token fills) keeps in-cell numbers legible; `missing` cells intentionally carry **no** value — don't paint them as zeros.

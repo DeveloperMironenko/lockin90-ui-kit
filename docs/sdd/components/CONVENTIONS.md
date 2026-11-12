@@ -19,17 +19,20 @@ Inter (UI), JetBrains Mono (data).
 | --- | --- | --- | --- |
 | Surfaces | `--void` `--bg-0/1/2` | `colors.void` `colors.bg0/1/2` | `#05060B` `#080A12` `#0C0F1A` `#11151F` |
 | Glass | `--glass` `--glass-2` | `colors.glass` `colors.glass2` | `rgba(255,255,255,.045)` / `.075` |
-| Borders | `--border` `--border-2` | `colors.border` `colors.border2` | `rgba(255,255,255,.09)` / `.16` |
-| Text | `--text` `--text-dim` `--text-faint` | `colors.text` `colors.textDim` `colors.textFaint` | `#EEF1F8` `#AAB2C6` `#828B9F` |
+| Card / field fill | `--card` `--card-solid` `--field` | `colors.card` `colors.cardSolid` `colors.field` | `rgba(22,24,32,.79)` / `#13151D` (the card on `--bg-0`, opaque) / `#25272E` (opaque) |
+| Borders | `--border` `--border-2` `--border-control` | `colors.border` `colors.border2` `colors.borderControl` | `rgba(255,255,255,.09)` / `.16` / `.36` |
+| Text | `--text` `--text-dim` `--text-faint` | `colors.text` `colors.textDim` `colors.textFaint` | `#EEF1F8` `#AAB2C6` `#868FA3` |
 | Spectrum | `--lime --mint --cyan --indigo --violet --magenta` | `colors.lime` … | `#A8FF35 #34F5C5 #22D3EE #6E7BFF #A855F7 #FF3D81` |
-| Accents | `--accent` `--accent-2` `--accent-3` | `colors.accent/accent2/accent3` | `#7C5CFF` `#22D3EE` `#34F5C5` |
+| Accents | `--accent` `--accent-2` `--accent-3` `--accent-soft` | `colors.accent/accent2/accent3/accentSoft` | `#7C5CFF` `#22D3EE` `#34F5C5` `#CBBCFF` (the accent for text on dark: a violet note's emphasis, accent chips and tags, Highlight, FollowButton; never hand-typed) |
+| Ink on bright | `--ink-on-bright` | `colors.inkOnBright` | `#0A0A12` — the one dark label on a bright surface (CTA gradient, solid danger, a selected toggle / segment, the monogram, the Toast's action); 4.5:1 at every CTA stop |
 | Zones | `--zone-high/mid/low` | `colors.zoneHigh/zoneMid/zoneLow` | `#34F5C5` `#FFB020` `#FF4D6D` |
-| Status | `--ok --warn --bad --info` | `colors.ok/warn/bad/info` | `#34F5C5 #FFB020 #FF4D6D #6E7BFF` |
+| Status | `--ok --warn --bad --info` | `colors.ok/warn/bad/info` | `#34F5C5 #FFB020 #FF4D6D #6E7BFF` (an `info` Alert and Toast both use `--info`, never the brand accent) |
 | Gradients | `--grad-flux/cta/mint/violet/warm` | `gradients.flux/cta/mint/violet/warm` | flux=5-stop 100° · cta=violet→cyan 135° · etc. |
-| Radii | `--r-sm --r --r-lg --r-xl --r-pill` | `radii.sm/md/lg/xl/pill` | `10 / 16 / 22 / 28 / 999` |
+| Radii | `--r-sm --r --r-lg --r-xl --r-pill` | `radii.sm/md/lg/xl/pill` | `10 / 10 / 10 / 10 / 999` (every corner 10, "Corner radii") |
 | Glow / elev | `--glow-accent/cyan/mint` `--elev-1/2` | `nativeShadows.glowAccent/...` | see tokens.css |
 | Motion | `--ease` `--ease-soft` `--dur` | n/a (native uses Animated/Reanimated) | cubic-beziers; .55s |
 | Type | `--font-display/ui/mono` | `fonts.display/ui/mono` | Space Grotesk / Inter / JetBrains Mono |
+| Type table | `--fs-*`, `--ls-label` | `textStyles` (tokens), `textStyle(role)` (ui-native) | see "Type" below |
 
 ## Parity legend (the §-header badge)
 - ✅ **identical** — same API, same visuals, substrate is the only difference.
@@ -62,21 +65,165 @@ filters on native" rule; any SDD still citing it is stale. View elevation/glow *
 2. **No lookalikes** — import the kit primitive; never re-create it locally.
 3. **New need → add to BOTH platforms** — same prop name, same tokens; never a one-off.
 4. **Parity gate** — web phone-width render ≡ native render before a screen ships.
+5. **Accessible by default** — the "Accessibility" rule below: contrast, targets, names from props,
+   announcements, reduced motion, text scaling.
+
+## Accessibility (owner rule, 2026-11-10 — WCAG 2.2 AA, Apple HIG, Material)
+
+A hard rule: every component SDD restates it in its §7 (one line citing this section) and says there how the
+primitive meets each point. A primitive that can't meet one is fixed here, in the kit, never in an app.
+
+- **Contrast:** text 4.5:1 (3:1 from 24px, or 18.7px bold); a control's edge, its icons and a focus ring 3:1,
+  measured on the surface the element sits on (a card is `--glass` over `--bg-0` ≈ `#13151D`; a field's fill is
+  `--glass-2` over the card ≈ `#25272E`). Never colour alone: an error has an icon and a text.
+- **Targets:** native at least 44×44 pt; web at least 24×24 px (44 at phone width). A control drawn smaller
+  keeps its look and gets the size from its hit area (native `hitSlop` / `minHeight`, web a `::before`).
+- **Names via props:** every control is named by a prop the app fills in its language (`label`,
+  `dismissLabel`, `clearLabel`…), never by built-in English. An English default that still exists is a
+  fallback for older apps only; apps always pass the translated text.
+- **Errors and changes are announced:** web `role="alert"` (errors) / `role="status"` (results), a field's
+  error and help tied by `aria-describedby`; native `accessibilityLiveRegion="polite"` plus
+  `AccessibilityInfo.announceForAccessibility` when an error appears, a field's label as its
+  `accessibilityLabel` and its error / help as its `accessibilityHint`.
+- **Reduced motion:** web `prefers-reduced-motion` (the global rule in `base.css`); native every
+  `Animated.loop` and large movement stops when the kit's `useReducedMotion()` is true.
+- **Increase Contrast:** native `useHighContrast()` / `useContrastColors()` (exported; Android high text
+  contrast, iOS darker system colours — not Bold Text, a weight setting; one shared store, as
+  `useReducedMotion`, where a change event beats a late first read) step faint → dim, dim → full text,
+  `--border-2` → the control edge, the control edge → `--border-control-strong` (`.5`). The mapping is
+  `highContrastColors` in tokens; web applies the same values under `@media (prefers-contrast: more)` in
+  tokens.css (a test keeps them equal). Used by FormField, Input, PasswordInput, SearchInput,
+  Select, ListRow, Eyebrow, Divider and Alert.
+- **Loading indicators slow, never stop, under Reduce Motion** (Spinner 2.5s, DotsLoader ×3): they still
+  say busy. Other loops stop at a defined still frame.
+- **Text scaling is never disabled:** no `allowFontScaling={false}` or `maxFontSizeMultiplier`; inputs are
+  16px / 16pt (no iOS zoom on web), with the box height kept by their padding and line height.
+- **Over the aurora:** a card's fill is `--card` (79% opaque: the old glass colour on the page, but the
+  aurora behind can't lift its text below 4.5:1); a field's fill is the opaque `--field`.
+- **No word splits:** lines wrap between words only. A text that can hold a long word (any translation in
+  a narrow box, any title at a large text size) is a native `FitText` (or measured by the shared
+  `internal/wordFit.tsx` measurer, as SegmentedTabs and Select), which shrinks it until its widest word
+  fits; web primitives use `useWordFit`. Never `numberOfLines` + `adjustsFontSizeToFit` on wrapping text.
+  **The shrink never goes below the default text size or 11pt** (`fitFloor`: at a larger OS text size only
+  that enlargement is taken back, `1 / fontScale`; at the default size nothing shrinks). The one exception
+  (owner, 2026-11-11): SegmentedTabs `fill` choice rows and a MetricTile word value (`textValue`, FitText
+  `belowDefault`) at the default text size may shrink below their design size, to 11pt / 11px drawn (`fitFloor(…, true)` / `fitFloorPercent(…, true)`), before they wrap
+  into balanced rows of pills (never a column list). A word still too
+  wide at that floor is the layout's to fix (a column fewer: MetricTile `onMinWidth`; segments on rows;
+  the text above its icon); the word breaks only as the last resort. Lines break where iOS and Android
+  break them (spaces, after a hyphen or a slash, between CJK characters); an email or web address never
+  shrinks its paragraph (`breakableAddress` lets it break after "@" and ".").
+- **No meaningful text under 11px** (chips, badges, eyebrows, labels, counts).
+- **Narrow breakpoint:** `--bp-narrow` / `breakpoints.narrow` = 360 (max-width), alongside phone (540) and tablet (980); a large-padded Card tightens to 16 there.
+- **44 at phone width (web) = 44 on native:** at ≤ 540px every Button (not `text`), SsoButton, Input,
+  Select (both sizes), SearchInput, SegmentedTabs segment and the Modal close is at least 44px tall; native
+  draws the same controls 44pt, so web and native stay equal. CodeInput boxes are 44 tall, 8 apart.
+- **Focus (web):** everything focusable shows a `:focus-visible` ring at 3:1 — a 2px solid `--accent-2` ring
+  (10.1:1 on the card), never `outline: none` without a replacement. **Fields have exactly one indicator,
+  their own edge** (owner, 2026-11-11: the ring around the violet edge read as two outlines): Input,
+  PasswordInput, SearchInput, Select trigger (and while open), DateField, CodeInput boxes, TagInput,
+  NoteField, RichTextEditor, CodeField and the message composer turn their edge `--accent` and 2px (the 1px
+  border plus a 1px inset shadow, so nothing moves), on mouse and keyboard focus alike; no outer ring, no
+  glow. Invalid: the same in `--zone-low`. The edge goes from `--border-control` (3.3:1) to a 2px `--accent`
+  (3.4:1 on the field, 4.2:1 on the card): the edge's contrast is WCAG 1.4.11 (Non-text Contrast), the
+  visible focus 2.4.7 (2.4.11 is Focus Not Obscured: sticky bars must not hide it). **Focused and invalid**
+  (U11, 2026-11-11): the 2px `--zone-low` edge plus a soft red halo outside it (`--lk-focus-invalid-halo`, 3px
+  at 38%), so focus on an invalid field is a visible change, not 1px → 2px of the same red. Buttons, links,
+  chips, the Menu trigger and Menu items (an inset ring) keep the `--accent-2` ring. Native fields already draw
+  only their edge.
+
+### Measured ratios (2026-11-10)
+
+| Pair | Ratio |
+| --- | --- |
+| `--border-control` (`.36` white) on the card `#13151D` | 3.34:1 (on `--bg-0` 3.26:1, on the field fill 3.23:1) |
+| `--border-2` (`.16`) on the card — cards keep it | 1.62:1 (a container's edge, not a control's) |
+| `--text-faint` `#868FA3` on the field fill `#25272E` | 4.62:1 (on the card 5.61:1, on `--bg-0` 6.09:1); was `#828B9F` 4.38:1 |
+| `--text-dim` on the field fill | 7.06:1 |
+| `--accent-2` focus ring on the card | 10.08:1 (the old `--accent` 45% ring was 1.79:1; the Menu trigger used it until 2026-11-11) |
+| a focused field's 2px `--accent` edge | 3.43:1 on the field fill, 4.21:1 on the card, 4.40:1 on `--bg-1` |
+| `--text-faint` / `--text-dim` on `--card` over the brightest aurora pixel | ≥ 4.90 / 7.49 (vivid: 4.56 / 6.97); the old glass card measured 3.22 / 3.71 |
+| `--text-faint` (placeholder) on `--field` | 4.60:1, whatever is behind (was 2.77 over the aurora) |
+
+The aurora peaks are modelled from the measured worst case (luminance .081 behind the old glass card): each
+blob colour screened over `--bg-0` at the intensity that reproduces it (cyan .343, violet .547, magenta
+.497), and 1.44× that for `vivid`. `tokens.test.ts` checks them.
+
+## Control sizes (owner rule, 2026-11-11 — "2 sizes of buttons, one for small places")
+
+Two sizes for every pressable or pickable control, web and native alike, the corner 10 at both:
+
+| Size | Visual height | Target | Value / label | Icon | Where |
+| --- | --- | --- | --- | --- | --- |
+| **`md`** (default) | 44 | 44 | Select 16, Button 14, ChoiceChip 14 | 16 | forms, a screen's back control, dialogs |
+| **`sm`** | 36 | 44 (web `::before`, native `hitSlop`) | Select 14, Button 13, ChoiceChip 14 | 14 (Select's leading 16) | compact rows: the auth / onboarding header (the language Select and the "Scan" chip, the same height), toolbars, a top bar |
+
+Button (`lg` stays a flow's closing CTA), IconButton (a 44 / 36 square), Select, ChoiceChip and BackLink (its
+`pill` / `bar` surface) take `size="md" | "sm"`. Two controls side by side have the same size, at every
+text size too: a `sm` ChoiceChip has a `sm` Select's padding (6 above and below) and line (1.3 × 14 = 18), so
+the header's language picker and "Scan" grow alike at the accessibility sizes.
+
+**Fills and edges (V19):** a control's fill is the opaque `--field` / `colors.field` (Button `default`,
+IconButton, SsoButton, BackLink's surface, ChoiceChip, IconTile, every field); a control you type into or pick
+from has the control edge (`--border-control`); buttons and chips `--border-2`; containers (Card, Alert,
+tiles) and overlays (Sheet, Modal, Menu, Popover, Tooltip, Select's panel) one edge, `--border` (`.09`).
+
+## Dialog actions (owner rule, 2026-11-11 — V10)
+
+- **One footer slot:** `Sheet` and `Modal` take `footer`; its actions are "Cancel | Primary" in that order,
+  each half the width at phone width (≤ 540 window width; web `.lk-dialog-actions`, native equal cells). A
+  long label wraps inside its half. On a wider screen (desktop, tablet) both Modal and Sheet put them at
+  the end at their own width, and onto a second line when they don't fit.
+- **Option choices are list rows** in the body (Choose photo / Take photo), never stacked buttons.
+- **A close ×** where the sheet has no Cancel: `Sheet` `closeLabel` (with `onClose`), as Modal's `closeLabel`.
+- Sheet and Modal titles are `cardTitle` (display 17). Native Modal's body scrolls and both rise above the
+  keyboard (iOS `KeyboardAvoidingView`, Android by the keyboard's height: RN Modal windows aren't resized).
+
+## Type (owner rule, 2026-11-11 — one size per text role)
+
+One table for web and native: `textStyles` in `@lockin90/tokens` (size, weight, line height, tracking in em),
+the `--fs-<role>` custom properties on web, `textStyle(role)` on native (tracking × size in pt, `label`
+uppercased). A kit primitive that owns a text uses its role; an app's own text uses the same roles.
+
+| Role | Font / size / weight | Colour | Where |
+| --- | --- | --- | --- |
+| `authTitle` | display 28 / 700 | text | an auth screen's title |
+| `screenTitle` | display 23 / 700 | text | a signed-in screen's title |
+| `stepTitle` | display 20 / 700 | text | an onboarding step's title |
+| `cardTitle` | display 17 / 700 | text | a card's, Sheet's, Modal's title |
+| `rowTitle` | ui 15 / 600 | text | a ListRow's title |
+| `body` | ui 14 / 400 | text-dim | running text, dialog bodies |
+| `secondary` | ui 13 / 400 | text-dim | an Alert's text, a row's second line |
+| `hint` | ui 11.5 / 400 | text-faint | a field's help (FormField) |
+| `label` | mono 11 / 500, .14em, uppercase | text-dim (field labels) / text-faint (section labels, Eyebrow) | FormField, Select, Divider, Eyebrow, MetricTile labels |
+| `control` | ui 16 / 400 | text | a control's value: Input, PasswordInput, SearchInput, Select `md` |
+| `controlSm` | ui 14 / 400 | text | Select `sm` (the header's language picker) |
+| `labelLink` | mono 11.5 | accent-2 | a link in a row of labels ("Resend code", Button `text`) |
+
+- **Strong** text inside a sentence is 600 in the sentence's full text colour (`--text`); only the violet
+  note's emphasis is `--accent-soft`.
+- **Links** in a sentence: Inter 600 `--accent-2` at the sentence's size; in a label row: `labelLink`.
+- **Icons are sized by their slot, by the kit:** buttons 16 (`sm` 14, `lg` 19), fields 16 `--text-faint`,
+  Alert 16, list rows and the header 18, Toast 13.
 
 ## One shape, one line (owner rule, 2026-11-02 — "the border has to be the same")
+
+> Radii superseded by "Corner radii" below (2026-11-11: every corner 10); the line rule stands.
 
 Every bordered box in the kit has one of two corner radii and the same neutral line, on web and native.
 
 | Kind | Radius | Which primitives |
 | --- | --- | --- |
-| **Control**: something you press, type into or pick (a box holding text or icons) | `--r-sm` / `radii.sm` (**10**) | Button (every variant, primary included), IconButton, SsoButton, SplitButton, FollowButton, BackLink, Input, PasswordInput, Select (`md` and `sm`), Combobox field, DateField, NoteField, CodeField cells, SearchInput (in `FormField`), TagInput (field and tags), Chip, ChoiceChip, Badge (native), DeltaPill, StateLabel, VersionBadge, TagCloud tags, SegmentedTabs (track and active segment), Pagination, Stepper buttons, Toolbar buttons |
-| **Container**: a surface that holds controls or content | `--r` / `radii.md` (**16**) | Card and every card surface (InsightCard, PrCard, TemplateCard, PricingTierCard, PendingPatternCard, MetricTile, StatTile, LeaderboardRow, Countdown, ShareCard, SessionBanner, AchievementBadge, MessageBubble), Alert, Toast, ForecastCallout, EmptyState, Modal, Sheet (top corners), Popover, Menu, Tooltip, Combobox / Select panels, CodeBlock, QRCode frame, VideoThumbnail |
+| **Control**: something you press, type into or pick (a box holding text or icons) — see "Corner radii" below | `--r-sm` / `radii.sm` (**10**) | Button (every variant, primary included), IconButton, SsoButton, SplitButton, FollowButton, BackLink, Input, PasswordInput, Select (`md` and `sm`), Combobox field, DateField, NoteField, CodeField cells, SearchInput (in `FormField`), TagInput (field and tags), Chip, ChoiceChip, Badge (native), DeltaPill, StateLabel, VersionBadge, TagCloud tags, SegmentedTabs (track and active segment), Pagination, Stepper buttons, Toolbar buttons |
+| **Container**: a surface that holds controls or content | `--r` / `radii.md` (**16**) | Card and every card surface (InsightCard, PrCard, TemplateCard, PricingTierCard, PendingPatternCard, StatTile, LeaderboardRow, Countdown, ShareCard, SessionBanner, AchievementBadge, MessageBubble), Alert, Toast, ForecastCallout, EmptyState, Modal, Sheet (top corners), Popover, Menu, Tooltip, Combobox / Select panels, CodeBlock, QRCode frame, VideoThumbnail |
 | **Shape, not a box** (unchanged) | as today | circles (Avatar, AvatarStack, StatusDot (native), Checkbox tick, Pulse), Toggle track and knob, Slider track and thumb, ProgressBar / Meter / PasswordStrengthMeter / ZoneBar / RangeBar / BarFill tracks and fills, chart marks, Ring, Gauge, the Sheet grab handle |
 
-- **The line:** every bordered control and container has `1px solid var(--border-2)` /
-  `borderWidth: 1, borderColor: colors.border2` (`rgba(255,255,255,.16)`). Fields already use it; cards,
-  chips and the small select move up from `--border` (`.09`), which was too faint to see a field's
-  edge. `--border` stays for dividers and table rules (lines inside a surface, not around it).
+- **The line:** every bordered control has `1px solid var(--border-2)` / `colors.border2`
+  (`rgba(255,255,255,.16)`), a field the control edge; containers and overlays keep `--border` (`.09`) —
+  superseded by "Control sizes" → "Fills and edges" (2026-11-11), which is what the code does.
+- **A field's edge is stronger (2026-11-10, "Accessibility"):** the boxes you type into or pick from (Input,
+  PasswordInput, SearchInput, Select trigger, TagInput, CodeInput boxes) use `--border-control` /
+  `colors.borderControl` (`.36`, 3.3:1 on the card); buttons, chips and cards keep `--border-2`.
 - **States and tones still recolour the line:** focus (`--accent`), invalid (`--zone-low`), a chip or alert
   tone, a selected ChoiceChip. They change the colour of the same 1px line, never its width or radius.
 - **No borderless control next to a bordered one:** a Button whose variant had no outline (primary's
@@ -86,6 +233,29 @@ Every bordered box in the kit has one of two corner radii and the same neutral l
 - **Order:** this rule (docs) → web PR (`@lockin90/ui`) → native PR (`@lockin90/ui-native`), each with
   before/after screenshots of every changed primitive → one release → `lockin90-design` updated to the
   same shapes (the mockups are what apps are compared with) → the apps bump the kit.
+
+## Corner radii (owner rule, 2026-11-11, final — "every corner 10")
+
+Supersedes the radii in "One shape, one line" above (its line rule stands). Web and native alike.
+
+| Kind | Radius | Which |
+| --- | --- | --- |
+| **Everything** | **10** — `--r-sm` / `radii.sm`; `--r` / `radii.md`, `--r-lg` / `radii.lg` and `--r-xl` / `radii.xl` are 10 too (the names stay for the components that cite them) | Every control (Button, IconButton, SsoButton, fields, Select trigger, DateField, CodeInput boxes, the SegmentedTabs track at every size and on rows, Chip, ChoiceChip, Badge, menu items), every container (Card, Toast, Alert, MetricTile and other tiles, Menu / Popover / Tooltip / Select / Combobox panels, ListRow groups, EmptyState tile), every big surface (Modal / dialog, the Sheet's top corners), avatars (a rounded square at every size; `shape` is ignored), Stepper nodes |
+| **A piece inside a control** | 10 **less its inset from the control's outer edge** (border included), so the corners run parallel | SegmentedTabs' lit segment: 5 on one row (1 edge + 4 down; 1 + 2 + 2 across), 6 at `sm` (1 + 3), 5 on rows (1 + 2 + 2); NumberStepper buttons 6 (1 + 3). Native computes it (`innerRadius(outer, inset)`, `internal/radius.ts`); web `calc(var(--r-sm) - var(--lk-seg-inset))`, adding the transparent border per axis where the fill is clipped to the padding box. The Toast's action keeps 10 (as the toast) |
+| **True circles** | `999` / `50%` (`--r-pill` / `radii.pill`) | Status dots, icon circles (the Toast's icon, the round "?" and × buttons), toggle knobs, the Sheet grab handle, the Toast's seconds ring; thin bars (progress, meters: a 10 radius on them is a pill anyway) |
+
+- **Fields, selects and option switches look alike** (owner, 2026-11-11): the SegmentedTabs track has the
+  field's fill (`--field` / `colors.field`) and edge (`--border-control` / `colors.borderControl`,
+  `borderControlStrong` under Increase Contrast), red (`--zone-low`) when invalid; a keyboard-focused choice
+  (`kind="choice"`) gets the field's one focus indicator, its 2px accent edge. Unselected labels stay
+  `--text-dim` (7.0:1 on the field).
+- **A surface that floats over anything** (Toast) uses the card's colour composited on `--bg-0`, opaque
+  (`--card-solid` / `colors.cardSolid`, `#13151D`): it reads as a card on the page and keeps its text at 4.5:1
+  over a photo or a field (the translucent `--card` over white leaves `--text-dim` at 4.3:1).
+- A radius literal on a box is a bug; a piece inside a control derives its radius from the control's and its
+  real inset, never a guess. Not yet swept (no app uses them): literal radii in chart, admin, marketing and
+  studio primitives (NotificationRow, Toolbar, Timeline, MessageComposer, ProGate, VideoThumbnail, Checkbox,
+  web notification / toolbar / tooltip / navitem…); they move to 10 when an app first uses them.
 
 ## One primitive per role (owner rule, 2026-07-09 — "they have to be the same")
 The SAME interaction role always renders through the SAME kit primitive, everywhere —

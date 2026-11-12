@@ -112,6 +112,7 @@ platform limit, not a styling choice — design uploads to use tap-to-pick on na
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Toolbar:** web root is `role="toolbar"`; each button carries `aria-label`/`title`/`aria-pressed` from the
   item; dividers are `aria-hidden`. Native root is `accessibilityRole="toolbar"`; buttons carry
   `accessibilityLabel` + `accessibilityState={{ selected: active }}`.

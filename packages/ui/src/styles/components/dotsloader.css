@@ -4,7 +4,7 @@
    Ports the Aurora Flux `.dots` / `dotBounce` look from the design source.
    Sizing & color are prop-driven via `--lk-dot-*` custom properties; each dot
    sets its own `animation-delay` inline (0 / .16 / .32s …) for the stagger.
-   Honors prefers-reduced-motion by holding the dots static & fully lit.
+   Under prefers-reduced-motion the bounce slows (3.6s) rather than stopping.
    Key: .lk-dots
    ========================================================================== */
 .lk-dots {
@@ -20,6 +20,7 @@
   background: var(--lk-dot-color, var(--accent));
   box-shadow: 0 0 10px var(--lk-dot-color, rgba(124, 92, 255, 0.5));
   animation: lk-dot-bounce 1.2s var(--ease-soft) infinite;
+  animation-delay: calc(var(--lk-dot-i, 0) * 0.16s);
   will-change: transform, opacity;
 }
 
@@ -36,10 +37,12 @@
   }
 }
 
+/* reduced motion — a loading indicator slows (3.6s, as native ×3) instead of stopping, so it still says
+   busy (as Spinner); !important and a class win over base.css's global freeze */
 @media (prefers-reduced-motion: reduce) {
   .lk-dots > i {
-    animation: none;
-    transform: none;
-    opacity: 1;
+    animation-duration: 3.6s !important;
+    animation-delay: calc(var(--lk-dot-i, 0) * 0.48s) !important;
+    animation-iteration-count: infinite !important;
   }
 }

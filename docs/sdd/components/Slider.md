@@ -100,6 +100,7 @@ Not a blocking capability gap — both let the user set a value by dragging the 
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the overlaid `<input type="range">` is a real, focusable slider — arrow keys adjust, screen readers
   announce min/max/value. Pass `aria-label` via rest when there's no visible label. The thumb shows a focus ring.
 - **Native:** the rail is a custom `View` with no `accessibilityRole="adjustable"` wired — for an AT-critical

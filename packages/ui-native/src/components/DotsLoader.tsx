@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { colors } from '@lockin90/tokens';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 export interface DotsLoaderProps {
   /** dot diameter */
@@ -11,6 +12,9 @@ export interface DotsLoaderProps {
   count?: number;
   /** gap between dots */
   gap?: number;
+  /** what is loading, read by screen readers, in the app's language (CONVENTIONS "Accessibility").
+   *  @default 'Loading' (an English fallback for older apps) */
+  label?: string;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -19,7 +23,7 @@ export interface DotsLoaderProps {
  * (the AI coach composing) and generic inline loading state. Mirrors the web
  * `DotsLoader` (same prop API + staggered 0.16s wave) using Animated loops.
  */
-export function DotsLoader({ size = 7, color = colors.accent, count = 3, gap = 6, style }: DotsLoaderProps) {
+export function DotsLoader({ size = 7, color = colors.accent, count = 3, gap = 6, label = 'Loading', style }: DotsLoaderProps) {
   const n = Math.max(1, Math.floor(count));
   // one driver per dot; 0 = resting (down/dim), 1 = peak (up/bright)
   const valsRef = useRef<Animated.Value[]>([]);
@@ -28,23 +32,27 @@ export function DotsLoader({ size = 7, color = colors.accent, count = 3, gap = 6
   }
   const vals = valsRef.current;
 
+  const reduced = useReducedMotion();
   useEffect(() => {
+    // Reduce Motion: a loading indicator slows (×3) instead of stopping, as Spinner, so it still says busy
+    const k = reduced ? 3 : 1;
+    vals.forEach((v) => v.setValue(0));
     const loops = vals.map((v, i) =>
       Animated.loop(
         Animated.sequence([
-          Animated.delay(i * 160), // staggered start (matches web 0/.16/.32s)
-          Animated.timing(v, { toValue: 1, duration: 360, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-          Animated.timing(v, { toValue: 0, duration: 480, easing: Easing.in(Easing.quad), useNativeDriver: true }),
-          Animated.delay(Math.max(0, (n - 1 - i) * 160)), // pad so cycles realign
+          Animated.delay(i * 160 * k), // staggered start (matches web 0/.16/.32s)
+          Animated.timing(v, { toValue: 1, duration: 360 * k, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+          Animated.timing(v, { toValue: 0, duration: 480 * k, easing: Easing.in(Easing.quad), useNativeDriver: true }),
+          Animated.delay(Math.max(0, (n - 1 - i) * 160 * k)), // pad so cycles realign
         ]),
       ),
     );
     loops.forEach((l) => l.start());
     return () => loops.forEach((l) => l.stop());
-  }, [vals, n]);
+  }, [vals, n, reduced]);
 
   return (
-    <View style={[styles.row, { gap }, style]} accessibilityRole="progressbar" accessibilityLabel="Loading">
+    <View style={[styles.row, { gap }, style]} accessibilityRole="progressbar" accessibilityLabel={label}>
       {vals.map((v, i) => (
         <Animated.View
           key={i}

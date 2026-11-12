@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes, ReactNode } from 'react';
+import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
@@ -26,16 +26,19 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
  *  `required` is true (inherited from `InputHTMLAttributes`), an accent-colored
  *  `*` is appended after the label — matches the `FormField` required marker
  *  so required-field affordances look identical across both wrappers. */
-export function Input({
-  label,
-  unit,
-  invalid = false,
-  inputSize = 'md',
-  leading,
-  variant = 'default',
-  className,
-  ...rest
-}: InputProps) {
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  {
+    label,
+    unit,
+    invalid = false,
+    inputSize = 'md',
+    leading,
+    variant = 'default',
+    className,
+    ...rest
+  },
+  ref,
+) {
   const numeral = variant === 'numeral';
   return (
     <label className="lk-input-wrap">
@@ -58,9 +61,9 @@ export function Input({
         )}
       >
         {leading ? <span className="lk-input-lead">{leading}</span> : null}
-        <input className={cn('lk-input', className)} aria-invalid={invalid || undefined} {...rest} />
+        <input ref={ref} className={cn('lk-input', className)} aria-invalid={invalid || undefined} {...rest} />
         {unit ? <span className="lk-input-unit">{unit}</span> : null}
       </span>
     </label>
   );
-}
+});

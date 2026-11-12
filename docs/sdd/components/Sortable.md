@@ -98,6 +98,7 @@ No capability gap that blocks use — both reorder reliably and emit the same `o
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** each handle is a `<button aria-label="Reorder item">` linked to a visually-hidden hint via
   `aria-describedby`; ↑/↓ move the item and `:focus-visible` shows an accent ring. The list is `role="list"`,
   rows `role="listitem"`; indicators/hint are `aria-hidden`/sr-only.

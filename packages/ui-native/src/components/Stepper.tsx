@@ -1,7 +1,8 @@
 import { Fragment, type ReactNode } from 'react';
-import { View, Text, Pressable, StyleSheet, type ViewProps } from 'react-native';
+import { View, Text, Pressable, StyleSheet, useWindowDimensions, type ViewProps } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii, fonts, gradients, nativeShadows } from '@lockin90/tokens';
+import { innerRadius } from '../internal/radius';
 import { Icon } from './Icon';
 
 /* ============================================================================
@@ -39,6 +40,9 @@ export interface StepperProps extends ViewProps {
   onStepClick?: (index: number) => void;
 }
 
+/** Above this OS text scale the rail is vertical (as ListRow's settings rows). */
+const LARGE_TEXT = 1.35;
+
 const DEFAULT_STEPS: Step[] = [
   { label: 'Account' },
   { label: 'Profile' },
@@ -68,9 +72,20 @@ export function Stepper({
   // (no `allowAhead` — future steps are always disabled on this path).
   const pressHandler = onStepClick ?? onStepPress;
   const allowAheadResolved = onStepClick ? false : allowAhead;
+  // Nothing cut off (CONVENTIONS "Accessibility"): at a large OS text size (> 1.35, as ListRow and
+  // SegmentedTabs) the rail turns vertical — each step a row, the node then its label taking the rest
+  // of the width and wrapping between words — so a label never shrinks to "Про…".
+  const { fontScale } = useWindowDimensions();
+  const vertical = fontScale > LARGE_TEXT;
+  // and the nodes grow with the text so their number is never clipped (a circle: width = height)
+  const nodeSize = vertical
+    ? Math.ceil(Math.max(isGlow ? 40 : 30, (isGlow ? 14 : 12) * fontScale * 1.35))
+    : undefined;
+  const nodeGrow = nodeSize != null ? { width: nodeSize, height: nodeSize, borderRadius: radii.sm } : undefined;
+  const lineAt = nodeSize != null ? { marginLeft: nodeSize / 2 - 1 } : undefined;
 
   return (
-    <View style={[styles.step, style]} {...rest}>
+    <View style={[styles.step, vertical && styles.stepVertical, style]} {...rest}>
       {steps.map((stepItem, i) => {
         const done = complete ? i <= active : i < active;
         const isCurrent = !complete && i === active;
@@ -89,11 +104,21 @@ export function Stepper({
                   style={[
                     styles.line,
                     isGlow && styles.lineGlow,
+                    vertical && (isGlow ? styles.lineVerticalGlow : styles.lineVertical),
+                    lineAt,
                     isGlow && (nativeShadows.glowMint as object),
                   ]}
                 />
               ) : (
-                <View style={[styles.line, isGlow && styles.lineGlow, styles.lineFaint]} />
+                <View
+                  style={[
+                    styles.line,
+                    isGlow && styles.lineGlow,
+                    vertical && (isGlow ? styles.lineVerticalGlow : styles.lineVertical),
+                    lineAt,
+                    styles.lineFaint,
+                  ]}
+                />
               ))}
             <PressableMaybe
               onPress={pressHandler}
@@ -101,13 +126,13 @@ export function Stepper({
               pressable={!!pressHandler && (allowAheadResolved || i <= active)}
               isCurrent={isCurrent}
               label={stepItem.label}
-              style={[styles.item, isGlow && styles.itemGlow]}
+              style={[styles.item, isGlow && styles.itemGlow, vertical && styles.itemVertical]}
             >
               {done ? (
                 isGlow ? (
                   // Glow "done": hollow mint ring with a stroked check —
                   // no gradient fill; the border + tint carry the state.
-                  <View style={[styles.node, styles.nodeGlow, styles.nodeGlowDone]}>
+                  <View style={[styles.node, styles.nodeGlow, styles.nodeGlowDone, nodeGrow]}>
                     <Icon name="check" size={16} color={colors.zoneHigh} />
                   </View>
                 ) : (
@@ -115,7 +140,7 @@ export function Stepper({
                     colors={gradients.mint.stops as unknown as [string, string]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
-                    style={[styles.node, styles.nodeFilled, nativeShadows.glowMint]}
+                    style={[styles.node, styles.nodeFilled, nativeShadows.glowMint, nodeGrow]}
                   >
                     <Icon name="check" size={14} color={colors.bg1} />
                   </LinearGradient>
@@ -134,6 +159,7 @@ export function Stepper({
                     styles.nodeFilled,
                     isGlow && styles.nodeGlow,
                     nativeShadows.glowAccent,
+                    nodeGrow,
                   ]}
                 >
                   <Text
@@ -153,6 +179,7 @@ export function Stepper({
                     styles.nodeFuture,
                     isGlow && styles.nodeGlow,
                     isGlow && styles.nodeGlowFuture,
+                    nodeGrow,
                   ]}
                 >
                   <Text style={[styles.nodeNum, isGlow && styles.nodeNumGlow]}>{i + 1}</Text>
@@ -163,8 +190,10 @@ export function Stepper({
                   styles.label,
                   done && styles.labelDone,
                   isCurrent && styles.labelCurrent,
+                  vertical && styles.labelVertical,
                 ]}
-                numberOfLines={1}
+                // the row: one line, as the design; vertical: wraps between words, never clamped
+                numberOfLines={vertical ? undefined : 1}
               >
                 {stepItem.label}
               </Text>
@@ -279,7 +308,8 @@ const styles = StyleSheet.create({
   node: {
     width: 30,
     height: 30,
-    borderRadius: 15,
+    // every corner is 10 (owner, 2026-11-11), as StepIndex
+    borderRadius: radii.sm,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
@@ -307,13 +337,19 @@ const styles = StyleSheet.create({
   // Glow nodes are 40px tall (vs 30px compact), so the connector must drop to
   // their vertical center: (40 - 2) / 2 = 19.
   lineGlow: { marginTop: 19 },
+  // large text: a vertical rail — rows of node + label, joined by short vertical lines under the nodes
+  stepVertical: { flexDirection: 'column', alignItems: 'stretch' },
+  itemVertical: { flex: 0, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  labelVertical: { flex: 1, flexShrink: 1 },
+  lineVertical: { flex: 0, minWidth: 0, width: 2, height: 12, marginTop: 4, marginBottom: 4, marginLeft: 14 },
+  lineVerticalGlow: { flex: 0, minWidth: 0, width: 2, height: 12, marginTop: 4, marginBottom: 4, marginLeft: 19 },
 
   /* glow variant — 40px nodes, hollow mint "done", CTA "current" */
   itemGlow: { flex: 1, minWidth: 40 },
   nodeGlow: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: radii.sm,
     borderWidth: 1.5,
   },
   nodeGlowDone: {
@@ -334,7 +370,8 @@ const styles = StyleSheet.create({
     padding: 3,
     borderWidth: 1,
     borderColor: colors.border2,
-    borderRadius: radii.pill,
+    // a control's corners; its buttons 10 less their inset (1 edge + 3 padding)
+    borderRadius: radii.sm,
     backgroundColor: colors.glass2,
     alignSelf: 'flex-start',
   },
@@ -343,7 +380,7 @@ const styles = StyleSheet.create({
     height: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 15,
+    borderRadius: innerRadius(radii.sm, 4),
   },
   btnLabel: { fontFamily: fonts.display, fontSize: 18, fontWeight: '600', color: colors.textDim },
   btnLabelDisabled: { color: colors.textFaint, opacity: 0.35 },

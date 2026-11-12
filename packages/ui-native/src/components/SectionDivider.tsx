@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   label: {
-    // eyebrow — no wrap so the rule stays on one line
-    flexShrink: 0,
+    // wraps when wider than the row (a long translation at 320), never overflows
+    flexShrink: 1,
   },
   line: {
     flex: 1,

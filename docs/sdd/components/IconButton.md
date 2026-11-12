@@ -62,6 +62,8 @@ ignores outside the parent's bounds, where a corner button sits).
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
+
 A real `<button type="button">` with `aria-label`; native a `Pressable` with `accessibilityRole="button"`
 and `accessibilityLabel`, both required by the type and set after the rest props, so nothing passed
 can replace them. The icon is hidden from screen readers. 44 px touch target on both.
@@ -76,3 +78,14 @@ can replace them. The icon is hidden from screen readers. 44 px touch target on 
 
 A `Pressable` / `<button>` with an `Icon` styled by hand in an app is a lookalike (`Button.md` §9): use
 this. A round version is a different shape: it needs the owner's call in `CONVENTIONS.md` first.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Targets:** native already sits in a ≥ 44 × 44 target (the `minWidth` / `minHeight` 44 around the 32 / 40
+  square), now tested. Web `md` (40px) gets a `::before` 2px around at phone width (44); `sm` keeps its 44.
+- **Focus ring (web):** the kit's shared `2px solid --accent-2` instead of the `--accent` 45% shadow (1.79:1).
+
+## Update — 2026-11-11 (owner: the audit batch, control sizes and fills)
+
+- **Two sizes:** `md` a 44 square (was 40), `sm` 36 (was 32) with a 44 target; on the opaque `--field` fill (was
+  `--glass-2` with a blur, web and native; the optional `expo-blur` is no longer used here).

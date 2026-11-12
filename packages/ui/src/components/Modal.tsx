@@ -1,6 +1,7 @@
-import { useEffect, useState, type HTMLAttributes, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../cn';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 
 export interface ModalProps extends HTMLAttributes<HTMLDivElement> {
   /** Show the modal. When false, nothing renders. */
@@ -11,7 +12,8 @@ export interface ModalProps extends HTMLAttributes<HTMLDivElement> {
   title?: string;
   /** Body content. */
   children?: ReactNode;
-  /** Optional footer — right-aligned actions under a hairline. */
+  /** Optional footer — the actions under a hairline (CONVENTIONS "Dialog actions"): "Cancel | Primary",
+   *  each half the width at phone width (≤ 540px), end-aligned on a wider screen. */
   footer?: ReactNode;
   /** Card max-width: sm ~380px, md ~460px, lg ~620px. */
   size?: 'sm' | 'md' | 'lg';
@@ -25,7 +27,8 @@ const CLOSE = (
   </svg>
 );
 
-/** Centered dialog over a blurred scrim. Closes on scrim click + ESC. */
+/** Centered dialog over a blurred scrim. Closes on scrim click + ESC. Takes focus when it opens, keeps
+ *  Tab inside, gives focus back on close, and is named by its title (Modal.md §7). */
 export function Modal({
   open = true,
   onClose,
@@ -41,6 +44,9 @@ export function Modal({
   // `document` + hydration mismatch).
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+  useDialogFocus(open && mounted, panelRef);
 
   useEffect(() => {
     if (!open || !onClose) return;
@@ -70,14 +76,21 @@ export function Modal({
           size === 'lg' && 'lk-modal-lg',
           className,
         )}
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
+        tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
         {...rest}
       >
         {(title || onClose) && (
           <div className="lk-modal-head">
-            {title && <h2 className="lk-modal-title">{title}</h2>}
+            {title && (
+              <h2 id={titleId} className="lk-modal-title">
+                {title}
+              </h2>
+            )}
             {onClose && (
               <button
                 type="button"
@@ -91,7 +104,7 @@ export function Modal({
           </div>
         )}
         <div className="lk-modal-body">{children}</div>
-        {footer && <div className="lk-modal-foot">{footer}</div>}
+        {footer && <div className="lk-modal-foot lk-dialog-actions">{footer}</div>}
       </div>
     </div>,
     document.body,

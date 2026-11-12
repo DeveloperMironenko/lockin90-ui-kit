@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     fontSize: 9.5,
     fontWeight: '600',
     letterSpacing: 1.1,
-    color: '#0A0A12',
+    color: colors.inkOnBright,
   },
   head: {
     flexDirection: 'row',

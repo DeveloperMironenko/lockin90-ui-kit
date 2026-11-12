@@ -73,6 +73,7 @@ No capability gap — the row is fully usable and visually equivalent on both pl
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** real `<button>` (focusable, Enter/Space activate). The padlock + chevron SVGs are `aria-hidden`; the visible `label` names the control. Pass `aria-label` only if the label is non-descriptive.
 - **Native:** `Pressable` with `accessibilityRole="button"` and `accessibilityLabel={label}` (the label is announced). Decorative SVGs carry no a11y text.
 - **Hit target:** row padding `12px 14px` yields a comfortable full-width touch target.

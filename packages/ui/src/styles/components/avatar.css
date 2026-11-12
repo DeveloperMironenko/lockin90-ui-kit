@@ -1,17 +1,27 @@
 /* ============================================================================
    Avatar — a standalone identity tile: an image OR a monogram (initials on the
-   flux gradient). Circular by default, softly-rounded via .lk-avatar-rounded.
+   flux gradient). A rounded square at every size: every corner is 10 (owner, 2026-11-11);
+   .lk-avatar-rounded is the same.
    Size is applied inline (width/height); the monogram font-size scales with it.
    Mirrors the monogram treatment from .lk-pf-avatar / .lk-lb-av.
    ========================================================================== */
 .lk-avatar {
+  position: relative;
   display: inline-flex;
   flex: none;
-  border-radius: 50%;
+  border-radius: var(--r-sm);
   overflow: hidden;
 }
 
-.lk-avatar-rounded { border-radius: 30%; }
+/* a thin control edge over a photo, so a dark or light photo still has a shape (owner, 2026-11-11) */
+.lk-avatar--photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--border-control);
+  border-radius: inherit;
+  pointer-events: none;
+}
 
 .lk-avatar-img {
   width: 100%;
@@ -27,7 +37,7 @@
   place-items: center;
   font-family: var(--font-display);
   font-weight: 700;
-  color: #07080d;
+  color: var(--ink-on-bright);
   letter-spacing: -0.02em;
 }
 

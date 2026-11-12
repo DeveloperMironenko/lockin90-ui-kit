@@ -123,6 +123,7 @@ No capability gap — the card is fully usable and visually equivalent on both p
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** sets `aria-disabled` when `disabled`; the card is a region of text + an interactive CTA (the `Button` carries its own button semantics). The ribbon is decorative text.
 - **Native:** `disabled` sets `pointerEvents="none"` so the inner CTA can't be pressed; the CTA `Button` provides the `accessibilityRole`.
 - **Hit target / contrast:** the CTA is the touch target — keep it a real `Button` (≥44px `md`). The ribbon uses `#0a0a12` on the bright gradient for contrast; check icon uses `--zone-high` (mint) which also reads as "included".

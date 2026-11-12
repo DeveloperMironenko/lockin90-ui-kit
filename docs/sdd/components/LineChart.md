@@ -226,6 +226,7 @@ both sides, the same monotone/Catmull/step math, split/band/fan/ribbon construct
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** `<svg role="img">` + `ariaLabel` — always describe the trend AND the annotation story
   ("energy rising to a 2pm peak, forecast declining after now"). Overlay captions are real text
   (screen-reader visible); the pulse honors `prefers-reduced-motion`.
@@ -261,3 +262,7 @@ both sides, the same monotone/Catmull/step math, split/band/fan/ribbon construct
 - **Parity gate.** Before shipping a screen, confirm web phone-width and native render the same
   curve, fills, rules, dots, chips and captions — only the documented substrate differences
   (PAD_X inset, glow technique, gutter px) may differ.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Native reduced motion:** the pulse ring stops while `useReducedMotion()` is true.

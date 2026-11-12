@@ -89,6 +89,7 @@ No capability gap — both render the same tinted callout with the same bar/chip
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** root `<div role="note">` so assistive tech treats it as an aside/annotation. The icon is `aria-hidden`; meaning lives in the chip + prose.
 - **Native:** root `View` (spread `...rest` allows `accessibilityRole`/`accessibilityLabel`); the bar `View` is `pointerEvents="none"` and decorative.
 - **Color independence:** tone is reinforced by the `chip` label + prose, not color alone — don't rely on mint-vs-red being distinguishable; the chip text + content carry the valence.

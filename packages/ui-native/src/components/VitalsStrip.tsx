@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { Animated, Easing, View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, ClipPath, Defs, FeGaussianBlur, Filter, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { colors, fonts } from '@lockin90/tokens';
+import { useReducedMotion } from '../internal/useReducedMotion';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedRect = Animated.createAnimatedComponent(Rect);
@@ -195,14 +196,15 @@ function Tag({
 function PulseDot({ x, y, color, still = false }: { x: number; y: number; color: string; still?: boolean }) {
   const anim = useRef(new Animated.Value(0)).current;
 
+  const reduced = useReducedMotion();
   useEffect(() => {
-    if (still) return;
+    if (reduced || still) return;
     const loop = Animated.loop(
       Animated.timing(anim, { toValue: 1, duration: 1800, easing: Easing.linear, useNativeDriver: false }),
     );
     loop.start();
     return () => loop.stop();
-  }, [still, anim]);
+  }, [still, anim, reduced]);
 
   const r = anim.interpolate({ inputRange: [0, 1], outputRange: [3.6, 11] });
   const ringOpacity = anim.interpolate({ inputRange: [0, 1], outputRange: [0.8, 0] });
@@ -211,7 +213,7 @@ function PulseDot({ x, y, color, still = false }: { x: number; y: number; color:
     <G>
       <Circle cx={rd(x)} cy={rd(y)} r={6.6} fill={color} opacity={0.35} />
       <Circle cx={rd(x)} cy={rd(y)} r={3.6} fill={color} />
-      {still ? (
+      {still || reduced ? (
         <Circle cx={rd(x)} cy={rd(y)} r={7} fill="none" stroke={color} strokeWidth={1.4} opacity={0.4} />
       ) : (
         <AnimatedCircle cx={rd(x)} cy={rd(y)} r={r} fill="none" stroke={color} strokeWidth={1.4} opacity={ringOpacity} />
@@ -231,13 +233,19 @@ function LiveEcgTrace({ run, color, shine }: { run: EcgRun; color: string; shine
   const clipId = `lk-vt-clip-${uid}`;
   const progress = useRef(new Animated.Value(0)).current;
 
+  const reduced = useReducedMotion();
   useEffect(() => {
+    // Reduce Motion: the whole trace, the write head at its end
+    if (reduced) {
+      progress.setValue(1);
+      return;
+    }
     const loop = Animated.loop(
       Animated.timing(progress, { toValue: 1, duration: SWEEP_MS, easing: Easing.linear, useNativeDriver: false }),
     );
     loop.start();
     return () => loop.stop();
-  }, [progress]);
+  }, [progress, reduced]);
 
   const xs = run.pts.map((p) => p.x);
   const ys = run.pts.map((p) => p.y);

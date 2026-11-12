@@ -88,6 +88,7 @@ No capability gap blocks use — both render the same underline tab bar.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** rail `role="tablist"`; each tab `role="tab"` with `aria-selected={i === active}`. (Panels should carry `role="tabpanel"` + an `aria-labelledby` link in the consumer.)
 - **Native:** rail `accessibilityRole="tablist"`; tabs `accessibilityRole="tab"` + `accessibilityState={{ selected }}`.
 - **Hit target:** `10px` vertical padding + label; for touch-dense native use, ensure adequate spacing (the default `22px` gap helps).

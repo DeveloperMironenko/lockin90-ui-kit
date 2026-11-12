@@ -100,6 +100,7 @@ This file also documents **`CopyButton`** (lives in the same source file): a cop
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** default trigger is a `<button>` with `aria-haspopup="dialog"` + `aria-expanded`; the panel is `role="dialog"`. A custom trigger uses an inline wrapper (with the same `aria-haspopup`/`expanded`) to avoid nesting a `<button>`. ESC + outside-click dismiss. `CopyButton` toggles `aria-label` between "Copy" and "Copied".
 - **Native:** trigger and backdrop are `Pressable` with `accessibilityRole="button"`; `CopyButton` swaps `accessibilityLabel` between "Copy"/"Copied". Android back dismisses.
 - **Hit target:** trigger ≥28px; CopyButton ≥28–30px tall.
@@ -124,3 +125,13 @@ This file also documents **`CopyButton`** (lives in the same source file): a cop
 - **New need → both platforms.** A new `align`, a controlled `open`, or an arrow on native must be added to `PopoverProps` on web **and** native with the same name/tokens.
 - **Tokens only.** Trigger, panel, arrow, and CopyButton colors/radii all come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping, confirm the web phone-width popover and native popover match (same trigger, alignment, content) — accepting the documented arrow/frost differences.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The panel is a container, `--r` / `radii.md` (16, was 10); the round "?" trigger stays round (an icon circle).
+
+- **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
+
+## Update — 2026-11-11 (owner: the audit batch, control sizes and fills)
+
+- **Corners (V18):** the default "?" trigger is a control's 10 (was the pill).

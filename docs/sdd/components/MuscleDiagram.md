@@ -47,7 +47,7 @@ Secondary type exports: `MuscleTarget` (`{ group, role }`), `MuscleRole`, the 14
 | Body stroke | `--border-2`, 1px | `colors.border2`, 1px | `rgba(255,255,255,.16)` |
 | Highlight `primary` | fill `rgba(52,245,197,.55)` · stroke `--mint` | fill same · stroke `colors.mint` | `#34F5C5` |
 | Highlight `secondary` | fill `rgba(34,211,238,.45)` · stroke `--cyan` | fill same · stroke `colors.cyan` | `#22D3EE` |
-| Highlight `stabilizer` | fill `rgba(130,139,159,.35)` · stroke `--text-faint` | fill same · stroke `colors.textFaint` | `#828B9F` |
+| Highlight `stabilizer` | fill `rgba(130,139,159,.35)` · stroke `--text-faint` | fill same · stroke `colors.textFaint` | `#868FA3` |
 | Region glow | `filter: drop-shadow(0 0 5px currentColor)` | — (not applied) | role-colored |
 | Legend gap | `9px` | `9px` | row gap `10px` |
 | Legend dot | `10×10`, radius `3px`, `box-shadow 0 0 8px currentColor` | `10×10`, radius `3`, `shadowRadius 8` | role-colored glow |
@@ -111,6 +111,7 @@ No capability gap blocks the component — the body map is fully usable and geom
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the `<svg>` is `role="img"` with a generated `aria-label` summarizing body type, view, and each worked group + role (e.g. *"Body map (female, front view): Chest primary, Triceps secondary."*). Legend dots are `aria-hidden`; the muscle name + `Chip` carry the readable text.
 - **Native:** the figure is a decorative `Svg`; the legend `Text` rows are the accessible content. (No explicit `accessibilityLabel` on the `Svg` — consider adding one for parity with the web `aria-label`.)
 - **Contrast:** legend names use `--text` on the surface; role colors are decoration, never the sole signal (each row also carries a text `Chip`).

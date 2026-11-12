@@ -106,6 +106,7 @@ No capability gap blocks use.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** an `<ol>`/`<li>` conveys ordered milestone semantics; dots are `aria-hidden` (decorative); the status is carried in the visible `Chip` text. Headings are `<h3>` — ensure they fit the page's heading hierarchy.
 - **Native:** plain `View`s with `Text`; no interactive roles needed (static content). The status reads via the `Chip` label.
 - **Contrast:** title `--text`, description `--text-dim`, date `--text-faint`; the dim `next` body (`opacity .82`) stays above text-contrast minimums on the dark surface.

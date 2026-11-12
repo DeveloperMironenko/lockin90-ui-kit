@@ -94,6 +94,7 @@ No capability gap blocks use — the field is fully usable and visually equivale
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** real `<input>` (focusable, typeable). `aria-invalid` is set automatically when `invalid`. Provide a
   label via `FormField`'s `htmlFor`, or pass `aria-label` directly when there's no visible label.
 - **Native:** `TextInput` — pass `accessibilityLabel` for an unlabeled field; the `label` text is a sibling `Text`.
@@ -126,3 +127,45 @@ No capability gap blocks use — the field is fully usable and visually equivale
 
 ## Update — 2026-11-02 (native sizes match web)
 - **Native height = web height:** the field has `minHeight` 39.6 (sm 31.5), the web box `9 + 14×1.4 + 9 + 2`, so it matches the web field to the point (it was 36). The `label` caption is 11px / 500 `text-dim`, line height 17, as the web shows.
+
+## Update — 2026-11-10 (accessibility, 1.35)
+
+- **Edge:** `--border-control` / `colors.borderControl` (3.3:1 on the card, CONVENTIONS "Accessibility")
+  instead of `--border-2`; focus and invalid still recolour it.
+- **Text 16px / 16pt** (owner, 2026-11-10): no iOS zoom on web. The box keeps its size: web `md` line height
+  19.6px (39.6 tall), `sm` 17.5px (31.5 tall), `numeral` keeps 20px × 1.4; native `sm` padding 5 (min height
+  31.5), md unchanged (min height 39.6).
+- **Native:** the field box is a `Pressable` (`accessible={false}`): a tap on its padding, icon or unit focuses
+  the `TextInput`.
+- **`ref`** (web + native): forwarded to the field itself — web the `<input>` (`forwardRef<HTMLInputElement>`), native the `TextInput` — so an app moves focus to the next field on Return (`returnKeyType="next"` + `onSubmitEditing={() => next.current?.focus()}`). Works on React 18 and 19.
+- **Native ref type:** `TextInputRef` = `ComponentRef<typeof TextInput>` (exported), and the component is annotated `ForwardRefExoticComponent<InputProps & RefAttributes<TextInputRef>>`, so the emitted `.d.ts` keeps that form. On RN 0.88 the type `TextInput` is the component (no `focus()`), so the old emitted `RefAttributes<TextInput>` broke apps there; the `ComponentRef` form has `focus()` on 0.81 and 0.88 (checked against the mobile app's RN 0.88.1 types).
+
+## Update — 2026-11-10 (running-app audit, 1.35)
+
+- **Fill:** the opaque `--field` / `colors.field` (`#25272E`), so the placeholder keeps 4.6:1 over the aurora. **Focus (web):** the kit's 2px `--accent-2` ring (offset 2) on the field box. **Height:** at least 44 at phone width (web) and on native (all sizes), CONVENTIONS. Label 11px.
+
+## Update — 2026-11-10 (simulator check, 1.35)
+
+- **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more`): faint / dim text and the edge step up.
+
+## Update — 2026-11-11 (one focus indicator, web)
+
+- A focused field shows only its own edge: `--accent`, 2px (1px border + 1px inset shadow), on mouse and
+  keyboard focus; no outer `--accent-2` ring, no glow (owner: "2 outlines"). Invalid: the same in `--zone-low`.
+  Supersedes the ring / glow above; see CONVENTIONS "Focus (web)". Native was already edge-only.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- The `numeral` field has the control's 10 (was 9).
+
+## Update — 2026-11-11 (owner: the audit batch)
+
+- **Label (V20):** mono 11 / 500, .14em, `--text-dim` (web was faint .12em). **Focused and invalid (U11, web):**
+  the 2px red edge plus the red halo (`--lk-focus-invalid-halo`); also Select, SegmentedTabs `choice`,
+  TagInput, CodeInput, CodeField and RichTextEditor.
+
+## Update — 2026-11-11 (owner: the audit batch, V17)
+
+- **Icons sized by the slot (native, as web's CSS):** a kit `Icon` passed without its own `size` gets the slot's
+  — a field's `leading` 16 in `textFaint`, a row's `leading` 18 (`internal/iconSlot.ts`); any other node (an
+  avatar, a brand mark) renders as given.

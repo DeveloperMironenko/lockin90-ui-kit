@@ -57,3 +57,25 @@ describe('AlertStrong', () => {
     expect(renderToStaticMarkup(<AlertStrong>Why it matters:</AlertStrong>)).toBe('<b>Why it matters:</b>');
   });
 });
+
+describe('Alert box (owner, 2026-11-11)', () => {
+  it('the bar is on for signal tones and off for notes, and `bar` overrides it', () => {
+    expect(view(<Alert tone="warn">x</Alert>).classes).toContain('lk-alert--bar');
+    expect(view(<Alert tone="neutral">x</Alert>).classes).toContain('lk-alert--no-bar');
+    expect(view(<Alert tone="neutral" bar>x</Alert>).classes).toContain('lk-alert--bar');
+    expect(view(<Alert tone="danger" bar={false}>x</Alert>).classes).toContain('lk-alert--no-bar');
+  });
+
+  it('every default icon is 16', () => {
+    for (const tone of ['info', 'success', 'warn', 'danger', 'neutral', 'cyan', 'violet'] as const) {
+      expect(view(<Alert tone={tone}>x</Alert>).iconSlot).toMatch(/width="16"/);
+    }
+  });
+
+  it('a danger alert (or announceOnMount) mounts its region with the text hidden, to show it after', () => {
+    expect(renderToStaticMarkup(<Alert tone="danger">Failed</Alert>)).toContain('visibility:hidden');
+    expect(renderToStaticMarkup(<Alert tone="success" announceOnMount>Sent</Alert>)).toContain('visibility:hidden');
+    expect(renderToStaticMarkup(<Alert tone="info">Note</Alert>)).not.toContain('visibility:hidden');
+    expect(renderToStaticMarkup(<Alert tone="danger" live={false}>Failed</Alert>)).not.toContain('visibility:hidden');
+  });
+});

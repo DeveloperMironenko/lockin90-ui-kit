@@ -92,6 +92,7 @@ No capability gap: the block is fully usable and visually equivalent on both pla
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Web:** the `<pre>` is `tabIndex={0}` so keyboard users can scroll long bodies; the dot row is
   `aria-hidden`. `CopyButton` carries its own `aria-label="Copy code"`.
 - **Native:** the dot row is hidden from a11y (`accessibilityElementsHidden` /

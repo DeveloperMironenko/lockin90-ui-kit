@@ -3,7 +3,7 @@
 export { Accordion } from './components/Accordion';
 export type { AccordionItemData, AccordionProps } from './components/Accordion';
 export { Alert, AlertStrong } from './components/Alert';
-export type { AlertTone, AlertProps } from './components/Alert';
+export type { AlertTone, AlertProps, AlertTitleLevel } from './components/Alert';
 export { Avatar } from './components/Avatar';
 export type { AvatarProps } from './components/Avatar';
 export { ShareCard } from './components/ShareCard';
@@ -45,7 +45,7 @@ export type { GradientTextProps } from './components/GradientText';
 export { Icon, BRAND_COLORS } from './components/Icon';
 export type { IconName, IconProps } from './components/Icon';
 export { Input } from './components/Input';
-export type { InputProps } from './components/Input';
+export type { InputProps, TextInputRef } from './components/Input';
 export { PasswordInput } from './components/PasswordInput';
 export type { PasswordInputProps } from './components/PasswordInput';
 
@@ -93,6 +93,9 @@ export { RichText } from './components/RichText';
 export type { RichTextProps } from './components/RichText';
 export { SectionDivider } from './components/SectionDivider';
 export type { SectionDividerProps } from './components/SectionDivider';
+export { FitText } from './components/FitText';
+export type { FitTextProps } from './components/FitText';
+export { breakableAddress, useWordFit } from './internal/wordFit';
 export { SegmentedTabs } from './components/SegmentedTabs';
 export type { SegmentedTabsProps, SegmentedTone, SegmentedTab, SegmentedTabItem } from './components/SegmentedTabs';
 export { SsoButton } from './components/SsoButton';
@@ -120,10 +123,12 @@ export type { TableColumn, TableProps } from './components/Table';
 export { Tabs } from './components/Tabs';
 export type { TabsProps } from './components/Tabs';
 export { TagInput, CodeInput } from './components/TagInput';
-export type { TagInputProps, CodeInputProps } from './components/TagInput';
+export type { TagInputProps, CodeInputProps, CodeInputHandle } from './components/TagInput';
 export { Timeline } from './components/Timeline';
 export type { TimelineStatus, TimelineItem, TimelineProps } from './components/Timeline';
 export { Toast } from './components/Toast';
+export { TopLayer } from './components/TopLayer';
+export type { TopLayerProps } from './components/TopLayer';
 export type { ToastTone, ToastProps } from './components/Toast';
 export { Toggle } from './components/Toggle';
 export type { ToggleSize, ToggleProps } from './components/Toggle';
@@ -323,4 +328,7 @@ export type { SourceChipSize, SourceChipProps } from './components/SourceChip';
 // Optional-haptics helpers — silent no-ops in apps without expo-haptics; use
 // these for custom interactions (drags, pickers) so binaries without the
 // native module never crash.
-export { hapticSelection, hapticLift, hapticDrop } from './internal/optionalHaptics';
+export { hapticSelection, hapticSuccess, hapticLift, hapticDrop } from './internal/optionalHaptics';
+export { textStyle } from './theme';
+export { useReducedMotion } from './internal/useReducedMotion';
+export { useHighContrast, useContrastColors, contrastColors } from './internal/useHighContrast';

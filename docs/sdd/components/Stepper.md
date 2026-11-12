@@ -118,6 +118,7 @@ No capability gap blocks use — both render equivalent steppers.
 
 ## 7. Accessibility
 
+- **Kit rule:** CONVENTIONS "Accessibility" (2026-11-10) applies: contrast 4.5:1 text / 3:1 UI, 44pt native / 24px web targets, names from props, errors and changes announced, reduced motion, text scaling never disabled.
 - **Stepper:** display-only; nodes/labels convey progress visually. Web nodes are `aria-hidden` decorations; the consumer should expose flow progress textually (e.g. "Step 2 of 4") near the rail. Native renders plain `Text`/`View`.
 - **NumberStepper:** web `−`/`+` are real `<button>`s with `aria-label="Decrease"/"Increase"`; the value is `aria-live="polite"` so changes are announced; ends use the native `disabled` attribute. Native mirrors this — `accessibilityRole="button"` + `accessibilityLabel`, `accessibilityState={{ disabled }}`, value `accessibilityLiveRegion="polite"`.
 - **Hit target:** `30×30` `±` buttons — acceptable for desktop; on touch-dense native screens consider surrounding spacing.
@@ -143,3 +144,20 @@ No capability gap blocks use — both render equivalent steppers.
 - **New need → add to BOTH platforms.** Need vertical steps, clickable nodes, or a long-press repeat on `NumberStepper`? Add it on web AND native (same prop, same tokens) — never a one-off.
 - **Tokens only.** Node fills (`--grad-cta`/`--grad-mint`), the accent line, glows, pill bg, and mono value come from tokens; never literals.
 - **Parity gate.** Before shipping a flow or a quantity input, confirm the web phone-width and native renders match (same node states, same line fill, same disabled ends).
+
+## Update — 2026-11-11 (large text, 1.35)
+
+- **Native, large OS text size** (`fontScale` > 1.35, as ListRow / SegmentedTabs): the rail is vertical — each
+  step a row (node, then its label taking the rest of the width, wrapping between words, no `numberOfLines`),
+  joined by short 2 × 12 vertical connectors under the nodes. At AX sizes the row's labels were clamped to
+  "Про…" / "Гот…" (CONVENTIONS "Accessibility": nothing cut off). The nodes grow with the text there
+  (`max(40 | 30, number size × fontScale × 1.35)`, still circles), so the step number isn't clipped; the
+  connectors sit under their centres. Normal sizes keep the one-line row and fixed nodes.
+
+## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
+
+- NumberStepper's track is a control, `--r-sm` / `radii.sm` (10, was the pill); its buttons 10 less their inset (1 edge + 3 padding) = 6 (were circles). The step nodes stay round.
+
+## Update — 2026-11-11 (owner: every corner 10)
+
+- **Every corner 10** (owner, 2026-11-11): the step nodes are rounded squares (`--r-sm` / `radii.sm`, were circles), as StepIndex.
