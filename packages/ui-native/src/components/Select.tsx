@@ -344,9 +344,10 @@ const styles = StyleSheet.create({
   fieldDisabled: { opacity: 0.55 },
   measureText: { flex: 0 },
   leading: { flexShrink: 0, alignItems: 'center', justifyContent: 'center' },
-  // the value takes the row and sits left after the icon, as on web; `sm` hugs its content
+  // the value takes the row and sits left after the icon, as on web; `sm` hugs its content, and in a
+  // wider box (a row's controls one width, owner 2026-11-11) still sits left, the chevron at the end
   value: { flex: 1, fontFamily: fonts.ui, fontSize: 14, color: colors.text },
-  valueSm: { flex: 0, flexShrink: 1, fontFamily: fonts.mono, fontSize: 11 },
+  valueSm: { flex: 0, flexGrow: 1, flexShrink: 1, fontFamily: fonts.mono, fontSize: 11 },
   backdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.55)',

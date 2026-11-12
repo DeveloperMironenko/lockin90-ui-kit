@@ -223,3 +223,10 @@ The overlay differences are expected substrate, not capability gaps that block u
   a slash, as iOS and Android do: "Europe/" "Kyiv").
 - **Leading icon:** its width is measured on `onLayout` and from its ref in the layout effect (a tree
   mounted hidden gets no `onLayout` on iOS Fabric).
+
+## Update — 2026-11-11 (sm in a wider box)
+
+- Native `sm` value grows (`flexGrow: 1`) after its icon: in a box wider than its content (Settings' three
+  controls one width, owner 2026-11-11) the value sits left and the chevron at the end, as web (it sat in
+  the middle: `space-between` with a hugging value).
+
