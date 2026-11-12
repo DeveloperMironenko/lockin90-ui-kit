@@ -1,5 +1,6 @@
 import { type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
+import { useLiveReveal } from '../hooks/useLiveReveal';
 import { Icon } from './Icon';
 
 export type AlertTone = 'info' | 'success' | 'warn' | 'danger' | 'neutral' | 'cyan' | 'violet';
@@ -29,6 +30,14 @@ export interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   /** content under the text that is NOT announced when it changes — a ticking countdown ("Try again in
    *  0:42"): the live region is then the title and text only. */
   footer?: ReactNode;
+  /** Announce the alert when it appears (not only when its text changes): the live region mounts first
+   *  and its text shows a moment later, which screen readers read. Default: `danger` only, as native — an
+   *  error mounts in answer to an action; a note present when the page opens isn't read out. Pass it for a
+   *  result that appears after an action ("Code sent", "Saved offline, will send"). */
+  announceOnMount?: boolean;
+  /** The 3px tone bar at the start edge. Default: on for info / success / warn / danger, off for the notes
+   *  (neutral, cyan, violet). */
+  bar?: boolean;
 }
 
 export type AlertTitleLevel = 'p' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
@@ -43,8 +52,9 @@ const TONE: Record<AlertTone, string> = {
   violet: 'lk-alert-violet',
 };
 
-/** The bold part of a note's sentence (a `violet` note colours it light accent). The same name as the
- *  native twin, so an i18n `Trans` reads alike on both: `components={{ b: <AlertStrong /> }}`. */
+/** The bold part of an alert's sentence: 600 in the text's full colour (`--text`); a `violet` note colours
+ *  it `--accent-soft`. The same name as the native twin, so an i18n `Trans` reads alike on both:
+ *  `components={{ b: <AlertStrong /> }}`. */
 export function AlertStrong({ children }: { children?: ReactNode }) {
   return <b>{children}</b>;
 }
@@ -53,8 +63,8 @@ export function AlertStrong({ children }: { children?: ReactNode }) {
 const WARNING = (
   <span className="lk-icon" aria-hidden="true">
     <svg
-      width={18}
-      height={18}
+      width={16}
+      height={16}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -69,17 +79,19 @@ const WARNING = (
   </span>
 );
 
-/** Per-tone default leading icon. */
+/** Per-tone default leading icon: 16 in every tone (alert.css sizes an app's icon the same). */
 const DEFAULT_ICON: Record<AlertTone, ReactNode> = {
-  info: <Icon name="info" size={18} />,
-  success: <Icon name="check" size={18} />,
+  info: <Icon name="info" size={16} />,
+  success: <Icon name="check" size={16} />,
   warn: WARNING,
   danger: WARNING,
-  // the notes' 17px glyph size is set in alert.css (for app icons too)
-  neutral: <Icon name="info" />,
-  cyan: <Icon name="info" />,
-  violet: <Icon name="info" />,
+  neutral: <Icon name="info" size={16} />,
+  cyan: <Icon name="info" size={16} />,
+  violet: <Icon name="info" size={16} />,
 };
+
+/** The quiet notes: no bar by default. */
+const NOTE_TONES: ReadonlySet<AlertTone> = new Set(['neutral', 'cyan', 'violet']);
 
 /** Tinted callout box — info / success / warn / danger banner (or a quiet neutral / cyan note) with optional dismiss. */
 export function Alert({
@@ -92,21 +104,32 @@ export function Alert({
   titleAs: Title = 'p',
   live = true,
   footer,
+  announceOnMount,
+  bar,
   className,
   ...rest
 }: AlertProps) {
   // an error interrupts (alert); every other tone is a polite status; with a footer the role sits on the
   // title + text only, so a ticking footer is never re-announced
   const role = !live ? undefined : tone === 'danger' ? 'alert' : 'status';
+  // announced on mount: the region is there first, its text shows a moment later (useLiveReveal)
+  const pending = useLiveReveal(live && (announceOnMount ?? tone === 'danger'));
   const text = (
-    <>
+    <div className="lk-alert-words" style={pending ? { visibility: 'hidden' } : undefined}>
       {title && <Title className="lk-alert-title">{title}</Title>}
       {children && <p className="lk-alert-text">{children}</p>}
-    </>
+    </div>
   );
+  const barOn = bar ?? !NOTE_TONES.has(tone);
   return (
     <div
-      className={cn('lk-alert', TONE[tone], !title && !onDismiss && !footer && 'lk-alert--text-only', className)}
+      className={cn(
+        'lk-alert',
+        TONE[tone],
+        barOn ? 'lk-alert--bar' : 'lk-alert--no-bar',
+        !title && !onDismiss && !footer && 'lk-alert--text-only',
+        className,
+      )}
       role={footer == null ? role : undefined}
       {...rest}
     >

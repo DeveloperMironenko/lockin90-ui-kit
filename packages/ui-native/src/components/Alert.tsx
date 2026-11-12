@@ -1,5 +1,5 @@
-import { isValidElement, useEffect, useRef, type ReactNode } from 'react';
-import { AccessibilityInfo, Platform, View, Text, Pressable, StyleSheet, type TextStyle, type ViewProps, type ViewStyle } from 'react-native';
+import { createContext, isValidElement, useContext, useEffect, useRef, type ReactNode } from 'react';
+import { AccessibilityInfo, Platform, View, Text, Pressable, StyleSheet, type ViewProps } from 'react-native';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { useContrastColors } from '../internal/useHighContrast';
@@ -39,12 +39,16 @@ export interface AlertProps extends Omit<ViewProps, 'children'> {
    *  shrinks the text instead of splitting (FitText). Plain strings and nested `Text` are measured
    *  without it. */
   measureText?: string;
+  /** The 3px tone bar at the start edge. Default: on for info / success / warn / danger, off for the notes
+   *  (neutral, cyan, violet). As web. */
+  bar?: boolean;
 }
 
 export type AlertTitleLevel = 'p' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
+// info is the status `--info` (as Toast), not the brand accent (owner, 2026-11-11)
 const TONE: Record<AlertTone, { c: string; bg: string; border: string }> = {
-  info: { c: colors.accent, bg: 'rgba(124,92,255,0.08)', border: 'rgba(124,92,255,0.3)' },
+  info: { c: colors.info, bg: 'rgba(110,123,255,0.08)', border: 'rgba(110,123,255,0.3)' },
   success: { c: colors.mint, bg: 'rgba(52,245,197,0.08)', border: 'rgba(52,245,197,0.3)' },
   warn: { c: colors.zoneMid, bg: 'rgba(255,176,32,0.08)', border: 'rgba(255,176,32,0.3)' },
   danger: { c: colors.zoneLow, bg: 'rgba(255,77,109,0.08)', border: 'rgba(255,77,109,0.3)' },
@@ -53,37 +57,26 @@ const TONE: Record<AlertTone, { c: string; bg: string; border: string }> = {
   violet: { c: colors.accent, bg: 'rgba(124,92,255,0.055)', border: 'rgba(124,92,255,0.2)' },
 };
 
-/** Quiet notes (design .tz-note / .note-safe): no bar, their own box, glyph and text sizes. */
-const NOTE: Partial<Record<AlertTone, { box: ViewStyle; text: TextStyle; iconSize: number }>> = {
-  neutral: {
-    // The web's .tz-note sizes: mobile auth screens match the running web app at phone width.
-    box: { gap: 9, paddingTop: 11, paddingBottom: 11, paddingLeft: 13, paddingRight: 13 },
-    text: { fontSize: 12.5, lineHeight: 19 },
-    iconSize: 17,
-  },
-  cyan: {
-    box: { gap: 9, paddingTop: 12, paddingBottom: 12, paddingLeft: 14, paddingRight: 14 },
-    text: { fontSize: 12.5, lineHeight: 19 },
-    iconSize: 17,
-  },
-  // the web's phone-width .lk-alert-violet sizes (on the 4px scale)
-  violet: {
-    box: { gap: 12, paddingTop: 12, paddingBottom: 12, paddingLeft: 16, paddingRight: 16, borderRadius: radii.md },
-    text: { fontSize: 12.5, lineHeight: 19 },
-    iconSize: 18,
-  },
-};
+/** The quiet notes: no bar by default. */
+const NOTE_TONES: ReadonlySet<AlertTone> = new Set(['neutral', 'cyan', 'violet']);
 
-/** The bold part of a `violet` note's sentence (web: `<b>` inside it), in the light accent. Pass it as an
- *  i18n `Trans` component: `components={{ b: <AlertStrong /> }}`. */
+/** Every tone's icon (CONVENTIONS "Type": icons sized per slot). */
+const ICON = 16;
+
+/** The tone an `AlertStrong` sits in (a violet note colours it `accentSoft`). */
+const ToneContext = createContext<AlertTone | null>(null);
+
+/** The bold part of an alert's sentence (web: `<b>` inside it): 600 in the full text colour; a `violet`
+ *  note colours it `accentSoft`. Pass it as an i18n `Trans` component: `components={{ b: <AlertStrong /> }}`. */
 export function AlertStrong({ children }: { children?: ReactNode }) {
-  return <Text style={styles.strong}>{children}</Text>;
+  const tone = useContext(ToneContext);
+  return <Text style={[styles.strong, tone === 'violet' && styles.strongSoft]}>{children}</Text>;
 }
 
 /** Warning-triangle glyph — shared between warn + danger tones. */
 function WarningIcon({ color }: { color: string }) {
   return (
-    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
+    <Svg width={ICON} height={ICON} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
       <Path d="M12 4 2.5 20.5h19z" />
       <Path d="M12 10v4.5" />
       <Circle cx={12} cy={17.75} r={0.9} fill={color} stroke="none" />
@@ -92,7 +85,7 @@ function WarningIcon({ color }: { color: string }) {
 }
 
 /** Info "i" glyph — used for info tone (and the quiet notes, smaller and thinner). */
-function InfoIcon({ color, size = 18, strokeWidth = 1.9 }: { color: string; size?: number; strokeWidth?: number }) {
+function InfoIcon({ color, size = ICON, strokeWidth = 1.9 }: { color: string; size?: number; strokeWidth?: number }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
       <Circle cx={12} cy={12} r={9} />
@@ -105,7 +98,7 @@ function InfoIcon({ color, size = 18, strokeWidth = 1.9 }: { color: string; size
 /** Check glyph — used for success tone. */
 function CheckIcon({ color }: { color: string }) {
   return (
-    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
+    <Svg width={ICON} height={ICON} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
       <Path d="M20 6 9 17l-5-5" />
     </Svg>
   );
@@ -121,8 +114,6 @@ function isText(children: ReactNode): boolean {
 function defaultIcon(tone: AlertTone, color: string): ReactNode {
   if (tone === 'success') return <CheckIcon color={color} />;
   if (tone === 'warn' || tone === 'danger') return <WarningIcon color={color} />;
-  const note = NOTE[tone];
-  if (note) return <InfoIcon color={color} size={note.iconSize} strokeWidth={tone === 'violet' ? 1.7 : 1.6} />;
   return <InfoIcon color={color} />;
 }
 
@@ -139,6 +130,7 @@ export function Alert({
   footer,
   announceOnMount,
   measureText,
+  bar,
   style,
   ...rest
 }: AlertProps) {
@@ -166,17 +158,18 @@ export function Alert({
     if (first && !onMount) return;
     AccessibilityInfo.announceForAccessibility(spoken);
   }, [spoken, live, tone, onMount]);
-  const note = NOTE[tone];
+  const note = NOTE_TONES.has(tone);
+  const barOn = bar ?? !note;
   // a text-only neutral note centres its icon; with a title or a dismiss it top-aligns like every tone
   const centred = tone === 'neutral' && title == null && !onDismiss;
   return (
     <View
       // an error is an alert and read as soon as it shows; every tone is a live region (web: alert / status)
       {...(footer == null ? liveProps : {})}
-      style={[styles.alert, { backgroundColor: t.bg, borderColor: t.border }, note?.box, centred && styles.centred, style]}
+      style={[styles.alert, { backgroundColor: t.bg, borderColor: t.border }, centred && styles.centred, style]}
       {...rest}
     >
-      {!note && <View style={[styles.bar, { backgroundColor: t.c }]} pointerEvents="none" />}
+      {barOn && <View style={[styles.bar, { backgroundColor: t.c }]} pointerEvents="none" />}
       <View style={[styles.icon, centred && styles.iconCentered]}>{icon ?? defaultIcon(tone, t.c)}</View>
       <View style={styles.body}>
         <View {...(footer == null ? {} : liveProps)}>
@@ -186,8 +179,12 @@ export function Alert({
             </FitText>
           )}
           {children != null && (isText(children)
-            ? <FitText measureText={measureText} style={[styles.text, { color: c.textDim }, note?.text, note && title == null && styles.textAlone]}>{children}</FitText>
-            : children)}
+            ? (
+              <ToneContext.Provider value={tone}>
+                <FitText measureText={measureText} style={[styles.text, { color: c.textDim }, title == null && styles.textAlone]}>{children}</FitText>
+              </ToneContext.Provider>
+            )
+            : <ToneContext.Provider value={tone}>{children}</ToneContext.Provider>)}
         </View>
         {footer != null ? <View style={styles.footer}>{typeof footer === 'string' ? <Text style={styles.text}>{footer}</Text> : footer}</View> : null}
       </View>
@@ -210,17 +207,19 @@ export function Alert({
 }
 
 const styles = StyleSheet.create({
-  // web: --accent mixed 40% with white
-  strong: { fontWeight: '600', color: '#CBBEFF' },
+  // emphasis: 600 in the full text colour, as web; a violet note's in accentSoft
+  strong: { fontWeight: '600', color: colors.text },
+  strongSoft: { color: colors.accentSoft },
   alert: {
     position: 'relative',
     flexDirection: 'row',
     alignItems: 'flex-start',
+    // one box for every tone (owner, 2026-11-11): 12 / 16, as web
     gap: 12,
-    paddingTop: 14,
-    paddingRight: 15,
-    paddingBottom: 14,
-    paddingLeft: 17,
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 16,
+    paddingRight: 16,
     // a container's corners (CONVENTIONS "Corner radii")
     borderRadius: radii.md,
     borderWidth: 1,
@@ -235,7 +234,8 @@ const styles = StyleSheet.create({
     width: 3,
   },
   icon: {
-    marginTop: 1,
+    // centred on the first 19.5pt line
+    marginTop: 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
     marginTop: 3,
     fontFamily: fonts.ui,
     fontSize: 13,
-    lineHeight: 19,
+    lineHeight: 19.5,
     color: colors.textDim,
   },
   footer: { marginTop: 8 },

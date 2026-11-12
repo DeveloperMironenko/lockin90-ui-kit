@@ -36,8 +36,8 @@ It's the kit's single sanctioned inline-message surface (form errors, success co
 
 | Aspect | Web (`alert.css`) | Native (`StyleSheet`) |
 | --- | --- | --- |
-| Box | `padding: 14px 15px 14px 17px`, `--r-sm`, `border 1px`, `bg --glass-2` + tone tint, `overflow: hidden` | `paddingTop 14 / right 15 / bottom 14 / left 17`, `radii.sm`, `border 1px`, tone bg |
-| Left accent bar | `::before` `width: 3px`, `--lk-alert-c` (tone color) | absolute `<View>` `width: 3`, tone `c` |
+| Box | `padding: 12px 16px` (every tone), `--r`, `border 1px`, `bg --glass-2` + tone tint, `overflow: hidden` | `padding 12 / 16` (every tone), `radii.md`, `border 1px`, tone bg |
+| Left accent bar (optional, `bar`) | `.lk-alert--bar::before` `width: 3px`, `--lk-alert-c` (tone color) | absolute `<View>` `width: 3`, tone `c` |
 | Layout | flex row, `align-items: flex-start`, `gap: 12px` | row, `flex-start`, `gap: 12` |
 | Icon | `--lk-alert-c`, `margin-top: 1px` | tone `c`, `marginTop: 1` |
 | Title | `--font-display`, `14px`, 700, `--text` | `fonts.display`, `14`, `'700'`, `colors.text` |
@@ -177,3 +177,24 @@ No capability gap — the alert is visually equivalent on both.
 - The box is a container: `--r` / `radii.md` (16), web and native (was 10); the close button stays a control (10).
 
 - **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
+
+## Update — 2026-11-11 (owner: the audit batch, V5 / V8 / V17 / V25 / U10)
+
+Supersedes the sizes in §3 where they differ.
+
+- **One box for every tone** (signal tones and the three notes alike): padding 12 / 16, gap 12, a
+  container's corners (`--r` / `radii.md`), text 13 (`secondary`, line height 1.5 / 19.5), the icon 16
+  (an app's own icon is sized 16 by `alert.css` too; native default glyphs are 16). The violet note no longer
+  has its own text size (13.5 / 12.5 → 13) and the notes their own padding or 17 / 18 icons.
+- **`bar`** (new, web + native): the 3px tone bar at the start edge. Default on for info / success / warn /
+  danger, off for neutral / cyan / violet; `bar` overrides either way.
+- **`info` is the status `--info`** (`#6E7BFF`, tint 8% / line 30%), as the Toast's info, never the brand
+  accent.
+- **Strong** (`AlertStrong`, web `<b>` / `<strong>`): 600 in `--text` in every tone; only the violet note's
+  emphasis is `--accent-soft` (native reads the tone from the Alert around it). Native's lavender in every
+  tone was the bug.
+- **Announced on mount (web, new `announceOnMount`, as native's):** default `danger` only. The live region
+  (`role="alert"` / `"status"`) renders at once with its text hidden (`visibility: hidden`, so nothing
+  moves) and shows it `LIVE_REVEAL_MS` (100 ms) later, so screen readers read a region they already know
+  (a region that mounts with its text is often silent). Apps pass `announceOnMount` for a result that
+  appears after an action ("Code sent", the offline "will send" note, a reset done).

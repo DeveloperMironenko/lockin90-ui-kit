@@ -3,16 +3,18 @@
    A tone-tinted background + 1px tone border + a 3px left accent bar (::before),
    a tone-colored leading icon, a font-display title + font-ui dim body, and an
    optional × dismiss button top-right. Mirrors the design `.callout` vocab.
+   One box for every tone (owner, 2026-11-11): padding 12 / 16, a container's corners, text 13, the icon
+   16, the bar optional (`.lk-alert--bar`: on for the signal tones, off for the notes by default).
    Key: .lk-alert — the box; .lk-alert-{info,success,warn,danger} — tone tints;
-   .lk-alert-{neutral,cyan} — quiet notes (design auth .tz-note / .note-safe), no bar;
-   .lk-alert-violet — the onboarding "why we ask" note (design onboarding .why), no bar.
+   .lk-alert-{neutral,cyan} — quiet notes (design auth .tz-note / .note-safe);
+   .lk-alert-violet — the onboarding "why we ask" note (design onboarding .why).
    ========================================================================== */
 .lk-alert {
   position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 14px 15px 14px 17px;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   /* a container's corners (CONVENTIONS "Corner radii") */
   border-radius: var(--r);
   border: 1px solid var(--border);
@@ -20,8 +22,8 @@
   overflow: hidden;
 }
 
-/* 3px left accent bar in the tone color */
-.lk-alert::before {
+/* the optional 3px accent bar at the start edge, in the tone color */
+.lk-alert.lk-alert--bar::before {
   content: '';
   position: absolute;
   inset: 0 auto 0 0;
@@ -34,11 +36,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-top: 1px;
+  /* centred on the first 19.5px line */
+  margin-top: 2px;
   color: var(--lk-alert-c, var(--accent));
 }
 .lk-alert-icon svg {
   display: block;
+  /* 16 in every tone, an app's own icon too (CONVENTIONS "Type": icons sized per slot) */
+  width: 16px;
+  height: 16px;
 }
 
 .lk-alert-body {
@@ -59,11 +65,11 @@
 .lk-alert-text {
   margin: 0;
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: var(--fs-secondary);
   line-height: 1.5;
   color: var(--text-dim);
 }
-/* emphasis in the body reads in full text colour */
+/* emphasis in the body: 600 in the full text colour (a violet note: --accent-soft) */
 .lk-alert-text :is(b, strong) {
   font-weight: 600;
   color: var(--text);
@@ -108,9 +114,9 @@
 
 /* ---- tone tints: set --lk-alert-c, tinted bg + border ---- */
 .lk-alert-info {
-  --lk-alert-c: var(--accent);
-  background: rgba(124, 92, 255, 0.08);
-  border-color: rgba(124, 92, 255, 0.3);
+  --lk-alert-c: var(--info);
+  background: color-mix(in srgb, var(--info) 8%, transparent);
+  border-color: color-mix(in srgb, var(--info) 30%, transparent);
 }
 .lk-alert-success {
   --lk-alert-c: var(--mint);
@@ -128,34 +134,14 @@
   border-color: rgba(255, 77, 109, 0.3);
 }
 
-/* ---- quiet notes (design auth .tz-note / .note-safe): no accent bar, cyan icon,
-   17px glyph at stroke 1.6, 12.5px dim text ---- */
+/* ---- quiet notes (design auth .tz-note / .note-safe): a cyan icon, the same box and text ---- */
 .lk-alert-neutral,
 .lk-alert-cyan {
   --lk-alert-c: var(--accent-2);
-  gap: 9px;
-}
-.lk-alert-neutral::before,
-.lk-alert-cyan::before {
-  content: none;
-}
-.lk-alert-neutral .lk-alert-icon svg,
-.lk-alert-cyan .lk-alert-icon svg {
-  width: 17px;
-  height: 17px;
-  stroke-width: 1.6;
-}
-.lk-alert-neutral .lk-alert-text,
-.lk-alert-cyan .lk-alert-text {
-  font-size: 12.5px;
 }
 .lk-alert-neutral {
-  padding: 11px 13px;
   background: var(--glass);
   border-color: var(--border);
-}
-.lk-alert-neutral .lk-alert-text {
-  line-height: 1.55;
 }
 /* a one-line text note centres its icon; with a title or a dismiss it top-aligns like every tone */
 .lk-alert-neutral.lk-alert--text-only {
@@ -165,42 +151,19 @@
   margin-top: 0;
 }
 .lk-alert-cyan {
-  padding: 12px 14px;
   background: rgba(34, 211, 238, 0.05);
   border-color: rgba(34, 211, 238, 0.22);
 }
 
-/* ---- the onboarding "why we ask" note (design web/onboarding.html .why): no accent bar, an
-   accent-tinted box (the container radius, the line in the tone), the accent info glyph (18px,
-   stroke 1.7), 13.5px dim text, emphasis in a light accent; spacing on the 4px scale ---- */
+/* ---- the onboarding "why we ask" note (design web/onboarding.html .why): an accent-tinted box, the
+   accent icon, emphasis in --accent-soft ---- */
 .lk-alert-violet {
   --lk-alert-c: var(--accent);
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--r);
   border-color: color-mix(in srgb, var(--accent) 20%, transparent);
   background: color-mix(in srgb, var(--accent) 5.5%, transparent);
 }
-.lk-alert-violet::before {
-  content: none;
-}
-.lk-alert-violet .lk-alert-icon svg {
-  width: 18px;
-  height: 18px;
-  stroke-width: 1.7;
-}
-.lk-alert-violet .lk-alert-text {
-  font-size: 13.5px;
-  line-height: 1.5;
-}
 .lk-alert-violet .lk-alert-text :is(b, strong) {
-  font-weight: 600;
-  color: color-mix(in srgb, var(--accent) 40%, white);
-}
-@media (max-width: 540px) {
-  .lk-alert-violet .lk-alert-text {
-    font-size: 12.5px;
-  }
+  color: var(--accent-soft);
 }
 
 /* footer — under the text, outside the live region (a ticking countdown) */
