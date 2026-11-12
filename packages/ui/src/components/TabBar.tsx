@@ -12,6 +12,11 @@ export interface TabBarItem {
    *  the tab's active/inactive color automatically (via `currentColor`). */
   icon: ReactNode | IconName;
   label: string;
+  /** Read by screen readers in place of `label` (e.g. the FAB's "Log a workout" under its "Log"). */
+  accessibilityLabel?: string;
+  /** Shown but not available yet: `aria-disabled`, clicks do nothing, drawn as usual (not
+   *  dimmed), so a bar can show a tab before its page exists. */
+  disabled?: boolean;
 }
 
 export interface TabBarProps extends Omit<HTMLAttributes<HTMLElement>, 'onChange'> {
@@ -63,8 +68,14 @@ export function TabBar({
             key={i}
             type="button"
             aria-current={i === active ? 'page' : undefined}
+            aria-label={item.accessibilityLabel}
+            aria-disabled={item.disabled || undefined}
             className={cn('lk-tabbar-item', isFab && 'lk-tabbar-item--fab', i === active && 'is-active')}
-            onClick={() => (isFab && onFabPress ? onFabPress() : onChange?.(i))}
+            onClick={() => {
+              if (item.disabled) return;
+              if (isFab && onFabPress) onFabPress();
+              else onChange?.(i);
+            }}
           >
             <span className={isFab ? 'lk-tabbar-fab' : 'lk-tabbar-icon'}>{glyph}</span>
             <span className="lk-tabbar-label">{item.label}</span>
