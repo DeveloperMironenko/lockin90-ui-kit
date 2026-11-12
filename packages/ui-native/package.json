@@ -1,6 +1,6 @@
 {
   "name": "@lockin90/ui-native",
-  "version": "2.15.0",
+  "version": "2.16.0",
   "description": "LockIn90 \"Aurora Flux\" React Native component library — StyleSheet primitives driven by @lockin90/tokens.",
   "license": "UNLICENSED",
   "repository": {
