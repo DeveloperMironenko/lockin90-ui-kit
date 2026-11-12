@@ -13,7 +13,7 @@ export interface BadgeProps extends ViewProps {
 }
 
 const TONE: Record<BadgeTone, { color: string; bg: string; border: string; glow: string }> = {
-  accent: { color: '#0A0A12', bg: colors.accent, border: 'transparent', glow: colors.accent },
+  accent: { color: colors.inkOnBright, bg: colors.accent, border: 'transparent', glow: colors.accent },
   high: { color: colors.zoneHigh, bg: 'rgba(52,245,197,0.10)', border: 'rgba(52,245,197,0.35)', glow: colors.zoneHigh },
   mid: { color: colors.zoneMid, bg: 'rgba(255,176,32,0.10)', border: 'rgba(255,176,32,0.35)', glow: colors.zoneMid },
   low: { color: colors.zoneLow, bg: 'rgba(255,77,109,0.10)', border: 'rgba(255,77,109,0.35)', glow: colors.zoneLow },

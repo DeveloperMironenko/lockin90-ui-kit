@@ -26,7 +26,7 @@
   place-items: center;
   font-family: var(--font-display);
   font-weight: 700;
-  color: #07080d;
+  color: var(--ink-on-bright);
   letter-spacing: -0.02em;
 }
 

@@ -36,7 +36,7 @@ export function FollowButton({
 
   const tone = following
     ? { color: colors.textDim, border: colors.border2, bg: colors.glass }
-    : { color: '#cbbcff', border: 'rgba(124,92,255,0.45)', bg: 'rgba(124,92,255,0.10)' };
+    : { color: colors.accentSoft, border: 'rgba(124,92,255,0.45)', bg: 'rgba(124,92,255,0.10)' };
 
   return (
     <Pressable

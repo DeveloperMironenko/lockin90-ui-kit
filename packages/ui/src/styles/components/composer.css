@@ -94,7 +94,7 @@
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  color: #0a0a12;
+  color: var(--ink-on-bright);
   background: var(--grad-cta);
   box-shadow: var(--glow-accent);
   transition: transform 0.2s var(--ease), opacity 0.2s var(--ease);

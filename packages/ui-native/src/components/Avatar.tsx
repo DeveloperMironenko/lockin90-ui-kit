@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   avatar: { overflow: 'hidden' },
   img: { width: '100%', height: '100%' },
   mono: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  monoText: { fontFamily: fonts.display, fontWeight: '700', color: '#07080d', letterSpacing: -0.3 },
+  monoText: { fontFamily: fonts.display, fontWeight: '700', color: colors.inkOnBright, letterSpacing: -0.3 },
   // backgroundColor anchors the glow's shape on iOS; it's fully hidden by the orb
   auraGlow: { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.void, ...nativeShadows.glowAccent },
   auraOrb: { ...absoluteFill, overflow: 'hidden' },

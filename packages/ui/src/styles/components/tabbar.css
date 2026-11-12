@@ -81,7 +81,7 @@
   padding: 0;
   border: 0;
   border-radius: var(--r-pill);
-  color: #0A0A12;
+  color: var(--ink-on-bright);
   background: var(--grad-cta);
   background-size: 160% 160%;
   box-shadow: var(--glow-accent), 0 8px 24px -8px rgba(0, 0, 0, 0.6);

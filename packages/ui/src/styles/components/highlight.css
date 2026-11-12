@@ -6,7 +6,7 @@
    ========================================================================== */
 .lk-hl {
   font-weight: 600;
-  color: #cbbcff; /* accent — softened violet for legibility on dark */
+  color: var(--accent-soft); /* accent — softened violet for legibility on dark */
   background: rgba(124, 92, 255, 0.1);
   padding: 0 5px;
   border-radius: 5px;

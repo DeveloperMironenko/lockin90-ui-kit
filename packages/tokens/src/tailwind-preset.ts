@@ -33,6 +33,8 @@ const preset = {
         accent: colors.accent,
         'accent-2': colors.accent2,
         'accent-3': colors.accent3,
+        'accent-soft': colors.accentSoft,
+        'ink-on-bright': colors.inkOnBright,
         'zone-high': colors.zoneHigh,
         'zone-mid': colors.zoneMid,
         'zone-low': colors.zoneLow,

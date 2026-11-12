@@ -17,7 +17,7 @@
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 18px;
-  color: #0a0a12;
+  color: var(--ink-on-bright);
 }
 .lk-stepindex--done {
   background: color-mix(in srgb, var(--zone-high) 12%, transparent);

@@ -23,14 +23,16 @@ Inter (UI), JetBrains Mono (data).
 | Borders | `--border` `--border-2` `--border-control` | `colors.border` `colors.border2` `colors.borderControl` | `rgba(255,255,255,.09)` / `.16` / `.36` |
 | Text | `--text` `--text-dim` `--text-faint` | `colors.text` `colors.textDim` `colors.textFaint` | `#EEF1F8` `#AAB2C6` `#868FA3` |
 | Spectrum | `--lime --mint --cyan --indigo --violet --magenta` | `colors.lime` … | `#A8FF35 #34F5C5 #22D3EE #6E7BFF #A855F7 #FF3D81` |
-| Accents | `--accent` `--accent-2` `--accent-3` | `colors.accent/accent2/accent3` | `#7C5CFF` `#22D3EE` `#34F5C5` |
+| Accents | `--accent` `--accent-2` `--accent-3` `--accent-soft` | `colors.accent/accent2/accent3/accentSoft` | `#7C5CFF` `#22D3EE` `#34F5C5` `#CBBCFF` (the accent for text on dark: a violet note's emphasis, accent chips and tags, Highlight, FollowButton; never hand-typed) |
+| Ink on bright | `--ink-on-bright` | `colors.inkOnBright` | `#0A0A12` — the one dark label on a bright surface (CTA gradient, solid danger, a selected toggle / segment, the monogram, the Toast's action); 4.5:1 at every CTA stop |
 | Zones | `--zone-high/mid/low` | `colors.zoneHigh/zoneMid/zoneLow` | `#34F5C5` `#FFB020` `#FF4D6D` |
-| Status | `--ok --warn --bad --info` | `colors.ok/warn/bad/info` | `#34F5C5 #FFB020 #FF4D6D #6E7BFF` |
+| Status | `--ok --warn --bad --info` | `colors.ok/warn/bad/info` | `#34F5C5 #FFB020 #FF4D6D #6E7BFF` (an `info` Alert and Toast both use `--info`, never the brand accent) |
 | Gradients | `--grad-flux/cta/mint/violet/warm` | `gradients.flux/cta/mint/violet/warm` | flux=5-stop 100° · cta=violet→cyan 135° · etc. |
 | Radii | `--r-sm --r --r-lg --r-xl --r-pill` | `radii.sm/md/lg/xl/pill` | `10 / 10 / 10 / 10 / 999` (every corner 10, "Corner radii") |
 | Glow / elev | `--glow-accent/cyan/mint` `--elev-1/2` | `nativeShadows.glowAccent/...` | see tokens.css |
 | Motion | `--ease` `--ease-soft` `--dur` | n/a (native uses Animated/Reanimated) | cubic-beziers; .55s |
 | Type | `--font-display/ui/mono` | `fonts.display/ui/mono` | Space Grotesk / Inter / JetBrains Mono |
+| Type table | `--fs-*`, `--ls-label` | `textStyles` (tokens), `textStyle(role)` (ui-native) | see "Type" below |
 
 ## Parity legend (the §-header badge)
 - ✅ **identical** — same API, same visuals, substrate is the only difference.
@@ -142,6 +144,33 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
 The aurora peaks are modelled from the measured worst case (luminance .081 behind the old glass card): each
 blob colour screened over `--bg-0` at the intensity that reproduces it (cyan .343, violet .547, magenta
 .497), and 1.44× that for `vivid`. `tokens.test.ts` checks them.
+
+## Type (owner rule, 2026-11-11 — one size per text role)
+
+One table for web and native: `textStyles` in `@lockin90/tokens` (size, weight, line height, tracking in em),
+the `--fs-<role>` custom properties on web, `textStyle(role)` on native (tracking × size in pt, `label`
+uppercased). A kit primitive that owns a text uses its role; an app's own text uses the same roles.
+
+| Role | Font / size / weight | Colour | Where |
+| --- | --- | --- | --- |
+| `authTitle` | display 28 / 700 | text | an auth screen's title |
+| `screenTitle` | display 23 / 700 | text | a signed-in screen's title |
+| `stepTitle` | display 20 / 700 | text | an onboarding step's title |
+| `cardTitle` | display 17 / 700 | text | a card's, Sheet's, Modal's title |
+| `rowTitle` | ui 15 / 600 | text | a ListRow's title |
+| `body` | ui 14 / 400 | text-dim | running text, dialog bodies |
+| `secondary` | ui 13 / 400 | text-dim | an Alert's text, a row's second line |
+| `hint` | ui 11.5 / 400 | text-faint | a field's help (FormField) |
+| `label` | mono 11 / 500, .14em, uppercase | text-dim (field labels) / text-faint (section labels, Eyebrow) | FormField, Select, Divider, Eyebrow, MetricTile labels |
+| `control` | ui 16 / 400 | text | a control's value: Input, PasswordInput, SearchInput, Select `md` |
+| `controlSm` | ui 14 / 400 | text | Select `sm` (the header's language picker) |
+| `labelLink` | mono 11.5 | accent-2 | a link in a row of labels ("Resend code", Button `text`) |
+
+- **Strong** text inside a sentence is 600 in the sentence's full text colour (`--text`); only the violet
+  note's emphasis is `--accent-soft`.
+- **Links** in a sentence: Inter 600 `--accent-2` at the sentence's size; in a label row: `labelLink`.
+- **Icons are sized by their slot, by the kit:** buttons 16 (`sm` 14, `lg` 19), fields 16 `--text-faint`,
+  Alert 16, list rows and the header 18, Toast 13.
 
 ## One shape, one line (owner rule, 2026-11-02 — "the border has to be the same")
 

@@ -21,7 +21,7 @@ const DANGER_BORDER = 'rgba(255,77,109,0.42)';
 const TEXT_SLOP = { top: 14, bottom: 14, left: 8, right: 8 };
 const SPIN_SIZE = { sm: 14, md: 16, lg: 18 } as const;
 // the dark label on a bright surface (primary's gradient, solid danger), as web: label and spinner
-const INK_ON_BRIGHT = '#0A0A12';
+const INK_ON_BRIGHT = colors.inkOnBright;
 
 export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> {
   variant?: ButtonVariant;

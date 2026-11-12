@@ -328,6 +328,7 @@ export type { SourceChipSize, SourceChipProps } from './components/SourceChip';
 // Optional-haptics helpers — silent no-ops in apps without expo-haptics; use
 // these for custom interactions (drags, pickers) so binaries without the
 // native module never crash.
-export { hapticSelection, hapticLift, hapticDrop } from './internal/optionalHaptics';
+export { hapticSelection, hapticSuccess, hapticLift, hapticDrop } from './internal/optionalHaptics';
+export { textStyle } from './theme';
 export { useReducedMotion } from './internal/useReducedMotion';
 export { useHighContrast, useContrastColors, contrastColors } from './internal/useHighContrast';

@@ -62,7 +62,7 @@
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #0a0a12;
+  color: var(--ink-on-bright);
   background: var(--grad-cta);
   padding: 4px 10px;
   border-radius: var(--r-pill);

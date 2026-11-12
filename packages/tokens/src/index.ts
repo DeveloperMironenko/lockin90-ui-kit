@@ -47,6 +47,12 @@ export const colors = {
   accent: '#7C5CFF',
   accent2: '#22D3EE',
   accent3: '#34F5C5',
+  // the accent softened for text on dark (owner, 2026-11-11): the emphasis inside a violet note, accent
+  // chips and tags, Highlight, FollowButton; 9.9:1 on the card
+  accentSoft: '#CBBCFF',
+  // the dark label on a bright surface (the CTA gradient, a solid danger fill, a selected toggle, the
+  // monogram's gradient): one ink, 4.5:1 at every point of the CTA gradient
+  inkOnBright: '#0A0A12',
   // energy zones (signal)
   zoneHigh: '#34F5C5',
   zoneMid: '#FFB020',
@@ -127,6 +133,37 @@ export const fonts = {
   mono: 'JetBrains Mono',
 } as const;
 
+/** The type table (owner, 2026-11-11, CONVENTIONS "Type"): one size per text role, web and native alike.
+ *  `size` in px / pt, `lineHeight` a multiple of it, `tracking` in em (native: `tracking × size` pt). Web:
+ *  the `--fs-*` / `--ls-label` custom properties in tokens.css; native: `textStyle(role)` in ui-native. */
+export const textStyles = {
+  /** an auth screen's title ("Welcome back") */
+  authTitle: { font: 'display', size: 28, weight: '700', lineHeight: 1.2, tracking: -0.02 },
+  /** a signed-in screen's title */
+  screenTitle: { font: 'display', size: 23, weight: '700', lineHeight: 1.25, tracking: -0.01 },
+  /** an onboarding step's title */
+  stepTitle: { font: 'display', size: 20, weight: '700', lineHeight: 1.3, tracking: -0.01 },
+  /** a card's, sheet's or dialog's title */
+  cardTitle: { font: 'display', size: 17, weight: '700', lineHeight: 1.35, tracking: -0.01 },
+  /** a list row's title */
+  rowTitle: { font: 'ui', size: 15, weight: '600', lineHeight: 1.4, tracking: 0 },
+  /** running text */
+  body: { font: 'ui', size: 14, weight: '400', lineHeight: 1.55, tracking: 0 },
+  /** secondary text (text-dim): an alert's or a row's second line */
+  secondary: { font: 'ui', size: 13, weight: '400', lineHeight: 1.5, tracking: 0 },
+  /** a field's hint (text-faint) */
+  hint: { font: 'ui', size: 11.5, weight: '400', lineHeight: 1.5, tracking: 0 },
+  /** the one uppercase mono label: field labels (text-dim), section labels and eyebrows (text-faint) */
+  label: { font: 'mono', size: 11, weight: '500', lineHeight: 1.55, tracking: 0.14 },
+  /** a control's value: Input, Select md */
+  control: { font: 'ui', size: 16, weight: '400', lineHeight: 1.25, tracking: 0 },
+  /** a small control's value: Select sm */
+  controlSm: { font: 'ui', size: 14, weight: '400', lineHeight: 1.3, tracking: 0 },
+  /** a link inside a row of labels ("Resend code"; accent-2). In a sentence a link is the sentence's
+   *  size, Inter 600, accent-2 */
+  labelLink: { font: 'mono', size: 11.5, weight: '400', lineHeight: 1.5, tracking: 0 },
+} as const;
+
 /** Glow / elevation shadows (web box-shadow strings). */
 export const shadows = {
   glowAccent: '0 0 40px rgba(124,92,255,0.35)',
@@ -172,7 +209,7 @@ export const brand = {
 } as const;
 
 /** Everything, bundled. */
-export const tokens = { colors, gradients, radii, spacing, breakpoints, fonts, shadows, nativeShadows, motion, brand } as const;
+export const tokens = { colors, gradients, radii, spacing, breakpoints, fonts, textStyles, shadows, nativeShadows, motion, brand } as const;
 
 export type Colors = typeof colors;
 export type ColorToken = keyof Colors;
@@ -183,6 +220,8 @@ export type Spacing = typeof spacing;
 export type SpacingStep = keyof Spacing;
 export type Breakpoints = typeof breakpoints;
 export type Tokens = typeof tokens;
+export type TextStyles = typeof textStyles;
+export type TextRole = keyof TextStyles;
 
 /** Map a color token to its CSS custom property, e.g. `cssVar('zoneHigh')` → `var(--zone-high)`. */
 const cssVarName: Record<ColorToken, string> = {
@@ -190,7 +229,7 @@ const cssVarName: Record<ColorToken, string> = {
   glass: '--glass', glass2: '--glass-2', card: '--card', cardSolid: '--card-solid', field: '--field', border: '--border', border2: '--border-2', borderControl: '--border-control', borderControlStrong: '--border-control-strong',
   text: '--text', textDim: '--text-dim', textFaint: '--text-faint',
   lime: '--lime', mint: '--mint', cyan: '--cyan', indigo: '--indigo', violet: '--violet', magenta: '--magenta', orange: '--orange',
-  accent: '--accent', accent2: '--accent-2', accent3: '--accent-3',
+  accent: '--accent', accent2: '--accent-2', accent3: '--accent-3', accentSoft: '--accent-soft', inkOnBright: '--ink-on-bright',
   zoneHigh: '--zone-high', zoneMid: '--zone-mid', zoneLow: '--zone-low',
   ok: '--ok', warn: '--warn', bad: '--bad', info: '--info',
 };

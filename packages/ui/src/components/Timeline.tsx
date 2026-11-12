@@ -26,7 +26,7 @@ const CHIP_TONE = { done: 'high', now: 'accent', next: 'mid' } as const;
 const DEFAULT_LABEL = { done: 'Done', now: 'In progress', next: 'Next' } as const;
 
 const CHECK = (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0A0A12" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ stroke: 'var(--ink-on-bright)' }} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 6 9 17l-5-5" />
   </svg>
 );

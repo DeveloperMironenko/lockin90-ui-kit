@@ -23,7 +23,7 @@ const TONE: Record<ChipTone, { color: string; border: string; bg: string }> = {
   high: { color: colors.zoneHigh, border: 'rgba(52,245,197,0.35)', bg: 'rgba(52,245,197,0.08)' },
   mid: { color: colors.zoneMid, border: 'rgba(255,176,32,0.35)', bg: 'rgba(255,176,32,0.08)' },
   low: { color: colors.zoneLow, border: 'rgba(255,77,109,0.35)', bg: 'rgba(255,77,109,0.08)' },
-  accent: { color: '#cbbcff', border: 'rgba(124,92,255,0.4)', bg: 'rgba(124,92,255,0.10)' },
+  accent: { color: colors.accentSoft, border: 'rgba(124,92,255,0.4)', bg: 'rgba(124,92,255,0.10)' },
   // Dedicated PR red (design `.bd` — Finished's record pills) — NOT `low`'s
   // zoneLow #FF4D6D (that's a spectrum/status color); a PR must scream a
   // deliberately off-spectrum red, matching `PrBadge`'s `#FF4757`.
@@ -131,5 +131,5 @@ const styles = StyleSheet.create({
   labelWrap: { flexShrink: 1 },
   label: { fontFamily: fonts.mono, fontSize: 11, fontWeight: '500', letterSpacing: 0.4 },
   labelSm: { fontSize: 11, fontWeight: '600', letterSpacing: 0, lineHeight: 13, fontVariant: ['tabular-nums'] },
-  labelSmAccent: { color: '#0A0A12' },
+  labelSmAccent: { color: colors.inkOnBright },
 });

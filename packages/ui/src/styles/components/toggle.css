@@ -2,7 +2,7 @@
    Toggle — accessible on/off switch (design `.switch`, web settings screens).
    OFF: a glass pill track (subtle white fill + border-2) holding a solid
    text-dim knob. ON: the TRACK fills with the CTA gradient + accent glow
-   (border transparent) and the knob goes dark ink (#07080d) as it slides L→R.
+   (border transparent) and the knob goes dark ink (var(--ink-on-bright)) as it slides L→R.
    Built on a real <button role="switch"> so keyboard + AT work. An optional
    label sits in a flex row beside the switch.
    Key: .lk-toggle (track, sizes .lk-toggle-sm/-md, .is-on) > .lk-toggle-knob
@@ -44,8 +44,8 @@
   border-color: transparent;
   box-shadow: 0 0 16px rgba(124, 92, 255, 0.45);
 }
-.lk-toggle-md.is-on .lk-toggle-knob { transform: translateX(20px); background: #07080d; }
-.lk-toggle-sm.is-on .lk-toggle-knob { transform: translateX(16px); background: #07080d; }
+.lk-toggle-md.is-on .lk-toggle-knob { transform: translateX(20px); background: var(--ink-on-bright); }
+.lk-toggle-sm.is-on .lk-toggle-knob { transform: translateX(16px); background: var(--ink-on-bright); }
 
 .lk-toggle:focus-visible {
   outline: none;

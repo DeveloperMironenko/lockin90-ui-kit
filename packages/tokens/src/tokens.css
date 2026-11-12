@@ -47,6 +47,8 @@
   --accent: #7C5CFF;
   --accent-2: #22D3EE;
   --accent-3: #34F5C5;
+  --accent-soft: #CBBCFF; /* the accent softened for text on dark: a violet note's emphasis, accent chips */
+  --ink-on-bright: #0A0A12; /* the dark label on a bright surface (CTA gradient, solid danger, toggle) */
 
   /* ---- energy zones (signal colors) ---- */
   --zone-high: #34F5C5;
@@ -115,6 +117,21 @@
   --font-display: 'Space Grotesk', system-ui, sans-serif;
   --font-ui: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* ---- the type table (owner, 2026-11-11; `textStyles` in index.ts, CONVENTIONS "Type") ---- */
+  --fs-auth-title: 28px;
+  --fs-screen-title: 23px;
+  --fs-step-title: 20px;
+  --fs-card-title: 17px;
+  --fs-row-title: 15px;
+  --fs-body: 14px;
+  --fs-secondary: 13px;
+  --fs-hint: 11.5px;
+  --fs-label: 11px;
+  --fs-control: 16px;
+  --fs-control-sm: 14px;
+  --fs-label-link: 11.5px;
+  --ls-label: 0.14em;
 }
 
 /* Increase Contrast (prefers-contrast: more): faint and dim text and the lines step up, the values of

@@ -56,7 +56,7 @@ const FONT_SIZE: Record<TagCloudSize, number> = {
 /** gradient-mode tint per bucket; lg = cyan, xl = violet (mirrors web). */
 const GRAD_TINT: Partial<Record<TagCloudSize, { color: string; border: string; bg: string }>> = {
   lg: { color: colors.accent2, border: 'rgba(34,211,238,0.3)', bg: colors.glass },
-  xl: { color: '#cbbcff', border: 'rgba(124,92,255,0.4)', bg: 'rgba(124,92,255,0.08)' },
+  xl: { color: colors.accentSoft, border: 'rgba(124,92,255,0.4)', bg: 'rgba(124,92,255,0.08)' },
 };
 
 /** Weighted tag cloud — flex-wrapped mono pills sized by importance. */

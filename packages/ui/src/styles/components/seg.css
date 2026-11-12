@@ -165,7 +165,7 @@
    control (design `.seg.on.mint`). Idle segments are unaffected.
    -------------------------------------------------------------------------- */
 .lk-seg[data-tone='mint'] .lk-seg-tab.is-active {
-  color: #0a0a12; /* dark-on-bright label — the kit's gradient-CTA label color */
+  color: var(--ink-on-bright); /* dark-on-bright label — the kit's gradient-CTA label color */
   background: var(--grad-mint);
   box-shadow: var(--glow-mint);
 }
@@ -174,7 +174,7 @@
    is a CTA-gradient pill (violet→cyan) + accent glow + dark-ink label
    (design `.seg button[aria-pressed="true"]`). Idle segments are unaffected. */
 .lk-seg[data-tone='gradient'] .lk-seg-tab.is-active {
-  color: #07080d;
+  color: var(--ink-on-bright);
   background: var(--grad-cta);
   box-shadow: 0 0 16px rgba(124, 92, 255, 0.4);
 }

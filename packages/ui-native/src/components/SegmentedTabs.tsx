@@ -81,7 +81,7 @@ const TONE_BORDER: Record<SegmentedColorTone, string> = {
 
 /** The design's dark ink for labels on a bright CTA gradient
  *  (design `.seg button[aria-pressed="true"]` — #07080d). */
-const INK_ON_GRADIENT = '#07080D';
+const INK_ON_GRADIENT = colors.inkOnBright;
 
 /** The track's edge and the gaps that place the lit pill (styles below), so its corners are the track's
  *  control radius less the pill's inset from the outer edge (CONVENTIONS "Corner radii"). */
@@ -435,7 +435,7 @@ export function SegmentedTabs({
         // SEMANTIC-toned segment tints its label toward the tone.
         const labelColor = isGradActive
           ? tone === 'mint'
-            ? '#0A0A12'
+            ? colors.inkOnBright
             : INK_ON_GRADIENT
           : isColorTone
             ? toneColor!

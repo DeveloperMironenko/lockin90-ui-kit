@@ -87,7 +87,7 @@
 .lk-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 .lk-btn svg { width: 16px; height: 16px; flex: 0 0 auto; }
 .lk-btn-primary {
-  border: none; color: #0A0A12; background: var(--grad-cta); background-size: 160% 160%;
+  border: none; color: var(--ink-on-bright); background: var(--grad-cta); background-size: 160% 160%;
   box-shadow: var(--glow-accent); animation: lk-btn-flow 6s var(--ease-soft) infinite;
 }
 .lk-btn-primary:hover { box-shadow: 0 0 56px rgba(124, 92, 255, 0.55); }
@@ -187,7 +187,7 @@
    `variant`: solid `--bad` fill on the default button, red-tinted transparent
    on `.lk-btn-ghost`. */
 .lk-btn--tone-danger {
-  border: none; color: #0A0A12; background: var(--bad);
+  border: none; color: var(--ink-on-bright); background: var(--bad);
   box-shadow: 0 0 24px -6px color-mix(in srgb, var(--bad) 55%, transparent);
 }
 .lk-btn--tone-danger:hover { box-shadow: 0 0 34px -4px color-mix(in srgb, var(--bad) 70%, transparent); }
@@ -203,7 +203,7 @@
 }
 /* --lk-btn-ink: each variant's label colour, which the loading spinner draws in (loading hides the label) */
 .lk-btn { --lk-btn-ink: var(--text); }
-.lk-btn-primary, .lk-btn--tone-danger { --lk-btn-ink: #0A0A12; }
+.lk-btn-primary, .lk-btn--tone-danger { --lk-btn-ink: var(--ink-on-bright); }
 .lk-btn-ghost { --lk-btn-ink: var(--text-dim); }
 .lk-btn-ghost.lk-btn--tone-danger { --lk-btn-ink: var(--bad); }
 .lk-btn.lk-btn-text { --lk-btn-ink: var(--accent-2); }
@@ -230,7 +230,7 @@
 .lk-chip.lk-high { color: var(--zone-high); border-color: rgba(52, 245, 197, 0.35); background: rgba(52, 245, 197, 0.08); }
 .lk-chip.lk-mid { color: var(--zone-mid); border-color: rgba(255, 176, 32, 0.35); background: rgba(255, 176, 32, 0.08); }
 .lk-chip.lk-low { color: var(--zone-low); border-color: rgba(255, 77, 109, 0.35); background: rgba(255, 77, 109, 0.08); }
-.lk-chip.lk-accent { color: #cbbcff; border-color: rgba(124, 92, 255, 0.4); background: rgba(124, 92, 255, 0.10); }
+.lk-chip.lk-accent { color: var(--accent-soft); border-color: rgba(124, 92, 255, 0.4); background: rgba(124, 92, 255, 0.10); }
 .lk-chip.lk-pr { color: #FF6B78; border-color: rgba(255, 71, 87, 0.4); background: rgba(255, 71, 87, 0.08); }
 .lk-chip.lk-neutral { color: var(--text-faint); border-color: var(--border-2); background: var(--glass-2); }
 .lk-chip.lk-dot::before { content: ""; flex: none; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
@@ -250,7 +250,7 @@
 .lk-chip.lk-chip-sm.lk-mid { background: rgba(255, 176, 32, 0.10); }
 .lk-chip.lk-chip-sm.lk-low { background: rgba(255, 77, 109, 0.10); }
 .lk-chip.lk-chip-sm.lk-neutral { color: var(--text-dim); background: var(--glass-2); }
-.lk-chip.lk-chip-sm.lk-accent { color: #0A0A12; background: var(--grad-cta); border-color: transparent; }
+.lk-chip.lk-chip-sm.lk-accent { color: var(--ink-on-bright); background: var(--grad-cta); border-color: transparent; }
 /* sm bare dot — the whole chip collapses to an 8px glowing circle, no text
    (Badge's `dot` mode). These rules come last so the dot background wins over
    the tone background. */

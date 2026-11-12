@@ -224,7 +224,7 @@ export function SetTable({
                       end={{ x: 1, y: 1 }}
                       style={[styles.check, styles.checkDone]}
                     >
-                      <CheckGlyph color="#07080D" />
+                      <CheckGlyph color={colors.inkOnBright} />
                     </LinearGradient>
                   ) : (
                     <View style={styles.check}>

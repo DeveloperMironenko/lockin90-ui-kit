@@ -42,11 +42,11 @@
 .lk-toolbar-on {
   background: rgba(124, 92, 255, 0.16);
   border-color: rgba(124, 92, 255, 0.4);
-  color: #cbbcff;
+  color: var(--accent-soft);
 }
 .lk-toolbar-on:hover {
   background: rgba(124, 92, 255, 0.22);
-  color: #cbbcff;
+  color: var(--accent-soft);
 }
 
 .lk-toolbar-divider {

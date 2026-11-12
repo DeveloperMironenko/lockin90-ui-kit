@@ -188,7 +188,7 @@ button.lk-step-item.is-clickable {
 .lk-step--glow .lk-step-item.is-current .lk-step-node {
   border-color: transparent;
   background: var(--grad-cta, var(--accent));
-  color: #07080d;
+  color: var(--ink-on-bright);
   box-shadow: var(--glow-accent), 0 0 0 5px rgba(124, 92, 255, 0.10);
   animation: lk-step-pulse 2.4s var(--ease) infinite;
 }

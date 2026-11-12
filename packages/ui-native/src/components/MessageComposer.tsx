@@ -104,7 +104,7 @@ export function MessageComposer({
             end={{ x: 1, y: 1 }}
             style={[styles.send, !canSend && styles.sendDisabled, pressed && canSend && styles.sendPressed]}
           >
-            <Icon name="share" size={18} color="#0A0A12" />
+            <Icon name="share" size={18} color={colors.inkOnBright} />
           </LinearGradient>
         )}
       </Pressable>

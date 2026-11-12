@@ -62,7 +62,7 @@ const TONE_ICON: Record<ToastTone, IconName> = {
 const ENTER_MS = 200;
 const ENTER_DY = -8;
 /** The action's dark label on the CTA gradient (4.5:1 at every point of it). */
-const ON_CTA = '#080A12';
+const ON_CTA = colors.inkOnBright;
 /** The seconds ring: r 8 in a 20 box, drawn 16. */
 const RING_C = 2 * Math.PI * 8;
 
