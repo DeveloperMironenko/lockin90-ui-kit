@@ -147,3 +147,10 @@ No capability gap blocks use — the dialog is fully usable and visually equival
 - The web close button is a control, `--r-sm` (10, was 16); the dialog stays `--r-lg` / `radii.lg` (22).
 
 - **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
+
+## Update — 2026-11-11 (owner: the audit batch, V10 / U20)
+
+- **Footer actions** (CONVENTIONS "Dialog actions"): each half the width at phone width (≤ 540; web
+  `.lk-dialog-actions`, native equal cells), end-aligned wider.
+- **Native (U20):** the body is a `ScrollView` (sized by its content, scrolling once the card fills the room),
+  and the card rises above the keyboard (iOS `KeyboardAvoidingView`, Android the keyboard's height).

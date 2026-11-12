@@ -155,3 +155,15 @@ No gap blocks use — the sheet/drawer is fully usable and visually equivalent (
 - **Toasts above it:** the sheet renders `TopLayerHost` (see `TopLayer.md`) as the last child of its window while
   `open`, so an app's `TopLayer` toast draws over the scrim and the panel instead of under the window.
 - **Web (follow-up):** checked separately at 402×874 (`dvh`, the body's bottom).
+
+## Update — 2026-11-11 (owner: the audit batch, V10 / U20)
+
+- **New `footer`** (web + native): the actions pinned under the body, "Cancel | Primary", each half the width
+  (CONVENTIONS "Dialog actions"); the home-indicator inset moves from the body's end to the footer.
+- **New `closeLabel`:** with `onClose`, a × (18 drawn, 28 box, 44 target) at the end of the title row.
+- **New `subheader`:** pinned under the title, outside the scroll (Select's search field).
+- **New `height`** (`auto` default, `tall` = a fixed 80%: a searchable list never resizes per keystroke);
+  native **`padded`** (`false`: a list runs edge to edge in the body).
+- **Title** display 17 (was 16), as Modal (`cardTitle`).
+- **Android keyboard (U20):** the panel rises by the keyboard's height (`internal/keyboard.ts`
+  `useAndroidKeyboardHeight`); iOS keeps `KeyboardAvoidingView` `padding`.

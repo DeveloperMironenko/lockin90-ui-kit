@@ -98,3 +98,10 @@
 }
 /* the panel takes focus only so its name is read (useDialogFocus); its controls show the ring */
 .lk-modal:focus { outline: none; }
+
+/* Dialog actions (CONVENTIONS "Dialog actions"): at phone width every action is the same width, in the
+   order given ("Cancel | Primary"); a long label wraps inside its half. Modal and Sheet footers. */
+@media (max-width: 540px) {
+  .lk-dialog-actions { justify-content: stretch; }
+  .lk-dialog-actions > * { flex: 1 1 0; min-width: 0; white-space: normal; }
+}

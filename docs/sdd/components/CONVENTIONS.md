@@ -162,6 +162,16 @@ IconButton, SsoButton, BackLink's surface, ChoiceChip, IconTile, every field); a
 from has the control edge (`--border-control`); buttons and chips `--border-2`; containers (Card, Alert,
 tiles) and overlays (Sheet, Modal, Menu, Popover, Tooltip, Select's panel) one edge, `--border` (`.09`).
 
+## Dialog actions (owner rule, 2026-11-11 — V10)
+
+- **One footer slot:** `Sheet` and `Modal` take `footer`; its actions are "Cancel | Primary" in that order,
+  each half the width at phone width (≤ 540; web `.lk-dialog-actions`, native equal cells), end-aligned on
+  a wider screen (Modal). A long label wraps inside its half.
+- **Option choices are list rows** in the body (Choose photo / Take photo), never stacked buttons.
+- **A close ×** where the sheet has no Cancel: `Sheet` `closeLabel` (with `onClose`), as Modal's `closeLabel`.
+- Sheet and Modal titles are `cardTitle` (display 17). Native Modal's body scrolls and both rise above the
+  keyboard (iOS `KeyboardAvoidingView`, Android by the keyboard's height: RN Modal windows aren't resized).
+
 ## Type (owner rule, 2026-11-11 — one size per text role)
 
 One table for web and native: `textStyles` in `@lockin90/tokens` (size, weight, line height, tracking in em),

@@ -12,7 +12,8 @@ export interface ModalProps extends HTMLAttributes<HTMLDivElement> {
   title?: string;
   /** Body content. */
   children?: ReactNode;
-  /** Optional footer — right-aligned actions under a hairline. */
+  /** Optional footer — the actions under a hairline (CONVENTIONS "Dialog actions"): "Cancel | Primary",
+   *  each half the width at phone width (≤ 540px), end-aligned on a wider screen. */
   footer?: ReactNode;
   /** Card max-width: sm ~380px, md ~460px, lg ~620px. */
   size?: 'sm' | 'md' | 'lg';
@@ -103,7 +104,7 @@ export function Modal({
           </div>
         )}
         <div className="lk-modal-body">{children}</div>
-        {footer && <div className="lk-modal-foot">{footer}</div>}
+        {footer && <div className="lk-modal-foot lk-dialog-actions">{footer}</div>}
       </div>
     </div>,
     document.body,

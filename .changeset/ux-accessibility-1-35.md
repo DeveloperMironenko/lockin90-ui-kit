@@ -81,3 +81,5 @@ UX and accessibility (1.35b–h, CONVENTIONS "Accessibility"):
   - **Fills and edges (V19):** Button `default`, IconButton, SsoButton, BackLink's surface, ChoiceChip and IconTile are on the opaque `--field` (were glass / `--bg-1`; IconButton drops its blur); ChoiceChip's edge `--border-2`; Tooltip's bubble the overlays' `--border`. Web ChoiceChip, Popover and Menu triggers use the shared `--accent-2` focus ring.
   - **Native primary Button glow (V15):** drawn by a View around the gradient (it never rendered on the gradient).
   - **Popover** "?" trigger: 10 corners (was the pill).
+  - **Dialog actions (V10, CONVENTIONS "Dialog actions"):** `Sheet` gains `footer` (pinned "Cancel | Primary", equal halves), `closeLabel` (a named ×), `subheader` (pinned outside the scroll) and `height` (`tall` = fixed 80%), native `padded`; Sheet title 17 (was 16). `Modal`'s footer actions are equal at phone width (web `.lk-dialog-actions`).
+  - **Native Modal / Sheet keyboard (U20):** Modal's body scrolls and the card avoids the keyboard; Sheet and Modal rise by the keyboard's height on Android (RN Modal windows aren't resized).
