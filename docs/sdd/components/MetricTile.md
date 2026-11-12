@@ -210,3 +210,8 @@ shipping a native screen where the dots convey required state.
 - The `sm` tile at phone width (web) and native `tileSm` is a control's 10 (was 16): it sits in a padded card, where 16 less the padding is no radius. The default tile stays 10.
 
 - **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
+
+## Update — 2026-11-11 (owner: the audit batch)
+
+- **Labels (V20):** the one label style, .14em at every size and width (was .16em / sm 1pt native, .1em at phone
+  width web), 500.

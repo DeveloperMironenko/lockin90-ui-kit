@@ -37,7 +37,8 @@
   font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  /* the one label style (CONVENTIONS "Type") */
+  letter-spacing: var(--ls-label);
   color: var(--text-faint);
 }
 
@@ -168,7 +169,7 @@
 /* sm: a readout tile in a settings grid (design web/settings.html .field) */
 .lk-metric-sm { gap: 7px; padding: 14px 15px; min-width: 0; }  /* min-width: a grid cell can shrink, so its text is cut */
 /* the label and a word value wrap, never cut (a long translation: Пульс спокою, パワーリフティング) */
-.lk-metric-sm .lk-metric-label { font-size: 11px; font-weight: 400; letter-spacing: 0.14em; min-width: 0; overflow-wrap: anywhere; }
+.lk-metric-sm .lk-metric-label { font-size: 11px; font-weight: 500; letter-spacing: var(--ls-label); min-width: 0; overflow-wrap: anywhere; }
 .lk-metric-sm .lk-metric-value { font-weight: 600; font-size: 19px; line-height: 1.2; letter-spacing: -0.01em; }
 .lk-metric-sm .lk-metric-unit { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--text-faint); }
 .lk-metric-sm .lk-metric-hint { font-family: var(--font-ui); font-size: 11.5px; letter-spacing: normal; color: var(--text-dim); }
@@ -176,7 +177,6 @@
 @media (max-width: 540px) {
   /* a tile in a card: 16 less the card's padding is no radius, so a control's (CONVENTIONS "Corner radii") */
   .lk-metric-sm { gap: 3px; padding: 12px 11px; }
-  .lk-metric-sm .lk-metric-label { letter-spacing: 0.1em; }
   .lk-metric-sm .lk-metric-value { font-size: 20px; }
   .lk-metric-sm .lk-metric-word { font-size: 15px; letter-spacing: 0; min-width: 0; overflow-wrap: anywhere; }
   .lk-metric-sm .lk-metric-body { min-width: 0; }

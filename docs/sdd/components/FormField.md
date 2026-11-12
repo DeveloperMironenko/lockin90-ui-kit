@@ -193,3 +193,16 @@ None block use; app code reads 1:1 (same `label`/`help`/`error`/`required`, same
 ## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
 
 - SearchInput is a control, `--r-sm` / `radii.sm` (10) (was the pill); `shape` is deprecated and ignored (both shapes are 10). The round clear button stays round.
+
+## Update — 2026-11-11 (owner: the audit batch)
+
+- **Native: said once (U20).** With one control child, the control carries the label (its
+  `accessibilityLabel`) and a string error / help (its `accessibilityHint`); the visible label, error and
+  help are then hidden from screen readers (they were read again as separate elements, up to 7 times), and a
+  new error is announced once with `announceForAccessibility` (both platforms; no live region on top). With
+  several children the texts stay readable and the error is a live region, as before.
+- **Native help node (V6):** a `help` that is not a string or a `Text` (a FitText box, a View) is laid out on
+  its own, never inside the help `Text` (that drew ~33pt of extra height before the next label).
+- **Label (V20):** the one label style, mono 11 / 500, .14em (1.54pt), `--text-dim` on web too (was faint
+  .12em).
+- **Web focused and invalid (U11):** the red edge plus a soft red halo (CONVENTIONS "Focus").

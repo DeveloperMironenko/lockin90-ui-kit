@@ -63,7 +63,7 @@ describe('FormField error', () => {
         <Input />
       </FormField>,
     );
-    const text = host.querySelector('[aria-live="polite"]')!;
+    const text = Array.from(host.querySelectorAll('div')).find((d) => d.textContent === 'Enter your email' && d.children.length === 0)!;
     expect(text.previousElementSibling?.querySelector('svg')).toBeTruthy();
     unmount();
   });

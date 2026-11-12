@@ -156,6 +156,9 @@
   outline: 2px solid var(--accent-2);
   outline-offset: 2px;
 }
+/* A focused invalid field (U11): its 2px red edge plus a soft red halo outside it, so focus on an invalid
+   field is a visible change, not 1px → 2px of the same red. The one indicator stays the field's own. */
+:root { --lk-focus-invalid-halo: 0 0 0 3px color-mix(in srgb, var(--zone-low) 38%, transparent); }
 /* A control drawn smaller than the target keeps its look; an invisible ::before, centred on it, is the
    target: 24px, 44px at phone width (--bp-phone). The control is its positioning box. */
 .lk-btn-text, .lk-backlink, .lk-input-trail, .lk-search-clear, .lk-alert-close, .lk-toast-x { --lk-hit: 24px; }

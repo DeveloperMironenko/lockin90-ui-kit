@@ -12,11 +12,12 @@
 
 .lk-input-label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--text-faint);
+  /* the one label style (CONVENTIONS "Type") */
+  letter-spacing: var(--ls-label);
+  color: var(--text-dim);
 }
 
 .lk-input-field {
@@ -45,7 +46,7 @@
 }
 .lk-input-field.lk-input-invalid:focus-within {
   border-color: var(--zone-low);
-  box-shadow: inset 0 0 0 1px var(--zone-low);
+  box-shadow: inset 0 0 0 1px var(--zone-low), var(--lk-focus-invalid-halo);
 }
 
 .lk-input-lead {

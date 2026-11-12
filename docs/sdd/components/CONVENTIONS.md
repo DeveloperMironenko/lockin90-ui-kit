@@ -125,8 +125,12 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
   NoteField, RichTextEditor, CodeField and the message composer turn their edge `--accent` and 2px (the 1px
   border plus a 1px inset shadow, so nothing moves), on mouse and keyboard focus alike; no outer ring, no
   glow. Invalid: the same in `--zone-low`. The edge goes from `--border-control` (3.3:1) to a 2px `--accent`
-  (3.4:1 on the field, 4.2:1 on the card), WCAG 2.4.7 / 2.4.11. Buttons, links, chips and other controls
-  keep the `--accent-2` ring. Native fields already draw only their edge.
+  (3.4:1 on the field, 4.2:1 on the card): the edge's contrast is WCAG 1.4.11 (Non-text Contrast), the
+  visible focus 2.4.7 (2.4.11 is Focus Not Obscured: sticky bars must not hide it). **Focused and invalid**
+  (U11, 2026-11-11): the 2px `--zone-low` edge plus a soft red halo outside it (`--lk-focus-invalid-halo`, 3px
+  at 38%), so focus on an invalid field is a visible change, not 1px → 2px of the same red. Buttons, links,
+  chips, the Menu trigger and Menu items (an inset ring) keep the `--accent-2` ring. Native fields already draw
+  only their edge.
 
 ### Measured ratios (2026-11-10)
 
@@ -136,7 +140,7 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
 | `--border-2` (`.16`) on the card — cards keep it | 1.62:1 (a container's edge, not a control's) |
 | `--text-faint` `#868FA3` on the field fill `#25272E` | 4.62:1 (on the card 5.61:1, on `--bg-0` 6.09:1); was `#828B9F` 4.38:1 |
 | `--text-dim` on the field fill | 7.06:1 |
-| `--accent-2` focus ring on the card | 10.08:1 (the old `--accent` 45% ring was 1.79:1) |
+| `--accent-2` focus ring on the card | 10.08:1 (the old `--accent` 45% ring was 1.79:1; the Menu trigger used it until 2026-11-11) |
 | a focused field's 2px `--accent` edge | 3.43:1 on the field fill, 4.21:1 on the card, 4.40:1 on `--bg-1` |
 | `--text-faint` / `--text-dim` on `--card` over the brightest aurora pixel | ≥ 4.90 / 7.49 (vivid: 4.56 / 6.97); the old glass card measured 3.22 / 3.71 |
 | `--text-faint` (placeholder) on `--field` | 4.60:1, whatever is behind (was 2.77 over the aurora) |

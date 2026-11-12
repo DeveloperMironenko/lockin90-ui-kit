@@ -39,9 +39,19 @@ type ControlProps = { accessibilityLabel?: string; accessibilityHint?: string };
 const textOf = (node: ReactNode): string | undefined =>
   typeof node === 'string' || typeof node === 'number' ? String(node) : undefined;
 
+/** A string, a number or a `Text` (a sentence with styled parts) goes inside the help `Text`; any other node
+ *  (a View, FitText's measured box) is laid out on its own, never nested in a Text (V6: a View in a Text
+ *  took ~33pt of extra height). */
+const isTextNode = (node: ReactNode): boolean =>
+  typeof node === 'string' || typeof node === 'number' || (isValidElement(node) && node.type === Text);
+
+/** Hidden from screen readers: the control already says it (its label and hint). */
+const SR_HIDDEN = { accessibilityElementsHidden: true, importantForAccessibility: 'no-hide-descendants' as const, 'aria-hidden': true };
+
 /** Labeled form-control wrapper — mono label, the control, then faint help or red error. The one control
  *  child is named by the label (its `accessibilityLabel`, unless it sets its own) and hinted by the error
- *  or help; a new error is announced (FormField.md §7). */
+ *  or help, and the visible label, help and error are then hidden from screen readers so the field is said
+ *  once (U20); a new error is announced once (FormField.md §7). */
 export function FormField({
   label,
   help,
@@ -58,15 +68,20 @@ export function FormField({
   const c = useContrastColors();
   // a new error is read once: Android by the error's live region, iOS (no live regions) by an
   // announcement; an error already there when the field mounts is not announced
-  const mounted = useRef(false);
-  useEffect(() => {
-    if (mounted.current && errorText && Platform.OS === 'ios') AccessibilityInfo.announceForAccessibility(errorText);
-    mounted.current = true;
-  }, [errorText]);
-
   // the one control child gets the name and hint; mapped (never swapped for a bare element), so going
   // between one and several children never remounts the control
   const single = Children.count(children) === 1;
+  // the control says the label and the error / help itself: the texts beside it are not read again
+  const carried =
+    single && Children.toArray(children).every((c) => isValidElement(c) && c.type !== Fragment);
+  // a new error is said once: by an announcement when the control carries it (both platforms), else by
+  // the error's live region (Android) or an announcement (iOS, no live regions)
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (mounted.current && errorText && (carried || Platform.OS === 'ios')) AccessibilityInfo.announceForAccessibility(errorText);
+    mounted.current = true;
+  }, [errorText, carried]);
+
   const name = label ? (required && requiredLabel ? `${label}, ${requiredLabel}` : label) : undefined;
   const hint = error ? errorText : textOf(help);
   const body = Children.map(children, (child) =>
@@ -83,11 +98,13 @@ export function FormField({
         <View style={styles.labelRow}>
           {label ? (
             // a word wider than the field (a half-width column at a large text size) shrinks, never splits
-            <FitText style={[styles.fieldLabel, { color: c.textDim }]}>
-              {label.toUpperCase()}
-              {/* a thin space, as the web's 3px gap (a full space read twice as wide) */}
-              {required ? <Text style={styles.req}>{'\u2009*'}</Text> : null}
-            </FitText>
+            <View style={styles.labelBox} {...(carried ? SR_HIDDEN : null)}>
+              <FitText style={[styles.fieldLabel, { color: c.textDim }]}>
+                {label.toUpperCase()}
+                {/* a thin space, as the web's 3px gap (a full space read twice as wide) */}
+                {required ? <Text style={styles.req}>{'\u2009*'}</Text> : null}
+              </FitText>
+            </View>
           ) : null}
           {labelAction != null ? <View style={styles.labelAction}>{labelAction}</View> : null}
         </View>
@@ -95,16 +112,26 @@ export function FormField({
       <View style={styles.control}>{body}</View>
       {error ? (
         // an icon before the text, as web: the colour is never the only cue
-        <View style={styles.errorRow}>
+        <View style={styles.errorRow} {...(carried && errorText != null ? SR_HIDDEN : null)}>
           <View style={styles.errorIcon} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
             <Icon name="info" size={12} color={colors.zoneLow} />
           </View>
-          <Text style={styles.errorText} accessibilityLiveRegion="polite" accessibilityRole="alert">
+          <Text
+            style={styles.errorText}
+            {...(carried && errorText != null ? null : { accessibilityLiveRegion: 'polite' as const, accessibilityRole: 'alert' as const })}
+          >
             {error}
           </Text>
         </View>
       ) : help ? (
-        <Text style={[styles.helpText, { color: c.textFaint }]}>{help}</Text>
+        isTextNode(help) ? (
+          // only a plain string is carried by the control's hint; a styled sentence stays readable here
+          <Text style={[styles.helpText, { color: c.textFaint }]} {...(carried && textOf(help) != null ? SR_HIDDEN : null)}>
+            {help}
+          </Text>
+        ) : (
+          <View>{help}</View>
+        )
       ) : null}
     </View>
   );
@@ -239,11 +266,14 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 17,
     fontWeight: '500',
-    letterSpacing: 1.32,
+    // the one label style (CONVENTIONS "Type"): .14em
+    letterSpacing: 1.54,
     color: colors.textDim,
   },
   req: { color: colors.accent, fontSize: 11 },
   control: { minWidth: 0 },
+  // the label's box: shrinks in the row beside a labelAction
+  labelBox: { flexShrink: 1, minWidth: 0 },
   helpText: {
     fontFamily: fonts.ui,
     fontSize: 11.5,

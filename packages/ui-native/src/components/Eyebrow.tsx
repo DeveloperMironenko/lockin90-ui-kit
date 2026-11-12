@@ -21,7 +21,8 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '500',
     textTransform: 'uppercase',
-    letterSpacing: 2,
+    // the one label style (CONVENTIONS "Type"): .14em
+    letterSpacing: 1.54,
     color: colors.textFaint,
   },
 });

@@ -43,7 +43,7 @@
 /* ---- typography utilities ---- */
 .lk-display { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; line-height: 1.02; }
 .lk-mono { font-family: var(--font-mono); font-feature-settings: "tnum" 1; }
-.lk-eyebrow { font-family: var(--font-mono); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.22em; color: var(--text-dim); }
+.lk-eyebrow { font-family: var(--font-mono); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--text-faint); }
 .lk-gradient-text {
   /* seamless MIRRORED spectrum: the return leg passes back through the same hues
      (magenta→violet→cyan→mint→lime) so the loop never jumps red→green. The 200%

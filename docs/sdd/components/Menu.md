@@ -152,3 +152,10 @@ No capability gap blocks use — the menu is fully usable and visually equivalen
 - The panel is a container, `--r` / `radii.md` (16, was 10); items keep the control's 10 (16 less the 5 padding and 1 edge); the bare trigger stays round (it wraps an avatar).
 
 - **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
+
+## Update — 2026-11-11 (owner: the audit batch)
+
+- **Focus (U11, web):** the trigger takes the shared `--accent-2` ring (the old 45% accent ring was 1.79:1); a
+  keyboard-focused item draws the ring inside the panel (`outline-offset: -2px`) besides its tint (the tint
+  alone was ~1.2:1). **Targets (U12):** items are 44 tall at phone width; a `bare` trigger (an avatar) reaches 44
+  there with a `::before`.

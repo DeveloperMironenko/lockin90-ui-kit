@@ -233,7 +233,8 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '500',
     textTransform: 'uppercase',
-    letterSpacing: 1.68,
+    // the one label style (CONVENTIONS "Type"): .14em
+    letterSpacing: 1.54,
     color: colors.textFaint,
   },
   icon: { opacity: 0.8 },
@@ -291,7 +292,7 @@ const styles = StyleSheet.create({
   /* size sm: the phone's settings readout (design mobile/account.html .fcell × 402/294) */
   // a tile in a card: 16 less the card's padding is no radius, so a control's (CONVENTIONS "Corner radii")
   tileSm: { gap: 3, paddingVertical: 12, paddingHorizontal: PAD_X_SM },
-  labelSm: { fontSize: 11, fontWeight: '400', letterSpacing: 1 },
+  labelSm: { fontSize: 11, fontWeight: '500', letterSpacing: 1.54 },
   valueSm: { fontWeight: '600', fontSize: 20, letterSpacing: -0.2 },
   valueWord: { fontSize: 15, letterSpacing: 0 },
   unitSm: { fontFamily: fonts.mono, fontSize: 12, color: colors.textFaint },

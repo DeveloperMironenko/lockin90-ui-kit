@@ -108,7 +108,8 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 17,
     fontWeight: '500',
-    letterSpacing: 1.32,
+    // the one label style (CONVENTIONS "Type"): .14em
+    letterSpacing: 1.54,
     color: colors.textDim,
   },
   field: {
