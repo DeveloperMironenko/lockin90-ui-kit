@@ -200,7 +200,7 @@ export function Toast({
             colors={gradients.cta.stops as unknown as [string, string]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={styles.action}
+            style={[styles.action, counting && styles.actionRing]}
           >
             {counting && (
               <View
@@ -322,16 +322,18 @@ const styles = StyleSheet.create({
     lineHeight: 17.5,
     color: colors.textDim,
   },
-  // the filled action: 26 tall, corners 10 (the toast's 16 less its 6 padding), 0 10 0 5, 5 apart
+  // the filled action: 26 tall, corners 10 (the toast's 16 less its 6 padding), 0 10 (0 10 0 5 with the
+  // ring), 5 apart
   action: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
     height: 26,
-    paddingLeft: 5,
-    paddingRight: 10,
+    paddingHorizontal: 10,
     borderRadius: radii.sm,
   },
+  // the ring sits 5 from its left edge
+  actionRing: { paddingLeft: 5 },
   pressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },
   actionText: {
     fontFamily: fonts.ui,

@@ -78,7 +78,7 @@
   align-items: center;
   gap: 5px;
   height: 26px;
-  padding: 0 10px 0 5px;
+  padding: 0 10px;
   border: 0;
   border-radius: var(--r-sm);
   background: var(--grad-cta);
@@ -92,6 +92,8 @@
   transition: transform .25s var(--ease), box-shadow .3s var(--ease);
 }
 .lk-toast-action::before { content: ""; position: absolute; inset: -9px -4px; }
+/* the ring sits 5 from its left edge */
+.lk-toast-action:has(.lk-toast-ring) { padding-left: 5px; }
 .lk-toast-action:hover { box-shadow: var(--glow-accent); }
 .lk-toast-action:active { transform: scale(.98); }
 .lk-toast-action:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }

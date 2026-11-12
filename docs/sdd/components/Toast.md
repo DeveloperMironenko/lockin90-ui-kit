@@ -217,7 +217,7 @@ Supersedes the sizes, the action and the countdown line of the update above.
 - **Action** (`actionLabel` + `onAction`): **filled** with the CTA gradient, label `#080A12` 12.5 / 600
   (4.5:1 at every point of the gradient), 26 tall with a 44px / 44pt hit area (web `::before`, native
   `hitSlop` 9 / 4), corners 10 (`--r-sm` / `radii.sm`: the toast's 16 less its 6 padding), padding 0 10 0 5,
-  gap 5; pressed scales to .98, web focus the `--accent-2` ring. Without `duration` (a "Try again") it has no
+  gap 5 (padding 0 10 without the ring); pressed scales to .98, web focus the `--accent-2` ring. Without `duration` (a "Try again") it has no
   ring.
 - **Seconds ring** (with `duration`): inside the action, left; 16, stroke 1.8 in the label's colour over a
   .22 track, the whole seconds left in the middle (8.5 / 700, tabular, rounded up: 6, 5… 1); the arc drains
