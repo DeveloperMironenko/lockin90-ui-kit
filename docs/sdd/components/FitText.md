@@ -53,8 +53,8 @@ is named by `accessibilityLabel`, so the measurer never joins its name). Apps us
   Android never break an address by themselves, so one wider than its line breaks at any letter; the app
   passes it through `breakableAddress` (a zero-width space after each "@", "." and "/") so it breaks there.
 - `fitFloor(fontSize, fontScale, belowDefault = false)`: `min(1, max(1 / max(1, fontScale), 11 / (fontSize ×
-  fontScale)))`, rounded up to 2 decimals — the default text size, and never under 11pt. FitText never
-  passes `belowDefault`; only SegmentedTabs `fill` does (at a text size ≤ 1 its floor is `11 / (fontSize ×
+  fontScale)))`, rounded up to 2 decimals — the default text size, and never under 11pt. FitText passes it
+  only when asked (`belowDefault` prop: MetricTile's word value); SegmentedTabs `fill` does too (at a text size ≤ 1 its floor is `11 / (fontSize ×
   fontScale)`: down to 11pt drawn; larger, as without).
 - `WordMeasurer`: one unconstrained line per word in the text's own style, absolutely placed, 0 tall,
   transparent, hidden from accessibility (also used by SegmentedTabs and Select).

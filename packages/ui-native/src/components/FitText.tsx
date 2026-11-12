@@ -10,6 +10,9 @@ export interface FitTextProps extends TextProps {
   /** Called with the narrowest width (pt) in which every word fits whole at the smallest size it may
    *  shrink to (for a layout that chooses its columns by it, as MetricTile's `onMinWidth`). */
   onMinWidth?: (width: number) => void;
+  /** At the default text size the text may shrink below its size, down to 11pt (owner 2026-11-11: a word
+   *  value in a fixed grid, MetricTile `textValue`); at a larger text size never below the default size. */
+  belowDefault?: boolean;
 }
 
 /** The string a text's children say: strings and numbers, and those inside nested elements (a styled
@@ -41,8 +44,8 @@ export function textOf(children: ReactNode, nested = false): string {
  * row, give it a box that can shrink (`flexShrink: 1, minWidth: 0`): a text that can't shrink is as wide
  * as its content, and that is no room to fit to.
  */
-export function FitText({ style, children, measureText, onLayout, onMinWidth, ...rest }: FitTextProps) {
-  const { scaled, textRef, onRoom, measurer, minWidth } = useWordFit(measureText ?? textOf(children), style);
+export function FitText({ style, children, measureText, onLayout, onMinWidth, belowDefault, ...rest }: FitTextProps) {
+  const { scaled, textRef, onRoom, measurer, minWidth } = useWordFit(measureText ?? textOf(children), style, belowDefault);
   useReportMinWidth(minWidth, onMinWidth);
   return (
     <>

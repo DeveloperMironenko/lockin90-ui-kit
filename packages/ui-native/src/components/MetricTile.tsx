@@ -130,6 +130,9 @@ export function MetricTile({
         <FitText
           style={[styles.value, sm && styles.valueSm, sm && textValue && styles.valueWord]}
           onMinWidth={onMinWidth && put('value')}
+          // a word value ("Нейтральный") shrinks to fit its tile, to 11pt at the default text size (owner
+          // 2026-11-11: three across in every language)
+          belowDefault={textValue}
         >
           {value}
         </FitText>

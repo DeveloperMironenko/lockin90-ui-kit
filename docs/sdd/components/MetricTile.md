@@ -194,3 +194,14 @@ shipping a native screen where the dots convey required state.
   beside the icon, so its room is the row's); web `.lk-metric-label` / `.lk-metric-value` `min-width: 0`
   (the md ones had none, so `useWordFit` never saw a word overflow) and `overflow-wrap: anywhere` as the
   last resort.
+
+## Update — 2026-11-11 (word values shrink to fit; owner decision)
+
+- **A word value (`textValue`) shrinks to fit its tile at the default text size, down to 11pt / 11px**
+  (owner, 2026-11-11: the Settings grid stays three across in every language, as the design; a grid with
+  fewer columns or tiles of different sizes read badly). Native: the value's `FitText` takes the new
+  `belowDefault` (`fitFloor(…, true)`); web: `useWordFit(value, true)` (`fitFloorPercent(…, true)`). At a
+  larger text size the floor stays the default text size. Labels and number values are unchanged.
+- `onMinWidth` stays (the narrowest width at the floor, now the lower one for a word value); the app no
+  longer chooses its columns by it. Equal tile heights are the grid's (the app's) to set.
+

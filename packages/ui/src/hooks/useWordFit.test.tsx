@@ -67,10 +67,10 @@ describe('useWordFit', () => {
     const value = render(100, 80);
     expect(value.style.fontSize).toBe('');
   });
-  it('at the default text size, a word wider than its element keeps its size (it wraps, the last resort)', () => {
+  it('at the default text size, a word value wider than its tile shrinks to fit, never under 11px (owner 2026-11-11)', () => {
     const value = render(78, 94);
-    expect(value.style.fontSize).toBe('');
-    expect(value.style.overflowWrap).toBe('');
+    expect(parseFloat(value.style.fontSize)).toBeLessThanOrEqual((16 * 78) / 94);
+    expect(parseFloat(value.style.fontSize)).toBeGreaterThanOrEqual(11);
   });
   it('at an enlarged text size, it shrinks the word until it fits', () => {
     document.documentElement.style.fontSize = '32px';

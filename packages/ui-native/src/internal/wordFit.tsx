@@ -238,9 +238,10 @@ type Measured = { key: string; w: Record<string, number>; room: number; box: num
  * or text size measures the words afresh. Layout events alone are not enough on iOS Fabric (a tree mounted
  * hidden gets none), so the text, the box and the probes are also measured from their refs in a layout
  * effect. `minWidth` is the narrowest room in which every word fits at the floor (for a layout that
- * chooses its columns by it).
+ * chooses its columns by it). `belowDefault`: at the default text size the text may shrink below its size,
+ * to 11pt (`fitFloor`'s; a word value in a fixed grid, MetricTile `textValue`).
  */
-export function useWordFit(text: string, style: StyleProp<TextStyle>) {
+export function useWordFit(text: string, style: StyleProp<TextStyle>, belowDefault = false) {
   const { fontScale } = useWindowDimensions();
   const flat = (StyleSheet.flatten(style) ?? {}) as TextStyle;
   // each distinct word once, a styled one measured at bold; an address is left out (it breaks after its
@@ -308,7 +309,7 @@ export function useWordFit(text: string, style: StyleProp<TextStyle>) {
   const measured = probes.every((p) => cur.w[p.id] != null);
   const ready = words.length > 0 && cur.room > 0 && measured;
   const widest = measured && probes.length ? Math.max(...probes.map((p) => cur.w[p.id]!)) : 0;
-  const floor = fitFloor(flat.fontSize ?? 14, fontScale);
+  const floor = fitFloor(flat.fontSize ?? 14, fontScale, belowDefault);
   // a word as wide as the text (within a point of rounding) fits: only a word wider than its line shrinks
   const scale = ready && widest > cur.room + SLACK ? wordFitScale(widest, cur.room, floor) : 1;
   drawn.current = { scale, widest: widest * scale };

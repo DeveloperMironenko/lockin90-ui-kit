@@ -314,6 +314,17 @@ describe('FitText: a text as wide as its content', () => {
   });
 });
 
+describe('FitText belowDefault (a word value in a fixed grid)', () => {
+  test('at the default text size it shrinks to fit, down to 11pt', () => {
+    const { host, unmount } = mount(<FitText belowDefault style={{ fontSize: 15 }}>Нейтральный</FitText>);
+    layout(host.firstElementChild!, 60);
+    for (const probe of Array.from(host.querySelectorAll('[data-testid="lk-fit-measure"] > div'))) layout(probe, 77);
+    // (60 − 1) / 77 → 0.76: 11.4pt (the floor 11 / 15 = 0.74)
+    expect(JSON.stringify(propOf(host.firstElementChild!, 'style'))).toContain('"fontSize":"11.4px"');
+    unmount();
+  });
+});
+
 describe('SegmentedTabs: inline with a field', () => {
   test('the md track is a field\'s 44 tall; each segment fills it and reaches 44 with its hit slop', () => {
     const { host, unmount } = mount(<SegmentedTabs kind="choice" fill tabs={['Male', 'Female']} />);

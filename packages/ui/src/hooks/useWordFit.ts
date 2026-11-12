@@ -27,8 +27,10 @@ export function fitFloorPercent(base: number, root: number, belowDefault = false
  * (`anywhere`) is the last resort, and the layout is what should change (fewer columns). Runs again when
  * `text` changes, when the webfonts arrive and when the element's width changes. The element must be a
  * block or a flex item that can shrink (`min-width: 0`: its width set by its container, not by its text).
+ * `belowDefault`: at the default text size it may shrink below its size, to 11px (a word value in a fixed
+ * grid, MetricTile `textValue`).
  */
-export function useWordFit<T extends HTMLElement>(text: unknown) {
+export function useWordFit<T extends HTMLElement>(text: unknown, belowDefault = false) {
   const ref = useRef<T>(null);
   useLayoutEffect(() => {
     const el = ref.current;
@@ -39,7 +41,7 @@ export function useWordFit<T extends HTMLElement>(text: unknown) {
       if (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0) {
         const base = parseFloat(getComputedStyle(el).fontSize) || 16;
         const root = parseFloat(getComputedStyle(document.documentElement).fontSize) || DEFAULT_ROOT;
-        const floor = fitFloorPercent(base, root);
+        const floor = fitFloorPercent(base, root, belowDefault);
         // one measured jump, then 2 % steps, the last one the floor
         let percent = Math.max(floor, Math.min(98, Math.floor((100 * el.clientWidth) / el.scrollWidth)));
         while (floor < 100) {
@@ -72,6 +74,6 @@ export function useWordFit<T extends HTMLElement>(text: unknown) {
       observer?.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [text]);
+  }, [text, belowDefault]);
   return ref;
 }

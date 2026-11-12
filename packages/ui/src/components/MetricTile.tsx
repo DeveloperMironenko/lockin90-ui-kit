@@ -69,7 +69,8 @@ export function MetricTile({
   const sized = size === 'sm' && 'lk-metric-sm';
   // a word of the label or the value never splits: it shrinks to fit the tile (as native FitText)
   const labelRef = useWordFit<HTMLSpanElement>(label);
-  const valueRef = useWordFit<HTMLSpanElement>(empty ? null : value);
+  // a word value shrinks to fit its tile, to 11px at the default text size (owner 2026-11-11)
+  const valueRef = useWordFit<HTMLSpanElement>(empty ? null : value, !!textValue);
   if (empty) {
     return (
       <div className={cn('lk-metric lk-metric-empty', sized, className)} {...rest}>

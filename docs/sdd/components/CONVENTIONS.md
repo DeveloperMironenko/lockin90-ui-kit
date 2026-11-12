@@ -104,8 +104,8 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
   fits; web primitives use `useWordFit`. Never `numberOfLines` + `adjustsFontSizeToFit` on wrapping text.
   **The shrink never goes below the default text size or 11pt** (`fitFloor`: at a larger OS text size only
   that enlargement is taken back, `1 / fontScale`; at the default size nothing shrinks). The one exception
-  (owner, 2026-11-11): SegmentedTabs `fill` choice rows at the default text size may shrink below their
-  design size, to 11pt / 11px drawn (`fitFloor(…, true)` / `fitFloorPercent(…, true)`), before they wrap
+  (owner, 2026-11-11): SegmentedTabs `fill` choice rows and a MetricTile word value (`textValue`, FitText
+  `belowDefault`) at the default text size may shrink below their design size, to 11pt / 11px drawn (`fitFloor(…, true)` / `fitFloorPercent(…, true)`), before they wrap
   into balanced rows of pills (never a column list). A word still too
   wide at that floor is the layout's to fix (a column fewer: MetricTile `onMinWidth`; segments on rows;
   the text above its icon); the word breaks only as the last resort. Lines break where iOS and Android
