@@ -55,9 +55,11 @@
 }
 .lk-taginput-input::placeholder { color: var(--text-faint); }
 .lk-taginput:focus-within {
-  /* the kit's focus ring, as buttons (CONVENTIONS "Accessibility": the border change alone is 1.2:1) */
-  outline: 2px solid var(--accent-2);
-  outline-offset: 2px;
+  /* one focus indicator (owner, 2026-11-11: no ring around the border): the field's own edge in the
+     accent, 2px (1px border + 1px inset, no layout shift; 3.4:1 on the field, 4.2:1 on the card) */
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
 }
 
 /* error state — red border + glow */
@@ -99,12 +101,12 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 .lk-code-box:focus {
-  /* the kit's focus ring, as buttons (CONVENTIONS "Accessibility": the border change alone is 1.2:1) */
-  outline: 2px solid var(--accent-2);
-  outline-offset: 1px;
+  /* one focus indicator (owner, 2026-11-11: no ring around the border): the field's own edge in the
+     accent, 2px (1px border + 1px inset, no layout shift; 3.4:1 on the field, 4.2:1 on the card) */
+  outline: none;
   border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
   background: rgba(124, 92, 255, 0.06);
-  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.16);
 }
 .lk-code-box.lk-code-filled {
   border-color: rgba(34, 211, 238, 0.45);
@@ -118,7 +120,7 @@
 }
 .lk-code--invalid .lk-code-box:focus {
   border-color: var(--bad);
-  box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.18);
+  box-shadow: inset 0 0 0 1px var(--bad);
 }
 
 /* phone (--bp-phone): no cap, the boxes fill the row; a tighter gap and digit, so 8 boxes fit a ~266px row */

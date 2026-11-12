@@ -117,8 +117,14 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
   Select (both sizes), SearchInput, SegmentedTabs segment and the Modal close is at least 44px tall; native
   draws the same controls 44pt, so web and native stay equal. CodeInput boxes are 44 tall, 8 apart.
 - **Focus (web):** everything focusable shows a `:focus-visible` ring at 3:1 — a 2px solid `--accent-2` ring
-  (10.1:1 on the card), never `outline: none` without a replacement. Fields (Input, SearchInput, Select,
-  CodeInput boxes, TagInput, NoteField, DateField) show the same ring on focus, not just a recoloured edge.
+  (10.1:1 on the card), never `outline: none` without a replacement. **Fields have exactly one indicator,
+  their own edge** (owner, 2026-11-11: the ring around the violet edge read as two outlines): Input,
+  PasswordInput, SearchInput, Select trigger (and while open), DateField, CodeInput boxes, TagInput,
+  NoteField, RichTextEditor, CodeField and the message composer turn their edge `--accent` and 2px (the 1px
+  border plus a 1px inset shadow, so nothing moves), on mouse and keyboard focus alike; no outer ring, no
+  glow. Invalid: the same in `--zone-low`. The edge goes from `--border-control` (3.3:1) to a 2px `--accent`
+  (3.4:1 on the field, 4.2:1 on the card), WCAG 2.4.7 / 2.4.11. Buttons, links, chips and other controls
+  keep the `--accent-2` ring. Native fields already draw only their edge.
 
 ### Measured ratios (2026-11-10)
 
@@ -129,6 +135,7 @@ primitive meets each point. A primitive that can't meet one is fixed here, in th
 | `--text-faint` `#868FA3` on the field fill `#25272E` | 4.62:1 (on the card 5.61:1, on `--bg-0` 6.09:1); was `#828B9F` 4.38:1 |
 | `--text-dim` on the field fill | 7.06:1 |
 | `--accent-2` focus ring on the card | 10.08:1 (the old `--accent` 45% ring was 1.79:1) |
+| a focused field's 2px `--accent` edge | 3.43:1 on the field fill, 4.21:1 on the card, 4.40:1 on `--bg-1` |
 | `--text-faint` / `--text-dim` on `--card` over the brightest aurora pixel | ≥ 4.90 / 7.49 (vivid: 4.56 / 6.97); the old glass card measured 3.22 / 3.71 |
 | `--text-faint` (placeholder) on `--field` | 4.60:1, whatever is behind (was 2.77 over the aurora) |
 

@@ -147,3 +147,9 @@ No capability gap blocks use — the field is fully usable and visually equivale
 ## Update — 2026-11-10 (simulator check, 1.35)
 
 - **Increase Contrast** (native `useContrastColors`; web `prefers-contrast: more`): faint / dim text and the edge step up.
+
+## Update — 2026-11-11 (one focus indicator, web)
+
+- A focused field shows only its own edge: `--accent`, 2px (1px border + 1px inset shadow), on mouse and
+  keyboard focus; no outer `--accent-2` ring, no glow (owner: "2 outlines"). Invalid: the same in `--zone-low`.
+  Supersedes the ring / glow above; see CONVENTIONS "Focus (web)". Native was already edge-only.

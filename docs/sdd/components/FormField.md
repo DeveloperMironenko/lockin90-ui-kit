@@ -183,3 +183,9 @@ None block use; app code reads 1:1 (same `label`/`help`/`error`/`required`, same
 - **A word never splits (native):** the label is `FitText`: a word wider than the field (a half-width column
   at AX sizes: "НАРОДЖЕННЯ") shrinks the label until it fits, never below the default text size or 11pt. Apps still go to one column at
   large text first.
+
+## Update — 2026-11-11 (one focus indicator, web)
+
+- A focused field shows only its own edge: `--accent`, 2px (1px border + 1px inset shadow), on mouse and
+  keyboard focus; no outer `--accent-2` ring, no glow (owner: "2 outlines"). Invalid: the same in `--zone-low`.
+  Supersedes the ring / glow above; see CONVENTIONS "Focus (web)". Native was already edge-only.

@@ -201,3 +201,9 @@ limitation.
 ## Update — 2026-11-10 (simulator check, 1.35)
 
 - **CodeInput boxes measured (native):** the row's width (`onLayout`) sets each box's width and height (`codeBoxLayout`, exported): 8 apart, as wide as fits (≤ 60); when 44-wide boxes don't fit 8 apart the gap shrinks (≥ 4) so they stay 44 (6 digits in 300: 44, gap 7.2). 8 digits on a phone go narrower (≈ 34 in 300) but stay 44 tall, 4 apart: each is still a ≥ 24 target with spacing (WCAG 2.5.8's spacing exception), and the row is one control. Height is 1.18 × width, at least 44 (the flex + aspect-ratio fallback, used until measured, let iOS draw them 42). Web keeps its CSS (44 tall, 8 apart at phone width).
+
+## Update — 2026-11-11 (one focus indicator, web)
+
+- A focused field shows only its own edge: `--accent`, 2px (1px border + 1px inset shadow), on mouse and
+  keyboard focus; no outer `--accent-2` ring, no glow (owner: "2 outlines"). Invalid: the same in `--zone-low`.
+  Supersedes the ring / glow above; see CONVENTIONS "Focus (web)". Native was already edge-only.

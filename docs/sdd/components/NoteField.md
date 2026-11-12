@@ -116,3 +116,9 @@ No capability gap blocks use; the field is equivalent on both platforms.
   **and** native with the same prop name and tokens — never a one-off.
 - **Tokens only.** Glass fill, border, radius, and focus color come from `@lockin90/tokens`; hardcoded values are bugs.
 - **Parity gate.** Confirm the web phone-width note field and the native one match (same label, default rows, padding, focus treatment) before shipping.
+
+## Update — 2026-11-11 (one focus indicator, web)
+
+- A focused field shows only its own edge: `--accent`, 2px (1px border + 1px inset shadow), on mouse and
+  keyboard focus; no outer `--accent-2` ring, no glow (owner: "2 outlines"). Invalid: the same in `--zone-low`.
+  Supersedes the ring / glow above; see CONVENTIONS "Focus (web)". Native was already edge-only.
