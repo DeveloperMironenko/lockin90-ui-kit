@@ -142,3 +142,16 @@ No gap blocks use — the sheet/drawer is fully usable and visually equivalent (
   `react-native-safe-area-context`'s `SafeAreaInsetsContext` — a new OPTIONAL peer (Expo Router apps have it;
   the app's `SafeAreaProvider` must be above). Without the package or the provider the inset is 0, as before.
 - **Review fixes:** as `Modal` — the opener is kept from before an `autoFocus` child takes focus; only the topmost open dialog traps Tab.
+
+## Update — 2026-11-11 (owner: the bottom cut, the toast under the sheet)
+
+- **The body scrolls to the edge (native):** the body is the kit's `ScrollView` (`keyboardShouldPersistTaps="handled"`,
+  `keyboardDismissMode="on-drag"`), sized by its content up to the panel's cap (`flexGrow: 0`, `flexShrink: 1`).
+  The panel has **no bottom padding** (bottom sheet and drawers: `paddingTop` only); the scroll's content ends
+  `2 + 18 + the safe-area bottom inset` above it. So the content scrolls behind the home indicator to the
+  screen's edge and the last line scrolls clear of it. Before, the panel's `18 + inset` padding was an opaque
+  band the scroll was cut at (iPhone 15 Pro Max: 52pt above the bottom, "Estimates are fi…").
+  **Apps don't wrap the body in a ScrollView of their own** (a nested one would never scroll).
+- **Toasts above it:** the sheet renders `TopLayerHost` (see `TopLayer.md`) as the last child of its window while
+  `open`, so an app's `TopLayer` toast draws over the scrim and the panel instead of under the window.
+- **Web (follow-up):** checked separately at 402×874 (`dvh`, the body's bottom).

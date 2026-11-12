@@ -168,3 +168,9 @@ No capability gap blocks use.
 - **Roles:** web `role="alert"` for `danger`, `status` otherwise. Native stays `accessibilityRole="alert"`; its
   live region is `assertive` for `danger`, `polite` otherwise.
 - **Close target:** native `hitSlop` 12 (20 + 24 = 44pt); web an invisible `::before` 24px (44 at phone width).
+
+## Update — 2026-11-11 (above an open Sheet / Modal)
+
+- **Native:** an app's toast goes in a **`TopLayer`** (see `TopLayer.md`): drawn inside the top-most open kit
+  `Sheet` / `Modal` (native windows the page can't draw over), in place when none is open. Placement, timing
+  and announcing stay the app's.

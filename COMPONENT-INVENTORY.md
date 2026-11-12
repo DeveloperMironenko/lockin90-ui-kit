@@ -258,6 +258,7 @@ Legend — Parity: ✅ same API · 🟡 same API, platform-shaped impl · 🔵 c
 | **Menu** | — | Action menu w/ dividers, danger items | `align: left·right`, items `danger·divider` | 🟡 web collision-aware portal vs native Modal |
 | **Tooltip** | — | Hover/focus (web) / press (native) tip, diamond arrow on both | `placement: top·bottom·left·right` | 🟡 web hover+portal flip vs native press |
 | **Toast** | `Badge`² | Floating notification card | `tone: default·success·warn·danger` | ✅ |
+| **TopLayer** | — | Native: draws a toast above an open Sheet / Modal | — | 🟡 native only |
 | **Alert** | — | Tinted inline callout banner | `tone: info·success·warn·danger`, dismiss | ✅ |
 | **EmptyState** | — | Zero-state card: icon+title+body+action | `compact` | ✅ |
 | **ProGate** | `LockedRow` | Premium-lock overlay; gated list row | `title·subtitle`; `label` | 🔵 native dims (opacity) instead of blur |

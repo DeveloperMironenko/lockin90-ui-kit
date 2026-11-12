@@ -9,10 +9,12 @@ import {
   KeyboardAvoidingView,
   PanResponder,
   Platform,
+  ScrollView,
 } from 'react-native';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { absoluteFill } from '../internal/absoluteFill';
 import { useBottomInset } from '../internal/optionalSafeArea';
+import { TopLayerHost } from './TopLayer';
 
 export interface SheetProps {
   /** Show the sheet. When false, nothing renders. */
@@ -24,7 +26,8 @@ export interface SheetProps {
   side?: 'bottom' | 'right' | 'left';
   /** Optional header title (font-display). */
   title?: string;
-  /** Body content. */
+  /** Body content. The body scrolls (the kit's ScrollView, taps on fields kept, a drag puts the
+   *  keyboard away): don't wrap it in a ScrollView of your own. */
   children?: ReactNode;
 }
 
@@ -33,8 +36,10 @@ export interface SheetProps {
 const DISMISS_FRACTION = 0.25;
 /** Downward fling velocity (px/ms) that dismisses regardless of distance. */
 const DISMISS_VELOCITY = 0.5;
-/** The bottom sheet's own bottom padding, under the safe-area inset. */
+/** The panel's own bottom padding (bottom sheet and drawers), under the safe-area inset. */
 const PAD_BOTTOM = 18;
+/** The body's own padding at each edge. */
+const BODY_PAD = 2;
 
 /** Side drawer + bottom sheet over a dimmed scrim. The bottom variant is
  *  anchored to the bottom edge with rounded top corners and a centered drag
@@ -46,9 +51,12 @@ export function Sheet({ open = true, onClose, side = 'bottom', title, children }
   const isBottom = side === 'bottom';
   const align = isBottom ? styles.scrimBottom : side === 'right' ? styles.scrimRight : styles.scrimLeft;
   const panel = isBottom ? styles.panelBottom : side === 'right' ? styles.panelRight : styles.panelLeft;
-  // the bottom sheet's content clears the home indicator: its 18 padding plus the safe-area inset
+  // The body scrolls to the panel's bottom edge, the screen's (iOS: behind the home indicator, as
+  // HIG sheets), and its content ends 18 + the safe-area inset higher, so the last line scrolls clear
+  // of the home indicator. Never a padded panel around the scroll: that drew an opaque band the
+  // content was cut at, 18 + 34pt above the bottom (owner, 2026-11-11).
   const bottomInset = useBottomInset();
-  const clear = isBottom && bottomInset ? { paddingBottom: PAD_BOTTOM + bottomInset } : undefined;
+  const contentEnd = { paddingBottom: BODY_PAD + PAD_BOTTOM + bottomInset };
 
   // ---- drag-to-dismiss (bottom sheet only) ----
   const dragY = useRef(new Animated.Value(0)).current;
@@ -106,7 +114,7 @@ export function Sheet({ open = true, onClose, side = 'bottom', title, children }
           {/* the panel claims the touch, so a tap on it never reaches the scrim (a plain view: as a
               Pressable it would be an accessible element grouping everything inside) */}
           <Animated.View
-            style={[styles.panel, panel, clear, isBottom && { transform: [{ translateY: dragY }] }]}
+            style={[styles.panel, panel, isBottom && { transform: [{ translateY: dragY }] }]}
             onStartShouldSetResponder={() => true}
             accessibilityViewIsModal
             // VoiceOver's escape gesture (two-finger Z) closes it, the scrim not being an element
@@ -136,12 +144,20 @@ export function Sheet({ open = true, onClose, side = 'bottom', title, children }
                 {title}
               </Text>
             ) : null}
-            <View style={styles.body}>
+            <ScrollView
+              style={styles.body}
+              contentContainerStyle={[styles.bodyContent, contentEnd]}
+              keyboardShouldPersistTaps="handled"
+              // a number pad has no Done key: a drag puts the keyboard away
+              keyboardDismissMode="on-drag"
+            >
               {typeof children === 'string' ? <Text style={styles.bodyText}>{children}</Text> : children}
-            </View>
+            </ScrollView>
           </Animated.View>
         </KeyboardAvoidingView>
       </Pressable>
+      {/* toasts (TopLayer) over the scrim and the panel, the page being under this window */}
+      <TopLayerHost active={open} />
     </RNModal>
   );
 }
@@ -174,7 +190,8 @@ const styles = StyleSheet.create({
     maxHeight: '86%',
     paddingTop: 8,
     paddingHorizontal: 16,
-    paddingBottom: PAD_BOTTOM,
+    // the body's content carries the bottom padding (it scrolls to the edge)
+    paddingBottom: 0,
     borderBottomWidth: 0,
     borderTopLeftRadius: radii.lg,
     borderTopRightRadius: radii.lg,
@@ -183,7 +200,7 @@ const styles = StyleSheet.create({
     height: '100%',
     width: 360,
     maxWidth: '100%',
-    paddingVertical: 18,
+    paddingTop: 18,
     paddingHorizontal: 20,
     borderTopLeftRadius: radii.lg,
     borderBottomLeftRadius: radii.lg,
@@ -192,7 +209,7 @@ const styles = StyleSheet.create({
     height: '100%',
     width: 360,
     maxWidth: '100%',
-    paddingVertical: 18,
+    paddingTop: 18,
     paddingHorizontal: 20,
     borderTopRightRadius: radii.lg,
     borderBottomRightRadius: radii.lg,
@@ -216,11 +233,14 @@ const styles = StyleSheet.create({
     letterSpacing: -0.16,
     color: colors.text,
   },
+  // sized by its content up to the panel's cap, then it scrolls
   body: {
+    flexGrow: 0,
     flexShrink: 1,
+  },
+  bodyContent: {
     paddingTop: 12,
-    paddingHorizontal: 2,
-    paddingBottom: 2,
+    paddingHorizontal: BODY_PAD,
   },
   bodyText: {
     fontFamily: fonts.ui,

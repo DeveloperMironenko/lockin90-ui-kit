@@ -49,15 +49,20 @@ function currentFiber(node: Element): Fiber | null {
   return null;
 }
 
-/** The nearest props, from the DOM node up through its owners, that carry `key`. */
-export function propOf(node: Element, key: string): unknown {
+/** The nearest props object, from the DOM node up through its owners, that carries `key`. */
+export function propsWith(node: Element, key: string): Record<string, unknown> | undefined {
   let fiber = currentFiber(node);
   while (fiber) {
     if (fiber.memoizedProps && key in fiber.memoizedProps && fiber.memoizedProps[key] !== undefined)
-      return fiber.memoizedProps[key];
+      return fiber.memoizedProps;
     fiber = fiber.return;
   }
   return undefined;
+}
+
+/** The nearest props, from the DOM node up through its owners, that carry `key`. */
+export function propOf(node: Element, key: string): unknown {
+  return propsWith(node, key)?.[key];
 }
 
 /** The touch target (pt) of a pressable node drawn `w`×`h`: its size plus its `hitSlop`. */

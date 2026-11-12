@@ -3,6 +3,7 @@ import { Modal as RNModal, View, Text, Pressable, StyleSheet } from 'react-nativ
 import Svg, { Path } from 'react-native-svg';
 import { colors, radii, fonts } from '@lockin90/tokens';
 import { absoluteFill } from '../internal/absoluteFill';
+import { TopLayerHost } from './TopLayer';
 
 export interface ModalProps {
   /** Show the modal. When false, nothing renders. */
@@ -67,6 +68,8 @@ export function Modal({ open = true, onClose, title, children, footer, size = 'm
           {footer && <View style={styles.foot}>{footer}</View>}
         </View>
       </Pressable>
+      {/* toasts (TopLayer) over the scrim and the card, the page being under this window */}
+      <TopLayerHost active={open} />
     </RNModal>
   );
 }

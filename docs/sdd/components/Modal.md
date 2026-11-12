@@ -135,3 +135,9 @@ No capability gap blocks use — the dialog is fully usable and visually equival
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **Close:** 44 × 44 at phone width (web) and on native (no slop needed); the glyph and header line are unchanged.
+
+## Update — 2026-11-11 (toasts above it)
+
+- **Native:** the modal renders `TopLayerHost` (see `TopLayer.md`) as the last child of its window while `open`,
+  so an app's `TopLayer` toast draws over the scrim and the card (an RN `Modal` is a native window the page
+  can't draw over).
