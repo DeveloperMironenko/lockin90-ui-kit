@@ -159,7 +159,9 @@ Two sizes for every pressable or pickable control, web and native alike, the cor
 | **`sm`** | 36 | 44 (web `::before`, native `hitSlop`) | Select 14, Button 13, ChoiceChip 14 | 14 (Select's leading 16) | compact rows: the auth / onboarding header (the language Select and the "Scan" chip, the same height), toolbars, a top bar |
 
 Button (`lg` stays a flow's closing CTA), IconButton (a 44 / 36 square), Select, ChoiceChip and BackLink (its
-`pill` / `bar` surface) take `size="md" | "sm"`. Two controls side by side have the same size.
+`pill` / `bar` surface) take `size="md" | "sm"`. Two controls side by side have the same size, at every
+text size too: a `sm` ChoiceChip has a `sm` Select's padding (6 above and below) and line (1.3 × 14 = 18), so
+the header's language picker and "Scan" grow alike at the accessibility sizes.
 
 **Fills and edges (V19):** a control's fill is the opaque `--field` / `colors.field` (Button `default`,
 IconButton, SsoButton, BackLink's surface, ChoiceChip, IconTile, every field); a control you type into or pick

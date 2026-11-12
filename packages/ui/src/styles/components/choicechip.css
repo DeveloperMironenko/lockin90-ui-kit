@@ -48,7 +48,9 @@
 
 .lk-choicechip-sm {
   min-height: 36px;
-  padding: 0 12px;
+  /* a sm Select's padding and line (select.css), so the two stay one height when the text grows */
+  padding: 6px 12px;
+  line-height: 1.3;
 }
 /* sm: the 36px box reaches a 44px target, same look */
 .lk-choicechip-sm::before {

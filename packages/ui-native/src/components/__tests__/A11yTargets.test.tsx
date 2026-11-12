@@ -69,6 +69,24 @@ describe('44pt touch targets, same look', () => {
     sm.unmount();
   });
 
+  test('a sm ChoiceChip and a sm Select grow alike with the text (the header: Language | Scan, one height)', () => {
+    const view = mount(
+      <>
+        <Select size="sm" accessibilityLabel="Language" options={[{ value: 'en', label: 'English' }]} value="en" />
+        <ChoiceChip size="sm">Scan</ChoiceChip>
+      </>,
+    );
+    const box = (el: Element) => getComputedStyle(el);
+    const line = (text: string) =>
+      box(Array.from(view.host.querySelectorAll('div')).filter((el) => el.textContent === text).pop()!).lineHeight;
+    const field = byLabel(view.host, 'Language');
+    const chip = Array.from(view.host.querySelectorAll('[role="button"]')).find((el) => el.textContent === 'Scan')!;
+    expect(box(chip).paddingTop).toBe(box(field).paddingTop);
+    expect(box(chip).paddingBottom).toBe(box(field).paddingBottom);
+    expect(line('Scan')).toBe(line('English'));
+    view.unmount();
+  });
+
   test('IconButton: the target is at least 44 around the 36 / 44 square', () => {
     const { host, unmount } = mount(<IconButton icon="camera" label="Change photo" />);
     const style = propOf(byLabel(host, 'Change photo'), 'style') as unknown[];

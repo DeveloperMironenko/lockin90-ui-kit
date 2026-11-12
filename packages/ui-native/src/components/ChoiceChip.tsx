@@ -96,7 +96,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignSelf: 'flex-start',
   },
-  chipSm: { minHeight: 36, paddingHorizontal: 12 },
+  // a sm Select's padding and line (Select fieldSm / valueSm), so the two stay one height at every
+  // text size (the header's language picker beside Scan)
+  chipSm: { minHeight: 36, paddingHorizontal: 12, paddingVertical: 6 },
   // stacked grid cell — icon over label, the control's corners, fills the flex column.
   // alignItems:'center' overrides the base row alignment so the icon+label centre
   // horizontally; extra vertical padding keeps the top icon off the rounded edge.
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
   dotOff: { backgroundColor: colors.textDim, shadowColor: colors.textDim },
   dotOn: { backgroundColor: colors.accent, shadowColor: colors.accent },
   label: { fontFamily: fonts.ui, fontSize: 14, lineHeight: 17.5 },
-  labelSm: { fontSize: 14 },
+  labelSm: { fontSize: 14, lineHeight: 18 },
   labelStacked: { fontFamily: fonts.mono, fontSize: 11, lineHeight: 13, letterSpacing: 0.3, textAlign: 'center' },
   labelOff: { color: colors.textDim },
   labelOn: { color: colors.text },
