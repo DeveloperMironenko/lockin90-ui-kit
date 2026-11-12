@@ -15,8 +15,10 @@ or broken mid-word at any text size). Lines still wrap between words; when the t
 than the width it is laid out in (a long word at an accessibility text size: "Налаштування") the whole text
 shrinks until that word fits — **never below the default text size or 11pt** (`fitFloor`: only the OS's
 enlargement is taken back, so at the default text size nothing shrinks). A word still too wide at that
-floor ("ФИЗИОЛОГИЧЕСКИЙ" in a third of a phone's width) is the layout's to fix — `onMinWidth` says how wide
-the text must be, so a grid can choose a column fewer — and breaks only as the last resort. Text that fits
+floor first gives up its letter spacing (a tracked label: "АКТИВНОСТЬ" at mono 11, .14em, in a third of the
+Settings card), each letter's spacing less by what is over, never below 0; still too wide, it is the layout's
+to fix — `onMinWidth` says how wide the text must be, so a grid can choose a column fewer — and breaks only
+as the last resort. Text that fits
 is drawn exactly as a plain `Text`. Text scaling is never turned off.
 
 The kit uses it for MetricTile (label, value), ListRow (a wrapping title / subtitle), Alert (title, text

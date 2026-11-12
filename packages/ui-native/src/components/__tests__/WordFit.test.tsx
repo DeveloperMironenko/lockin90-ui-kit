@@ -66,6 +66,26 @@ describe('FitText at a larger text size', () => {
   });
 });
 
+describe('FitText at its floor', () => {
+  test('a tracked word still too wide gives up its letter spacing, never splits ("АКТИВНОСТЬ" at 11pt)', () => {
+    const { host, unmount } = mount(<FitText style={{ fontSize: 11, letterSpacing: 1.54 }}>АКТИВНОСТЬ</FitText>);
+    layout(host.firstElementChild!, 74);
+    measure(host, 8); // 80 in 74 at the default text size: no shrinking, 6 over 10 letters
+    const drawn = style(host.firstElementChild!);
+    expect(drawn).toContain('"fontSize":"11px"');
+    expect(drawn).toContain('"letterSpacing":"0.84px"'); // 1.54 − (80 − 73) / 10 ≈ 0.84
+    unmount();
+  });
+
+  test('a word that fits keeps its letter spacing', () => {
+    const { host, unmount } = mount(<FitText style={{ fontSize: 11, letterSpacing: 1.54 }}>ПОЛ</FitText>);
+    layout(host.firstElementChild!, 74);
+    measure(host, 8);
+    expect(style(host.firstElementChild!)).not.toContain('letterSpacing":"0');
+    unmount();
+  });
+});
+
 describe('FitText follows its room while shrunk', () => {
   const mountShrunk = () => {
     dims.fontScale = 2;

@@ -175,6 +175,14 @@ export function wordFitScale(widest: number, room: number, min: number): number 
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
+/** The widest measured word's text. */
+function widestWord(probes: readonly { id: string; text: string }[], w: Record<string, number>): string {
+  let best = '';
+  let most = -1;
+  for (const p of probes) if ((w[p.id] ?? -1) > most) (most = w[p.id] ?? -1), (best = p.text);
+  return best;
+}
+
 /** One probe: a text the measurer lays out on one line, in a style. */
 export interface Probe {
   id: string;
@@ -312,15 +320,24 @@ export function useWordFit(text: string, style: StyleProp<TextStyle>, belowDefau
   const floor = fitFloor(flat.fontSize ?? 14, fontScale, belowDefault);
   // a word as wide as the text (within a point of rounding) fits: only a word wider than its line shrinks
   const scale = ready && widest > cur.room + SLACK ? wordFitScale(widest, cur.room, floor) : 1;
-  drawn.current = { scale, widest: widest * scale };
+  // at its floor a word still too wide gives up its letter spacing first (a tracked label, "АКТИВНОСТЬ"
+  // in a third of a card at 11pt): each letter's spacing less by what is over, never below 0, so the word
+  // stays whole where the spacing makes the difference
+  const spaced = typeof flat.letterSpacing === 'number' && flat.letterSpacing > 0 ? flat.letterSpacing * scale : 0;
+  const over = ready ? widest * scale - (cur.room - SLACK) : 0;
+  const letters = over > 0 && spaced > 0 ? [...widestWord(probes, cur.w)].length : 0;
+  const tracking = letters > 0 ? Math.max(0, round2(spaced - over / letters)) : undefined;
+  drawn.current = { scale, widest: tracking !== undefined ? widest * scale - letters * (spaced - tracking) : widest * scale };
   /** The style with the scale applied (size, line height and letter spacing together). */
   const scaled: TextStyle | null =
-    scale === 1
+    scale === 1 && tracking === undefined
       ? null
       : {
           fontSize: round2((flat.fontSize ?? 14) * scale),
           ...(typeof flat.lineHeight === 'number' ? { lineHeight: round2(flat.lineHeight * scale) } : {}),
-          ...(typeof flat.letterSpacing === 'number' ? { letterSpacing: round2(flat.letterSpacing * scale) } : {}),
+          ...(typeof flat.letterSpacing === 'number'
+            ? { letterSpacing: tracking ?? round2(flat.letterSpacing * scale) }
+            : {}),
         };
   const minWidth = !words.length ? 0 : measured ? Math.ceil(widest * floor + SLACK) : undefined;
   // once measured the probes go (nothing extra stays in the tree a screen reader walks); a new text, text
