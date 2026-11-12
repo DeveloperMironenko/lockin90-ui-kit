@@ -130,3 +130,9 @@ No capability gap.
 ## Update — 2026-11-11 (owner: the audit batch, control sizes and fills)
 
 - **Fill (V19):** on the opaque `--field` (was `rgba(255,255,255,.04)` glass); hover / press brighten it.
+
+## Update — 2026-11-11 (owner: the audit batch, U6)
+
+- **New `loading`** (web + native): the kit Spinner (16) over the kept, hidden content (the width never
+  changes), `aria-busy` / `accessibilityState.busy`, presses ignored, still focusable and named. Apps pass it
+  while the provider's popup / sheet is open and while its token is exchanged.

@@ -89,3 +89,5 @@ UX and accessibility (1.35b–h, CONVENTIONS "Accessibility"):
   - **Web focus (U11):** a focused invalid field (Input, Select, SegmentedTabs choice, TagInput, CodeInput, CodeField, RichTextEditor) adds a soft red halo to its 2px red edge; the Menu trigger uses the shared `--accent-2` ring (was 1.79:1) and a focused Menu item an inset ring. CONVENTIONS now cites WCAG 1.4.11 for a field edge's contrast.
   - **Web targets (U12):** Menu items and Select options 44 tall at phone width; a bare Menu trigger reaches 44 there.
   - **Avatar (V1 / V16):** a photo that fails to load shows the initials (web + native); a photo gets a thin `--border-control` edge; native initials drop `adjustsFontSizeToFit` (it lost the display font on iOS) and size from the box and the text size instead.
+  - **ReauthDialog (U1 / U14):** Cancel and × never disabled while `loading`; the password field read-only + busy (not disabled); Google / Apple `aria-disabled` (presses ignored, focus kept). Web Button styles `aria-disabled="true"` as disabled.
+  - **SsoButton `loading` (U6, web + native):** spinner over the kept content, busy, presses ignored.

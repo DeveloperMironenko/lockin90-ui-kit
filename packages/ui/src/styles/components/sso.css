@@ -6,6 +6,7 @@
    Key: .lk-sso
    ========================================================================== */
 .lk-sso {
+  position: relative;
   flex: 1;
   display: inline-flex;
   align-items: center;
@@ -52,3 +53,9 @@
   letter-spacing: 0.1px;
   color: var(--text);
 }
+
+/* busy (U6): the Spinner over the kept content (hidden, so the width never changes); no hover change */
+.lk-sso.lk-sso-loading { cursor: progress; }
+.lk-sso.lk-sso-loading > :not(.lk-sso-spin) { opacity: 0; }
+.lk-sso-spin { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.lk-sso[aria-busy='true']:hover { background: var(--field); }

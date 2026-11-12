@@ -29,7 +29,8 @@ export interface ReauthDialogProps {
   hasGoogle?: boolean;
   /** Show the "Continue with Apple" button (default false); with `hasGoogle` both show, Google first. */
   hasApple?: boolean;
-  /** Disable inputs + show loading on submit. */
+  /** Busy: Confirm shows its spinner, the field is read-only and `aria-busy`, Google / Apple ignore presses
+   *  (announced unavailable, still focusable). Cancel and the × always work (U1 / U14). */
   loading?: boolean;
   /** Error message rendered in a danger Alert above the fields. */
   error?: string;
@@ -161,7 +162,9 @@ export function ReauthDialog({
                 autoFocus
                 placeholder={passwordPlaceholder}
                 value={password}
-                disabled={loading}
+                // read-only, never disabled, while busy: focus stays on the field (U14)
+                readOnly={loading}
+                aria-busy={loading || undefined}
                 invalid={Boolean(error) || (missing && !password)}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -190,8 +193,8 @@ export function ReauthDialog({
           <Button
             variant="default"
             className={cn('lk-reauth-google')}
-            disabled={loading}
-            onClick={() => onGoogle?.()}
+            aria-disabled={loading || undefined}
+            onClick={() => !loading && onGoogle?.()}
           >
             <span className="lk-reauth-google-icon">{GOOGLE}</span>
             {googleLabel}
@@ -202,8 +205,8 @@ export function ReauthDialog({
           <Button
             variant="default"
             className="lk-reauth-apple"
-            disabled={loading}
-            onClick={() => onApple?.()}
+            aria-disabled={loading || undefined}
+            onClick={() => !loading && onApple?.()}
           >
             <span className="lk-reauth-apple-icon">{APPLE}</span>
             {appleLabel}
@@ -214,8 +217,8 @@ export function ReauthDialog({
           type="button"
           variant="ghost"
           className="lk-reauth-cancel"
+          // never disabled: a way out while a request hangs (offline, U1)
           onClick={close}
-          disabled={loading}
         >
           {cancelLabel}
         </Button>

@@ -89,6 +89,8 @@
 .lk-btn:hover { transform: translateY(-2px); border-color: var(--border-2); }
 .lk-btn:active { transform: translateY(0) scale(.98); }
 .lk-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+/* unavailable but focusable (aria-disabled, e.g. while a dialog is busy): the disabled look, no lift */
+.lk-btn[aria-disabled='true'] { opacity: .5; cursor: not-allowed; transform: none; }
 .lk-btn svg { width: 16px; height: 16px; flex: 0 0 auto; }
 .lk-btn-primary {
   border: none; color: var(--ink-on-bright); background: var(--grad-cta); background-size: 160% 160%;

@@ -37,3 +37,22 @@ describe('ReauthDialog labels', () => {
     expect(html).not.toContain('Cancel');
   });
 });
+
+/* U1 / U14: while busy there is always a way out, and nothing that had focus is disabled. */
+describe('ReauthDialog busy', () => {
+  const html = renderToStaticMarkup(<ReauthDialog open onClose={() => {}} hasGoogle loading cancelLabel="Cancelar" />);
+  it('Cancel is never disabled', () => {
+    expect(html).toMatch(/<button[^>]*class="[^"]*lk-reauth-cancel[^"]*"(?![^>]*disabled)[^>]*>/);
+  });
+  it('the field is read-only and busy, not disabled', () => {
+    const input = html.match(/<input[^>]*>/)![0];
+    expect(input.toLowerCase()).toContain('readonly');
+    expect(input).toContain('aria-busy="true"');
+    expect(input).not.toMatch(/\sdisabled/);
+  });
+  it('Google is announced unavailable but stays focusable', () => {
+    const google = html.match(/<button[^>]*lk-reauth-google[^>]*>/)![0];
+    expect(google).toContain('aria-disabled="true"');
+    expect(google).not.toMatch(/\sdisabled=""/);
+  });
+});

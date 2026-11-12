@@ -146,3 +146,15 @@ No capability gap — the dialog is fully usable and visually equivalent on both
 ## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
 
 - Native Google / Apple buttons are controls, `radii.sm` (10, were the pill), as SsoButton.
+
+## Update — 2026-11-11 (owner: the audit batch, U1 / U4 / U14)
+
+- **Always a way out (U1):** Cancel and the Modal's × are never disabled while `loading` (a request that hangs
+  offline left the dialog with no exit).
+- **Busy, not disabled (U14):** the password field is read-only and `aria-busy` (native `editable={false}` +
+  `accessibilityState.busy`), so focus stays on it; Google / Apple are announced unavailable
+  (`aria-disabled` / `accessibilityState.disabled`) and ignore presses, but stay focusable; Confirm keeps its
+  spinner (Button `loading`).
+- **Names (U4):** every label is a prop — apps pass `passwordRequiredLabel`, `closeLabel`, `cancelLabel`,
+  `confirmLabel`, `confirmingLabel`, `passwordLabel`, `passwordPlaceholder`, `googleLabel`, `appleLabel`,
+  `orLabel`, `title`, `description` translated (the English defaults are fallbacks).

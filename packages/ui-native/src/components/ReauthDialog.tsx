@@ -165,7 +165,9 @@ export function ReauthDialog({
                 autoFocus
                 placeholder={passwordPlaceholder}
                 value={password}
+                // read-only while busy (never disabled: focus stays, U14), announced busy
                 editable={!loading}
+                accessibilityState={{ busy: loading || undefined }}
                 invalid={Boolean(error) || (missing && !password)}
                 onChangeText={setPassword}
                 onSubmitEditing={submit}
@@ -194,8 +196,9 @@ export function ReauthDialog({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={googleLabel}
-            disabled={loading}
-            onPress={() => onGoogle?.()}
+            // presses ignored while busy, announced unavailable, still focusable (U14)
+            accessibilityState={{ disabled: loading }}
+            onPress={() => !loading && onGoogle?.()}
           >
             {({ pressed }) => (
               <View style={[styles.google, pressed && styles.pressed, loading && styles.disabled]}>
@@ -210,8 +213,8 @@ export function ReauthDialog({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={appleLabel}
-            disabled={loading}
-            onPress={() => onApple?.()}
+            accessibilityState={{ disabled: loading }}
+            onPress={() => !loading && onApple?.()}
           >
             {({ pressed }) => (
               <View style={[styles.apple, pressed && styles.pressed, loading && styles.disabled]}>
@@ -226,7 +229,7 @@ export function ReauthDialog({
           variant="ghost"
           title={cancelLabel}
           style={styles.submit}
-          disabled={loading}
+          // never disabled: a way out while a request hangs (offline, U1)
           onPress={close}
         />
       </View>

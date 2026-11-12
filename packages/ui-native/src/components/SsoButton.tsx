@@ -1,4 +1,6 @@
 import { Pressable, Text, View, StyleSheet, type PressableProps } from 'react-native';
+import { absoluteFill } from '../internal/absoluteFill';
+import { Spinner } from './Spinner';
 import Svg, { Path } from 'react-native-svg';
 import { colors, fonts, radii } from '@lockin90/tokens';
 
@@ -6,17 +8,22 @@ export type SsoProvider = 'google' | 'apple';
 
 export interface SsoButtonProps extends Omit<PressableProps, 'children' | 'style'> {
   provider: SsoProvider;
+  /** Busy (U6: the provider's sheet is open, or its token is being exchanged): the kit Spinner over the
+   *  kept (invisible) content; `accessibilityState.busy`, presses ignored. As web and Button `loading`. */
+  loading?: boolean;
 }
 
 /** SSO sign-in button — full-color Google G or monochrome Apple glyph + label.
  *  Mirrors the `.sso` design CSS (10×12 padding, 12.5px/600 label, 16×16 icon,
  *  rgba(255,255,255,.04) bg, subtle border). Stretches to fill its grid cell. */
-export function SsoButton({ provider, ...rest }: SsoButtonProps) {
+export function SsoButton({ provider, loading = false, onPress, accessibilityState, ...rest }: SsoButtonProps) {
   const label = provider === 'google' ? 'Google' : 'Apple';
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`Continue with ${label}`}
+      accessibilityState={{ ...accessibilityState, disabled: rest.disabled === true, busy: loading || undefined }}
+      onPress={onPress ? (e) => !loading && onPress(e) : undefined}
       {...rest}
       style={({ pressed }) => [
         styles.btn,
@@ -24,10 +31,15 @@ export function SsoButton({ provider, ...rest }: SsoButtonProps) {
         rest.disabled === true ? styles.disabled : undefined,
       ]}
     >
-      <View style={styles.iconSlot}>
+      <View style={[styles.iconSlot, loading && styles.hidden]}>
         {provider === 'google' ? <GoogleBrandIcon /> : <AppleBrandIcon color={colors.text} />}
       </View>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, loading && styles.hidden]}>{label}</Text>
+      {loading ? (
+        <View style={styles.spin} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+          <Spinner size={16} thickness={2} color={colors.text} />
+        </View>
+      ) : null}
     </Pressable>
   );
 }
@@ -82,6 +94,9 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.85 },
   disabled: { opacity: 0.5 },
+  // loading: the content keeps its place (the width) under the centred spinner
+  hidden: { opacity: 0 },
+  spin: { ...absoluteFill, alignItems: 'center', justifyContent: 'center' },
   iconSlot: { width: 16, height: 16, alignItems: 'center', justifyContent: 'center' },
   label: {
     color: colors.text,
