@@ -1,7 +1,8 @@
 # SDD — `TopLayer`
 
-> **Package:** `@lockin90/ui-native` (native). Web: see §5.
-> **Source:** `packages/ui-native/src/components/TopLayer.tsx` (with the internal `TopLayerHost` that `Sheet` and `Modal` render).
+> **Package:** `@lockin90/ui` (web) · `@lockin90/ui-native` (native).
+> **Source:** `packages/ui/src/components/TopLayer.tsx` + `styles/components/toplayer.css` (`.lk-top-layer`) ·
+> `packages/ui-native/src/components/TopLayer.tsx` (with the internal `TopLayerHost` that `Sheet` and `Modal` render).
 > **Exports:** `TopLayer`, type `TopLayerProps`.
 > **Status:** Shipped (2026-11-11, 1.35). **Parity:** 🟡 native needs it because an RN `Modal` is a native window; web stacks by `z-index` (§5).
 > **Stories:** none (it draws nothing of its own).
@@ -51,10 +52,11 @@ None of its own: it adds two full-screen transparent boxes (`absoluteFill`) in t
 
 ## 5. Web ↔ native parity
 
-**Verdict: 🟡.** Native needs a layer because the page can't draw over a native window. On web a Sheet is
-`position: fixed` and the Modal a portal at the end of `<body>`, both stacking by `z-index` in one
-document, so an app's toast is above them when its `z-index` is higher (see the web app's toast); no
-web export is needed for that.
+**Verdict: 🟡 same name and job, platform-shaped.** Native draws the children inside the top-most open
+window. **Web** (2026-11-11: the web app's toast was at `z-index: 5`, under the Modal / Sheet at 1000): a
+portal at the end of `<body>` into `.lk-top-layer` (`position: fixed; inset: 0; z-index: 10000;
+pointer-events: none`), above Modal and Sheet (1000) and Select, Menu, Popover, Combobox (9999). The content
+places itself in the viewport; the kit Toast's action and × take `pointer-events: auto`. SSR: renders nothing.
 
 ## 6. Composition & usage
 

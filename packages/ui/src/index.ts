@@ -125,6 +125,8 @@ export type { TagInputProps, CodeInputProps, CodeInputHandle } from './component
 export { Timeline } from './components/Timeline';
 export type { TimelineStatus, TimelineItem, TimelineProps } from './components/Timeline';
 export { Toast, Badge } from './components/Toast';
+export { TopLayer } from './components/TopLayer';
+export type { TopLayerProps } from './components/TopLayer';
 export type { ToastTone, ToastProps, BadgeTone, BadgeProps } from './components/Toast';
 export { Toggle } from './components/Toggle';
 export type { ToggleSize, ToggleProps } from './components/Toggle';

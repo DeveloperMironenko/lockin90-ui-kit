@@ -1,0 +1,11 @@
+/* ============================================================================
+   TopLayer — a click-through layer over everything (above Modal, Sheet, Select,
+   Menu, Popover, Combobox): an app's toast stays visible over an open dialog.
+   Its content places itself (fixed-like: the layer is the viewport).
+   ========================================================================== */
+.lk-top-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+}

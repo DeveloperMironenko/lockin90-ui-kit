@@ -174,3 +174,32 @@ No capability gap blocks use.
 - **Native:** an app's toast goes in a **`TopLayer`** (see `TopLayer.md`): drawn inside the top-most open kit
   `Sheet` / `Modal` (native windows the page can't draw over), in place when none is open. Placement, timing
   and announcing stay the app's.
+
+## Update — 2026-11-11 (owner: the new look, Undo with a countdown; web + native)
+
+Supersedes the `filled` look and §3's rail: the owner said the solid green "ruins the style".
+
+- **Look (both):** the dark glass card, as other cards: `--card` / `colors.card` with the card blur (web
+  `backdrop-filter: blur(16px) saturate(120%)`; native `expo-blur` intensity 24 where installed), solid
+  `--bg-1` / `colors.bg1` under Reduce Transparency (`prefers-reduced-transparency` / iOS setting, new internal
+  `useReduceTransparency`). Radius `--r` / `radii.md` (16), padding 9 / 12 / 9 / 10, min height 48, soft shadow
+  `--elev-2` / `nativeShadows.elev2`. **Edge** 1px in the tone at an alpha that keeps it 3:1 on the card and on
+  the solid fill (it marks the state): success `rgba(52,245,197,.45)` (3.5:1), warn `rgba(255,176,32,.5)`
+  (3.3:1), danger `rgba(255,77,109,.7)` (3.3:1); default `--border-2`. **Icon** 16 in a 28 circle of the tone at
+  16 %, the glyph in the tone (8.9:1 success). **Title** 14 / 600 `--text` (16:1). No rail.
+- **Enter:** a fade and an 8px slide down over 200ms; a fade only under reduced motion.
+- **`filled`:** deprecated, ignored (every toast is the glass card); removed in the next major. Nothing uses it.
+- **Action (both):** `actionLabel` + `onAction`: a text button in `--accent-2` (10:1), 14 / 600, named by its
+  label; web 28px tall with a 44px hit area at phone width, `pointer-events: auto` inside a click-through layer;
+  native 28pt with `hitSlop` to 44pt. A toast with an action takes the pointer (web `.lk-toast-has-action`).
+- **Countdown (only with an action):** `duration` (ms) + `onTimeout`. A 2px (2pt) line along the bottom edge,
+  inside the rounded corners (the card clips it), in the edge's colour (3:1), shrinking from full to nothing
+  toward the start; `onTimeout` fires only when it runs out. It **holds** while the toast is hovered, pressed or
+  has focus (web: CSS `animation-play-state: paused` on `:hover`, `:focus-within`, `.is-held` from
+  pointerdown; native: touch start / end on the card, focus on the action), WCAG 2.2.1. Under reduced motion it
+  steps down once a second (web `steps(n)` with its real duration, exempt from the global animation freeze;
+  native one `setValue` a second). The line is hidden from screen readers (no per-second announcement).
+  **Native screen readers:** VoiceOver's focus can't be seen from JS, so while a screen reader is on the
+  countdown holds and a × (`dismissLabel`) ends it at once (`onTimeout`).
+- **Apps:** a confirmation for about 4 s; a toast with Undo about 6 s (its `duration`). The app announces it
+  (the title and that it can be undone), never the countdown.

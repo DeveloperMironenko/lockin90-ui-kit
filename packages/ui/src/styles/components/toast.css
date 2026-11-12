@@ -1,50 +1,61 @@
 /* ============================================================================
-   Toast — a compact floating notification card. Tone-driven: it tints its icon
-   + a subtle left accent rail.
+   Toast — a compact floating notification card: the dark glass card, its edge,
+   icon circle and countdown line tinted by the tone.
 
    (`Badge` used to live here too; it is now a thin wrapper over `Chip` at its
    `sm` size — see `.lk-chip-sm*` in primitives.css.)
    ========================================================================== */
 
-/* ---- Toast: compact floating glass card ---- */
+/* ---- Toast: the dark glass card (owner, 2026-11-11: no solid tone fill) ---- */
 .lk-toast {
   position: relative;
   display: flex;
-  align-items: flex-start;
-  gap: 11px;
+  align-items: center;
+  gap: 10px;
   width: min(360px, 92vw);
-  padding: 11px 13px;
-  border-radius: var(--r-sm);
+  min-height: 48px;
+  padding: 9px 12px 9px 10px;
+  border-radius: var(--r);
+  /* the tone's edge (3:1 on the card where it marks the state); neutral by default */
   border: 1px solid var(--border-2);
-  background: var(--bg-1);
-  background-image: linear-gradient(var(--glass-2), var(--glass-2));
+  background: var(--card);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
   box-shadow: var(--elev-2);
+  /* the countdown line inside the rounded corners */
   overflow: hidden;
+  animation: lk-toast-in .2s var(--ease) both;
+}
+@keyframes lk-toast-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes lk-toast-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .lk-toast { background: var(--bg-1); backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
 
-/* subtle left accent rail — neutral by default, tinted per tone */
-.lk-toast::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 3px;
-  background: var(--border-2);
-}
-
+/* the icon in a small circle, in the tone's colour */
 .lk-toast-icon {
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  margin-top: 1px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--glass-2);
   color: var(--text-dim);
 }
-.lk-toast-icon svg { width: 17px; height: 17px; }
+.lk-toast-icon svg { width: 16px; height: 16px; }
 
 .lk-toast-body { min-width: 0; flex: 1 1 auto; }
 
 .lk-toast-title {
   font-family: var(--font-ui);
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.35;
   color: var(--text);
@@ -57,6 +68,31 @@
   line-height: 1.4;
   color: var(--text-dim);
 }
+
+/* an action ("Undo"): a text button, 24px tall (44 at phone width), takes clicks inside a click-through layer */
+.lk-toast-action {
+  position: relative;
+  flex: 0 0 auto;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--accent-2);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background .2s ease;
+}
+.lk-toast-action:hover { background: var(--glass-2); }
+.lk-toast-action:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+@media (max-width: 540px) {
+  .lk-toast-action::before { content: ""; position: absolute; inset: -8px -2px; }
+}
+/* a toast with an action takes the pointer (hover and press hold its countdown) */
+.lk-toast-has-action { pointer-events: auto; }
 
 .lk-toast-x {
   position: relative;
@@ -74,26 +110,46 @@
   font-size: 17px;
   line-height: 1;
   cursor: pointer;
+  pointer-events: auto;
   transition: color .2s ease, background .2s ease;
 }
 .lk-toast-x:hover { color: var(--text); background: var(--glass-2); }
 
-/* tone tints: icon color + left rail */
-.lk-toast-success .lk-toast-icon { color: var(--zone-high); }
-.lk-toast-success::before { background: var(--zone-high); }
+/* the countdown: 2px along the bottom edge in the tone's edge colour, shrinking toward the start; it holds
+   while the toast is hovered, pressed or has focus; its end is the timeout */
+.lk-toast-count {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, .45);
+  transform-origin: left center;
+  animation: lk-toast-count var(--lk-toast-ms, 6000ms) linear forwards;
+}
+.lk-toast:is(:hover, :focus-within, .is-held) .lk-toast-count { animation-play-state: paused; }
+@keyframes lk-toast-count {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* a fade only; the line keeps its real time (the global freeze would end it at once), one step a second */
+  .lk-toast.lk-toast { animation: lk-toast-fade .2s ease both !important; }
+  .lk-toast .lk-toast-count {
+    animation-duration: var(--lk-toast-ms, 6000ms) !important;
+    animation-timing-function: steps(var(--lk-toast-steps, 6), end) !important;
+  }
+}
 
-.lk-toast-warn .lk-toast-icon { color: var(--zone-mid); }
-.lk-toast-warn::before { background: var(--zone-mid); }
+/* tone tints: the edge, the icon's circle and the countdown (each edge alpha keeps 3:1 on the card) */
+.lk-toast-success { border-color: rgba(52, 245, 197, .45); }
+.lk-toast-success .lk-toast-icon { color: var(--zone-high); background: rgba(52, 245, 197, .16); }
+.lk-toast-success .lk-toast-count { background: rgba(52, 245, 197, .45); }
 
-.lk-toast-danger .lk-toast-icon { color: var(--zone-low); }
-.lk-toast-danger::before { background: var(--zone-low); }
+.lk-toast-warn { border-color: rgba(255, 176, 32, .5); }
+.lk-toast-warn .lk-toast-icon { color: var(--zone-mid); background: rgba(255, 176, 32, .16); }
+.lk-toast-warn .lk-toast-count { background: rgba(255, 176, 32, .5); }
 
-/* filled: the tone's color is the card, no rail; the ink dark on it (default: the opaque --bg-2) */
-.lk-toast-filled { border-color: transparent; }
-.lk-toast-filled::before { display: none; }
-.lk-toast-filled.lk-toast-success { background: var(--zone-high); }
-.lk-toast-filled.lk-toast-warn { background: var(--zone-mid); }
-.lk-toast-filled.lk-toast-danger { background: var(--zone-low); }
-.lk-toast-filled:is(.lk-toast-success, .lk-toast-warn, .lk-toast-danger) :is(.lk-toast-icon, .lk-toast-title, .lk-toast-x) { color: var(--bg-0); }
-.lk-toast-filled:is(.lk-toast-success, .lk-toast-warn, .lk-toast-danger) .lk-toast-msg { color: var(--bg-0); opacity: .75; }
-.lk-toast-filled:not(.lk-toast-success, .lk-toast-warn, .lk-toast-danger) { background: var(--bg-2); }
+.lk-toast-danger { border-color: rgba(255, 77, 109, .7); }
+.lk-toast-danger .lk-toast-icon { color: var(--zone-low); background: rgba(255, 77, 109, .16); }
+.lk-toast-danger .lk-toast-count { background: rgba(255, 77, 109, .7); }

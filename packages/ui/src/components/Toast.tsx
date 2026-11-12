@@ -1,4 +1,4 @@
-import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
+import { forwardRef, useState, type CSSProperties, type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../cn';
 import { Chip } from './Chip';
 import { Icon, type IconName } from './Icon';
@@ -10,20 +10,31 @@ import { Icon, type IconName } from './Icon';
 export type ToastTone = 'default' | 'success' | 'warn' | 'danger';
 
 export interface ToastProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
-  /** tints the leading icon + the subtle left accent rail */
+  /** tints the edge and the icon's circle */
   tone?: ToastTone;
   /** bold first line */
   title?: string;
   /** optional dimmer second line */
   message?: ReactNode;
-  /** override the default tone icon (pass any node, e.g. an <Icon />) */
+  /** override the default tone icon (pass any node, e.g. an <Icon />; it takes the tone's colour) */
   icon?: ReactNode;
   /** show a × button; called when it's clicked */
   onDismiss?: () => void;
   /** the × button's name, in the app's language (CONVENTIONS "Accessibility": names via props).
    *  @default 'Dismiss' (an English fallback for older apps) */
   dismissLabel?: string;
-  /** fill the card with the tone's color (no rail), its text and icons dark on it */
+  /** an action's label ("Undo"), in the app's language; shown with `onAction` */
+  actionLabel?: string;
+  /** called when the action is clicked */
+  onAction?: () => void;
+  /** With an action: how long (ms) until `onTimeout`, shown as a line along the bottom edge that shrinks
+   *  to nothing. It holds while the toast is pressed, hovered or has focus (WCAG 2.2.1); under reduced
+   *  motion it steps down once a second. */
+  duration?: number;
+  /** the countdown ran out: do what the action could undo */
+  onTimeout?: () => void;
+  /** @deprecated 2026-11-11 (owner: the solid fill "ruins the style"): ignored, every toast is the glass
+   *  card. Removed in the next major. */
   filled?: boolean;
 }
 
@@ -42,25 +53,70 @@ const TONE_ICON: Record<ToastTone, IconName> = {
   danger: 'info',
 };
 
-/** Compact floating notification card — tone-tinted icon + title/message + optional dismiss. */
+/** Compact floating notification: the dark glass card (solid under reduced transparency) with a
+ *  tone-tinted edge and a soft shadow, the icon in a small tone-tinted circle, white text, an optional
+ *  action ("Undo") with a countdown line, and ×. Fades in with a small slide (a fade under reduced motion). */
 export const Toast = forwardRef<HTMLDivElement, ToastProps>(function Toast(
-  { tone = 'default', title = 'Saved', message, icon, onDismiss, dismissLabel = 'Dismiss', filled = false, className, ...rest },
+  {
+    tone = 'default',
+    title = 'Saved',
+    message,
+    icon,
+    onDismiss,
+    dismissLabel = 'Dismiss',
+    actionLabel,
+    onAction,
+    duration,
+    onTimeout,
+    filled: _filled,
+    className,
+    ...rest
+  },
   ref,
 ) {
+  const action = Boolean(onAction && actionLabel);
+  const counting = action && Boolean(duration);
+  // a finger or a mouse button down on the toast holds the countdown (hover and focus hold it in CSS)
+  const [pressed, setPressed] = useState(false);
+  const press = (on: boolean) => () => setPressed(on);
   return (
     // an error interrupts (alert); every other tone is a polite status
-    <div ref={ref} role={tone === 'danger' ? 'alert' : 'status'} className={cn('lk-toast', TOAST_TONE[tone], filled && 'lk-toast-filled', className)} {...rest}>
+    <div
+      ref={ref}
+      role={tone === 'danger' ? 'alert' : 'status'}
+      className={cn('lk-toast', TOAST_TONE[tone], action && 'lk-toast-has-action', pressed && 'is-held', className)}
+      onPointerDown={counting ? press(true) : undefined}
+      onPointerUp={counting ? press(false) : undefined}
+      onPointerCancel={counting ? press(false) : undefined}
+      onPointerLeave={counting ? press(false) : undefined}
+      {...rest}
+    >
       <span className="lk-toast-icon" aria-hidden="true">
-        {icon ?? <Icon name={TONE_ICON[tone]} size={17} />}
+        {icon ?? <Icon name={TONE_ICON[tone]} size={16} />}
       </span>
       <div className="lk-toast-body">
         <div className="lk-toast-title">{title}</div>
         {message != null && <div className="lk-toast-msg">{message}</div>}
       </div>
+      {action && (
+        <button type="button" className="lk-toast-action" onClick={onAction}>
+          {actionLabel}
+        </button>
+      )}
       {onDismiss && (
         <button type="button" className="lk-toast-x" aria-label={dismissLabel} onClick={onDismiss}>
           ×
         </button>
+      )}
+      {counting && (
+        // the time left, from full to nothing; its end is the timeout (not announced)
+        <span
+          className="lk-toast-count"
+          aria-hidden="true"
+          data-testid="toast-countdown"
+          style={{ '--lk-toast-ms': `${duration}ms`, '--lk-toast-steps': Math.max(1, Math.round(duration! / 1000)) } as CSSProperties}
+          onAnimationEnd={() => onTimeout?.()}
+        />
       )}
     </div>
   );
