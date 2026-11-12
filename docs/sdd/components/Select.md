@@ -242,3 +242,26 @@ The overlay differences are expected substrate, not capability gaps that block u
 - The web dropdown panel is a container, `--r` (16, was 10), its options a control's 10 (was 6); the native list sheet's top corners are `radii.lg` (22, was 24).
 
 - **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
+
+## Update — 2026-11-11 (owner: the audit batch, V4 / V9 / V11 / V17 / V20 / U4 / U5 / U12)
+
+Supersedes §3's sizes where they differ.
+
+- **Two control sizes (CONVENTIONS "Control sizes"):** `md` 44 tall at every width, the value 16 (`control`;
+  was 14); `sm` 36 tall with a 44 target (web `::before`, native `hitSlop` 4), the value Inter 14
+  (`controlSm`; was mono 11 native / mono 13 web), chevron 14, padding 6 / 12 / 6 / 10. Both on the field fill
+  with the control edge. The header's language Select and the "Scan" ChoiceChip are both `sm`: the same height.
+- **Leading icon (V17):** a field's icon, 16 and `--text-faint` (web CSS; native gives an element without its
+  own `size` / `color` those).
+- **Label (V20):** the one label style — mono 11 / 500, .14em, uppercase, `--text-dim` (web was Inter, faint).
+- **Native opens the kit `Sheet` (V9):** its panel, handle, display-17 title and × (`closeLabel`, with a
+  `title`); a searchable list is `height="tall"` with the `SearchInput` as the Sheet's `subheader`; the
+  Sheet's own scroll, keyboard and safe-area handling (Android keyboard padding, U20). The old own sheet
+  (top corners 24, a mono title, a header rule, a 28pt ×) is gone. Option rows are 44 tall at least, the
+  selected one `--accent-2` (as web; was the accent).
+- **Web options (U12):** 44 tall at phone width; option text 15 (`rowTitle`) on both platforms.
+- **New `clearLabel` (U4)** for the search field's ×, and **`noMatchesLabel` (U5)**: shown when a search finds
+  nothing and announced (web: a `role="status"` region present from the open, its text set then; native: a
+  live region on Android, `announceForAccessibility` on iOS). English defaults 'Clear search' / 'No matches'.
+- **Search (U5):** an option matches on its label or its value, case-insensitive, underscores as spaces and
+  each "/" part on its own (`selectMatch.ts`, the same on both): "New York" finds `America/New_York`.

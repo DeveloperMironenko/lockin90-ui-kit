@@ -189,8 +189,8 @@ describe('Select: a word never breaks', () => {
     expect(probes.map((p) => p.textContent)).toEqual(['Europe/', 'Kyiv', '·', 'GMT+2']);
     probes.forEach((p) => layout(p, (p.textContent ?? '').length * 20));
     const wrap = host.firstElementChild!;
-    // "Europe/" 7 × 20 = 140, + 1 slack + sm chrome 37
-    expect(JSON.stringify(propOf(wrap, 'style'))).toContain('"minWidth":"178px"');
+    // "Europe/" 7 × 20 = 140, + 1 slack + sm chrome 44 (12 + 10 padding, 2 edges, 6 gap, 14 chevron)
+    expect(JSON.stringify(propOf(wrap, 'style'))).toContain('"minWidth":"185px"');
     unmount();
   });
 
@@ -201,9 +201,9 @@ describe('Select: a word never breaks', () => {
     );
     const probes = Array.from(host.querySelectorAll('[data-testid="lk-select-measure"] > div'));
     expect(probes.map((p) => p.textContent)).toEqual(['America/', 'Argentina/', 'Buenos_Aires', '·', 'GMT-3']);
-    // mono 11 ≈ 6.6 a character: "Buenos_Aires" 79.2 → 80 + 1 + 37 = 118 (the whole zone as one word was 236)
+    // ≈ 6.6 a character: "Buenos_Aires" 79.2 → 80 + 1 + 44 = 125 (the whole zone as one word was 236)
     probes.forEach((p) => layout(p, (p.textContent ?? '').length * 6.6));
-    expect(JSON.stringify(propOf(host.firstElementChild!, 'style'))).toContain('"minWidth":"118px"');
+    expect(JSON.stringify(propOf(host.firstElementChild!, 'style'))).toContain('"minWidth":"125px"');
     unmount();
   });
 
@@ -215,8 +215,8 @@ describe('Select: a word never breaks', () => {
     probes.forEach((p) => layout(p, 50));
     const lead = Array.from(host.querySelectorAll('div')).find((d) => d.textContent === 'G' && d.children.length === 1)!;
     layout(lead, 14);
-    // 50 + 1 + 37 + 14 + the 5 gap
-    expect(JSON.stringify(propOf(host.firstElementChild!, 'style'))).toContain('"minWidth":"107px"');
+    // 50 + 1 + 44 + 14 + the 6 gap
+    expect(JSON.stringify(propOf(host.firstElementChild!, 'style'))).toContain('"minWidth":"115px"');
     unmount();
   });
 });

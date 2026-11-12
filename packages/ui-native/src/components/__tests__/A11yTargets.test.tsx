@@ -48,14 +48,18 @@ describe('44pt touch targets, same look', () => {
     p.unmount();
   });
 
-  test('Select sm and md are 44 tall', () => {
+  test('Select md is 44 tall; sm 36 with a slop to 44', () => {
     // mounted (its option sheet is a portal, which the static renderer can't draw)
-    for (const props of [{ size: 'sm' as const, accessibilityLabel: 'Language' }, { accessibilityLabel: 'Country' }]) {
-      const { host, unmount } = mount(<Select {...props} />);
-      const tall = new Set(classesFor('min-height:44px'));
-      expect(Array.from(byLabel(host, props.accessibilityLabel).classList as unknown as ArrayLike<string>).some((c) => tall.has(c))).toBe(true);
-      unmount();
-    }
+    const md = mount(<Select accessibilityLabel="Country" />);
+    const tall = new Set(classesFor('min-height:44px'));
+    expect(Array.from(byLabel(md.host, 'Country').classList as unknown as ArrayLike<string>).some((c) => tall.has(c))).toBe(true);
+    md.unmount();
+    const sm = mount(<Select size="sm" accessibilityLabel="Language" />);
+    const short = new Set(classesFor('min-height:36px'));
+    const field = byLabel(sm.host, 'Language');
+    expect(Array.from(field.classList as unknown as ArrayLike<string>).some((c) => short.has(c))).toBe(true);
+    expect(target(field, 80, 36).height).toBeGreaterThanOrEqual(44);
+    sm.unmount();
   });
 
   test('ChoiceChip md is 44 tall; sm 36 with a slop to 44', () => {

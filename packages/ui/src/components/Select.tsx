@@ -13,6 +13,7 @@ import {
 import { createPortal } from 'react-dom';
 import { cn } from '../cn';
 import { SearchInput } from './FormField';
+import { optionMatches } from './selectMatch';
 import { computeMenuPosition, type MenuPosition } from './tooltipPosition';
 
 /** A single option in a {@link Select}. */
@@ -44,13 +45,16 @@ export interface SelectProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onCha
   searchable?: boolean;
   /** placeholder for the search field (pass a localized string). @default 'Search…' */
   searchPlaceholder?: string;
+  /** the search field's clear button name, in the app's language (U4). @default 'Clear search' */
+  clearLabel?: string;
+  /** shown (and announced) when the search finds nothing, in the app's language (U5). @default 'No matches' */
+  noMatchesLabel?: string;
   /** name for a hidden input so the value posts in a native form */
   name?: string;
   /**
-   * Field scale. `'md'` (default) is the standard form field. `'sm'` is the
-   * design settings compact glass pill (`.pref-select`): mono 13px value,
-   * `--glass-2` fill, `--border` hairline, padding 8×14, 13px chevron — hugs
-   * its content instead of stretching. Mirrors native `size="sm"`.
+   * Control size (CONVENTIONS "Control sizes"): `'md'` (default) the form field, 44 tall, value 16; `'sm'`
+   * 36 tall with a 44 target, value 14 (a header's language picker, beside a `sm` ChoiceChip) — it hugs
+   * its content instead of stretching. Both on the field fill with the control edge. Mirrors native.
    */
   size?: 'md' | 'sm';
   /**
@@ -85,6 +89,8 @@ export function Select({
   disabled = false,
   searchable = false,
   searchPlaceholder = 'Search…',
+  clearLabel = 'Clear search',
+  noMatchesLabel = 'No matches',
   name,
   size = 'md',
   leading,
@@ -127,11 +133,7 @@ export function Select({
 
   // the list the panel shows — filtered by label (case-insensitive) while searching.
   // Mirrors the native Select's filter; `active` indexes into THIS list.
-  const trimmedQuery = query.trim().toLowerCase();
-  const shown =
-    searchable && trimmedQuery
-      ? options.filter((o) => o.label.toLowerCase().includes(trimmedQuery))
-      : options;
+  const shown = searchable && query.trim() ? options.filter((o) => optionMatches(o, query)) : options;
 
   const enabledIndices = shown.map((o, i) => (o.disabled ? -1 : i)).filter((i) => i >= 0);
   const firstEnabled = () => (enabledIndices.length ? enabledIndices[0] : 0);
@@ -180,8 +182,7 @@ export function Select({
   /** search field: re-filter and land the highlight on the first match. */
   const onQueryChange = (next: string) => {
     setQuery(next);
-    const t = next.trim().toLowerCase();
-    const filtered = t ? options.filter((o) => o.label.toLowerCase().includes(t)) : options;
+    const filtered = next.trim() ? options.filter((o) => optionMatches(o, next)) : options;
     const first = filtered.findIndex((o) => !o.disabled);
     setActive(first >= 0 ? first : 0);
   };
@@ -420,6 +421,7 @@ export function Select({
                   value={query}
                   onChange={onQueryChange}
                   placeholder={searchPlaceholder}
+                  clearLabel={clearLabel}
                   autoFocus
                   autoComplete="off"
                   autoCorrect="off"
@@ -436,6 +438,10 @@ export function Select({
                 <ul id={listboxId} role="listbox" {...comboName} className="lk-select-list">
                   {rows}
                 </ul>
+                {/* a live region there from the open, its text set when nothing matches: announced */}
+                <div className="lk-select-empty" role="status">
+                  {shown.length === 0 ? noMatchesLabel : ''}
+                </div>
               </div>
             ) : (
               <ul
