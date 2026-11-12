@@ -102,6 +102,8 @@
 /* Dialog actions (CONVENTIONS "Dialog actions"): at phone width every action is the same width, in the
    order given ("Cancel | Primary"); a long label wraps inside its half. Modal and Sheet footers. */
 @media (max-width: 540px) {
-  .lk-dialog-actions { justify-content: stretch; }
-  .lk-dialog-actions > * { flex: 1 1 0; min-width: 0; white-space: normal; }
+  /* a grid of equal columns (flex-basis 0 still adds each action's own border and padding) */
+  .lk-modal-foot.lk-dialog-actions,
+  .lk-sheet-foot.lk-dialog-actions { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+  .lk-dialog-actions > * { min-width: 0; white-space: normal; }
 }
