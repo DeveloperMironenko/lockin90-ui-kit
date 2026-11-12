@@ -14,7 +14,8 @@
   width: 100%;
   padding: 10px 12px;
   border-radius: var(--r-sm);
-  background: var(--glass);
+  /* a control's fill (V19) */
+  background: var(--field);
   border: 1px solid var(--border-2);
   color: var(--text);
   font-family: var(--font-ui);
@@ -26,7 +27,7 @@
 
 .lk-sso:hover,
 .lk-sso:focus-visible {
-  background: var(--glass-2);
+  background: color-mix(in srgb, var(--field) 92%, white);
 }
 /* the focus ring is the kit's shared one (primitives.css) */
 

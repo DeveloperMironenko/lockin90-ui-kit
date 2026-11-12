@@ -126,3 +126,7 @@ No capability gap.
 ## Update — 2026-11-10 (running-app audit, 1.35)
 
 - **44 tall** at phone width (web) and on native (`minHeight`).
+
+## Update — 2026-11-11 (owner: the audit batch, control sizes and fills)
+
+- **Fill (V19):** on the opaque `--field` (was `rgba(255,255,255,.04)` glass); hover / press brighten it.

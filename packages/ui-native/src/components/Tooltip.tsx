@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 9,
     borderRadius: radii.sm,
     borderWidth: 1,
-    borderColor: colors.border2,
+    borderColor: colors.border,
     backgroundColor: colors.bg1,
     ...nativeShadows.elev1,
   },
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     width: ARROW,
     height: ARROW,
     backgroundColor: colors.bg1,
-    borderColor: colors.border2,
+    borderColor: colors.border,
     transform: [{ rotate: '45deg' }],
   },
 });

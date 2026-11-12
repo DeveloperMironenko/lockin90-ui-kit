@@ -109,7 +109,8 @@ const styles = StyleSheet.create({
     minWidth: 28,
     height: 28,
     paddingHorizontal: 6,
-    borderRadius: radii.pill,
+    // a control's corners (CONVENTIONS "Corner radii")
+    borderRadius: radii.sm,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.glass2,

@@ -27,19 +27,24 @@ afterEach(() => vi.restoreAllMocks());
 const byLabel = (host: Element, label: string) => host.querySelector(`[aria-label="${label}"]`)!;
 
 describe('44pt touch targets, same look', () => {
-  test('Button sm is 44 tall (as web at phone width); the text variant (17) has a slop', () => {
-    expect(minHeight44(render(Button, { size: 'sm', title: 'Edit' }))).toBe(true);
+  test('Button md is 44 tall; sm 36 with a slop to 44; the text variant (17) has a slop', () => {
+    expect(minHeight44(render(Button, { title: 'Save' }))).toBe(true);
+    expect(findAll(parse(render(Button, { size: 'sm', title: 'Edit' })), (el) => hasDeclaration(el, 'min-height:36px')).length).toBeGreaterThan(0);
+    const sm = mount(<Button size="sm" title="Edit" />);
+    expect(target(sm.host.querySelector('[role="button"]')!, 60, 36).height).toBeGreaterThanOrEqual(44);
+    sm.unmount();
     const text = mount(<Button variant="text" title="Resend" />);
     expect(target(text.host.querySelector('[role="button"]')!, 60, 17).height).toBeGreaterThanOrEqual(44);
     text.unmount();
   });
 
-  test('BackLink, both variants', () => {
+  test('BackLink: the text link has a slop to 44; the pill is md 44 tall, sm 36 with a slop to 44', () => {
     const d = mount(<BackLink label="Back" />);
     expect(target(d.host.querySelector('[role="button"]')!, 60, 26).height).toBeGreaterThanOrEqual(44);
     d.unmount();
-    const p = mount(<BackLink label="Back" variant="pill" />);
-    expect(target(p.host.querySelector('[role="button"]')!, 60, 30).height).toBeGreaterThanOrEqual(44);
+    expect(minHeight44(render(BackLink, { label: 'Back', variant: 'pill' }))).toBe(true);
+    const p = mount(<BackLink label="Back" variant="pill" size="sm" />);
+    expect(target(p.host.querySelector('[role="button"]')!, 60, 36).height).toBeGreaterThanOrEqual(44);
     p.unmount();
   });
 
@@ -53,16 +58,14 @@ describe('44pt touch targets, same look', () => {
     }
   });
 
-  test('ChoiceChip md (32) and sm (28)', () => {
-    const md = mount(<ChoiceChip>Run</ChoiceChip>);
-    expect(target(md.host.querySelector('[role="button"]')!, 60, 32).height).toBeGreaterThanOrEqual(44);
-    md.unmount();
+  test('ChoiceChip md is 44 tall; sm 36 with a slop to 44', () => {
+    expect(minHeight44(render(ChoiceChip, { children: 'Run' }))).toBe(true);
     const sm = mount(<ChoiceChip size="sm">Run</ChoiceChip>);
-    expect(target(sm.host.querySelector('[role="button"]')!, 60, 28).height).toBeGreaterThanOrEqual(44);
+    expect(target(sm.host.querySelector('[role="button"]')!, 60, 36).height).toBeGreaterThanOrEqual(44);
     sm.unmount();
   });
 
-  test('IconButton: the target is at least 44 around the 32 / 40 square', () => {
+  test('IconButton: the target is at least 44 around the 36 / 44 square', () => {
     const { host, unmount } = mount(<IconButton icon="camera" label="Change photo" />);
     const style = propOf(byLabel(host, 'Change photo'), 'style') as unknown[];
     expect(JSON.stringify(style)).toMatch(/"minWidth":44.*"minHeight":44/);

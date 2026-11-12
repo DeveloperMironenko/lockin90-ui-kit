@@ -111,3 +111,9 @@ No capability gap blocks use — both are a fully usable back control.
   7 above / below: 44pt. Web (already ≥ 24: 26 / 30 / 36 tall): an invisible centred `::before` makes it 44px at
   phone width.
 - **Focus ring (web):** the kit's shared `2px solid --accent-2` (the old `--accent` 45% ring was 1.79:1).
+
+## Update — 2026-11-11 (owner: the audit batch, control sizes and fills)
+
+- **New `size` (`md` | `sm`, default `md`, web + native):** the `pill` / `bar` surface is 44 tall at md (the
+  one back control of a screen, V2), 36 with a 44 target at sm (a compact header); chevron 16 / 14. The
+  surface is on the `--field` fill (was `--glass`). The `default` text link is unchanged (44 to touch).

@@ -28,7 +28,8 @@
   height: 28px;
   padding: 0 6px;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  /* a control's corners (CONVENTIONS "Corner radii") */
+  border-radius: var(--r-sm);
   background: var(--glass-2);
   color: var(--text-dim);
   font-family: var(--font-ui);

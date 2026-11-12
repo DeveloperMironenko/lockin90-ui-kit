@@ -18,9 +18,9 @@ describe('IconButton', () => {
     expect(html).toMatch(/aria-label="Change photo"/);
   });
 
-  test('md is a 40 square, sm a 32 one, with a control’s 10 corners', () => {
-    expect(inlineStyle(square())).toMatchObject({ width: '40px', height: '40px' });
-    expect(inlineStyle(square({ size: 'sm' }))).toMatchObject({ width: '32px' });
+  test('md is a 44 square, sm a 36 one (the two control sizes), with a control’s 10 corners', () => {
+    expect(inlineStyle(square())).toMatchObject({ width: '44px', height: '44px' });
+    expect(inlineStyle(square({ size: 'sm' }))).toMatchObject({ width: '36px' });
     expect(hasDeclaration(square(), 'border-top-left-radius:10px')).toBe(true);
   });
 

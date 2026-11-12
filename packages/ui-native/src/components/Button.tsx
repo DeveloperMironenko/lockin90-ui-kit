@@ -6,8 +6,9 @@ import { hapticSelection } from '../internal/optionalHaptics';
 import { absoluteFill } from '../internal/absoluteFill';
 import { Spinner } from './Spinner';
 import { FitText } from './FitText';
+import { sizedIcon } from '../internal/iconSlot';
 
-// the web's body line height (1.55): the md button is 12 + 14 × 1.55 + 12 = 45.7, as on web
+// the web's body line height (1.55); md is 44 tall at least, sm 36 (CONVENTIONS "Control sizes")
 const LINE = 1.55;
 
 export type ButtonVariant = 'default' | 'primary' | 'ghost' | 'text';
@@ -20,6 +21,10 @@ const DANGER_BORDER = 'rgba(255,77,109,0.42)';
 // (44 − 17) / 2 above and below the text variant's line
 const TEXT_SLOP = { top: 14, bottom: 14, left: 8, right: 8 };
 const SPIN_SIZE = { sm: 14, md: 16, lg: 18 } as const;
+// the icon slot's size (CONVENTIONS "Type"): a `leading` / `trailing` icon without its own size gets it
+const ICON_SIZE = { sm: 14, md: 16, lg: 19 } as const;
+// sm's 36pt box reaches the 44pt target
+const SM_SLOP = { top: 4, bottom: 4 };
 // the dark label on a bright surface (primary's gradient, solid danger), as web: label and spinner
 const INK_ON_BRIGHT = colors.inkOnBright;
 
@@ -63,8 +68,12 @@ export function Button({
   onPress,
   accessibilityState,
   accessibilityLabel,
+  hitSlop,
   ...rest
 }: ButtonProps) {
+  const lead = sizedIcon(leading, ICON_SIZE[size]);
+  const trail = sizedIcon(trailing, ICON_SIZE[size]);
+  const slop = hitSlop ?? (size === 'sm' && variant !== 'text' ? SM_SLOP : undefined);
   const pad = size === 'sm' ? styles.padSm : size === 'lg' ? styles.padLg : styles.padMd;
   const labelSize = size === 'sm' ? 13 : size === 'lg' ? 17 : 14;
   const danger = tone === 'danger';
@@ -98,7 +107,7 @@ export function Button({
       <Pressable
         accessibilityRole="button"
         onPress={press}
-        hitSlop={TEXT_SLOP}
+        hitSlop={hitSlop ?? TEXT_SLOP}
         accessibilityState={a11yState}
         accessibilityLabel={accessibilityLabel ?? title}
         {...rest}
@@ -106,11 +115,11 @@ export function Button({
         {({ pressed }) => (
           <View style={[styles.textRow, tone === 'muted' && styles.textRowMuted, pressed && styles.textPressed, style]}>
             <View style={[styles.textRow, hide]}>
-              {leading}
+              {lead}
               <FitText style={[styles.textLabel, tone === 'muted' && styles.textMuted, disabled && styles.textDisabled]}>
                 {title}
               </FitText>
-              {trailing}
+              {trail}
             </View>
             {spinner(colors.accent2)}
           </View>
@@ -124,24 +133,29 @@ export function Button({
       <Pressable
         accessibilityRole="button"
         onPress={press}
+        hitSlop={slop}
         accessibilityState={a11yState}
         accessibilityLabel={accessibilityLabel ?? title}
         {...rest}
       >
         {({ pressed }) => (
-          <LinearGradient
-            colors={gradients.cta.stops as unknown as [string, string]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={[styles.base, pad, styles.primary, pressed && styles.pressed, disabled && styles.disabled, style]}
-          >
-            <View style={[styles.base, styles.inner, hide]}>
-              {leading}
-              <FitText style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: INK_ON_BRIGHT }]}>{title}</FitText>
-              {trailing}
-            </View>
-            {spinner(INK_ON_BRIGHT)}
-          </LinearGradient>
+          // the glow is drawn by a plain View around the gradient: a boxShadow on the gradient view itself
+          // never rendered on device (V15)
+          <View style={[styles.glowBox, styles.primary, pressed && styles.pressed, disabled && styles.disabled, style]}>
+            <LinearGradient
+              colors={gradients.cta.stops as unknown as [string, string]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={[styles.base, pad, styles.fill]}
+            >
+              <View style={[styles.base, styles.inner, hide]}>
+                {lead}
+                <FitText style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: INK_ON_BRIGHT }]}>{title}</FitText>
+                {trail}
+              </View>
+              {spinner(INK_ON_BRIGHT)}
+            </LinearGradient>
+          </View>
         )}
       </Pressable>
     );
@@ -169,7 +183,8 @@ export function Button({
     borderColor = DANGER_BORDER;
     textColor = colors.bad;
   } else {
-    backgroundColor = ghost ? 'transparent' : colors.glass2;
+    // a control's fill (V19): the opaque field colour, not glass
+    backgroundColor = ghost ? 'transparent' : colors.field;
     borderColor = colors.border2;
     textColor = ghost ? colors.textDim : colors.text;
   }
@@ -178,6 +193,7 @@ export function Button({
     <Pressable
       accessibilityRole="button"
       onPress={press}
+      hitSlop={slop}
       accessibilityState={a11yState}
       accessibilityLabel={accessibilityLabel ?? title}
       {...rest}
@@ -195,9 +211,9 @@ export function Button({
           ]}
         >
           <View style={[styles.base, styles.inner, hide]}>
-            {leading}
+            {lead}
             <FitText style={[styles.label, { fontSize: labelSize, lineHeight: labelSize * LINE, color: textColor }]}>{title}</FitText>
-            {trailing}
+            {trail}
           </View>
           {spinner(textColor)}
         </View>
@@ -208,12 +224,15 @@ export function Button({
 
 const styles = StyleSheet.create({
   base: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, borderRadius: radii.sm },
-  padMd: { paddingVertical: 12, paddingHorizontal: 20 },
+  padMd: { minHeight: 44, paddingVertical: 10, paddingHorizontal: 20 },
   // web `.lk-btn-lg`: 16 / 28
   padLg: { paddingVertical: 16, paddingHorizontal: 28 },
-  // sm: 44 tall at least, as the web at phone width (CONVENTIONS "Accessibility")
-  padSm: { minHeight: 44, paddingVertical: 8, paddingHorizontal: 14 },
+  // sm: 36 tall, its target 44 (SM_SLOP), as web (CONVENTIONS "Control sizes")
+  padSm: { minHeight: 36, paddingVertical: 6, paddingHorizontal: 14 },
   primary: { ...nativeShadows.glowAccent },
+  // the primary's outer box: its corners carry the glow; the gradient fills it
+  glowBox: { borderRadius: radii.sm },
+  fill: { flexGrow: 1, borderRadius: radii.sm, overflow: 'hidden' },
   dangerGlow: { shadowColor: colors.bad, shadowOpacity: 0.4, shadowRadius: 24, shadowOffset: { width: 0, height: 0 }, elevation: 8 },
   pressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },
   // web `.lk-btn:disabled`: the whole surface at half strength

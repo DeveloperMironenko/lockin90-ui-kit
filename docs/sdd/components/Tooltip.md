@@ -106,3 +106,7 @@ No capability gap blocks use — the tooltip is fully usable and visually equiva
 - **New need → both platforms.** A delay prop, a rich arrow, or a controlled `open` must be added to `TooltipProps` on web **and** native with the same names/tokens.
 - **Tokens only.** Badge, bubble, and arrow colors/radii all come from `@lockin90/tokens`.
 - **Parity gate.** Before shipping, confirm the web phone-width tooltip and native tooltip match (same content, placement, arrow) — accepting only the hover-vs-press reveal difference.
+
+## Update — 2026-11-11 (owner: the audit batch, control sizes and fills)
+
+- **Edge (V19):** the bubble and its pointer use the overlays' `--border` (was `--border-2`).

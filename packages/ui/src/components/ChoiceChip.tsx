@@ -6,7 +6,8 @@ export type ChoiceChipSize = 'sm' | 'md';
 export interface ChoiceChipProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Selected (`.on`) state — accent border + tint + brighter text. */
   selected?: boolean;
-  /** Pill size. */
+  /** Control size (CONVENTIONS "Control sizes"): `md` 44 tall, `sm` 36 with a 44 target (a header row's
+   *  "Scan", the same height as a `sm` Select beside it). @default 'md' */
   size?: ChoiceChipSize;
   /** Leading glow dot (ignored when `icon` is set). */
   leadingDot?: boolean;

@@ -75,13 +75,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: radii.sm,
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    // a control's fill (V19)
+    backgroundColor: colors.field,
     borderWidth: 1,
     borderColor: colors.border2,
   },
-  pressed: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
-  },
+  pressed: { opacity: 0.85 },
   disabled: { opacity: 0.5 },
   iconSlot: { width: 16, height: 16, alignItems: 'center', justifyContent: 'center' },
   label: {

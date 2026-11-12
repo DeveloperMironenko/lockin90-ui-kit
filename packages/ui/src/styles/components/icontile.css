@@ -10,7 +10,8 @@
   height: 38px;
   border-radius: var(--r-sm);
   border: 1px solid var(--border-2);
-  background: var(--bg-1);
+  /* a control's fill (V19) */
+  background: var(--field);
   color: var(--text);
 }
 .lk-icontile svg {

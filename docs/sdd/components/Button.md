@@ -224,3 +224,13 @@ There is **no capability gap** that blocks use — the button is fully usable an
 - **Native:** the label (and the row holding it, `leading` / `trailing`) has `flexShrink: 1, minWidth: 0`, so
   its room is the button's: a label as wide as its content gave FitText nothing to fit to. It shrinks at a
   larger text size only, never below the default text size or 11pt.
+
+## Update — 2026-11-11 (owner: the audit batch, control sizes and fills)
+
+- **Two sizes (CONVENTIONS "Control sizes"):** `md` is 44 tall at every width (min-height 44, padding 10 / 20;
+  was 12 / 20 ≈ 45.7), `sm` 36 tall (6 / 14) with a 44 target (web `::before`, native `hitSlop` 4); `lg` unchanged.
+- **Fill (V19):** `default` sits on the opaque `--field` (was `--glass-2`); `ghost` stays transparent.
+- **Icons sized by the slot (V17):** 16 at md (primary's 17 is gone), 14 at sm, 19 at lg; native gives a
+  `leading` / `trailing` element without its own `size` the slot's size (`internal/iconSlot.ts`), as web's CSS.
+- **Native primary glow (V15):** the glow (`nativeShadows.glowAccent`) is on a plain View around the gradient
+  (a `boxShadow` on the gradient view never drew on device); the gradient fills it.

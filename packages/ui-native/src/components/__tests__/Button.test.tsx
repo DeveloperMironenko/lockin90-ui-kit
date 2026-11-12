@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { Button, type ButtonProps } from '../Button';
-import { ancestors, findByText, hasDeclaration, parse, render } from './markup';
+import { Text } from 'react-native';
+import { ancestors, findAll, findByText, hasDeclaration, parse, render } from './markup';
 
 /* Screen readers announce every variant as a button. */
 describe('Button role', () => {
@@ -72,5 +73,27 @@ describe('Button disabled', () => {
 
   test('the text variant stays at full strength', () => {
     expect(dimmed({ variant: 'text', disabled: true })).toBe(false);
+  });
+});
+
+/* Audit 2026-11-11: V15 (the glow on a plain View around the gradient), V17 (icons sized by the slot), V19
+ * (a control's fill). */
+describe('Button audit', () => {
+  const all = (html: string) => findAll(parse(html), () => true);
+  test('primary: the glow is on the box around the gradient, not on the gradient', () => {
+    const els = all(render(Button, { variant: 'primary', title: 'Save' }));
+    const glow = els.find((el) => hasDeclaration(el, 'box-shadow:0 0 40px rgba(124,92,255,0.35)'));
+    expect(glow).toBeDefined();
+    expect((glow!.attrs.style ?? '').includes('linear-gradient')).toBe(false);
+  });
+  test('a leading icon without its own size gets the slot size (md 16, sm 14, lg 19)', () => {
+    const Probe = ({ size }: { size?: number }) => <Text>{`icon-${size}`}</Text>;
+    for (const [size, px] of [['md', 16], ['sm', 14], ['lg', 19]] as const) {
+      expect(render(Button, { title: 'Go', size, leading: <Probe /> })).toContain(`icon-${px}`);
+    }
+    expect(render(Button, { title: 'Go', leading: <Probe size={22} /> })).toContain('icon-22');
+  });
+  test('the default variant is on the field fill', () => {
+    expect(render(Button, { title: 'Edit' }).toLowerCase()).toContain('rgba(37,39,46,1.00)');
   });
 });

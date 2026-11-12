@@ -71,14 +71,18 @@
   box-shadow: none;
 }
 
-/* ---- buttons ---- */
+/* ---- buttons ----
+   Two control sizes (owner, 2026-11-11, CONVENTIONS "Control sizes"): md 44 tall (forms, the default) and
+   sm 36 tall with a 44 target (compact rows: a header, a toolbar); lg is a flow's closing CTA. */
 .lk-btn {
+  position: relative;
   display: inline-flex; align-items: center; justify-content: center; gap: 9px; white-space: nowrap;
   font-family: var(--font-ui); font-weight: 600; font-size: 14px;
-  padding: 12px 20px; border-radius: var(--r-sm); border: 1px solid var(--border-2);
+  min-height: 44px; padding: 10px 20px; border-radius: var(--r-sm); border: 1px solid var(--border-2);
   /* a button's own line height, as the design's: an app's reset (Tailwind's) makes it inherit the page's */
   line-height: normal;
-  background: var(--glass-2); color: var(--text); cursor: pointer;
+  /* a control's fill (V19): the opaque field colour, not glass */
+  background: var(--field); color: var(--text); cursor: pointer;
   transition: transform .25s var(--ease), box-shadow .3s var(--ease), background .3s var(--ease), border-color .3s var(--ease);
   will-change: transform;
 }
@@ -91,32 +95,30 @@
   box-shadow: var(--glow-accent); animation: lk-btn-flow 6s var(--ease-soft) infinite;
 }
 .lk-btn-primary:hover { box-shadow: 0 0 56px rgba(124, 92, 255, 0.55); }
-.lk-btn-primary svg { width: 17px; height: 17px; }
 @keyframes lk-btn-flow { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
 .lk-btn-ghost { background: transparent; border-color: var(--border-2); color: var(--text-dim); }
 .lk-btn-ghost:hover { color: var(--text); }
-.lk-btn-sm { padding: 8px 14px; font-size: 13px; }
+.lk-btn.lk-btn-sm { min-height: 36px; padding: 6px 14px; font-size: 13px; }
 .lk-btn-sm svg { width: 14px; height: 14px; }
+/* sm: the 36px box reaches a 44px target, same look */
+.lk-btn.lk-btn-sm::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: max(100%, 44px); transform: translateY(-50%); }
 /* lg — a flow's closing CTA (design onboarding .enter-cta: 17px, padding 17 / 28 on the 4px scale) */
 .lk-btn-lg { padding: var(--space-4) var(--space-7); font-size: 17px; }
 .lk-btn-lg svg { width: 19px; height: 19px; }
 /* icon-only: a square button with one icon (IconButton.md), Button's surface and a control's corners */
 .lk-icon-btn {
   position: relative; display: inline-grid; place-items: center; flex: 0 0 auto;
-  width: 40px; height: 40px; padding: 0; border-radius: var(--r-sm);
-  border: 1px solid var(--border-2); background: var(--glass-2); color: var(--text);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); cursor: pointer;
+  width: 44px; height: 44px; padding: 0; border-radius: var(--r-sm);
+  border: 1px solid var(--border-2); background: var(--field); color: var(--text); cursor: pointer;
   transition: transform .25s var(--ease), border-color .3s var(--ease), background .3s var(--ease);
 }
 @media (hover: hover) { .lk-icon-btn:hover { transform: translateY(-1px); } }
 .lk-icon-btn:active { transform: scale(.96); }
 .lk-icon-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 /* the kit's focus ring (keyboard only) is the shared one below */
-.lk-icon-btn-sm { width: 32px; height: 32px; }
-/* the touch target reaches 44px around the 32px box */
-.lk-icon-btn-sm::before { content: ''; position: absolute; inset: -6px; }
-/* md (40px) at phone width: a 44px target, same look */
-@media (max-width: 540px) { .lk-icon-btn:not(.lk-icon-btn-sm)::before { content: ''; position: absolute; inset: -2px; } }
+.lk-icon-btn-sm { width: 36px; height: 36px; }
+/* the touch target reaches 44px around the 36px box */
+.lk-icon-btn-sm::before { content: ''; position: absolute; inset: -4px; }
 /* text: a bare action inside a line of mono meta text ("Resend code" beside the code's hint):
    no surface, no padding, `--accent-2`; underlined on hover, `--text-faint` when disabled.
    Two classes, so it wins over the surface rules wherever they sit (Button skips size/tone). */
@@ -143,6 +145,9 @@
 .lk-icon-btn:focus-visible,
 .lk-sso:focus-visible,
 .lk-backlink:focus-visible,
+.lk-choicechip:focus-visible,
+.lk-pop-trigger:focus-visible,
+.lk-menu-trigger:focus-visible,
 .lk-listrow-tappable:focus-visible,
 .lk-input-trail:focus-visible,
 .lk-search-clear:focus-visible,
@@ -173,7 +178,7 @@
 }
 /* Phone width (--bp-phone): every control is at least 44px tall, as native (CONVENTIONS "Accessibility") */
 @media (max-width: 540px) {
-  .lk-btn:not(.lk-btn-text), .lk-sso, .lk-input-field, .lk-select-trigger, .lk-search, .lk-seg-tab { min-height: 44px; }
+  .lk-sso, .lk-input-field, .lk-select-trigger:not(.lk-select-sm), .lk-search, .lk-seg-tab, .lk-menu-item, .lk-select-option { min-height: 44px; }
   .lk-modal-close { min-width: 44px; min-height: 44px; }
 }
 /* SSO / social sign-in: full-width, roomy rounded-square (not the pill) with a

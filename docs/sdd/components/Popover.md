@@ -131,3 +131,7 @@ This file also documents **`CopyButton`** (lives in the same source file): a cop
 - The panel is a container, `--r` / `radii.md` (16, was 10); the round "?" trigger stays round (an icon circle).
 
 - **Final (owner, same day): every corner 10.** Read every 16 / 22 above as 10 (`radii.md` / `radii.lg` and `--r` / `--r-lg` are 10).
+
+## Update — 2026-11-11 (owner: the audit batch, control sizes and fills)
+
+- **Corners (V18):** the default "?" trigger is a control's 10 (was the pill).

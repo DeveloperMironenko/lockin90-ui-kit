@@ -128,7 +128,7 @@ describe('Toast action and countdown', () => {
   test('the ring number scales with the text size (no allowFontScaling={false})', () => {
     const view = undoToast(() => {});
     const num = view.host.querySelector('[data-testid="toast-countdown"]')!;
-    const text = [...num.querySelectorAll('*')].find((el) => el.textContent === '6' && el.children.length === 0)!;
+    const text = Array.from(num.querySelectorAll("*")).find((el) => el.textContent === '6' && el.children.length === 0)!;
     expect(propOf(text, 'allowFontScaling')).not.toBe(false);
     view.unmount();
   });

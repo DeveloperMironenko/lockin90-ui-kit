@@ -145,6 +145,23 @@ The aurora peaks are modelled from the measured worst case (luminance .081 behin
 blob colour screened over `--bg-0` at the intensity that reproduces it (cyan .343, violet .547, magenta
 .497), and 1.44× that for `vivid`. `tokens.test.ts` checks them.
 
+## Control sizes (owner rule, 2026-11-11 — "2 sizes of buttons, one for small places")
+
+Two sizes for every pressable or pickable control, web and native alike, the corner 10 at both:
+
+| Size | Visual height | Target | Value / label | Icon | Where |
+| --- | --- | --- | --- | --- | --- |
+| **`md`** (default) | 44 | 44 | Select 16, Button 14, ChoiceChip 14 | 16 | forms, a screen's back control, dialogs |
+| **`sm`** | 36 | 44 (web `::before`, native `hitSlop`) | Select 14, Button 13, ChoiceChip 14 | 14 (Select's leading 16) | compact rows: the auth / onboarding header (the language Select and the "Scan" chip, the same height), toolbars, a top bar |
+
+Button (`lg` stays a flow's closing CTA), IconButton (a 44 / 36 square), Select, ChoiceChip and BackLink (its
+`pill` / `bar` surface) take `size="md" | "sm"`. Two controls side by side have the same size.
+
+**Fills and edges (V19):** a control's fill is the opaque `--field` / `colors.field` (Button `default`,
+IconButton, SsoButton, BackLink's surface, ChoiceChip, IconTile, every field); a control you type into or pick
+from has the control edge (`--border-control`); buttons and chips `--border-2`; containers (Card, Alert,
+tiles) and overlays (Sheet, Modal, Menu, Popover, Tooltip, Select's panel) one edge, `--border` (`.09`).
+
 ## Type (owner rule, 2026-11-11 — one size per text role)
 
 One table for web and native: `textStyles` in `@lockin90/tokens` (size, weight, line height, tracking in em),
@@ -184,10 +201,9 @@ Every bordered box in the kit has one of two corner radii and the same neutral l
 | **Container**: a surface that holds controls or content | `--r` / `radii.md` (**16**) | Card and every card surface (InsightCard, PrCard, TemplateCard, PricingTierCard, PendingPatternCard, StatTile, LeaderboardRow, Countdown, ShareCard, SessionBanner, AchievementBadge, MessageBubble), Alert, Toast, ForecastCallout, EmptyState, Modal, Sheet (top corners), Popover, Menu, Tooltip, Combobox / Select panels, CodeBlock, QRCode frame, VideoThumbnail |
 | **Shape, not a box** (unchanged) | as today | circles (Avatar, AvatarStack, StatusDot (native), Checkbox tick, Pulse), Toggle track and knob, Slider track and thumb, ProgressBar / Meter / PasswordStrengthMeter / ZoneBar / RangeBar / BarFill tracks and fills, chart marks, Ring, Gauge, the Sheet grab handle |
 
-- **The line:** every bordered control and container has `1px solid var(--border-2)` /
-  `borderWidth: 1, borderColor: colors.border2` (`rgba(255,255,255,.16)`). Fields already use it; cards,
-  chips and the small select move up from `--border` (`.09`), which was too faint to see a field's
-  edge. `--border` stays for dividers and table rules (lines inside a surface, not around it).
+- **The line:** every bordered control has `1px solid var(--border-2)` / `colors.border2`
+  (`rgba(255,255,255,.16)`), a field the control edge; containers and overlays keep `--border` (`.09`) —
+  superseded by "Control sizes" → "Fills and edges" (2026-11-11), which is what the code does.
 - **A field's edge is stronger (2026-11-10, "Accessibility"):** the boxes you type into or pick from (Input,
   PasswordInput, SearchInput, Select trigger, TagInput, CodeInput boxes) use `--border-control` /
   `colors.borderControl` (`.36`, 3.3:1 on the card); buttons, chips and cards keep `--border-2`.

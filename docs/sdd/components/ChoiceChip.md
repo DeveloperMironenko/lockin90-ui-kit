@@ -143,3 +143,10 @@ Both render the same pill with the same selected look — no capability gap.
 ## Update — 2026-11-11 (owner: one radius for every control, CONVENTIONS "Corner radii")
 
 - A control: `--r-sm` / `radii.sm` (10), the `stacked` cell too (was the pill / 16).
+
+## Update — 2026-11-11 (owner: the audit batch, control sizes and fills)
+
+- **Two sizes:** `md` 44 tall (was 32), `sm` 36 tall with a 44 target (was 28; the header's "Scan" beside a
+  `sm` Select, the same height); label 14 at both, icon 16 (native sizes an `icon` without its own size);
+  unselected on the `--field` fill with `--border-2` (was `--glass` / `--border`). Web focus: the kit's shared
+  `--accent-2` ring (was a 14% accent glow). `stacked` keeps its own layout.
